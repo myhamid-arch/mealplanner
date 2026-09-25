@@ -53,7 +53,7 @@ Before starting, confirm that every leaf in your row's `Needs` is merged into `c
 - **Never merge.** The architect re-verifies (CP3), then either merges or requests changes as numbered findings. Fix every finding, re-run `--reverify`, comment `CP2 READY` again, and stop.
 
 ## 4. Anti-drift rules (a violation fails review)
-1. Write only inside your OWNS globs. You need a dependency or a file outside them? Put it under "Requests" in the PR and continue without it, or stop if it blocks a gate. `package.json` and lockfile changes are architect-applied.
+1. Write only inside your OWNS globs. You need a dependency or a file outside them? Put it under "Requests" in the PR and continue without it, or stop if it blocks a gate. `package.json` and lockfile changes are architect-applied, except in leaf 1.1.1, which owns them and must declare every dependency named in spec ARC-1 up front.
 2. Do not edit `docs/spec/**`, `docs/mockups/**`, or ledger CHECK/EXPECT/OWNS lines.
 3. Build only what your cited requirement IDs ask for. No extra features, screens, settings, abstractions or dependencies. Nothing from `docs/spec/01-product.md` §5 (out of scope).
 4. No TODOs, placeholders, mocked production code paths, or skipped/disabled/quarantined tests in the finished leaf. Model stubs are allowed **only in tests**, as the gates specify.
