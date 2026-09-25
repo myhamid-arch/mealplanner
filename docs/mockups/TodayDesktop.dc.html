@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Today — admin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 960px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="today" hint-size="240px,860px"></dc-import>
+  </div>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 28px 32px; display: flex; gap: 22px">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <a href="TodayDesktop.dc.html" aria-label="Previous day" style="width: 40px; height: 40px; border-radius: 12px; background: #F1E7D6; display: flex; align-items: center; justify-content: center; color: #2B2118"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6l6 6"></path></svg></a>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 32px; font-weight: 700">Sunday 27 September</h1>
+        <a href="TodayDesktop.dc.html" aria-label="Next day" style="width: 40px; height: 40px; border-radius: 12px; background: #F1E7D6; display: flex; align-items: center; justify-content: center; color: #2B2118"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"></path></svg></a>
+        <span style="margin-left: auto; padding: 6px 12px; border-radius: 999px; background: #E1EFD9; color: #2F7A2B; font-weight: 800; font-size: 14px">All 8 targeted meals on target</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+        <div style="background: #FFFFFF; border-radius: 18px; padding: 14px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 12px; font-weight: 800; color: #5A4A3B">BREAKFAST 07:00 · cooked</span>
+          <span style="height: 70px; border-radius: 12px; background-color: #F3A712; background-image: radial-gradient(circle at 40% 50%, #E4572E 0 18px, transparent 19px), radial-gradient(circle at 66% 45%, #FFF8EE 0 12px, transparent 13px)"></span>
+          <span style="font-weight: 800">Shakshuka with labneh</span>
+          <span style="font-size: 12px; font-weight: 800; color: #5A4A3B">Levantine</span>
+        </div>
+        <div style="background: #FFFFFF; border-radius: 18px; padding: 14px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 12px; font-weight: 800; color: #5A4A3B">LUNCH 13:30 · cooked</span>
+          <span style="height: 70px; border-radius: 12px; background-color: #3F8F3A; background-image: radial-gradient(circle at 35% 45%, #F3A712 0 16px, transparent 17px), radial-gradient(circle at 68% 55%, #FFF8EE 0 16px, transparent 17px)"></span>
+          <span style="font-weight: 800">Chicken shawarma bowl</span>
+          <span style="font-size: 12px; font-weight: 800; color: #5A4A3B">Levantine</span>
+        </div>
+        <div style="background: #FFFFFF; border-radius: 18px; padding: 14px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 12px; font-weight: 800; color: #5A4A3B">SNACK 16:30 · per person</span>
+          <span style="height: 70px; border-radius: 12px; background-color: #FCEBC4; background-image: radial-gradient(circle at 50% 50%, #B3263E 0 12px, transparent 13px)"></span>
+          <span style="font-weight: 800">5 different snacks</span>
+          <span style="font-size: 12px; font-weight: 800; color: #5A4A3B">Yogurt bowl ×2 · fruit &amp; dates ×3</span>
+        </div>
+        <a href="CookSheet.dc.html" style="text-decoration: none; color: #2B2118; background: #FFFFFF; border-radius: 18px; padding: 14px; border: 2.5px solid #C4411E; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 12px; font-weight: 800; color: #C4411E">DINNER 20:30 · kitchen starts 19:15</span>
+          <span style="height: 70px; border-radius: 12px; background-color: #1F8A8A; background-image: radial-gradient(circle at 35% 50%, #FFF8EE 0 18px, transparent 19px), radial-gradient(circle at 70% 45%, #F3A712 0 14px, transparent 15px)"></span>
+          <span style="font-weight: 800">Hammour, saffron rice, fattoush</span>
+          <span style="font-size: 12px; font-weight: 800; color: #5A4A3B">Grilled ×2 · breaded-fried ×3</span>
+        </a>
+      </div>
+      <section style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 0 #EADFCC">
+        <div style="display: grid; grid-template-columns: 170px repeat(4, minmax(0, 1fr)) 190px; gap: 10px; padding: 12px 18px; background: #F1E7D6; border-radius: 20px 20px 0 0; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #5A4A3B">
+          <span>Person</span><span>Breakfast</span><span>Lunch</span><span>Snack</span><span>Dinner</span><span>Day vs target</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 170px repeat(4, minmax(0, 1fr)) 190px; gap: 10px; padding: 12px 18px; align-items: center; border-bottom: 1px solid #F1E7D6; font-size: 14px">
+          <span style="display: flex; align-items: center; gap: 8px; font-weight: 800"><span style="width: 30px; height: 30px; border-radius: 15px; background: #17706F; color: #FFFFFF; display: flex; align-items: center; justify-content: center">O</span>Omar</span>
+          <span style="color: #2F7A2B; font-weight: 800">On target</span><span style="color: #2F7A2B; font-weight: 800">On target</span><span style="color: #2F7A2B; font-weight: 800">On target</span><span style="color: #2F7A2B; font-weight: 800">On target</span>
+          <span style="font-family: JetBrains Mono, monospace; font-size: 13px">2146 / 2150 kcal</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 170px repeat(4, minmax(0, 1fr)) 190px; gap: 10px; padding: 12px 18px; align-items: center; border-bottom: 1px solid #F1E7D6; font-size: 14px">
+          <span style="display: flex; align-items: center; gap: 8px; font-weight: 800"><span style="width: 30px; height: 30px; border-radius: 15px; background: #5B2A86; color: #FFFFFF; display: flex; align-items: center; justify-content: center">S</span>Sara</span>
+          <span style="color: #2F7A2B; font-weight: 800">On target</span><span style="color: #2F7A2B; font-weight: 800">On target</span><span style="color: #2F7A2B; font-weight: 800">On target</span><span style="color: #2F7A2B; font-weight: 800">On target</span>
+          <span style="font-family: JetBrains Mono, monospace; font-size: 13px">1656 / 1655 kcal</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 170px repeat(4, minmax(0, 1fr)) 190px; gap: 10px; padding: 12px 18px; align-items: center; border-bottom: 1px solid #F1E7D6; font-size: 14px">
+          <span style="display: flex; align-items: center; gap: 8px; font-weight: 800"><span style="width: 30px; height: 30px; border-radius: 15px; background: #B3263E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">L</span>Layla</span>
+          <span style="color: #5A4A3B">Regular portion</span><span style="color: #5A4A3B">Regular portion</span><span style="color: #5A4A3B">Fruit &amp; dates</span><span style="color: #5A4A3B">Fried fish</span>
+          <span style="font-size: 13px; color: #5A4A3B">No targets</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 170px repeat(4, minmax(0, 1fr)) 190px; gap: 10px; padding: 12px 18px; align-items: center; border-bottom: 1px solid #F1E7D6; font-size: 14px">
+          <span style="display: flex; align-items: center; gap: 8px; font-weight: 800"><span style="width: 30px; height: 30px; border-radius: 15px; background: #B7790A; color: #FFFFFF; display: flex; align-items: center; justify-content: center">A</span>Adam</span>
+          <span style="color: #5A4A3B">Large portion</span><span style="color: #5A4A3B">Large portion</span><span style="color: #5A4A3B">Fruit &amp; dates</span><span style="color: #5A4A3B">Fried fish</span>
+          <span style="font-size: 13px; color: #5A4A3B">No targets</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 170px repeat(4, minmax(0, 1fr)) 190px; gap: 10px; padding: 12px 18px; align-items: center; font-size: 14px">
+          <span style="display: flex; align-items: center; gap: 8px; font-weight: 800"><span style="width: 30px; height: 30px; border-radius: 15px; background: #2F7A2B; color: #FFFFFF; display: flex; align-items: center; justify-content: center">Z</span>Zayd</span>
+          <span style="color: #5A4A3B">Regular portion</span><span style="color: #8E1C30; font-weight: 700">No tahini (sesame)</span><span style="color: #5A4A3B">Fruit &amp; dates</span><span style="color: #8E1C30; font-weight: 700">Garlic yogurt, not tahini</span>
+          <span style="font-size: 13px; color: #5A4A3B">No targets</span>
+        </div>
+      </section>
+    </div>
+    <aside style="width: 280px; display: flex; flex-direction: column; gap: 14px">
+      <div style="background: #5B2A86; color: #FFFFFF; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+        <span style="font-family: Fraunces, serif; font-size: 20px; font-weight: 700">Needs you</span>
+        <a href="ChatDesktop.dc.html" style="padding: 10px 12px; border-radius: 12px; background: #6E3C99; color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 14px">3 proposals from the assistant</a>
+        <a href="WeekPlan.dc.html" style="padding: 10px 12px; border-radius: 12px; background: #6E3C99; color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 14px">Monday's plan is ready to send to the kitchen</a>
+      </div>
+      <div style="background: #FFFFFF; border-radius: 20px; padding: 18px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-weight: 800">Kitchen</span>
+        <span style="font-size: 14px; color: #3D3025">Priya marked lunch cooked at 13:05.</span>
+        <span style="font-size: 14px; color: #8E1C30; font-weight: 700">Flag: "No radishes today" — fattoush will use extra cucumber. Macros re-checked.</span>
+      </div>
+      <div style="background: #FFFFFF; border-radius: 20px; padding: 18px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-weight: 800">Reviews today</span>
+        <span style="font-size: 14px; color: #3D3025">4 ratings for lunch · average 4.5</span>
+        <a href="ReviewsFeed.dc.html" style="font-weight: 800; font-size: 14px">Read them</a>
+      </div>
+    </aside>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

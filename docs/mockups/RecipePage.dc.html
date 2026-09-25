@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recipe — hammour</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1500px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="recipes" hint-size="240px,860px"></dc-import>
+  </div>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 28px 32px; display: flex; flex-direction: column; gap: 18px">
+    <div style="height: 220px; border-radius: 24px; background-color: #1F8A8A; background-image: radial-gradient(circle at 22% 55%, #FFF8EE 0 70px, transparent 71px), radial-gradient(circle at 22% 55%, #E9D7B5 0 80px, transparent 81px), radial-gradient(circle at 55% 45%, #F3A712 0 56px, transparent 57px), radial-gradient(circle at 80% 60%, #3F8F3A 0 44px, transparent 45px), radial-gradient(circle at 86% 30%, #E4572E 0 18px, transparent 19px); position: relative">
+      <span style="position: absolute; left: 22px; bottom: 18px; padding: 6px 12px; border-radius: 999px; background: #FFFFFF; font-weight: 800; font-size: 13px; transform: rotate(-3deg)">Levantine</span>
+      <span style="position: absolute; left: 130px; bottom: 18px; padding: 6px 12px; border-radius: 999px; background: #FFFFFF; font-weight: 800; font-size: 13px; transform: rotate(2deg)">Dinner · lunch</span>
+    </div>
+    <div style="display: flex; align-items: flex-start; gap: 16px">
+      <div style="flex-grow: 1">
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 34px; font-weight: 700; line-height: 1.15">Hammour, saffron rice, fattoush &amp; tahini-lemon</h1>
+        <p style="margin: 6px 0 0; color: #5A4A3B">4 components, each cooked and portioned separately. Written by the assistant on 14 Sep and edited by Omar. Used in 6 meals. Rated 4.6 from 11 reviews.</p>
+      </div>
+      <div style="display: flex; gap: 8px">
+        <button type="button" style="height: 44px; padding: 0 14px; border-radius: 12px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800">Edit</button>
+        <a href="ChatSidePanel.dc.html" style="height: 44px; padding: 0 14px; border-radius: 12px; background: #5B2A86; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; text-decoration: none">Ask assistant to revise</a>
+      </div>
+    </div>
+
+    <section style="background: #FFFFFF; border-radius: 22px; padding: 22px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 24px">1 · Hammour</h2>
+        <span style="font-size: 14px; color: #5A4A3B">Same fish, three ways. Each person gets the way that suits their macros and taste.</span>
+      </div>
+      <div role="tablist" aria-label="Preparation" style="display: flex; gap: 8px">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+          <button type="button" role="tab" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+        </sc-for>
+      </div>
+      <div style="display: flex; gap: 20px">
+        <div style="width: 300px; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6B5B4B">Per 100 g cooked</span>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font-family: JetBrains Mono, monospace">
+            <span style="padding: 12px; border-radius: 12px; background: #FDE3D8; display: flex; flex-direction: column"><span style="font-family: Nunito, sans-serif; font-size: 12px; font-weight: 800; color: #A3351A">kcal</span><span style="font-size: 22px">{{v.kcal}}</span></span>
+            <span style="padding: 12px; border-radius: 12px; background: #D6EFEE; display: flex; flex-direction: column"><span style="font-family: Nunito, sans-serif; font-size: 12px; font-weight: 800; color: #17706F">Protein</span><span style="font-size: 22px">{{v.p}} g</span></span>
+            <span style="padding: 12px; border-radius: 12px; background: #FCEBC4; display: flex; flex-direction: column"><span style="font-family: Nunito, sans-serif; font-size: 12px; font-weight: 800; color: #7A4F00">Carbs</span><span style="font-size: 22px">{{v.c}} g</span></span>
+            <span style="padding: 12px; border-radius: 12px; background: #EDEDD2; display: flex; flex-direction: column"><span style="font-family: Nunito, sans-serif; font-size: 12px; font-weight: 800; color: #5E5E14">Fat</span><span style="font-size: 22px">{{v.f}} g</span></span>
+          </div>
+          <span style="font-size: 13px; color: #3D3025">{{v.note}}</span>
+          <span style="font-size: 13px; font-weight: 800">Tonight: {{v.who}}</span>
+        </div>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6B5B4B">Ingredients · for 1 kg cooked</span>
+          <sc-for list="{{v.ingredients}}" as="ing" hint-placeholder-count="5">
+            <span style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 10px; background: #FFF8EE; font-size: 14px"><span style="font-weight: 700">{{ing.name}}</span><span style="font-family: JetBrains Mono, monospace">{{ing.qty}}</span></span>
+          </sc-for>
+        </div>
+        <div style="width: 330px; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6B5B4B">Method</span>
+          <sc-for list="{{v.steps}}" as="st" hint-placeholder-count="4">
+            <span style="display: flex; gap: 10px; font-size: 14px"><span style="width: 24px; height: 24px; border-radius: 12px; background: #2B2118; color: #FFF8EE; font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0">{{st.n}}</span><span>{{st.text}}</span></span>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+      <section style="background: #FFFFFF; border-radius: 20px; padding: 18px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 6px">
+        <h3 style="margin: 0; font-family: Fraunces, serif; font-size: 20px">2 · Saffron rice</h3>
+        <span style="font-size: 14px; color: #5A4A3B">Boiled · 1 way</span>
+        <span style="font-family: JetBrains Mono, monospace; font-size: 13px">per 100 g: 136 kcal · P2.6 C28.4 F1.2</span>
+      </section>
+      <section style="background: #FFFFFF; border-radius: 20px; padding: 18px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 6px">
+        <h3 style="margin: 0; font-family: Fraunces, serif; font-size: 20px">3 · Fattoush</h3>
+        <span style="font-size: 14px; color: #5A4A3B">Raw salad, toasted khubz</span>
+        <span style="font-family: JetBrains Mono, monospace; font-size: 13px">per 100 g: 110 kcal · P2 C12 F6</span>
+      </section>
+      <section style="background: #FFFFFF; border-radius: 20px; padding: 18px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 6px">
+        <h3 style="margin: 0; font-family: Fraunces, serif; font-size: 20px">4 · Sauce</h3>
+        <span style="font-size: 14px; color: #5A4A3B">Tahini-lemon · <strong>garlic yogurt (sesame-free, for Zayd)</strong></span>
+        <span style="font-family: JetBrains Mono, monospace; font-size: 13px">tahini: 300 kcal · P8 C8 F27</span>
+      </section>
+    </div>
+
+    <section style="background: #FFFFFF; border-radius: 20px; padding: 20px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; justify-content: space-between; align-items: center"><h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px">Reviews</h2><a href="ReviewsFeed.dc.html" style="font-weight: 800">All 11</a></div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+        <div style="padding: 14px; border-radius: 14px; background: #FFF8EE; display: flex; flex-direction: column; gap: 6px"><span style="font-weight: 800">Adam · 5 stars · breaded-fried</span><span style="font-size: 14px">"Crispy, best fish so far."</span></div>
+        <div style="padding: 14px; border-radius: 14px; background: #FFF8EE; display: flex; flex-direction: column; gap: 6px"><span style="font-weight: 800">Omar · 4 stars · grilled</span><span style="font-size: 14px">"Great. Tahini sauce a bit thick." <span style="padding: 2px 8px; border-radius: 999px; background: #FCEBC4; font-size: 12px; font-weight: 800">recipe note</span></span></div>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { sel: 0 }; }
+  renderVals() {
+    const V = [
+      { label: 'Grilled', kcal: 118, p: 24.1, c: 0.4, f: 2.2, who: 'Omar 195 g, Sara 150 g',
+        note: 'About 20% of the raw weight is lost as water. A little fat drips off.',
+        ingredients: [
+          { name: 'Hammour fillet, skin off', qty: '1.25 kg' }, { name: 'Olive oil (marinade)', qty: '20 g' },
+          { name: 'Lemon juice', qty: '30 ml' }, { name: 'Garlic, grated', qty: '10 g' },
+          { name: 'Sumac', qty: '5 g' }, { name: 'Salt', qty: '6 g' } ],
+        steps: [ 'Mix oil, lemon, garlic, sumac and salt. Coat fillets; rest 15 min.', 'Heat grill pan to high (about 230 °C).', 'Grill 3–4 min per side until the flesh flakes at 60 °C.', 'Rest 2 min. Weigh each plate to the gram shown on the cook sheet.' ] },
+      { label: 'Pan-seared', kcal: 150, p: 23.6, c: 0.3, f: 5.8, who: 'nobody tonight',
+        note: 'Pan oil is measured, not poured: 45 g for 1 kg cooked.',
+        ingredients: [
+          { name: 'Hammour fillet, skin on', qty: '1.22 kg' }, { name: 'Olive oil (pan)', qty: '45 g' },
+          { name: 'Lemon', qty: '1 (60 g)' }, { name: 'Salt', qty: '6 g' } ],
+        steps: [ 'Pat fillets dry; salt.', 'Heat the measured oil in a heavy pan over medium-high heat.', 'Sear skin-side down 4 min, flip, 2 min.', 'Squeeze lemon over. Weigh portions.' ] },
+      { label: 'Breaded-fried', kcal: 210, p: 19.8, c: 8.4, f: 10.9, who: 'Layla 160 g, Adam 180 g, Zayd 120 g',
+        note: 'Absorbs about 90 g of the frying oil per 1 kg cooked. The rest is discarded, not eaten.',
+        ingredients: [
+          { name: 'Hammour fillet, in strips', qty: '830 g' }, { name: 'Plain flour', qty: '45 g' },
+          { name: 'Eggs', qty: '2 (110 g)' }, { name: 'Breadcrumbs', qty: '100 g' },
+          { name: 'Sunflower oil for frying', qty: '1.2 L' } ],
+        steps: [ 'Dust strips in flour, dip in beaten egg, press into breadcrumbs.', 'Heat oil to 175 °C.', 'Fry in batches 3–4 min until golden.', 'Drain on a rack 1 min. Weigh portions.' ] }
+    ];
+    const sel = this.state.sel;
+    const on = 'height: 44px; padding: 0 18px; border-radius: 12px; border: none; font: inherit; font-weight: 800; font-size: 15px; background: #2B2118; color: #FFF8EE;';
+    const off = 'height: 44px; padding: 0 18px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; font-weight: 800; font-size: 15px; background: #FFFFFF; color: #2B2118;';
+    const v = V[sel];
+    return {
+      tabs: V.map((x, i) => ({ label: x.label, style: i === sel ? on : off, pick: () => this.setState({ sel: i }) })),
+      v: { ...v, steps: v.steps.map((t, i) => ({ n: i + 1, text: t })) }
+    };
+  }
+}
+</script>
+</body>
+</html>

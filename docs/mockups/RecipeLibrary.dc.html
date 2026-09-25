@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recipe library</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 960px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="recipes" hint-size="240px,860px"></dc-import>
+  </div>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 28px 32px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 32px; font-weight: 700">Recipes</h1>
+      <span style="color: #5A4A3B">74 in your library · 12 written by the assistant</span>
+      <a href="ChatPhoneRecipe.dc.html" style="margin-left: auto; height: 44px; padding: 0 16px; border-radius: 12px; background: #5B2A86; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; gap: 8px; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4zM12 8l1 2l2 1l-2 1l-1 2l-1-2l-2-1l2-1z"></path></svg>Ask for a new recipe</a>
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap">
+      <label style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #E4D6C0; width: 260px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B5B4B" stroke-width="2" stroke-linecap="round"><path d="M11 18a7 7 0 1 0 0-14a7 7 0 0 0 0 14zM21 21l-5-5"></path></svg><input type="search" placeholder="Dish, ingredient…" style="border: none; outline: none; font: inherit; font-size: 14px; flex-grow: 1; background: transparent"></label>
+      <span style="padding: 9px 14px; border-radius: 999px; background: #2B2118; color: #FFF8EE; font-weight: 800; font-size: 14px">All meals</span>
+      <span style="padding: 9px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">Packable</span>
+      <span style="padding: 9px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">Any cuisine</span>
+      <span style="padding: 9px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">Main protein</span>
+      <span style="padding: 9px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">4 stars and up</span>
+      <span style="padding: 9px 14px; border-radius: 999px; background: #EBDDF6; color: #5B2A86; font-weight: 800; font-size: 14px">New</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+      <a href="RecipePage.dc.html" style="text-decoration: none; color: #2B2118; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 0 #EADFCC, 0 6px 18px rgba(43,33,24,0.06); display: flex; flex-direction: column">
+        <span style="height: 120px; background-color: #1F8A8A; background-image: radial-gradient(circle at 35% 50%, #FFF8EE 0 28px, transparent 29px), radial-gradient(circle at 70% 45%, #F3A712 0 22px, transparent 23px), radial-gradient(circle at 78% 75%, #3F8F3A 0 12px, transparent 13px)"></span>
+        <span style="padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Hammour, saffron rice, fattoush</span><span style="font-size: 13px; color: #5A4A3B">Levantine · 3 fish variants</span><span style="font-size: 13px; font-weight: 800; color: #7A4F00">4.6 · 11 reviews</span></span>
+      </a>
+      <span style="background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column">
+        <span style="height: 120px; background-color: #3F8F3A; background-image: radial-gradient(circle at 35% 45%, #F3A712 0 24px, transparent 25px), radial-gradient(circle at 68% 55%, #FFF8EE 0 26px, transparent 27px)"></span>
+        <span style="padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Chicken shawarma bowl</span><span style="font-size: 13px; color: #5A4A3B">Levantine · packable</span><span style="font-size: 13px; font-weight: 800; color: #7A4F00">4.8 · 19 reviews</span></span>
+      </span>
+      <span style="background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column">
+        <span style="height: 120px; background-color: #B7790A; background-image: radial-gradient(circle at 45% 50%, #E4572E 0 30px, transparent 31px), radial-gradient(circle at 72% 40%, #FFF8EE 0 14px, transparent 15px)"></span>
+        <span style="padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Chicken tikka masala</span><span style="font-size: 13px; color: #5A4A3B">Indian · 2 sauce variants</span><span style="font-size: 13px; font-weight: 800; color: #7A4F00">4.4 · 9 reviews</span></span>
+      </span>
+      <span style="background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; position: relative">
+        <span style="position: absolute; top: 10px; right: 10px; padding: 4px 9px; border-radius: 999px; background: #5B2A86; color: #FFFFFF; font-weight: 800; font-size: 12px">NEW · AI</span>
+        <span style="height: 120px; background-color: #5B2A86; background-image: radial-gradient(circle at 35% 50%, #FFF8EE 0 26px, transparent 27px), radial-gradient(circle at 68% 50%, #F3A712 0 20px, transparent 21px)"></span>
+        <span style="padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Chicken &amp; rice lunch box</span><span style="font-size: 13px; color: #5A4A3B">East Asian · served cold</span><span style="font-size: 13px; font-weight: 800; color: #5A4A3B">No reviews yet</span></span>
+      </span>
+      <span style="background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column">
+        <span style="height: 120px; background-color: #E4572E; background-image: radial-gradient(circle at 40% 50%, #F3A712 0 22px, transparent 23px), radial-gradient(circle at 70% 50%, #FFF8EE 0 20px, transparent 21px)"></span>
+        <span style="padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Shakshuka with labneh</span><span style="font-size: 13px; color: #5A4A3B">Levantine · breakfast</span><span style="font-size: 13px; font-weight: 800; color: #7A4F00">4.5 · 14 reviews</span></span>
+      </span>
+      <span style="background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column">
+        <span style="height: 120px; background-color: #1F8A8A; background-image: radial-gradient(circle at 38% 45%, #F3A712 0 30px, transparent 31px), radial-gradient(circle at 72% 60%, #FFF8EE 0 16px, transparent 17px)"></span>
+        <span style="padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Fish &amp; chips</span><span style="font-size: 13px; color: #5A4A3B">British · baked or fried</span><span style="font-size: 13px; font-weight: 800; color: #7A4F00">4.7 · 8 reviews</span></span>
+      </span>
+      <span style="background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column">
+        <span style="height: 120px; background-color: #3F8F3A; background-image: radial-gradient(circle at 50% 50%, #B3263E 0 30px, transparent 31px), radial-gradient(circle at 50% 50%, #F3A712 0 36px, transparent 37px)"></span>
+        <span style="padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Turkey bolognese</span><span style="font-size: 13px; color: #5A4A3B">Italian · 2 pasta variants</span><span style="font-size: 13px; font-weight: 800; color: #7A4F00">4.3 · 12 reviews</span></span>
+      </span>
+      <span style="background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; opacity: 0.7">
+        <span style="position: relative; height: 120px; background-color: #A89A88"></span>
+        <span style="padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Stuffed peppers</span><span style="font-size: 13px; color: #5A4A3B">Retired · low ratings</span><span style="font-size: 13px; font-weight: 800; color: #8E1C30">2.4 · 5 reviews</span></span>
+      </span>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

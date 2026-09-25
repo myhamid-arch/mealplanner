@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Family tastes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1100px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="family" hint-size="240px,860px"></dc-import>
+  </div>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 32px 36px; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between">
+      <div>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 34px; font-weight: 700">Family tastes</h1>
+        <p style="margin: 4px 0 0; color: #5A4A3B">What everyone likes. Set it here, let reviews teach it, or both.</p>
+      </div>
+      <span role="radiogroup" aria-label="Detail level" style="display: inline-flex; padding: 3px; border-radius: 999px; background: #F1E7D6; gap: 2px"><a role="radio" href="MemberSimple.dc.html" style="padding: 6px 12px; border-radius: 999px; color: #3D3025; font-weight: 800; font-size: 13px; text-decoration: none">Basic</a><span role="radio" aria-checked="true" style="padding: 6px 12px; border-radius: 999px; background: #2B2118; color: #FFF8EE; font-weight: 800; font-size: 13px">Detailed</span><a role="radio" href="TastesDesktop.dc.html" style="padding: 6px 12px; border-radius: 999px; color: #3D3025; font-weight: 800; font-size: 13px; text-decoration: none">Expert</a></span>
+    </div>
+
+    <section style="background: #FFFFFF; border-radius: 20px; padding: 20px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px">Cuisines</h2>
+        <span style="display: flex; gap: 14px; font-size: 13px; font-weight: 800">
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 7px; background: #2F7A2B"></span>Loves</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 7px; background: #A7D39B"></span>Likes</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 7px; border: 2px solid #D9CBB4; box-sizing: border-box"></span>Neutral</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 7px; background: #B3263E"></span>Not keen</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span style="font-family: JetBrains Mono, monospace; font-size: 11px; color: #5B2A86">L</span>learned from reviews</span>
+        </span>
+      </div>
+      <div style="display: grid; grid-template-columns: 170px repeat(5, minmax(0, 1fr)) 140px; gap: 6px; align-items: center; text-align: center; font-size: 14px">
+        <span></span><span style="font-weight: 800">Omar</span><span style="font-weight: 800">Sara</span><span style="font-weight: 800">Layla</span><span style="font-weight: 800">Adam</span><span style="font-weight: 800">Zayd</span><span style="font-weight: 800; color: #5A4A3B">Household</span>
+
+        <span style="text-align: left; font-weight: 800">Levantine</span>
+        <span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="font-family: JetBrains Mono, monospace; font-weight: 800; color: #2F7A2B">+0.82</span>
+
+        <span style="text-align: left; font-weight: 800">Italian</span>
+        <span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="font-family: JetBrains Mono, monospace; font-weight: 800; color: #2F7A2B">+0.88</span>
+
+        <span style="text-align: left; font-weight: 800">American</span>
+        <span style="height: 36px; border-radius: 10px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="height: 36px; border-radius: 10px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B; color: #FFFFFF; font-family: JetBrains Mono, monospace; font-size: 11px; display: flex; align-items: center; justify-content: center">L</span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="font-family: JetBrains Mono, monospace; font-weight: 800; color: #2F7A2B">+0.46</span>
+
+        <span style="text-align: left; font-weight: 800">British</span>
+        <span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="height: 36px; border-radius: 10px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="height: 36px; border-radius: 10px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="font-family: JetBrains Mono, monospace; font-weight: 800; color: #2F7A2B">+0.30</span>
+
+        <span style="text-align: left; font-weight: 800">Indian</span>
+        <span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="height: 36px; border-radius: 10px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="height: 36px; border-radius: 10px; background: #B3263E; color: #FFFFFF; font-family: JetBrains Mono, monospace; font-size: 11px; display: flex; align-items: center; justify-content: center">L</span><span style="font-family: JetBrains Mono, monospace; font-weight: 800; color: #2F7A2B">+0.28</span>
+
+        <span style="text-align: left; font-weight: 800">Japanese</span>
+        <span style="height: 36px; border-radius: 10px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="height: 36px; border-radius: 10px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="font-family: JetBrains Mono, monospace; font-weight: 800; color: #2F7A2B">+0.24</span>
+
+        <span style="text-align: left; font-weight: 800">Tex-Mex</span>
+        <span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="height: 36px; border-radius: 10px; background: #B3263E"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #2F7A2B"></span><span style="height: 36px; border-radius: 10px; background: #A7D39B"></span><span style="font-family: JetBrains Mono, monospace; font-weight: 800; color: #2F7A2B">+0.38</span>
+      </div>
+      <span style="font-size: 14px; color: #5A4A3B">Tap any cell to change it. "Household" blends everyone, leaning towards whoever likes a dish least (fairness, in Planning balance).</span>
+    </section>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px">
+      <section style="background: #FFFFFF; border-radius: 20px; padding: 20px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 10px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 20px">Never serve</h2>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #F6DDE3"><span style="font-weight: 800; flex-grow: 1">Zayd · sesame (incl. tahini)</span><span style="padding: 3px 9px; border-radius: 999px; background: #8E1C30; color: #FFFFFF; font-weight: 800; font-size: 12px">ALLERGY</span></div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #F1E7D6"><span style="font-weight: 800; flex-grow: 1">Sara · liver, kidneys</span><span style="font-size: 13px; font-weight: 700">dislike</span></div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #F1E7D6"><span style="font-weight: 800; flex-grow: 1">Everyone · pork, alcohol</span><span style="font-size: 13px; font-weight: 700">household rule</span></div>
+        <button type="button" style="align-self: flex-start; height: 42px; padding: 0 14px; border-radius: 12px; border: 1.5px dashed #C4411E; background: transparent; color: #C4411E; font: inherit; font-weight: 800">Add a rule</button>
+      </section>
+      <section style="background: #FFFFFF; border-radius: 20px; padding: 20px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 10px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 20px">How they like it cooked</h2>
+        <div style="display: grid; grid-template-columns: 120px repeat(5, minmax(0, 1fr)); gap: 6px; text-align: center; font-size: 13px; align-items: center">
+          <span></span><span style="font-weight: 800">O</span><span style="font-weight: 800">S</span><span style="font-weight: 800">L</span><span style="font-weight: 800">A</span><span style="font-weight: 800">Z</span>
+          <span style="text-align: left; font-weight: 800">Grilled</span><span style="height: 28px; border-radius: 8px; background: #2F7A2B"></span><span style="height: 28px; border-radius: 8px; background: #2F7A2B"></span><span style="height: 28px; border-radius: 8px; background: #A7D39B"></span><span style="height: 28px; border-radius: 8px; background: #B3263E"></span><span style="height: 28px; border-radius: 8px; border: 2px solid #D9CBB4; box-sizing: border-box"></span>
+          <span style="text-align: left; font-weight: 800">Breaded-fried</span><span style="height: 28px; border-radius: 8px; background: #B3263E"></span><span style="height: 28px; border-radius: 8px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="height: 28px; border-radius: 8px; background: #2F7A2B"></span><span style="height: 28px; border-radius: 8px; background: #2F7A2B"></span><span style="height: 28px; border-radius: 8px; background: #2F7A2B"></span>
+          <span style="text-align: left; font-weight: 800">Roasted</span><span style="height: 28px; border-radius: 8px; background: #A7D39B"></span><span style="height: 28px; border-radius: 8px; background: #A7D39B"></span><span style="height: 28px; border-radius: 8px; background: #A7D39B"></span><span style="height: 28px; border-radius: 8px; background: #A7D39B"></span><span style="height: 28px; border-radius: 8px; background: #A7D39B"></span>
+          <span style="text-align: left; font-weight: 800">Spicy</span><span style="height: 28px; border-radius: 8px; background: #2F7A2B"></span><span style="height: 28px; border-radius: 8px; background: #A7D39B"></span><span style="height: 28px; border-radius: 8px; background: #A7D39B"></span><span style="height: 28px; border-radius: 8px; border: 2px solid #D9CBB4; box-sizing: border-box"></span><span style="height: 28px; border-radius: 8px; background: #B3263E"></span>
+        </div>
+        <span style="font-size: 13px; color: #5A4A3B">This is why one fish can be grilled for the adults and fried for the kids.</span>
+      </section>
+    </div>
+    <section style="background: #5B2A86; color: #FFFFFF; border-radius: 20px; padding: 18px 22px; display: flex; align-items: center; gap: 16px">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4zM12 8l1 2l2 1l-2 1l-1 2l-1-2l-2-1l2-1z"></path></svg>
+      <span style="flex-grow: 1; font-size: 15px">Send a 60-second taste swipe to everyone with a login. Results fill in the grid above.</span>
+      <a href="TastePhone.dc.html" style="height: 44px; padding: 0 18px; border-radius: 12px; background: #FFFFFF; color: #5B2A86; font-weight: 800; display: flex; align-items: center; text-decoration: none">Send taste swipe</a>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

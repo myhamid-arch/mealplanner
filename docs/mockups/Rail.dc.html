@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Navigation rail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<nav aria-label="Main" style="width: 240px; height: 860px; box-sizing: border-box; padding: 22px 14px; background: #2B2118; color: #F1E7D6; font-family: Nunito, sans-serif; display: flex; flex-direction: column; gap: 18px">
+  <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px; text-decoration: none; color: #FFF8EE">
+    <span style="width: 34px; height: 34px; border-radius: 10px; background: #C4411E; display: flex; align-items: center; justify-content: center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFF8EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17h10v3H7zM7 17c-2.5-.5-4-2.6-3.5-5A4 4 0 0 1 8 9a4.5 4.5 0 0 1 8 0a4 4 0 0 1 4.5 3c.5 2.4-1 4.5-3.5 5"></path></svg>
+    </span>
+    <span style="font-family: Fraunces, serif; font-size: 22px; font-weight: 700">Mise</span>
+  </a>
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <sc-for list="{{items}}" as="item" hint-placeholder-count="9">
+      <a href="{{item.href}}" style="{{item.style}}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{item.icon}}"></path></svg>
+        <span>{{item.label}}</span>
+      </a>
+    </sc-for>
+  </div>
+  <a href="ChatDesktop.dc.html" style="margin-top: 6px; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #5B2A86; color: #FFFFFF; text-decoration: none; font-weight: 800; font-size: 15px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4zM12 8l1 2l2 1l-2 1l-1 2l-1-2l-2-1l2-1z"></path></svg>
+    <span style="flex-grow: 1">Assistant</span>
+    <span style="min-width: 22px; height: 22px; border-radius: 11px; background: #F3A712; color: #2B2118; font-size: 12px; display: flex; align-items: center; justify-content: center">3</span>
+  </a>
+  <div style="flex-grow: 1"></div>
+  <a href="AccountPhone.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: #3A2E23; text-decoration: none; color: #F1E7D6">
+    <span style="width: 36px; height: 36px; border-radius: 18px; background: #17706F; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center">O</span>
+    <span style="display: flex; flex-direction: column">
+      <span style="font-weight: 800; font-size: 14px; color: #FFF8EE">Omar</span>
+      <span style="font-size: 12px; color: #CDBFA9">Admin · Khalifa City home</span>
+    </span>
+  </a>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["today","plan","recipes","kitchen","reviews","insights","family","settings","access"],"default":"today"},"$preview":{"width":240,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const active = this.props.active ?? 'today';
+    const base = 'display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; text-decoration: none; font-size: 15px; font-weight: 700;';
+    const list = [
+      { key: 'today', label: 'Today', href: 'TodayDesktop.dc.html', icon: 'M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4M16 12a4 4 0 1 1-8 0a4 4 0 0 1 8 0' },
+      { key: 'plan', label: 'Plan', href: 'WeekPlan.dc.html', icon: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4' },
+      { key: 'recipes', label: 'Recipes', href: 'RecipeLibrary.dc.html', icon: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 19V5M8 7h7' },
+      { key: 'kitchen', label: 'Kitchen', href: 'CookSheet.dc.html', icon: 'M7 17h10v3H7zM7 17c-2.5-.5-4-2.6-3.5-5A4 4 0 0 1 8 9a4.5 4.5 0 0 1 8 0a4 4 0 0 1 4.5 3c.5 2.4-1 4.5-3.5 5' },
+      { key: 'reviews', label: 'Reviews', href: 'ReviewsFeed.dc.html', icon: 'M12 3l2.7 5.6l6.1.9l-4.4 4.3l1 6.1L12 17l-5.4 2.9l1-6.1L3.2 9.5l6.1-.9z' },
+      { key: 'insights', label: 'Insights', href: 'Insights.dc.html', icon: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.9.7 1.5 1.7 1.5 2.8V17h4v-.3c0-1.1.6-2.1 1.5-2.8A6 6 0 0 0 12 3z' },
+      { key: 'family', label: 'Family', href: 'MemberSimple.dc.html', icon: 'M9 11a4 4 0 1 0 0-8a4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 12 0v1M16 3.1a4 4 0 0 1 0 7.8M22 21v-1a6 6 0 0 0-4-5.7' },
+      { key: 'settings', label: 'Settings', href: 'HouseholdSettings.dc.html', icon: 'M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M14 4v4M8 10v4M16 16v4' },
+      { key: 'access', label: 'People & access', href: 'PeopleAccess.dc.html', icon: 'M12 3l8 3v6c0 5-3.5 8-8 9c-4.5-1-8-4-8-9V6zM9 12l2 2l4-4' }
+    ];
+    return {
+      items: list.map((it) => ({
+        ...it,
+        style: base + (it.key === active ? ' background: #C4411E; color: #FFFFFF;' : ' color: #F1E7D6;')
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

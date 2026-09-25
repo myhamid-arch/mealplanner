@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Assistant</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1100px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="none" hint-size="240px,860px"></dc-import>
+  </div>
+  <aside style="width: 230px; box-sizing: border-box; padding: 22px 14px; border-right: 1px solid #EADFCC; display: flex; flex-direction: column; gap: 8px; background: #FBF3E6">
+    <button type="button" style="height: 44px; border-radius: 12px; border: none; background: #5B2A86; color: #FFFFFF; font: inherit; font-weight: 800">New conversation</button>
+    <span style="margin-top: 8px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6B5B4B">Today</span>
+    <span style="padding: 10px; border-radius: 10px; background: #FFFFFF; font-weight: 800; font-size: 14px; box-shadow: 0 1px 0 #EADFCC">Sara's protein &amp; Adam's hunger</span>
+    <span style="padding: 10px; border-radius: 10px; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between">Updates <span style="padding: 0 7px; border-radius: 9px; background: #F3A712; font-size: 12px">2</span></span>
+    <span style="margin-top: 8px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6B5B4B">This week</span>
+    <span style="padding: 10px; border-radius: 10px; font-weight: 700; font-size: 14px">Weekend brunch ideas</span>
+    <span style="padding: 10px; border-radius: 10px; font-weight: 700; font-size: 14px">School is nut-free now</span>
+    <span style="padding: 10px; border-radius: 10px; font-weight: 700; font-size: 14px">Why was Tuesday off target?</span>
+  </aside>
+  <section style="flex-grow: 1; display: flex; flex-direction: column">
+    <div style="flex-grow: 1; box-sizing: border-box; padding: 26px 40px; display: flex; flex-direction: column; gap: 16px">
+      <div style="align-self: flex-end; max-width: 520px; padding: 14px 16px; border-radius: 18px 18px 4px 18px; background: #2B2118; color: #FFF8EE; font-size: 15px">Sara's protein should be 140 from now on. And why is Adam always hungry after dinner?</div>
+      <div style="display: flex; gap: 8px; font-size: 13px; font-weight: 800; color: #5A4A3B">
+        <span style="padding: 6px 10px; border-radius: 999px; background: #F1E7D6">Updated Sara's targets</span>
+        <span style="padding: 6px 10px; border-radius: 999px; background: #F1E7D6">Re-solved 7 plates</span>
+        <span style="padding: 6px 10px; border-radius: 999px; background: #F1E7D6">Read 14 of Adam's reviews</span>
+      </div>
+      <div style="max-width: 760px; display: flex; flex-direction: column; gap: 12px">
+        <span style="font-size: 15px; line-height: 1.5">Done: Sara's protein is now <strong>140 g</strong> a day. Calories go up by 40 to <strong>1695</strong>, because I kept carbs and fat the same. All her plates from tomorrow still land within tolerance.</span>
+        <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; border: 1.5px solid #9FCFCB; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; align-items: center; gap: 10px"><span style="padding: 3px 10px; border-radius: 999px; background: #D6EFEE; color: #17706F; font-weight: 800; font-size: 12px">APPLIED · you asked</span><span style="font-weight: 800">Sara · daily targets</span><span style="margin-left: auto; font-size: 13px; color: #5A4A3B">09:42</span></div>
+          <div style="display: grid; grid-template-columns: 120px repeat(4, minmax(0, 1fr)); gap: 6px; font-family: JetBrains Mono, monospace; font-size: 14px">
+            <span style="font-family: Nunito, sans-serif; font-weight: 800; color: #5A4A3B">Before</span><span>1655 kcal</span><span>P 130</span><span>C 160</span><span>F 55</span>
+            <span style="font-family: Nunito, sans-serif; font-weight: 800; color: #2F7A2B">After</span><span>1695 kcal</span><span style="font-weight: 800; color: #2F7A2B">P 140</span><span>C 160</span><span>F 55</span>
+          </div>
+          <div style="display: flex; gap: 8px"><button type="button" style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800">Undo</button><a href="ChangeLog.dc.html" style="height: 40px; padding: 0 6px; font-weight: 800; display: flex; align-items: center">In change log</a></div>
+        </div>
+        <span style="font-size: 15px; line-height: 1.5">About Adam: he has no macro targets, so his portions are learned from his reviews. He's tagged <strong>"still hungry" after 3 of the last 5 dinners</strong>. Each time the protein was fish or chicken breast, and his plate was under 520 g. I suggest this:</span>
+        <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; border: 2px solid #5B2A86; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; align-items: center; gap: 10px"><span style="padding: 3px 10px; border-radius: 999px; background: #EBDDF6; color: #5B2A86; font-weight: 800; font-size: 12px">PROPOSAL</span><span style="font-weight: 800">Bigger dinners for Adam</span></div>
+          <span style="font-size: 14px; color: #3D3025">Dinner protein × 1.15 and carbs × 1.10 for Adam only. Other meals unchanged.</span>
+          <div style="display: grid; grid-template-columns: 160px repeat(3, minmax(0, 1fr)); gap: 6px; font-size: 14px">
+            <span style="font-weight: 800; color: #5A4A3B">Sunday example</span><span style="font-weight: 800">Fish</span><span style="font-weight: 800">Rice</span><span style="font-weight: 800">Fattoush</span>
+            <span>Now</span><span style="font-family: JetBrains Mono, monospace">180 g</span><span style="font-family: JetBrains Mono, monospace">220 g</span><span style="font-family: JetBrains Mono, monospace">80 g</span>
+            <span style="color: #2F7A2B; font-weight: 800">Proposed</span><span style="font-family: JetBrains Mono, monospace; color: #2F7A2B">205 g</span><span style="font-family: JetBrains Mono, monospace; color: #2F7A2B">240 g</span><span style="font-family: JetBrains Mono, monospace">80 g</span>
+          </div>
+          <span style="font-size: 13px; color: #5A4A3B">Evidence: <a href="ReviewsFeed.dc.html">3 reviews</a> · Nobody else affected</span>
+          <div style="display: flex; gap: 8px">
+            <button type="button" style="height: 42px; padding: 0 18px; border-radius: 10px; border: none; background: #C4411E; color: #FFFFFF; font: inherit; font-weight: 800">Accept</button>
+            <button type="button" style="height: 42px; padding: 0 16px; border-radius: 10px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800">Edit</button>
+            <button type="button" style="height: 42px; padding: 0 16px; border-radius: 10px; border: 1.5px solid #D9CBB4; background: #FFFFFF; font: inherit; font-weight: 800; color: #5A4A3B">Reject…</button>
+          </div>
+        </div>
+      </div>
+      <div style="align-self: center; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 14px; background: #FCEBC4; font-size: 14px; max-width: 760px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A4F00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.9.7 1.5 1.7 1.5 2.8V17h4v-.3c0-1.1.6-2.1 1.5-2.8A6 6 0 0 0 12 3z"></path></svg>
+        <span><strong>Nightly check-in</strong> found 2 more suggestions.</span><a href="ChatPhoneDigest.dc.html" style="font-weight: 800">View</a>
+      </div>
+    </div>
+    <div style="box-sizing: border-box; padding: 16px 40px 26px; border-top: 1px solid #EADFCC; display: flex; flex-direction: column; gap: 10px; background: #FFF8EE">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap">
+        <span style="padding: 8px 12px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #E4D6C0; font-weight: 700; font-size: 14px">Plan tomorrow</span>
+        <span style="padding: 8px 12px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #E4D6C0; font-weight: 700; font-size: 14px">Why is Omar's Wednesday lunch high in fat?</span>
+        <span style="padding: 8px 12px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #E4D6C0; font-weight: 700; font-size: 14px">Review 3 proposals</span>
+        <span style="padding: 8px 12px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #E4D6C0; font-weight: 700; font-size: 14px">Make weekends more about favourites</span>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; padding: 8px 8px 8px 16px; border-radius: 18px; background: #FFFFFF; border: 2px solid #5B2A86">
+        <label style="flex-grow: 1; display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Message</span><input type="text" placeholder="Ask anything, or tell me what to change…" style="flex-grow: 1; border: none; outline: none; font: inherit; font-size: 16px; height: 40px"></label>
+        <button type="button" aria-label="Voice input" style="width: 44px; height: 44px; border-radius: 12px; border: none; background: #F1E7D6"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2B2118" stroke-width="2" stroke-linecap="round"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></button>
+        <button type="button" aria-label="Send" style="width: 44px; height: 44px; border-radius: 12px; border: none; background: #5B2A86"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6l-6 6"></path></svg></button>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Change log</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 960px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="settings" hint-size="240px,860px"></dc-import>
+  </div>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 32px 36px; display: flex; flex-direction: column; gap: 18px">
+    <div>
+      <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 34px; font-weight: 700">Change log</h1>
+      <p style="margin: 4px 0 0; color: #5A4A3B">Every change, who or what made it, and a way back.</p>
+    </div>
+    <div style="display: flex; gap: 8px">
+      <span style="padding: 8px 14px; border-radius: 999px; background: #2B2118; color: #FFF8EE; font-weight: 800; font-size: 14px">All</span>
+      <span style="padding: 8px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">People &amp; access</span>
+      <span style="padding: 8px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">Targets</span>
+      <span style="padding: 8px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">Recipes</span>
+      <span style="padding: 8px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">Plans</span>
+      <span style="padding: 8px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">Learned automatically</span>
+    </div>
+    <div style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column">
+      <div style="padding: 16px 20px; display: flex; gap: 16px; align-items: flex-start; border-bottom: 1px solid #F1E7D6">
+        <span style="font-family: JetBrains Mono, monospace; font-size: 13px; color: #5A4A3B; width: 90px; padding-top: 3px">Today 09:42</span>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px">
+          <span style="display: flex; align-items: center; gap: 8px"><span style="padding: 3px 9px; border-radius: 999px; background: #EBDDF6; color: #5B2A86; font-weight: 800; font-size: 12px">Assistant · you asked</span><span style="font-weight: 800">Sara's protein target 130 → 140 g</span></span>
+          <div style="display: flex; gap: 10px; font-family: JetBrains Mono, monospace; font-size: 13px">
+            <span style="padding: 6px 10px; border-radius: 8px; background: #F6DDE3; color: #8E1C30; text-decoration: line-through">P 130 · 1655 kcal</span>
+            <span style="padding: 6px 10px; border-radius: 8px; background: #E1EFD9; color: #2F7A2B">P 140 · 1695 kcal</span>
+          </div>
+          <span style="font-size: 13px; color: #5A4A3B">7 future plates re-solved · all within tolerance</span>
+        </div>
+        <button type="button" style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800; display: flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"></path></svg>Undo</button>
+      </div>
+      <div style="padding: 16px 20px; display: flex; gap: 16px; align-items: flex-start; border-bottom: 1px solid #F1E7D6">
+        <span style="font-family: JetBrains Mono, monospace; font-size: 13px; color: #5A4A3B; width: 90px; padding-top: 3px">Today 08:15</span>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; align-items: center; gap: 8px"><span style="padding: 3px 9px; border-radius: 999px; background: #D6EFEE; color: #17706F; font-weight: 800; font-size: 12px">Proposal accepted by Sara</span><span style="font-weight: 800">Adam: breaded-fried hammour instead of grilled</span></span>
+          <span style="font-size: 13px; color: #5A4A3B">Why: Adam rated grilled hammour 2/5 three times, "dry"</span>
+        </div>
+        <button type="button" style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800">Undo</button>
+      </div>
+      <div style="padding: 16px 20px; display: flex; gap: 16px; align-items: flex-start; border-bottom: 1px solid #F1E7D6">
+        <span style="font-family: JetBrains Mono, monospace; font-size: 13px; color: #5A4A3B; width: 90px; padding-top: 3px">Yesterday</span>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; align-items: center; gap: 8px"><span style="padding: 3px 9px; border-radius: 999px; background: #FCEBC4; color: #7A4F00; font-weight: 800; font-size: 12px">Learned automatically</span><span style="font-weight: 800">Zayd's rice portions × 0.9</span></span>
+          <span style="font-size: 13px; color: #5A4A3B">From 2 "too much" ratings this week</span>
+        </div>
+        <button type="button" style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800">Undo</button>
+      </div>
+      <div style="padding: 16px 20px; display: flex; gap: 16px; align-items: flex-start; border-bottom: 1px solid #F1E7D6">
+        <span style="font-family: JetBrains Mono, monospace; font-size: 13px; color: #5A4A3B; width: 90px; padding-top: 3px">Yesterday</span>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; align-items: center; gap: 8px"><span style="padding: 3px 9px; border-radius: 999px; background: #F1E7D6; color: #3D3025; font-weight: 800; font-size: 12px">Omar</span><span style="font-weight: 800">Blocked Ravi (kitchen)</span></span>
+          <span style="font-size: 13px; color: #5A4A3B">Signed out of 1 device</span>
+        </div>
+        <button type="button" style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800">Undo</button>
+      </div>
+      <div style="padding: 16px 20px; display: flex; gap: 16px; align-items: flex-start">
+        <span style="font-family: JetBrains Mono, monospace; font-size: 13px; color: #5A4A3B; width: 90px; padding-top: 3px">20 Sep</span>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; align-items: center; gap: 8px"><span style="padding: 3px 9px; border-radius: 999px; background: #F1E7D6; color: #3D3025; font-weight: 800; font-size: 12px">Omar</span><span style="font-weight: 800">Planning balance: appeal 0.6 → 0.8 on weekends</span></span>
+          <span style="font-size: 13px; color: #6B5B4B">Can't undo directly: changed again on 22 Sep. Undo that change first, or ask the assistant.</span>
+        </div>
+        <button type="button" disabled style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #D9CBB4; background: #F7F1E6; color: #8C7B69; font: inherit; font-weight: 800">Undo</button>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

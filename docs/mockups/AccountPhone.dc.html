@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>My account</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE; overflow: hidden">
+  <div style="box-sizing: border-box; padding: 22px 18px 100px; display: flex; flex-direction: column; gap: 14px">
+    <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 28px; font-weight: 700">My account</h1>
+    <div style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border-radius: 18px; padding: 14px; box-shadow: 0 1px 0 #EADFCC">
+      <span style="width: 52px; height: 52px; border-radius: 26px; background: #17706F; color: #FFFFFF; font-size: 22px; font-weight: 800; display: flex; align-items: center; justify-content: center">O</span>
+      <span style="display: flex; flex-direction: column; flex-grow: 1">
+        <span style="font-weight: 800; font-size: 17px">Omar</span>
+        <span style="font-size: 13px; color: #5A4A3B">omar@example.com</span>
+        <span style="font-size: 13px; color: #17706F; font-weight: 800">Admin · eats as Omar</span>
+      </span>
+      <a href="AccountPhone.dc.html" style="font-weight: 800; font-size: 14px">Edit</a>
+    </div>
+    <div style="background: #FFFFFF; border-radius: 18px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column">
+      <div style="padding: 14px 16px; display: flex; justify-content: space-between; border-bottom: 1px solid #F1E7D6"><span style="font-weight: 700">Password</span><a href="AccountPhone.dc.html" style="font-weight: 800; font-size: 14px">Change</a></div>
+      <div style="padding: 14px 16px; display: flex; justify-content: space-between; border-bottom: 1px solid #F1E7D6"><span style="font-weight: 700">Two-step sign-in</span><span style="font-size: 14px; color: #5A4A3B">Off · <a href="AccountPhone.dc.html" style="font-weight: 800">Turn on</a></span></div>
+      <div style="padding: 14px 16px; display: flex; justify-content: space-between"><span style="font-weight: 700">Household</span><span style="font-size: 14px; color: #5A4A3B">Khalifa City home</span></div>
+    </div>
+    <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6B5B4B">Signed in on</span>
+    <div style="background: #FFFFFF; border-radius: 18px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column">
+      <div style="padding: 12px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #F1E7D6">
+        <span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-weight: 800">iPhone · app</span><span style="font-size: 13px; color: #2F7A2B; font-weight: 700">This device</span></span>
+      </div>
+      <div style="padding: 12px 16px; display: flex; align-items: center; gap: 10px">
+        <span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-weight: 800">Chrome · Mac</span><span style="font-size: 13px; color: #5A4A3B">Abu Dhabi · 2 hours ago</span></span>
+        <button type="button" style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #D9CBB4; background: #FFFFFF; font: inherit; font-weight: 800; font-size: 14px; color: #2B2118">Sign out</button>
+      </div>
+    </div>
+    <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6B5B4B">Notifications</span>
+    <div style="background: #FFFFFF; border-radius: 18px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column">
+      <label style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1E7D6; font-weight: 700">After-meal rating reminder<input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #C4411E"></label>
+      <label style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-weight: 700">New proposals from the assistant<input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #C4411E"></label>
+    </div>
+    <div style="display: flex; justify-content: space-between; padding: 4px 4px 0">
+      <a href="SignIn.dc.html" style="font-weight: 800">Sign out</a>
+      <a href="AccountPhone.dc.html" style="font-weight: 800; color: #8E1C30">Delete my account</a>
+    </div>
+  </div>
+  <div style="position: absolute; left: 0; bottom: 0; width: 390px; height: 84px">
+    <dc-import name="TabBar" active="me" hint-size="390px,84px"></dc-import>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

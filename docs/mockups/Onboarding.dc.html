@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Onboarding — five questions</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 900px; box-sizing: border-box; padding: 34px 48px; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE; display: flex; flex-direction: column; gap: 20px">
+  <div style="display: flex; align-items: center; gap: 8px">
+    <sc-for list="{{dots}}" as="d" hint-placeholder-count="6">
+      <span style="{{d.style}}">{{d.label}}</span>
+    </sc-for>
+    <a href="ChatOnboarding.dc.html" style="margin-left: auto; font-weight: 800; font-size: 14px">Rather just talk? Tell the assistant</a>
+  </div>
+
+  <div style="flex-grow: 1; display: flex; gap: 28px; min-height: 0">
+    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px">
+      <sc-if value="{{s0}}" hint-placeholder-val="{{true}}">
+        <span style="font-size: 14px; font-weight: 800; color: #C4411E">QUESTION 1 OF 5</span>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 36px; font-weight: 700">Who eats at home?</h1>
+        <p style="margin: 0; color: #5A4A3B; font-size: 16px">Names and ages, in one line. Ages let the app set sensible starting portions.</p>
+        <label style="display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Household members</span><input type="text" value="Omar 41, Sara 39, Layla 18, Adam 15, Zayd 10" style="flex-grow: 1; height: 58px; border-radius: 14px; border: 2px solid #C4411E; padding: 0 16px; font: inherit; font-size: 20px; font-weight: 700; background: #FFFFFF"></label>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <span style="padding: 8px 12px; border-radius: 999px; background: #17706F; color: #FFFFFF; font-weight: 800">Omar · 41</span>
+          <span style="padding: 8px 12px; border-radius: 999px; background: #5B2A86; color: #FFFFFF; font-weight: 800">Sara · 39</span>
+          <span style="padding: 8px 12px; border-radius: 999px; background: #B3263E; color: #FFFFFF; font-weight: 800">Layla · 18</span>
+          <span style="padding: 8px 12px; border-radius: 999px; background: #B7790A; color: #FFFFFF; font-weight: 800">Adam · 15</span>
+          <span style="padding: 8px 12px; border-radius: 999px; background: #2F7A2B; color: #FFFFFF; font-weight: 800">Zayd · 10</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{s1}}" hint-placeholder-val="{{false}}">
+        <span style="font-size: 14px; font-weight: 800; color: #C4411E">QUESTION 2 OF 5</span>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 36px; font-weight: 700">Who follows macro targets?</h1>
+        <p style="margin: 0; color: #5A4A3B; font-size: 16px">Tap the people who do. Type their numbers in any format, or paste them from a coach.</p>
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #FFFFFF; border: 2px solid #17706F">
+            <span style="width: 110px; font-weight: 800">Omar</span>
+            <input type="text" aria-label="Omar's targets" value="2150 cal, 180p 200c 70f" style="flex-grow: 1; height: 44px; border-radius: 10px; border: 1.5px solid #D9CBB4; padding: 0 12px; font-family: JetBrains Mono, monospace; font-size: 15px">
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #FFFFFF; border: 2px solid #17706F">
+            <span style="width: 110px; font-weight: 800">Sara</span>
+            <input type="text" aria-label="Sara's targets" value="1655 / 130 / 160 / 55" style="flex-grow: 1; height: 44px; border-radius: 10px; border: 1.5px solid #D9CBB4; padding: 0 12px; font-family: JetBrains Mono, monospace; font-size: 15px">
+          </div>
+          <div style="display: flex; gap: 8px">
+            <span style="padding: 10px 14px; border-radius: 12px; background: #F1E7D6; font-weight: 800; color: #5A4A3B">Layla</span>
+            <span style="padding: 10px 14px; border-radius: 12px; background: #F1E7D6; font-weight: 800; color: #5A4A3B">Adam</span>
+            <span style="padding: 10px 14px; border-radius: 12px; background: #F1E7D6; font-weight: 800; color: #5A4A3B">Zayd</span>
+            <span style="align-self: center; font-size: 14px; color: #5A4A3B">no targets</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{s2}}" hint-placeholder-val="{{false}}">
+        <span style="font-size: 14px; font-weight: 800; color: #C4411E">QUESTION 3 OF 5</span>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 36px; font-weight: 700">What does a normal week look like?</h1>
+        <p style="margin: 0; color: #5A4A3B; font-size: 16px">Tap what's true. Pick days only where asked.</p>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <div style="padding: 14px; border-radius: 14px; background: #FFFFFF; border: 2.5px solid #C4411E; display: flex; flex-direction: column; gap: 6px"><span style="font-weight: 800">Kids go to school</span><span style="font-size: 14px; color: #3D3025">Layla, Adam, Zayd · Mon–Fri</span></div>
+          <div style="padding: 14px; border-radius: 14px; background: #FFFFFF; border: 2.5px solid #C4411E; display: flex; flex-direction: column; gap: 6px"><span style="font-weight: 800">Someone eats lunch at work</span><span style="font-size: 14px; color: #3D3025">Omar · Mon–Fri</span></div>
+          <div style="padding: 14px; border-radius: 14px; background: #FFFFFF; border: 2.5px solid #C4411E; display: flex; flex-direction: column; gap: 6px"><span style="font-weight: 800">Someone trains</span><span style="font-size: 14px; color: #3D3025">Omar · Mon Wed Fri · evening</span><span style="font-size: 14px; color: #3D3025">Sara · Tue Thu Sat · morning</span></div>
+          <div style="padding: 14px; border-radius: 14px; background: #FFFFFF; border: 1.5px solid #D9CBB4; display: flex; flex-direction: column; gap: 6px"><span style="font-weight: 800">We snack between meals</span><span style="font-size: 14px; color: #3D3025">Already assumed. Tap to turn off.</span></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{s3}}" hint-placeholder-val="{{false}}">
+        <span style="font-size: 14px; font-weight: 800; color: #C4411E">QUESTION 4 OF 5</span>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 36px; font-weight: 700">What food does the family love?</h1>
+        <p style="margin: 0; color: #5A4A3B; font-size: 16px">Tap any. Individual tastes are learned later from ratings.</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap">
+          <span style="padding: 12px 16px; border-radius: 14px; background: #2F7A2B; color: #FFFFFF; font-weight: 800; transform: rotate(-2deg)">Levantine</span>
+          <span style="padding: 12px 16px; border-radius: 14px; background: #2F7A2B; color: #FFFFFF; font-weight: 800; transform: rotate(1deg)">Italian</span>
+          <span style="padding: 12px 16px; border-radius: 14px; background: #2F7A2B; color: #FFFFFF; font-weight: 800; transform: rotate(-1deg)">Indian</span>
+          <span style="padding: 12px 16px; border-radius: 14px; background: #2F7A2B; color: #FFFFFF; font-weight: 800; transform: rotate(2deg)">British</span>
+          <span style="padding: 12px 16px; border-radius: 14px; background: #FFFFFF; border: 1.5px solid #D9CBB4; font-weight: 800">American</span>
+          <span style="padding: 12px 16px; border-radius: 14px; background: #FFFFFF; border: 1.5px solid #D9CBB4; font-weight: 800">Emirati</span>
+          <span style="padding: 12px 16px; border-radius: 14px; background: #FFFFFF; border: 1.5px solid #D9CBB4; font-weight: 800">Japanese</span>
+          <span style="padding: 12px 16px; border-radius: 14px; background: #FFFFFF; border: 1.5px solid #D9CBB4; font-weight: 800">Mexican</span>
+          <span style="padding: 12px 16px; border-radius: 14px; background: #FFFFFF; border: 1.5px solid #D9CBB4; font-weight: 800">Thai</span>
+          <span style="padding: 12px 16px; border-radius: 14px; background: #FFFFFF; border: 1.5px solid #D9CBB4; font-weight: 800">Persian</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{s4}}" hint-placeholder-val="{{false}}">
+        <span style="font-size: 14px; font-weight: 800; color: #C4411E">QUESTION 5 OF 5</span>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 36px; font-weight: 700">Anything anyone must never eat?</h1>
+        <p style="margin: 0; color: #5A4A3B; font-size: 16px">Allergies, religious rules, strong dislikes. Plain words are fine.</p>
+        <label style="display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Never eat</span><textarea rows="3" style="flex-grow: 1; border-radius: 14px; border: 2px solid #C4411E; padding: 14px 16px; font: inherit; font-size: 18px; font-weight: 700; resize: none; background: #FFFFFF">Zayd is allergic to sesame. No pork or alcohol for anyone. Sara hates liver.</textarea></label>
+      </sc-if>
+
+      <sc-if value="{{s5}}" hint-placeholder-val="{{false}}">
+        <span style="font-size: 14px; font-weight: 800; color: #2F7A2B">DONE · 5 ANSWERS</span>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 36px; font-weight: 700">Here's what I worked out</h1>
+        <p style="margin: 0; color: #5A4A3B; font-size: 16px">Everything on the right came from your 5 answers. Adjust anything now, or later. Nothing here is permanent.</p>
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 1px 0 #EADFCC">
+          <span style="font-weight: 800">Want to go deeper now? (optional)</span>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+            <a href="MemberDetailed.dc.html" style="padding: 8px 12px; border-radius: 999px; background: #F1E7D6; color: #2B2118; font-weight: 800; font-size: 14px; text-decoration: none">Different targets on training days</a>
+            <a href="ScheduleGrid.dc.html" style="padding: 8px 12px; border-radius: 999px; background: #F1E7D6; color: #2B2118; font-weight: 800; font-size: 14px; text-decoration: none">Meal times</a>
+            <a href="TastePhone.dc.html" style="padding: 8px 12px; border-radius: 999px; background: #F1E7D6; color: #2B2118; font-weight: 800; font-size: 14px; text-decoration: none">Taste swipe for each person</a>
+            <a href="PlanningBalance.dc.html" style="padding: 8px 12px; border-radius: 999px; background: #F1E7D6; color: #2B2118; font-weight: 800; font-size: 14px; text-decoration: none">Planning balance</a>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="margin-top: auto; display: flex; gap: 12px; align-items: center">
+        <sc-if value="{{canBack}}" hint-placeholder-val="{{false}}">
+          <button type="button" onClick="{{back}}" style="height: 52px; padding: 0 22px; border-radius: 14px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800">Back</button>
+        </sc-if>
+        <sc-if value="{{notDone}}" hint-placeholder-val="{{true}}">
+          <button type="button" onClick="{{next}}" style="height: 52px; padding: 0 26px; border-radius: 14px; border: none; background: #C4411E; color: #FFFFFF; font: inherit; font-weight: 800; font-size: 16px">{{nextLabel}}</button>
+          <button type="button" onClick="{{next}}" style="height: 52px; padding: 0 12px; border: none; background: transparent; font: inherit; font-weight: 800; color: #5A4A3B">Skip</button>
+        </sc-if>
+        <sc-if value="{{s5}}" hint-placeholder-val="{{false}}">
+          <a href="TodayDesktop.dc.html" style="height: 52px; padding: 0 26px; border-radius: 14px; background: #C4411E; color: #FFFFFF; font-weight: 800; font-size: 16px; display: flex; align-items: center; text-decoration: none">Looks right: plan tomorrow</a>
+        </sc-if>
+      </div>
+    </div>
+
+    <aside aria-label="What the app has worked out" style="width: 440px; box-sizing: border-box; background: #2B2118; color: #FFF8EE; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+      <span style="font-family: Fraunces, serif; font-size: 22px; font-weight: 700">What I've worked out</span>
+      <span style="font-size: 13px; color: #CDBFA9">Updates as you answer. Tap Adjust to change any of it.</span>
+      <sc-if value="{{noneYet}}" hint-placeholder-val="{{true}}">
+        <span style="padding: 14px; border-radius: 14px; background: #3A2E23; font-size: 14px; color: #CDBFA9">Nothing yet. Answer the first question.</span>
+      </sc-if>
+      <sc-for list="{{inferred}}" as="it" hint-placeholder-count="4">
+        <div style="padding: 12px 14px; border-radius: 14px; background: #3A2E23; display: flex; gap: 10px; align-items: flex-start">
+          <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: #F3A712">{{it.from}}</span>
+            <span style="font-size: 14px; line-height: 1.4">{{it.text}}</span>
+          </span>
+          <a href="{{it.href}}" style="flex-shrink: 0; font-size: 13px; font-weight: 800; color: #F6B49F">Adjust</a>
+        </div>
+      </sc-for>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { step: 0 }; }
+  renderVals() {
+    const step = this.state.step;
+    const all = [
+      [
+        { text: '2 adults, 3 children', href: 'MemberSimple.dc.html' },
+        { text: 'Starting portions from age: Layla and Adam large, Zayd medium. They adjust from ratings.', href: 'MemberSimple.dc.html' }
+      ],
+      [
+        { text: 'Omar 2150 kcal · P180 C200 F70. Sara 1655 kcal · P130 C160 F55.', href: 'MemberSimple.dc.html' },
+        { text: 'Split across meals automatically. Each meal held to P ±5, C ±5, F ±2.', href: 'MemberDetailed.dc.html' },
+        { text: 'Saturated fat capped at 10% of calories: 24 g for Omar, 18 g for Sara', href: 'MemberDetailed.dc.html' }
+      ],
+      [
+        { text: 'Packed school lunch Mon–Fri for the 3 kids: shared, eaten cold, replaces lunch', href: 'ScheduleGrid.dc.html' },
+        { text: 'Packed work lunch Mon–Fri for Omar: individual, microwave available', href: 'ScheduleGrid.dc.html' },
+        { text: 'Pre- and post-workout meals on training days. Same daily totals, more carbs around the workout.', href: 'MemberDetailed.dc.html' }
+      ],
+      [
+        { text: 'First weeks lean on Levantine, Italian, Indian and British dishes', href: 'TastesDesktop.dc.html' }
+      ],
+      [
+        { text: 'Zayd: never sesame, including tahini, hummus and za\'atar. Hard rule.', href: 'TastesDesktop.dc.html' },
+        { text: 'Everyone: no pork, no alcohol, including in sauces and marinades', href: 'TastesDesktop.dc.html' },
+        { text: 'Sara: no liver', href: 'TastesDesktop.dc.html' }
+      ]
+    ];
+    const names = ['Who', 'Targets', 'Week', 'Food', 'Never', 'Review'];
+    const inferred = [];
+    all.forEach((group, i) => { if (i < step || step === 5) group.forEach((g) => inferred.push({ ...g, from: 'FROM ANSWER ' + (i + 1) })); });
+    return {
+      s0: step === 0, s1: step === 1, s2: step === 2, s3: step === 3, s4: step === 4, s5: step === 5,
+      canBack: step > 0, notDone: step < 5, noneYet: inferred.length === 0,
+      nextLabel: step === 4 ? 'See what I worked out' : 'Next',
+      next: () => this.setState({ step: Math.min(5, step + 1) }),
+      back: () => this.setState({ step: Math.max(0, step - 1) }),
+      inferred,
+      dots: names.map((n, i) => ({ label: (i < 5 ? (i + 1) + ' ' : '') + n,
+        style: 'padding: 7px 12px; border-radius: 999px; font-weight: 800; font-size: 13px; ' + (i === step ? 'background: #C4411E; color: #FFFFFF;' : (i < step ? 'background: #E1EFD9; color: #2F7A2B;' : 'background: #F1E7D6; color: #5A4A3B;')) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

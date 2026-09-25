@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Invite someone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 960px; position: relative; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE; display: flex">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="access" hint-size="240px,860px"></dc-import>
+  </div>
+  <div style="flex-grow: 1; padding: 32px 36px; box-sizing: border-box">
+    <div style="font-family: Fraunces, serif; font-size: 34px; font-weight: 700">People &amp; access</div>
+  </div>
+  <div style="position: absolute; left: 0; top: 0; width: 1280px; height: 960px; background: rgba(43,33,24,0.55); display: flex; align-items: center; justify-content: center">
+    <div role="dialog" aria-label="Invite someone" style="width: 820px; background: #FFF8EE; border-radius: 26px; box-shadow: 0 30px 80px rgba(0,0,0,0.35); padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 22px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 30px; font-weight: 700">Invite someone</h2>
+        <a href="PeopleAccess.dc.html" aria-label="Close" style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #2B2118"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <span style="font-weight: 800">Who are they at the table?</span>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <span style="padding: 10px 14px; border-radius: 12px; background: #2B2118; color: #FFF8EE; font-weight: 800">Adam</span>
+          <span style="padding: 10px 14px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #D9CBB4; font-weight: 800">Zayd</span>
+          <span style="padding: 10px 14px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #D9CBB4; font-weight: 800">A new person</span>
+          <span style="padding: 10px 14px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #D9CBB4; font-weight: 800">Doesn't eat here (staff)</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <span style="font-weight: 800">What can they do?</span>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+          <label style="border-radius: 16px; padding: 16px; background: #FFFFFF; border: 1.5px solid #D9CBB4; display: flex; flex-direction: column; gap: 6px">
+            <span style="display: flex; align-items: center; gap: 8px; font-weight: 800"><input type="radio" name="role" style="width: 18px; height: 18px; accent-color: #C4411E">Admin</span>
+            <span style="font-size: 14px; color: #5A4A3B">Everything: people, targets, settings, plans, the assistant.</span>
+          </label>
+          <label style="border-radius: 16px; padding: 16px; background: #FFFFFF; border: 2.5px solid #C4411E; display: flex; flex-direction: column; gap: 6px">
+            <span style="display: flex; align-items: center; gap: 8px; font-weight: 800"><input type="radio" name="role" checked style="width: 18px; height: 18px; accent-color: #C4411E">Member</span>
+            <span style="font-size: 14px; color: #5A4A3B">Sees plans and their plates, rates meals, sets their own tastes.</span>
+          </label>
+          <label style="border-radius: 16px; padding: 16px; background: #FFFFFF; border: 1.5px solid #D9CBB4; display: flex; flex-direction: column; gap: 6px">
+            <span style="display: flex; align-items: center; gap: 8px; font-weight: 800"><input type="radio" name="role" style="width: 18px; height: 18px; accent-color: #C4411E">Kitchen</span>
+            <span style="font-size: 14px; color: #5A4A3B">Cook sheets and recipes only. Can flag missing ingredients.</span>
+          </label>
+        </div>
+      </div>
+      <div style="display: flex; gap: 20px; align-items: stretch">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px">
+          <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 800">Send to email (optional)
+            <input type="email" value="adam@example.com" style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; font-weight: 600; background: #FFFFFF">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 800">Link expires
+            <select style="height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; font-weight: 600; background: #FFFFFF"><option>In 7 days</option><option>In 24 hours</option><option>In 30 days</option></select>
+          </label>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #F1E7D6">
+            <span style="font-family: JetBrains Mono, monospace; font-size: 14px; flex-grow: 1">mise.app/join/KHL-9RD-T4A</span>
+            <button type="button" style="height: 38px; padding: 0 14px; border-radius: 10px; border: none; background: #2B2118; color: #FFF8EE; font: inherit; font-weight: 800">Copy link</button>
+          </div>
+        </div>
+        <div style="width: 190px; background: #FFFFFF; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; border: 1.5px solid #E4D6C0">
+          <svg width="150" height="150" viewBox="0 0 21 21" role="img" aria-label="QR code for the invite link" shape-rendering="crispEdges"><rect width="21" height="21" fill="#FFFFFF"></rect><path fill="#2B2118" d="M0 0h7v7H0zM1 1v5h5V1zM2 2h3v3H2zM14 0h7v7h-7zM15 1v5h5V1zM16 2h3v3h-3zM0 14h7v7H0zM1 15v5h5v-5zM2 16h3v3H2zM8 0h1v1H8zM10 1h2v1h-2zM9 3h1v2H9zM11 4h2v1h-2zM8 6h1v1H8zM12 6h1v2h-1zM8 8h2v1H8zM0 8h2v1H0zM3 9h2v1H3zM6 8h1v2H6zM14 8h1v1h-1zM16 9h3v1h-3zM20 8h1v2h-1zM10 10h1v1h-1zM12 10h2v1h-2zM8 11h1v2H8zM1 11h1v1H1zM4 12h2v1H4zM15 11h1v2h-1zM18 12h2v1h-2zM10 13h3v1h-3zM8 15h1v1H8zM10 16h2v1h-2zM13 15h1v2h-1zM15 14h2v1h-2zM19 14h2v1h-2zM16 16h1v2h-1zM18 17h2v1h-2zM9 18h1v2H9zM11 19h2v1h-2zM14 19h1v2h-1zM17 19h1v1h-1zM20 19h1v2h-1zM12 17h1v1h-1z"></path></svg>
+          <span style="font-size: 13px; font-weight: 700; color: #5A4A3B; text-align: center">Scan to join on a phone</span>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 12px">
+        <a href="PeopleAccess.dc.html" style="height: 50px; padding: 0 22px; border-radius: 14px; border: 1.5px solid #2B2118; color: #2B2118; font-weight: 800; display: flex; align-items: center; text-decoration: none">Cancel</a>
+        <a href="PeopleAccess.dc.html" style="height: 50px; padding: 0 24px; border-radius: 14px; background: #C4411E; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; text-decoration: none">Send invite to Adam</a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

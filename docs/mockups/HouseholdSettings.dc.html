@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Household settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1180px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="settings" hint-size="240px,860px"></dc-import>
+  </div>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 32px 36px; display: flex; flex-direction: column; gap: 18px">
+    <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 34px; font-weight: 700">Settings</h1>
+    <div style="display: flex; gap: 8px">
+      <a href="HouseholdSettings.dc.html" style="padding: 9px 16px; border-radius: 999px; background: #2B2118; color: #FFF8EE; font-weight: 800; font-size: 14px; text-decoration: none">General</a>
+      <a href="PlanningBalance.dc.html" style="padding: 9px 16px; border-radius: 999px; background: #F1E7D6; color: #2B2118; font-weight: 800; font-size: 14px; text-decoration: none">Planning balance</a>
+      <a href="ScheduleGrid.dc.html" style="padding: 9px 16px; border-radius: 999px; background: #F1E7D6; color: #2B2118; font-weight: 800; font-size: 14px; text-decoration: none">Meals &amp; schedule</a>
+      <a href="ChangeLog.dc.html" style="padding: 9px 16px; border-radius: 999px; background: #F1E7D6; color: #2B2118; font-weight: 800; font-size: 14px; text-decoration: none">Change log</a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px">
+      <section style="background: #FFFFFF; border-radius: 20px; padding: 22px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 14px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px">Household</h2>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Name<input type="text" value="Khalifa City home" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 10px; border: 1.5px solid #D9CBB4; font: inherit; font-size: 15px"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Area — used to choose ingredients you can buy<input type="text" value="Khalifa City, Abu Dhabi, UAE" style="height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 10px; border: 1.5px solid #D9CBB4; font: inherit; font-size: 15px"></label>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+          <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Time zone<select style="height: 44px; border-radius: 10px; border: 1.5px solid #D9CBB4; font: inherit; background: #FFFFFF; padding: 0 8px"><option>Asia/Dubai</option></select></label>
+          <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Units<select style="height: 44px; border-radius: 10px; border: 1.5px solid #D9CBB4; font: inherit; background: #FFFFFF; padding: 0 8px"><option>Metric (kg, g, L, ml)</option></select></label>
+        </div>
+      </section>
+      <section style="background: #FFFFFF; border-radius: 20px; padding: 22px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 14px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px">Who sees what</h2>
+        <label style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px"><span style="display: flex; flex-direction: column"><span style="font-weight: 800">Members see each other's plates and targets</span><span style="font-size: 14px; color: #5A4A3B">Off: members see only their own numbers.</span></span><input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #C4411E; flex-shrink: 0"></label>
+        <label style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px"><span style="display: flex; flex-direction: column"><span style="font-weight: 800">Kitchen sees names on the plating table</span><span style="font-size: 14px; color: #5A4A3B">Off: shows initials and colours only.</span></span><input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #C4411E; flex-shrink: 0"></label>
+        <label style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px"><span style="display: flex; flex-direction: column"><span style="font-weight: 800">Members can review for younger siblings</span><span style="font-size: 14px; color: #5A4A3B">Otherwise only admins can review on someone's behalf.</span></span><input type="checkbox" style="width: 22px; height: 22px; accent-color: #C4411E; flex-shrink: 0"></label>
+      </section>
+      <section style="background: #FFFFFF; border-radius: 20px; padding: 22px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 14px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px; display: flex; align-items: center; gap: 10px"><span style="width: 30px; height: 30px; border-radius: 9px; background: #5B2A86; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4zM12 8l1 2l2 1l-2 1l-1 2l-1-2l-2-1l2-1z"></path></svg></span>Assistant &amp; AI</h2>
+        <label style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px"><span style="display: flex; flex-direction: column"><span style="font-weight: 800">Let the assistant apply changes I ask for</span><span style="font-size: 14px; color: #5A4A3B">Each one shows an Undo. Off: everything becomes a proposal.</span></span><input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #C4411E; flex-shrink: 0"></label>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-weight: 800">New recipes when the library runs short</span>
+          <div style="display: flex; gap: 8px">
+            <span style="padding: 9px 14px; border-radius: 12px; background: #2B2118; color: #FFF8EE; font-weight: 800; font-size: 14px">Add automatically</span>
+            <span style="padding: 9px 14px; border-radius: 12px; background: #F1E7D6; font-weight: 800; font-size: 14px">Ask me first</span>
+            <span style="padding: 9px 14px; border-radius: 12px; background: #F1E7D6; font-weight: 800; font-size: 14px">Never</span>
+          </div>
+        </div>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 800">Insight check-ins
+          <select style="height: 44px; border-radius: 10px; border: 1.5px solid #D9CBB4; font: inherit; background: #FFFFFF; padding: 0 8px"><option>Nightly, plus after every 10 reviews</option><option>Weekly</option><option>Only when I ask</option></select>
+        </label>
+      </section>
+      <section style="background: #FFFFFF; border-radius: 20px; padding: 22px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 14px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px">Default precision</h2>
+        <span style="font-size: 14px; color: #5A4A3B">Per meal, for everyone with targets. Each person can override on their profile.</span>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; font-family: JetBrains Mono, monospace">
+          <label style="display: flex; flex-direction: column; gap: 4px; font-family: Nunito, sans-serif; font-weight: 800; font-size: 13px; color: #17706F">Protein ±<input type="text" value="5 g" style="height: 42px; border-radius: 10px; border: 1.5px solid #9FCFCB; font-family: JetBrains Mono, monospace; font-size: 15px; padding: 0 10px; box-sizing: border-box"></label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-family: Nunito, sans-serif; font-weight: 800; font-size: 13px; color: #8A5A00">Carbs ±<input type="text" value="5 g" style="height: 42px; border-radius: 10px; border: 1.5px solid #F2D08A; font-family: JetBrains Mono, monospace; font-size: 15px; padding: 0 10px; box-sizing: border-box"></label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-family: Nunito, sans-serif; font-weight: 800; font-size: 13px; color: #5E5E14">Fat ±<input type="text" value="2 g" style="height: 42px; border-radius: 10px; border: 1.5px solid #CFCF94; font-family: JetBrains Mono, monospace; font-size: 15px; padding: 0 10px; box-sizing: border-box"></label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-family: Nunito, sans-serif; font-weight: 800; font-size: 13px; color: #A3351A">Calories ±<input type="text" value="50" style="height: 42px; border-radius: 10px; border: 1.5px solid #F0B4A0; font-family: JetBrains Mono, monospace; font-size: 15px; padding: 0 10px; box-sizing: border-box"></label>
+        </div>
+        <label style="display: flex; justify-content: space-between; align-items: center; font-weight: 800">Saturated fat cap when not set<select style="height: 40px; border-radius: 10px; border: 1.5px solid #D9CBB4; font: inherit; background: #FFFFFF; padding: 0 8px"><option>10% of calories</option><option>None</option></select></label>
+      </section>
+    </div>
+    <section style="background: #FFFFFF; border-radius: 20px; padding: 22px; box-shadow: 0 1px 0 #EADFCC; display: flex; align-items: center; gap: 18px">
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px">Your data</h2>
+        <span style="font-size: 14px; color: #5A4A3B">Download everything: people, targets, recipes, plans, reviews, change log.</span>
+      </div>
+      <button type="button" style="height: 46px; padding: 0 18px; border-radius: 12px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800">Export (JSON + CSV)</button>
+    </section>
+    <section style="border-radius: 20px; padding: 22px; border: 2px solid #E8B4BF; background: #FDF3F5; display: flex; align-items: center; gap: 18px">
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px; color: #8E1C30">Delete household</h2>
+        <span style="font-size: 14px; color: #5A4A3B">Removes all data after 14 days. Any admin can cancel during that time. Needs confirmation from a second admin if there is one.</span>
+      </div>
+      <button type="button" style="height: 46px; padding: 0 18px; border-radius: 12px; border: none; background: #8E1C30; color: #FFFFFF; font: inherit; font-weight: 800">Delete household…</button>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

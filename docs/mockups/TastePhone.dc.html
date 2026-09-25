@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>My tastes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE; overflow: hidden">
+  <div style="box-sizing: border-box; padding: 22px 18px 100px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 28px; font-weight: 700">My tastes</h1>
+      <span style="font-size: 13px; font-weight: 800; color: #5A4A3B">Layla</span>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; color: #5A4A3B"><span>Taste swipe</span><span>7 of 20</span></div>
+    <div style="height: 6px; border-radius: 3px; background: #F1E7D6"><div style="width: 35%; height: 6px; border-radius: 3px; background: #C4411E"></div></div>
+    <div style="position: relative; height: 330px">
+      <div style="position: absolute; left: 14px; right: 14px; top: 14px; height: 310px; border-radius: 24px; background: #FCEBC4; transform: rotate(3deg)"></div>
+      <div style="position: absolute; left: 0; right: 0; top: 0; height: 316px; border-radius: 24px; background: #FFFFFF; box-shadow: 0 14px 34px rgba(43,33,24,0.16); overflow: hidden; display: flex; flex-direction: column">
+        <div style="height: 180px; background-color: #E4572E; background-image: radial-gradient(circle at 30% 40%, #F3A712 0 38px, transparent 39px), radial-gradient(circle at 68% 58%, #FFF8EE 0 52px, transparent 53px), radial-gradient(circle at 70% 58%, #3F8F3A 0 20px, transparent 21px); display: flex; align-items: flex-end; padding: 12px; box-sizing: border-box">
+          <span style="padding: 5px 10px; border-radius: 999px; background: #FFFFFF; font-weight: 800; font-size: 12px; transform: rotate(-3deg)">Levantine</span>
+        </div>
+        <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 4px">
+          <span style="font-family: Fraunces, serif; font-size: 22px; font-weight: 700">Chicken shawarma bowl</span>
+          <span style="font-size: 14px; color: #5A4A3B">Spiced chicken thigh, rice, pickles, garlic sauce</span>
+        </div>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+      <button type="button" style="height: 64px; border-radius: 18px; border: none; background: #F6DDE3; color: #8E1C30; font: inherit; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>Not for me</button>
+      <button type="button" style="height: 64px; border-radius: 18px; border: none; background: #F1E7D6; color: #3D3025; font: inherit; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"></path></svg>It's fine</button>
+      <button type="button" style="height: 64px; border-radius: 18px; border: none; background: #2F7A2B; color: #FFFFFF; font: inherit; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.4-9.3-8.6C1 9.2 2.8 5.5 6.4 5.5c2 0 3.3 1.1 4 2.2c.7-1.1 2-2.2 4-2.2c3.6 0 5.4 3.7 3.7 6.9C19 16.6 12 21 12 21z"></path></svg>Love it</button>
+    </div>
+    <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6B5B4B">Learned from your reviews</span>
+    <div style="display: flex; gap: 6px; flex-wrap: wrap">
+      <span style="padding: 6px 10px; border-radius: 999px; background: #E1EFD9; color: #2F7A2B; font-weight: 800; font-size: 13px">Crispy anything</span>
+      <span style="padding: 6px 10px; border-radius: 999px; background: #E1EFD9; color: #2F7A2B; font-weight: 800; font-size: 13px">Pasta</span>
+      <span style="padding: 6px 10px; border-radius: 999px; background: #F6DDE3; color: #8E1C30; font-weight: 800; font-size: 13px">Eggplant</span>
+      <a href="Insights.dc.html" style="padding: 6px 10px; font-weight: 800; font-size: 13px">See all</a>
+    </div>
+  </div>
+  <div style="position: absolute; left: 0; bottom: 0; width: 390px; height: 84px">
+    <dc-import name="TabBar" active="me" hint-size="390px,84px"></dc-import>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

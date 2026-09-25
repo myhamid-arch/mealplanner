@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How detail levels work</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1180px; box-sizing: border-box; padding: 36px 44px; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE; display: flex; flex-direction: column; gap: 20px">
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 34px; font-weight: 700">One control for detail, everywhere</h1>
+    <p style="margin: 0; font-size: 16px; color: #5A4A3B; max-width: 900px">Every section has the same Basic · Detailed · Expert switch in its corner. It changes only that section, for that person. Try it: switch levels, then tap an "auto" value to make it your own.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+    <div style="padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">1 · You always see what the app does for you</span><span style="font-size: 14px; color: #3D3025">Automatic values are shown, not hidden, marked with a grey "auto" tag.</span></div>
+    <div style="padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">2 · Change one thing without changing modes</span><span style="font-size: 14px; color: #3D3025">Tap any auto value to set it yourself. It turns orange, and "Back to auto" puts it back.</span></div>
+    <div style="padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">3 · Nothing is lost by going back</span><span style="font-size: 14px; color: #3D3025">Going to a lower level asks whether to keep your changes working quietly or reset them.</span></div>
+  </div>
+
+  <section style="background: #FFFFFF; border-radius: 22px; padding: 22px; box-shadow: 0 1px 0 #EADFCC, 0 8px 24px rgba(43,33,24,0.05); display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <span style="width: 40px; height: 40px; border-radius: 20px; background: #17706F; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center">O</span>
+      <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 24px">Omar's targets</h2>
+      <div role="radiogroup" aria-label="Detail level for targets" style="margin-left: auto; display: flex; padding: 4px; border-radius: 999px; background: #F1E7D6; gap: 2px">
+        <sc-for list="{{tLevels}}" as="lv" hint-placeholder-count="3">
+          <button type="button" role="radio" onClick="{{lv.pick}}" style="{{lv.style}}">{{lv.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    <span style="font-size: 14px; color: #5A4A3B">{{tHint}}</span>
+
+    <div style="display: grid; grid-template-columns: 150px repeat(4, minmax(0, 1fr)); gap: 10px; align-items: center">
+      <span></span><span style="font-weight: 800; color: #A3351A">Calories</span><span style="font-weight: 800; color: #17706F">Protein g</span><span style="font-weight: 800; color: #7A4F00">Carbs g</span><span style="font-weight: 800; color: #5E5E14">Fat g</span>
+      <span style="font-weight: 800">{{rowLabel}}</span>
+      <span style="font-family: JetBrains Mono, monospace; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #D9CBB4">2150</span>
+      <span style="font-family: JetBrains Mono, monospace; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #D9CBB4">180</span>
+      <span style="font-family: JetBrains Mono, monospace; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #D9CBB4">200</span>
+      <span style="font-family: JetBrains Mono, monospace; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #D9CBB4">70</span>
+      <sc-if value="{{showDetailed}}" hint-placeholder-val="{{false}}">
+        <span style="font-weight: 800">Training days</span>
+        <span style="font-family: JetBrains Mono, monospace; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #D9CBB4">2390</span>
+        <span style="font-family: JetBrains Mono, monospace; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #D9CBB4">180</span>
+        <span style="font-family: JetBrains Mono, monospace; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #D9CBB4">260</span>
+        <span style="font-family: JetBrains Mono, monospace; font-size: 18px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #D9CBB4">70</span>
+      </sc-if>
+    </div>
+    <sc-if value="{{showDetailed}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; gap: 12px">
+        <span style="padding: 10px 14px; border-radius: 12px; background: #FFF8EE; font-size: 14px"><strong>Saturated fat</strong> at most <span style="font-family: JetBrains Mono, monospace">22 g</span></span>
+        <span style="padding: 10px 14px; border-radius: 12px; background: #FFF8EE; font-size: 14px"><strong>Soluble fibre</strong> at least <span style="font-family: JetBrains Mono, monospace">10 g</span></span>
+      </div>
+    </sc-if>
+    <sc-if value="{{showExpert}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 12px; background: #F1E7D6; font-size: 14px">
+        <span style="font-weight: 800">Precision per meal</span>
+        <span style="font-family: JetBrains Mono, monospace">P ±5 · C ±5 · F ±2 · kcal ±50</span>
+        <span style="color: #5A4A3B">(household default)</span>
+        <span style="margin-left: auto; display: flex; gap: 6px"><span style="padding: 7px 12px; border-radius: 10px; background: #2B2118; color: #FFF8EE; font-weight: 800">Strict</span><span style="padding: 7px 12px; border-radius: 10px; background: #FFFFFF; font-weight: 800">Flexible</span></span>
+      </div>
+    </sc-if>
+  </section>
+
+  <section style="background: #FFFFFF; border-radius: 22px; padding: 22px; box-shadow: 0 1px 0 #EADFCC, 0 8px 24px rgba(43,33,24,0.05); display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 24px">How a rest day is split across meals</h2>
+      <span style="padding: 4px 10px; border-radius: 999px; background: #FDE3D8; color: #A3351A; font-weight: 800; font-size: 13px">{{customCount}} changed by you</span>
+      <div role="radiogroup" aria-label="Detail level for meal split" style="margin-left: auto; display: flex; padding: 4px; border-radius: 999px; background: #F1E7D6; gap: 2px">
+        <sc-for list="{{sLevels}}" as="lv" hint-placeholder-count="3">
+          <button type="button" role="radio" onClick="{{lv.pick}}" style="{{lv.style}}">{{lv.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    <span style="font-size: 14px; color: #5A4A3B">{{sHint}}</span>
+    <sc-if value="{{showConfirm}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #FCEBC4">
+        <span style="font-weight: 800; flex-grow: 1">You changed some of these yourself. What should happen to them?</span>
+        <button type="button" onClick="{{keepChanges}}" style="height: 40px; padding: 0 14px; border-radius: 10px; border: none; background: #2B2118; color: #FFF8EE; font: inherit; font-weight: 800">Keep them, just hide</button>
+        <button type="button" onClick="{{resetChanges}}" style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #2B2118; background: #FFFFFF; font: inherit; font-weight: 800">Reset to automatic</button>
+      </div>
+    </sc-if>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+      <sc-for list="{{meals}}" as="m" hint-placeholder-count="4">
+        <div style="{{m.cardStyle}}">
+          <span style="font-weight: 800">{{m.name}}</span>
+          <span style="font-family: JetBrains Mono, monospace; font-size: 22px">{{m.share}}</span>
+          <span style="font-family: JetBrains Mono, monospace; font-size: 12px; color: #3D3025">{{m.macros}}</span>
+          <button type="button" onClick="{{m.toggle}}" style="{{m.tagStyle}}">{{m.tag}}</button>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <div style="display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: 18px; background: #5B2A86; color: #FFFFFF">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4zM12 8l1 2l2 1l-2 1l-1 2l-1-2l-2-1l2-1z"></path></svg>
+    <span style="font-size: 15px">Don't want to touch any of this? Say it to the assistant: <strong>"give Omar a bigger lunch on rest days"</strong>. It changes the right level for you and shows an Undo.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1180}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tLevel: 0, sLevel: 1, custom: { lunch: true }, confirm: false, pendingLevel: 0 };
+  }
+  renderVals() {
+    const s = this.state;
+    const labels = ['Basic', 'Detailed', 'Expert'];
+    const on = 'height: 36px; padding: 0 16px; border-radius: 999px; border: none; font: inherit; font-weight: 800; font-size: 14px; background: #2B2118; color: #FFF8EE;';
+    const off = 'height: 36px; padding: 0 16px; border-radius: 999px; border: none; font: inherit; font-weight: 800; font-size: 14px; background: transparent; color: #3D3025;';
+    const tHints = [
+      'Basic: one set of daily numbers. The app splits them across meals and holds each meal to the household precision.',
+      'Detailed adds: different numbers on training days, a saturated-fat cap and a soluble-fibre goal.',
+      'Expert adds: this person\'s own precision per meal, and strict or flexible mode.'
+    ];
+    const sHints = [
+      'Basic: split automatically from the household\'s meal weights. Your changes are kept but hidden.',
+      'Detailed: tap any value to set it yourself. The others rebalance so the day still adds up to 100%.',
+      'Expert: set exact grams for a single meal (e.g. post-workout). The rest of the day fills around it.'
+    ];
+    const count = Object.values(s.custom).filter(Boolean).length;
+    const autoShares = { breakfast: 26, lunch: 32, dinner: 32, snack: 10 };
+    const customShares = { breakfast: 24, lunch: 36, dinner: 30, snack: 10 };
+    const names = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack: 'Snack' };
+    const kcalDay = 2150;
+    const meals = Object.keys(names).map((k) => {
+      const isCustom = !!s.custom[k] && s.sLevel > 0;
+      const keptHidden = !!s.custom[k] && s.sLevel === 0;
+      const share = (s.custom[k] ? customShares[k] : autoShares[k]);
+      const kcal = Math.round(kcalDay * share / 100);
+      const editable = s.sLevel > 0;
+      return {
+        name: names[k],
+        share: share + '%',
+        macros: kcal + ' kcal',
+        cardStyle: 'padding: 14px; border-radius: 14px; display: flex; flex-direction: column; gap: 6px; ' + (isCustom ? 'background: #FDE3D8; border: 2px solid #C4411E;' : 'background: #FFF8EE; border: 2px solid transparent;'),
+        tag: isCustom ? 'Yours · back to auto' : (keptHidden ? 'Yours (hidden)' : (editable ? 'auto · tap to change' : 'auto')),
+        tagStyle: 'align-self: flex-start; height: 32px; padding: 0 10px; border-radius: 999px; border: none; font: inherit; font-size: 12px; font-weight: 800; ' + (isCustom ? 'background: #C4411E; color: #FFFFFF;' : 'background: #E7DDCB; color: #3D3025;'),
+        toggle: () => { if (s.sLevel === 0) return; this.setState({ custom: { ...s.custom, [k]: !s.custom[k] } }); }
+      };
+    });
+    return {
+      tLevels: labels.map((l, i) => ({ label: l, style: i === s.tLevel ? on : off, pick: () => this.setState({ tLevel: i }) })),
+      sLevels: labels.map((l, i) => ({ label: l, style: i === s.sLevel ? on : off, pick: () => {
+        if (i < s.sLevel && count > 0 && i === 0) { this.setState({ confirm: true, pendingLevel: i }); }
+        else { this.setState({ sLevel: i, confirm: false }); }
+      } })),
+      tHint: tHints[s.tLevel],
+      sHint: sHints[s.sLevel],
+      rowLabel: s.tLevel > 0 ? 'Rest days' : 'Every day',
+      showDetailed: s.tLevel >= 1,
+      showExpert: s.tLevel >= 2,
+      meals,
+      customCount: count,
+      showConfirm: s.confirm,
+      keepChanges: () => this.setState({ sLevel: s.pendingLevel, confirm: false }),
+      resetChanges: () => this.setState({ sLevel: s.pendingLevel, confirm: false, custom: {} })
+    };
+  }
+}
+</script>
+</body>
+</html>

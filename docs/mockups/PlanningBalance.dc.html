@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Planning balance</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 960px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="settings" hint-size="240px,860px"></dc-import>
+  </div>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 32px 36px; display: flex; flex-direction: column; gap: 18px">
+    <div>
+      <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 34px; font-weight: 700">Planning balance</h1>
+      <p style="margin: 4px 0 0; color: #5A4A3B">Macros are always kept within each person's precision. Basic: pick a preset above. Detailed: fine-tune below. Expert: different settings for different days.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+      <span style="padding: 16px; border-radius: 16px; background: #FFFFFF; border: 1.5px solid #E4D6C0; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Macros first</span><span style="font-size: 13px; color: #5A4A3B">Plates dead-centre on target</span></span>
+      <span style="padding: 16px; border-radius: 16px; background: #FFFFFF; border: 2.5px solid #C4411E; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Balanced</span><span style="font-size: 13px; color: #5A4A3B">Your current setting</span></span>
+      <span style="padding: 16px; border-radius: 16px; background: #FFFFFF; border: 1.5px solid #E4D6C0; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Crowd-pleaser</span><span style="font-size: 13px; color: #5A4A3B">Favourites more often</span></span>
+      <span style="padding: 16px; border-radius: 16px; background: #FFFFFF; border: 1.5px solid #E4D6C0; display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Fewest ingredients</span><span style="font-size: 13px; color: #5A4A3B">Reuse, reuse, reuse</span></span>
+    </div>
+    <div style="display: flex; gap: 20px; align-items: flex-start">
+      <section style="flex-grow: 1; background: #FFFFFF; border-radius: 20px; padding: 22px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; justify-content: space-between; align-items: center"><h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px">Fine-tune</h2><span role="radiogroup" aria-label="Detail level" style="display: inline-flex; padding: 3px; border-radius: 999px; background: #F1E7D6; gap: 2px"><a role="radio" href="PlanningBalance.dc.html" style="padding: 6px 12px; border-radius: 999px; color: #3D3025; font-weight: 800; font-size: 13px; text-decoration: none">Basic</a><span role="radio" aria-checked="true" style="padding: 6px 12px; border-radius: 999px; background: #2B2118; color: #FFF8EE; font-weight: 800; font-size: 13px">Detailed</span><a role="radio" href="PlanningBalance.dc.html" style="padding: 6px 12px; border-radius: 999px; color: #3D3025; font-weight: 800; font-size: 13px; text-decoration: none">Expert</a></span></div>
+        <label style="display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; justify-content: space-between; font-weight: 800"><span style="color: #A3351A">Macro precision</span><span style="font-family: JetBrains Mono, monospace">1.0</span></span>
+          <input type="range" min="0" max="10" value="10" style="accent-color: #C4411E">
+          <span style="font-size: 13px; color: #5A4A3B">Higher: plates sit closer to the centre of the target instead of just inside the limits.</span>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; justify-content: space-between; font-weight: 800"><span style="color: #2F7A2B">Appeal</span><span style="font-family: JetBrains Mono, monospace">0.6</span></span>
+          <input type="range" min="0" max="10" value="6" style="accent-color: #2F7A2B">
+          <span style="font-size: 13px; color: #5A4A3B">Cuisines, likes, ratings.</span>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; justify-content: space-between; font-weight: 800"><span style="color: #17706F">Ingredient economy</span><span style="font-family: JetBrains Mono, monospace">0.4</span></span>
+          <input type="range" min="0" max="10" value="4" style="accent-color: #17706F">
+          <span style="font-size: 13px; color: #5A4A3B">Reuse ingredients across the week. Vary how they're cooked instead of buying new ones.</span>
+        </label>
+        <div style="height: 1px; background: #F1E7D6"></div>
+        <label style="display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; justify-content: space-between; font-weight: 800"><span>Variety</span><span style="font-family: JetBrains Mono, monospace">0.3</span></span>
+          <input type="range" min="0" max="10" value="3" style="accent-color: #5B2A86">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px">
+          <span style="display: flex; justify-content: space-between; font-weight: 800"><span>Fairness</span><span style="font-family: JetBrains Mono, monospace">0.5</span></span>
+          <input type="range" min="0" max="10" value="5" style="accent-color: #5B2A86">
+          <span style="font-size: 13px; color: #5A4A3B">Higher: avoid dishes that anyone dislikes, even if others love them.</span>
+        </label>
+        <div style="display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #F1E7D6">
+          <span style="font-weight: 800">Weekend preset</span>
+          <span style="font-size: 14px; color: #5A4A3B">Sat–Sun · appeal 0.8 · economy 0.2</span>
+          <a href="PlanningBalance.dc.html" style="margin-left: auto; font-weight: 800">Edit</a>
+        </div>
+      </section>
+      <section style="width: 360px; background: #2B2118; color: #FFF8EE; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+        <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 22px">Next week, if you save</h2>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <div style="padding: 12px; border-radius: 14px; background: #3A2E23; display: flex; flex-direction: column"><span style="font-size: 12px; font-weight: 800; color: #CDBFA9">Different ingredients</span><span style="font-family: JetBrains Mono, monospace; font-size: 24px">38 <span style="font-size: 14px; color: #A7D39B">−6</span></span></div>
+          <div style="padding: 12px; border-radius: 14px; background: #3A2E23; display: flex; flex-direction: column"><span style="font-size: 12px; font-weight: 800; color: #CDBFA9">Meals on target</span><span style="font-family: JetBrains Mono, monospace; font-size: 24px">100%</span></div>
+        </div>
+        <span style="font-size: 13px; font-weight: 800; color: #CDBFA9">3 meals would change</span>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+          <span style="padding: 10px; border-radius: 12px; background: #3A2E23">Wed dinner: lamb kofta → <strong>chicken kofta</strong> (chicken is already in 4 meals)</span>
+          <span style="padding: 10px; border-radius: 12px; background: #3A2E23">Thu school lunch: quinoa salad → <strong>freekeh salad</strong></span>
+          <span style="padding: 10px; border-radius: 12px; background: #3A2E23">Fri breakfast: unchanged dish, <strong>fried eggs → poached</strong> for Sara</span>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 4px">
+          <button type="button" style="flex-grow: 1; height: 46px; border-radius: 12px; border: 1.5px solid #CDBFA9; background: transparent; color: #FFF8EE; font: inherit; font-weight: 800">Reset</button>
+          <button type="button" style="flex-grow: 1; height: 46px; border-radius: 12px; border: none; background: #C4411E; color: #FFFFFF; font: inherit; font-weight: 800">Save &amp; replan</button>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

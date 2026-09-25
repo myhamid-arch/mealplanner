@@ -4,6 +4,9 @@ The build uses the **unlazy** skill (`.claude/skills/unlazy`) in orchestrated mo
 
 ## 1. Protocol (BLD-1)
 
+The review checkpoints and anti-drift rules in §7 are binding and take precedence over anything looser below. Gate ledgers are **tracked in the repo** under `docs/build/` (not `.unlazy/`), because build sessions are ephemeral and the architect must see the same ledger the builder ran.
+
+
 1. **Plan.** The architect creates `.unlazy/mealplanner-v1/PLAN.md` (contract inventory = every requirement ID in docs 01–10 mapped to a leaf and gate), a root `GATES.md`, one `gates/leaf-*.md` per leaf (§4) and one `gates/node-*.md` per branch. It lints them (`gate-lint.mjs`), and inspects and approves every `CHECK:`.
 2. **Dispatch.** For each READY set (max 3 concurrent builders), the architect claims ownership, opens a wave, launches builders with `isolation: worktree`, records the handles and seals the wave.
 3. **Builder brief** (identical shape for every leaf):
@@ -69,13 +72,14 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
     1.4.3 Onboarding, Family, Settings screens ............ gates/leaf-1.4.3.md
     1.4.4 Today, Plan, Plate, Recipes, Kitchen screens .... gates/leaf-1.4.4.md
     1.4.5 Reviews, Insights, Chat UI ...................... gates/leaf-1.4.5.md
+    1.4.6 Sign-in, People & access, account, platform ..... gates/leaf-1.4.6.md
 ```
 
 ## 4. Leaf dispatch table (BLD-4)
 
 | Leaf | Owns | Needs | Tier | Wave |
 |---|---|---|---|---|
-| 1.1.1 | `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `turbo.json`, `tsconfig.base.json`, `eslint.config.mjs`, `.prettierrc`, `.github/workflows/**`, `docker-compose.yml`, `.env.example`, `scripts/verify/lib/**`, `apps/*/package.json`, `packages/*/package.json`, `packages/*/tsconfig.json`, `apps/*/tsconfig.json` | – | mechanical | 1 |
+| 1.1.1 | `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `turbo.json`, `tsconfig.base.json`, `eslint.config.mjs`, `.prettierrc`, `.github/workflows/**`, `docker-compose.yml`, `.env.example`, `scripts/verify/lib/**`, `scripts/verify/leaf-1.1.1.mjs`, `apps/*/package.json`, `packages/*/package.json`, `packages/*/tsconfig.json`, `apps/*/tsconfig.json` | – | mechanical | 1 |
 | 1.1.2 | `packages/db/src/schema/**`, `packages/db/src/migrations/**`, `packages/db/src/repos/**`, `packages/db/src/services/changes/**`, `packages/db/src/services/config/**`, `packages/db/test/**`, `packages/core/src/changes/**`, `packages/core/src/types/**`, `packages/core/test/fixtures/**`, `scripts/verify/leaf-1.1.2.mjs` | 1.1.1 | judgment | 2 |
 | 1.1.3 | `data/ingredients.*`, `data/method-yields.*`, `data/cuisines.json`, `data/soluble-fibre.csv`, `data/substitutes.csv`, `scripts/import-fdc.ts`, `scripts/verify/leaf-1.1.3.mjs` | 1.1.1 | judgment | 2 |
 | 1.2.1 | `packages/core/src/nutrition/**`, `packages/core/test/nutrition/**`, `scripts/verify/leaf-1.2.1.mjs` | 1.1.1 | judgment | 2 |
@@ -89,7 +93,8 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 | 1.4.1 | `apps/web/app/api/**`, `apps/web/lib/server/**`, `apps/web/lib/auth/**`, `apps/worker/src/**`, `packages/api-contract/src/**`, `packages/db/src/services/plans/**`, `apps/web/test/api/**`, `scripts/verify/leaf-1.4.1.mjs` | 1.1.2, 1.2.3 | judgment | 6 |
 | 1.3.3 | `packages/core/src/learning/rules/**`, `packages/core/test/learning/rules/**`, `packages/ai/src/insights/**`, `packages/db/src/services/proposals/**`, `scripts/verify/leaf-1.3.3.mjs` | 1.3.1, 1.3.2 | judgment | 5 |
 | 1.3.5 | `packages/ai/src/agent/**`, `packages/ai/test/agent/**`, `evals/agent/**`, `scripts/verify/leaf-1.3.5.mjs` | 1.3.1, 1.3.3, 1.4.1 | judgment | 7 |
-| 1.4.3 | `apps/web/app/(app)/onboarding/**`, `apps/web/app/(app)/family/**`, `apps/web/app/(app)/settings/**`, `apps/web/components/config/**`, `apps/web/e2e/config.spec.ts`, `scripts/verify/leaf-1.4.3.mjs` | 1.4.1, 1.4.2 | judgment | 7 |
+| 1.4.3 | `apps/web/app/(app)/onboarding/**`, `apps/web/app/(app)/family/**`, `apps/web/app/(app)/settings/**`, `apps/web/components/config/**`, `apps/web/components/detail-level/**`, `packages/core/src/onboarding/**`, `packages/core/test/onboarding/**`, `apps/web/e2e/config.spec.ts`, `scripts/verify/leaf-1.4.3.mjs` | 1.4.1, 1.4.2 | judgment | 7 |
+| 1.4.6 | `apps/web/app/(auth)/**`, `apps/web/app/(app)/access/**`, `apps/web/app/(app)/account/**`, `apps/web/app/(app)/changelog/**`, `apps/web/app/(platform)/**`, `apps/web/components/admin/**`, `apps/web/e2e/admin.spec.ts`, `scripts/verify/leaf-1.4.6.mjs` | 1.4.1, 1.4.2 | judgment | 7 |
 | 1.4.4 | `apps/web/app/(app)/today/**`, `apps/web/app/(app)/plan/**`, `apps/web/app/(app)/recipes/**`, `apps/web/app/(app)/kitchen/**`, `apps/web/components/plan/**`, `apps/web/components/recipe/**`, `apps/web/e2e/plan.spec.ts`, `scripts/verify/leaf-1.4.4.mjs` | 1.4.1, 1.4.2, 1.2.4 | judgment | 7 |
 | 1.4.5 | `apps/web/app/(app)/reviews/**`, `apps/web/app/(app)/insights/**`, `apps/web/app/(app)/chat/**`, `apps/web/components/chat/**`, `apps/web/components/reviews/**`, `apps/web/e2e/chat.spec.ts`, `scripts/verify/leaf-1.4.5.mjs` | 1.4.1, 1.4.2, 1.3.3, 1.3.5 | judgment | 8 |
 
@@ -190,7 +195,34 @@ Each gate below becomes a ledger entry. Runnable gates use `CHECK: node scripts/
 - G3 The progressive-granularity behaviour of UX-2 works for each area the leaf owns (1.4.3).
 - G4 (manual) Architect visual review against UX-5.
 
+**r2 additions to gates** ([13-revision-r2.md](13-revision-r2.md)):
+- 1.1.2 also: `meal_override`, `household_user.status/blocked_reason`, `support_grant`, `platform_operator` role, TOTP secrets; the last-admin invariant enforced in the service layer (test).
+- 1.2.3 also: the planner honours `meal_override` (split_member, make_individual) (test).
+- 1.4.1 also: block revokes all sessions immediately; invite single-use + expiry; TOTP; support-grant gating on every platform endpoint (tests).
+- 1.4.3 also: G5 `inferSetup` golden tests (the fixture F1 answers produce exactly the F1 configuration; sesame expands to tahini/hummus/za'atar via flags; free-text parse is stubbed); G6 SC-6 (≤ 5 required answers to the first plan) and SC-7 (every review link resolves); G7 R2-DL behaviour (auto tags, per-value override, keep/reset on lowering the level).
+- 1.4.6 G1 Playwright: sign-in (password + magic link stub + invite code), invite → accept, block → the blocked session gets 401 on its next request, remove, last-admin protection, change-log undo; G2 axe-core; G3 (manual) visual review against the mockups.
+
 ## 6. Branch and root gates (BLD-6)
 
 - Each `node-*` ledger: N1 reverify all children, N2 interface checks (packages compile against each other's public types; the contract tests pass), N3 end-to-end for the branch, N4 regression (full test suite), N5 lease releases, N6 manual review.
 - **Root.** SC-1 to SC-5 ([01-product.md](01-product.md) §7) as runnable gates on a fresh `docker compose up` with seeded data. Every contract-inventory row is reconciled. The final report goes to the owner.
+
+## 7. Review checkpoints and anti-drift rules (BLD-7)
+
+Every leaf passes three checkpoints. The builder **stops and waits** at CP1 and CP2. Only the architect advances a leaf.
+
+| CP | Who | What must exist | Pass condition |
+|---|---|---|---|
+| CP1 Plan | Builder → Architect | A draft PR `leaf <id>: <title>` into the integration branch. Its body has: the leaf plan (files to create, public interfaces, key decisions), a **traceability table** (every requirement ID the leaf covers → where it will be implemented → which gate proves it), open `SPEC-Q`s, and any dependencies to add. No production code yet, apart from optional interface stubs. | The architect comments `CP1 APPROVED` (with any amendments). |
+| CP2 Evidence | Builder → Architect | The finished work on the same PR. Every gate in `docs/build/gates/leaf-<id>.md` is met, with the checker's own evidence lines. PR body updated: gate results (paste the `gate-check --reverify` output), traceability table with file:line, deviations (should be none), and the four-pass log (what each pass found and fixed). | The builder marks the PR ready for review and stops. |
+| CP3 Verify | Architect | — | The architect re-runs `--reverify` on a clean checkout, confirms `git diff --name-only` ⊆ OWNS, reads the diff against the cited IDs, refutes at least one gate, and reviews the manual gates. Then either `CP3 APPROVED` + merge, or `CHANGES REQUESTED` with numbered findings. |
+
+**Anti-drift rules** (a violation fails CP2 automatically):
+1. Write only inside the leaf's OWNS globs. Anything else needed goes in the PR as a request.
+2. Do not edit the spec, the mockups, or any `CHECK:`/`EXPECT:`/`OWNS:` line in a ledger. Only the checker writes `EVIDENCE:`. If a gate seems wrong, raise `SPEC-Q` and stop; never weaken it.
+3. Build only what the cited requirement IDs ask for. Nothing from 01-product §5 (out of scope). No extra features, pages, settings or dependencies.
+4. No placeholders, TODOs, mocked production paths or skipped/disabled tests in the finished leaf. Stubs are allowed only for the model in tests, as the gates specify.
+5. UI must match the mockup for that screen (`docs/mockups/<Screen>.dc.html`) in layout, content and interactions. Improve only accessibility and responsiveness.
+6. When unsure, choose the more conservative reading, record it as `SPEC-Q-<n>` in `docs/decisions/leaf-<id>-questions.md` (every leaf owns `docs/decisions/leaf-<id>-*.md`), and carry on. Stop only if the question blocks a gate.
+7. Report honestly. A gate that cannot pass is `ABANDON:`ed with a reason, never marked done.
+8. One leaf per PR, and one PR at a time unless the architect dispatches a wave in parallel.

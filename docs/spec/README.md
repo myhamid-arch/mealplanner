@@ -1,6 +1,6 @@
 # Family Meal Planner — Specification
 
-Status: **DRAFT r1 — awaiting owner review.** Nothing is built yet. The builder agent must not start until the owner approves this revision and the open questions in [12-open-questions.md](12-open-questions.md) are resolved or explicitly defaulted.
+Status: **r2 — UI approved in mockups; build may start.** Open questions in [12-open-questions.md](12-open-questions.md) use their stated defaults until the owner answers. **[13-revision-r2.md](13-revision-r2.md) overrides earlier files where they conflict.** Visual reference: [`docs/mockups/`](../mockups/). Build ledgers: [`docs/build/`](../build/).
 
 Roles:
 - **Owner** — the person commissioning the product. Approves spec revisions, answers open questions.
@@ -23,6 +23,7 @@ Roles:
 | 10 | [10-architecture.md](10-architecture.md) | Stack, repo layout, API, auth, jobs, mobile, deployment |
 | 11 | [11-build-plan.md](11-build-plan.md) | Depth tree, leaves, ownership, gates, architect/builder protocol |
 | 12 | [12-open-questions.md](12-open-questions.md) | Decisions the owner must confirm |
+| 13 | [13-revision-r2.md](13-revision-r2.md) | Decisions from the approved mockups (onboarding, detail levels, shared/individual meals, administration) |
 
 ## Requirement IDs
 

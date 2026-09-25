@@ -1,0 +1,547 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AccountPhone.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "access",
+      "title": "Phone — my account",
+      "w": 390,
+      "x": 4550,
+      "y": 0
+    },
+    "BlockDialog.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Block or remove a user",
+      "w": 1280,
+      "x": 2720,
+      "y": 0
+    },
+    "ChangeLog.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Change log & undo",
+      "w": 1280,
+      "x": 5440,
+      "y": 0
+    },
+    "ChatDesktop.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "page": "agent",
+      "title": "Assistant — full screen",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "ChatOnboarding.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "agent",
+      "title": "Assistant — set up by conversation",
+      "w": 1280,
+      "x": 2720,
+      "y": 0
+    },
+    "ChatPhoneDigest.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "agent",
+      "title": "Phone — assistant insight digest",
+      "w": 390,
+      "x": 4080,
+      "y": 0
+    },
+    "ChatPhoneRecipe.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "page": "agent",
+      "title": "Phone — ask for a new recipe",
+      "w": 390,
+      "x": 4550,
+      "y": 0
+    },
+    "ChatSidePanel.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "agent",
+      "title": "Assistant — side panel on any page",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "CookSheet.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "page": "plans",
+      "title": "Kitchen cook sheet",
+      "w": 1280,
+      "x": 7740,
+      "y": 0
+    },
+    "CreateHousehold.dc.html": {
+      "h": 860,
+      "is_interactive": true,
+      "page": "access",
+      "title": "Create a household (new admin)",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "HouseholdSettings.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Household settings",
+      "w": 1280,
+      "x": 4080,
+      "y": 0
+    },
+    "Insights.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "page": "feedback",
+      "title": "Insights — what the app has learned",
+      "w": 1280,
+      "x": 2300,
+      "y": 0
+    },
+    "InviteAccept.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "access",
+      "title": "Phone — accept an invite",
+      "w": 390,
+      "x": 4080,
+      "y": 0
+    },
+    "InviteDialog.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Invite someone",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "overview",
+      "title": "Overview & navigation map",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "MemberDetailed.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "page": "custom",
+      "title": "Family — member (detail added)",
+      "w": 1280,
+      "x": 2720,
+      "y": 0
+    },
+    "MemberSimple.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "custom",
+      "title": "Family — member (simple level)",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "Onboarding.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "page": "access",
+      "title": "Onboarding — 5 questions, the rest worked out (try it)",
+      "w": 1280,
+      "x": 2720,
+      "y": 0
+    },
+    "PeopleAccess.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "People & access (users, roles, block, remove)",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "PlanningBalance.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "custom",
+      "title": "Planning balance (weights)",
+      "w": 1280,
+      "x": 5440,
+      "y": 0
+    },
+    "PlatePhone.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "plans",
+      "title": "Phone — my plate",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "PlatformConsole.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "admin",
+      "title": "Platform operator console",
+      "w": 1280,
+      "x": 6800,
+      "y": 0
+    },
+    "QuickRatePhone.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "feedback",
+      "title": "Phone — quick rating",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "Rail.dc.html": {
+      "h": 860,
+      "is_interactive": true,
+      "page": "components",
+      "title": "Desktop navigation rail",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "RecipeLibrary.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "plans",
+      "title": "Recipe library",
+      "w": 1280,
+      "x": 5020,
+      "y": 0
+    },
+    "RecipePage.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "page": "plans",
+      "title": "Recipe",
+      "w": 1280,
+      "x": 6380,
+      "y": 0
+    },
+    "ReviewComposePhone.dc.html": {
+      "h": 1000,
+      "is_interactive": true,
+      "page": "feedback",
+      "title": "Phone — detailed review",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "ReviewsFeed.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "feedback",
+      "title": "Reviews feed",
+      "w": 1280,
+      "x": 940,
+      "y": 0
+    },
+    "ScheduleGrid.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "custom",
+      "title": "Meals & schedule",
+      "w": 1280,
+      "x": 4080,
+      "y": 0
+    },
+    "SignIn.dc.html": {
+      "h": 860,
+      "is_interactive": true,
+      "page": "access",
+      "title": "Sign in",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "SwapDialog.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "plans",
+      "title": "Swap a meal",
+      "w": 1280,
+      "x": 3660,
+      "y": 0
+    },
+    "TabBar.dc.html": {
+      "h": 84,
+      "is_interactive": true,
+      "page": "components",
+      "title": "Phone tab bar",
+      "w": 390,
+      "x": 320,
+      "y": 0
+    },
+    "TastePhone.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "custom",
+      "title": "Phone — my tastes",
+      "w": 390,
+      "x": 6800,
+      "y": 0
+    },
+    "TodayDesktop.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "plans",
+      "title": "Today (admin)",
+      "w": 1280,
+      "x": 940,
+      "y": 0
+    },
+    "TodayPhone.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "page": "plans",
+      "title": "Phone — Today (member)",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "WeekPlan.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "page": "plans",
+      "title": "Week plan",
+      "w": 1280,
+      "x": 2300,
+      "y": 0
+    },
+    "TastesDesktop.dc.html": {
+      "x": 7270,
+      "y": 0,
+      "w": 1280,
+      "h": 1100,
+      "title": "Family tastes (household grid)",
+      "page": "custom",
+      "is_interactive": true
+    },
+    "DetailLevels.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 1180,
+      "title": "How detail levels work (try it)",
+      "page": "custom",
+      "is_interactive": true
+    },
+    "FirstDaysPhone.dc.html": {
+      "x": 5020,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Phone — first days: optional follow-up questions",
+      "page": "access",
+      "is_interactive": true
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-25T14:10:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "page": "overview",
+    "view": "canvas"
+  },
+  "notes": {
+    "s_access": {
+      "fill": "orange",
+      "page": "access",
+      "text": "Ways in: (1) the first admin signs up and creates the household; (2) everyone else joins by an invite link or QR code, already tied to a role and a person; (3) returning users sign in with a password or a one-time email link. Setup asks only for names and, for people who track macros, one line of numbers. Everything else is assumed and asked later — one tap-to-answer question per day.",
+      "w": 620,
+      "x": 0,
+      "y": 980
+    },
+    "s_admin": {
+      "fill": "orange",
+      "page": "admin",
+      "text": "Block = the account stays but cannot sign in; all sessions end immediately; reversible. Remove = the login is deleted from the household; the person as an eater (their plates, targets, reviews) can be kept or archived. Nothing here can be done to the last remaining admin.",
+      "w": 620,
+      "x": 0,
+      "y": 1300
+    },
+    "s_agent": {
+      "fill": "orange",
+      "page": "agent",
+      "text": "Two kinds of change cards: 'Applied' (you asked for it — Undo is one tap) and 'Proposal' (the assistant's own idea — nothing changes until you Accept). Allergy removals, looser tolerances, removing people and role changes are always proposals, even if you asked.",
+      "w": 620,
+      "x": 0,
+      "y": 1220
+    },
+    "s_custom": {
+      "fill": "orange",
+      "page": "custom",
+      "text": "One control everywhere: Basic · Detailed · Expert in each section's corner, per section and per person. Automatic values are always visible with an 'auto' tag; tap one to set it yourself, 'back to auto' undoes it. Lowering the level asks: keep your changes working quietly, or reset.",
+      "w": 620,
+      "x": 0,
+      "y": 1520
+    },
+    "s_plans": {
+      "fill": "orange",
+      "page": "plans",
+      "text": "Sample numbers: Omar 2150 kcal · 180P/200C/70F; Sara 1655 kcal · 130P/160C/55F; Layla (18), Adam (15), Zayd (10, sesame allergy) have no targets. The same hammour is grilled for the adults and breaded-fried for the kids — same ingredients, different macros.",
+      "w": 620,
+      "x": 0,
+      "y": 1620
+    },
+    "t_access": {
+      "kind": "title1",
+      "maxW": 5410,
+      "page": "access",
+      "text": "Signing in, creating a household, onboarding, invites",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_admin": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "admin",
+      "text": "Website administration: people, roles, blocking, settings, audit",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_agent": {
+      "kind": "title1",
+      "maxW": 4940,
+      "page": "agent",
+      "text": "The smart assistant",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_comp": {
+      "kind": "title1",
+      "maxW": 1400,
+      "page": "components",
+      "text": "Shared components",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_custom": {
+      "kind": "title1",
+      "maxW": 8550,
+      "page": "custom",
+      "text": "Customisation: coarse by default, detail where you want it",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_feedback": {
+      "kind": "title1",
+      "maxW": 3580,
+      "page": "feedback",
+      "text": "Feedback and learning",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t_plans": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "plans",
+      "text": "Plans, recipes and the kitchen",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "SignIn.dc.html",
+    "CreateHousehold.dc.html",
+    "Onboarding.dc.html",
+    "InviteAccept.dc.html",
+    "AccountPhone.dc.html",
+    "FirstDaysPhone.dc.html",
+    "PeopleAccess.dc.html",
+    "InviteDialog.dc.html",
+    "BlockDialog.dc.html",
+    "HouseholdSettings.dc.html",
+    "ChangeLog.dc.html",
+    "PlatformConsole.dc.html",
+    "DetailLevels.dc.html",
+    "MemberSimple.dc.html",
+    "MemberDetailed.dc.html",
+    "ScheduleGrid.dc.html",
+    "PlanningBalance.dc.html",
+    "TastePhone.dc.html",
+    "TastesDesktop.dc.html",
+    "TodayPhone.dc.html",
+    "PlatePhone.dc.html",
+    "TodayDesktop.dc.html",
+    "WeekPlan.dc.html",
+    "SwapDialog.dc.html",
+    "RecipeLibrary.dc.html",
+    "RecipePage.dc.html",
+    "CookSheet.dc.html",
+    "QuickRatePhone.dc.html",
+    "ReviewComposePhone.dc.html",
+    "ReviewsFeed.dc.html",
+    "Insights.dc.html",
+    "ChatDesktop.dc.html",
+    "ChatSidePanel.dc.html",
+    "ChatOnboarding.dc.html",
+    "ChatPhoneDigest.dc.html",
+    "ChatPhoneRecipe.dc.html",
+    "Rail.dc.html",
+    "TabBar.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "overview",
+      "name": "0 · Overview"
+    },
+    {
+      "id": "access",
+      "name": "1 · Sign-in & onboarding"
+    },
+    {
+      "id": "admin",
+      "name": "2 · Website administration"
+    },
+    {
+      "id": "custom",
+      "name": "3 · Customisation"
+    },
+    {
+      "id": "plans",
+      "name": "4 · Plans, recipes, kitchen"
+    },
+    {
+      "id": "feedback",
+      "name": "5 · Feedback & learning"
+    },
+    {
+      "id": "agent",
+      "name": "6 · Smart assistant"
+    },
+    {
+      "id": "components",
+      "name": "7 · Shared components"
+    }
+  ],
+  "title": "Family Meal Planner — UI Mockups"
+}

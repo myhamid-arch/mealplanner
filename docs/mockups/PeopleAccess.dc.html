@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>People and access</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 960px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="access" hint-size="240px,860px"></dc-import>
+  </div>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 32px 36px; display: flex; flex-direction: column; gap: 20px; position: relative">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between">
+      <div>
+        <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 34px; font-weight: 700">People &amp; access</h1>
+        <p style="margin: 4px 0 0; color: #5A4A3B">Who can sign in, what they can do, and who they are at the table.</p>
+      </div>
+      <a href="InviteDialog.dc.html" style="height: 48px; padding: 0 20px; border-radius: 14px; background: #C4411E; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; gap: 8px; text-decoration: none">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Invite someone</a>
+    </div>
+    <div style="display: flex; gap: 8px">
+      <span style="padding: 8px 14px; border-radius: 999px; background: #2B2118; color: #FFF8EE; font-weight: 800; font-size: 14px">Logins · 6</span>
+      <span style="padding: 8px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">Pending invites · 1</span>
+      <span style="padding: 8px 14px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 14px">Blocked · 1</span>
+      <label style="margin-left: auto; display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #E4D6C0; width: 260px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B5B4B" stroke-width="2" stroke-linecap="round"><path d="M11 18a7 7 0 1 0 0-14a7 7 0 0 0 0 14zM21 21l-5-5"></path></svg>
+        <input type="search" placeholder="Search people" style="border: none; outline: none; font: inherit; font-size: 14px; flex-grow: 1; background: transparent">
+      </label>
+    </div>
+    <div style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 0 #EADFCC, 0 8px 24px rgba(43,33,24,0.05)">
+      <div style="display: grid; grid-template-columns: 230px 130px 150px 130px 150px 1fr; gap: 12px; padding: 12px 20px; background: #F1E7D6; border-radius: 20px 20px 0 0; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #5A4A3B">
+        <span>Login</span><span>Eats as</span><span>Role</span><span>Status</span><span>Last active</span><span></span>
+      </div>
+      <div style="display: grid; grid-template-columns: 230px 130px 150px 130px 150px 1fr; gap: 12px; padding: 14px 20px; align-items: center; border-bottom: 1px solid #F1E7D6">
+        <span style="display: flex; align-items: center; gap: 10px"><span style="width: 36px; height: 36px; border-radius: 18px; background: #17706F; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center">O</span><span style="display: flex; flex-direction: column"><span style="font-weight: 800">Omar (you)</span><span style="font-size: 13px; color: #5A4A3B">omar@example.com</span></span></span>
+        <span>Omar</span>
+        <span style="font-weight: 800; color: #17706F">Admin</span>
+        <span><span style="padding: 4px 10px; border-radius: 999px; background: #E1EFD9; color: #2F7A2B; font-weight: 800; font-size: 13px">Active</span></span>
+        <span style="font-size: 14px">Now</span>
+        <span></span>
+      </div>
+      <div style="display: grid; grid-template-columns: 230px 130px 150px 130px 150px 1fr; gap: 12px; padding: 14px 20px; align-items: center; border-bottom: 1px solid #F1E7D6">
+        <span style="display: flex; align-items: center; gap: 10px"><span style="width: 36px; height: 36px; border-radius: 18px; background: #5B2A86; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center">S</span><span style="display: flex; flex-direction: column"><span style="font-weight: 800">Sara</span><span style="font-size: 13px; color: #5A4A3B">sara@example.com</span></span></span>
+        <span>Sara</span>
+        <label style="display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Role for Sara</span><select style="height: 38px; border-radius: 10px; border: 1.5px solid #D9CBB4; background: #FFFFFF; font: inherit; font-weight: 800; padding: 0 8px"><option>Admin</option><option>Member</option><option>Kitchen</option></select></label>
+        <span><span style="padding: 4px 10px; border-radius: 999px; background: #E1EFD9; color: #2F7A2B; font-weight: 800; font-size: 13px">Active</span></span>
+        <span style="font-size: 14px">1 hour ago</span>
+        <span style="display: flex; justify-content: flex-end"><button type="button" aria-label="More actions for Sara" style="width: 40px; height: 40px; border-radius: 10px; border: none; background: transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="#2B2118"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></button></span>
+      </div>
+      <div style="display: grid; grid-template-columns: 230px 130px 150px 130px 150px 1fr; gap: 12px; padding: 14px 20px; align-items: center; border-bottom: 1px solid #F1E7D6; background: #FFF8EE">
+        <span style="display: flex; align-items: center; gap: 10px"><span style="width: 36px; height: 36px; border-radius: 18px; background: #B3263E; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center">L</span><span style="display: flex; flex-direction: column"><span style="font-weight: 800">Layla</span><span style="font-size: 13px; color: #5A4A3B">layla@example.com</span></span></span>
+        <span>Layla</span>
+        <label style="display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Role for Layla</span><select style="height: 38px; border-radius: 10px; border: 1.5px solid #D9CBB4; background: #FFFFFF; font: inherit; font-weight: 800; padding: 0 8px"><option>Member</option><option>Admin</option><option>Kitchen</option></select></label>
+        <span><span style="padding: 4px 10px; border-radius: 999px; background: #E1EFD9; color: #2F7A2B; font-weight: 800; font-size: 13px">Active</span></span>
+        <span style="font-size: 14px">Yesterday</span>
+        <span style="display: flex; justify-content: flex-end"><button type="button" aria-label="More actions for Layla" style="width: 40px; height: 40px; border-radius: 10px; border: 2px solid #C4411E; background: #FDE3D8"><svg width="20" height="20" viewBox="0 0 24 24" fill="#2B2118"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></button></span>
+      </div>
+      <div style="display: grid; grid-template-columns: 230px 130px 150px 130px 150px 1fr; gap: 12px; padding: 14px 20px; align-items: center; border-bottom: 1px solid #F1E7D6">
+        <span style="display: flex; align-items: center; gap: 10px"><span style="width: 36px; height: 36px; border-radius: 18px; background: #B7790A; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center">A</span><span style="display: flex; flex-direction: column"><span style="font-weight: 800">Adam</span><span style="font-size: 13px; color: #5A4A3B">adam@example.com</span></span></span>
+        <span>Adam</span>
+        <span style="font-weight: 800">Member</span>
+        <span><span style="padding: 4px 10px; border-radius: 999px; background: #FCEBC4; color: #7A4F00; font-weight: 800; font-size: 13px">Invited</span></span>
+        <span style="font-size: 14px">Expires in 5 days</span>
+        <span style="display: flex; justify-content: flex-end; gap: 12px; font-size: 14px; font-weight: 800"><a href="InviteDialog.dc.html">Resend</a><a href="PeopleAccess.dc.html" style="color: #8E1C30">Revoke</a></span>
+      </div>
+      <div style="display: grid; grid-template-columns: 230px 130px 150px 130px 150px 1fr; gap: 12px; padding: 14px 20px; align-items: center; border-bottom: 1px solid #F1E7D6">
+        <span style="display: flex; align-items: center; gap: 10px"><span style="width: 36px; height: 36px; border-radius: 18px; background: #2B2118; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center">P</span><span style="display: flex; flex-direction: column"><span style="font-weight: 800">Priya</span><span style="font-size: 13px; color: #5A4A3B">Kitchen tablet</span></span></span>
+        <span style="color: #6B5B4B">Doesn't eat</span>
+        <span style="font-weight: 800; color: #5B2A86">Kitchen</span>
+        <span><span style="padding: 4px 10px; border-radius: 999px; background: #E1EFD9; color: #2F7A2B; font-weight: 800; font-size: 13px">Active</span></span>
+        <span style="font-size: 14px">Today 07:10</span>
+        <span style="display: flex; justify-content: flex-end"><button type="button" aria-label="More actions for Priya" style="width: 40px; height: 40px; border-radius: 10px; border: none; background: transparent"><svg width="20" height="20" viewBox="0 0 24 24" fill="#2B2118"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></button></span>
+      </div>
+      <div style="display: grid; grid-template-columns: 230px 130px 150px 130px 150px 1fr; gap: 12px; padding: 14px 20px; align-items: center">
+        <span style="display: flex; align-items: center; gap: 10px"><span style="width: 36px; height: 36px; border-radius: 18px; background: #A89A88; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center">R</span><span style="display: flex; flex-direction: column"><span style="font-weight: 800; color: #5A4A3B">Ravi</span><span style="font-size: 13px; color: #5A4A3B">Former kitchen staff</span></span></span>
+        <span style="color: #6B5B4B">Doesn't eat</span>
+        <span style="font-weight: 800; color: #5A4A3B">Kitchen</span>
+        <span><span style="padding: 4px 10px; border-radius: 999px; background: #F6DDE3; color: #8E1C30; font-weight: 800; font-size: 13px">Blocked</span></span>
+        <span style="font-size: 14px">12 Sep</span>
+        <span style="display: flex; justify-content: flex-end; gap: 12px; font-size: 14px; font-weight: 800"><a href="PeopleAccess.dc.html">Unblock</a><a href="BlockDialog.dc.html" style="color: #8E1C30">Remove</a></span>
+      </div>
+    </div>
+    <div style="display: flex; gap: 16px">
+      <div style="flex-grow: 1; background: #FFFFFF; border-radius: 20px; padding: 18px 20px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 10px">
+        <span style="font-weight: 800">Family members without a login</span>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span style="width: 36px; height: 36px; border-radius: 18px; background: #2F7A2B; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; justify-content: center">Z</span>
+          <span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-weight: 800">Zayd, 10</span><span style="font-size: 13px; color: #5A4A3B">Admins leave feedback for him</span></span>
+          <a href="InviteDialog.dc.html" style="font-weight: 800">Give him a login</a>
+        </div>
+      </div>
+      <div style="width: 380px; background: #FFFFFF; border-radius: 20px; padding: 18px 20px; box-shadow: 0 1px 0 #EADFCC; display: flex; flex-direction: column; gap: 10px">
+        <span style="font-weight: 800">Security</span>
+        <label style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700">Require two-step sign-in for admins<input type="checkbox" style="width: 20px; height: 20px; accent-color: #C4411E"></label>
+        <span style="font-size: 13px; color: #5A4A3B">2 admins. The last admin can't be removed, blocked or demoted.</span>
+      </div>
+    </div>
+    <div role="menu" aria-label="Actions for Layla" style="position: absolute; right: 36px; top: 370px; width: 270px; background: #FFFFFF; border-radius: 16px; box-shadow: 0 18px 48px rgba(43,33,24,0.22); padding: 8px; display: flex; flex-direction: column">
+      <a role="menuitem" href="MemberSimple.dc.html" style="padding: 11px 12px; border-radius: 10px; text-decoration: none; color: #2B2118; font-weight: 700">Open Layla's family profile</a>
+      <a role="menuitem" href="PeopleAccess.dc.html" style="padding: 11px 12px; border-radius: 10px; text-decoration: none; color: #2B2118; font-weight: 700">Send password reset link</a>
+      <a role="menuitem" href="PeopleAccess.dc.html" style="padding: 11px 12px; border-radius: 10px; text-decoration: none; color: #2B2118; font-weight: 700">Sign out of all devices</a>
+      <a role="menuitem" href="PeopleAccess.dc.html" style="padding: 11px 12px; border-radius: 10px; text-decoration: none; color: #2B2118; font-weight: 700">Link to a different person</a>
+      <span style="height: 1px; background: #F1E7D6; margin: 4px 0"></span>
+      <a role="menuitem" href="BlockDialog.dc.html" style="padding: 11px 12px; border-radius: 10px; text-decoration: none; color: #8E1C30; font-weight: 800">Block…</a>
+      <a role="menuitem" href="BlockDialog.dc.html" style="padding: 11px 12px; border-radius: 10px; text-decoration: none; color: #8E1C30; font-weight: 800">Remove from household…</a>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

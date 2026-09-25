@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sign in</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 860px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 560px; box-sizing: border-box; padding: 56px; background-color: #C4411E; background-image: repeating-linear-gradient(0deg, rgba(255,248,238,0.14) 0px, rgba(255,248,238,0.14) 28px, transparent 28px, transparent 56px), repeating-linear-gradient(90deg, rgba(255,248,238,0.14) 0px, rgba(255,248,238,0.14) 28px, transparent 28px, transparent 56px); color: #FFF8EE; display: flex; flex-direction: column; justify-content: space-between">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <span style="width: 44px; height: 44px; border-radius: 12px; background: #FFF8EE; display: flex; align-items: center; justify-content: center">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C4411E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17h10v3H7zM7 17c-2.5-.5-4-2.6-3.5-5A4 4 0 0 1 8 9a4.5 4.5 0 0 1 8 0a4 4 0 0 1 4.5 3c.5 2.4-1 4.5-3.5 5"></path></svg>
+      </span>
+      <span style="font-family: Fraunces, serif; font-size: 30px; font-weight: 700">Mise</span>
+    </div>
+    <div style="background: #FFF8EE; color: #2B2118; border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 18px 40px rgba(43,33,24,0.25)">
+      <span style="font-family: Fraunces, serif; font-size: 30px; font-weight: 700; line-height: 1.15">Everyone's macros. One kitchen. Food the whole family likes.</span>
+      <span style="font-size: 16px; color: #5A4A3B">Plans every meal for every person, writes the recipes for your kitchen, and learns from what the family thinks.</span>
+    </div>
+  </div>
+  <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center">
+    <form style="width: 420px; display: flex; flex-direction: column; gap: 18px">
+      <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 36px; font-weight: 700">Welcome back</h1>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Email
+        <input type="email" value="omar@example.com" style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1.5px solid #D9CBB4; background: #FFFFFF; font: inherit; font-weight: 600; font-size: 16px; color: #2B2118">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Password
+        <input type="password" value="password123" style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1.5px solid #D9CBB4; background: #FFFFFF; font: inherit; font-size: 16px; color: #2B2118">
+      </label>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px">
+        <label style="display: flex; align-items: center; gap: 8px; font-weight: 600"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #C4411E">Keep me signed in on this device</label>
+        <a href="SignIn.dc.html" style="font-weight: 700">Forgot password?</a>
+      </div>
+      <a href="TodayDesktop.dc.html" style="height: 52px; border-radius: 14px; background: #C4411E; color: #FFFFFF; font-weight: 800; font-size: 17px; display: flex; align-items: center; justify-content: center; text-decoration: none">Sign in</a>
+      <div style="display: flex; align-items: center; gap: 12px; color: #6B5B4B; font-size: 13px; font-weight: 700"><span style="flex-grow: 1; height: 1px; background: #E4D6C0"></span>or<span style="flex-grow: 1; height: 1px; background: #E4D6C0"></span></div>
+      <button type="button" style="height: 52px; border-radius: 14px; border: 1.5px solid #2B2118; background: #FFFFFF; color: #2B2118; font: inherit; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v12H3zM3 7l9 6l9-6"></path></svg>
+        Email me a one-time sign-in link
+      </button>
+      <div style="margin-top: 8px; padding: 16px; border-radius: 14px; background: #F1E7D6; display: flex; flex-direction: column; gap: 10px">
+        <span style="font-weight: 800">Got an invite code?</span>
+        <div style="display: flex; gap: 8px">
+          <label style="flex-grow: 1; display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Invite code</span>
+            <input type="text" placeholder="e.g. KHL-7Q4-M2P" style="flex-grow: 1; height: 44px; box-sizing: border-box; padding: 0 12px; border-radius: 10px; border: 1.5px solid #D9CBB4; background: #FFFFFF; font-family: JetBrains Mono, monospace; font-size: 15px">
+          </label>
+          <a href="InviteAccept.dc.html" style="height: 44px; padding: 0 16px; border-radius: 10px; background: #2B2118; color: #FFF8EE; font-weight: 800; display: flex; align-items: center; text-decoration: none">Join</a>
+        </div>
+      </div>
+      <span style="font-size: 15px; text-align: center">New here? <a href="CreateHousehold.dc.html" style="font-weight: 800">Create a household</a></span>
+    </form>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Swap a meal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 960px; position: relative; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="plan" hint-size="240px,860px"></dc-import>
+  </div>
+  <div style="flex-grow: 1; padding: 26px 28px; box-sizing: border-box"><span style="font-family: Fraunces, serif; font-size: 30px; font-weight: 700">Week of 28 Sep</span></div>
+  <div style="position: absolute; left: 0; top: 0; width: 1280px; height: 960px; background: rgba(43,33,24,0.5); display: flex; justify-content: flex-end">
+    <div role="dialog" aria-label="Swap Wednesday dinner" style="width: 640px; height: 960px; box-sizing: border-box; background: #FFF8EE; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: -20px 0 60px rgba(0,0,0,0.25)">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <div><span style="font-size: 13px; font-weight: 800; color: #5A4A3B">Wednesday dinner · 5 people</span><h2 style="margin: 2px 0 0; font-family: Fraunces, serif; font-size: 28px">Swap lamb kofta</h2></div>
+        <a href="WeekPlan.dc.html" aria-label="Close" style="width: 44px; height: 44px; border-radius: 12px; background: #F1E7D6; display: flex; align-items: center; justify-content: center; color: #2B2118"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #F1E7D6; font-size: 14px">
+        <span style="font-weight: 800">Now: 0.71</span>
+        <span style="font-family: JetBrains Mono, monospace; font-size: 12px">macros .93 · appeal .74 · economy .48</span>
+        <span style="margin-left: auto; color: #5A4A3B">Lamb is used only here this week</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="background: #FFFFFF; border-radius: 16px; padding: 14px; border: 2.5px solid #2F7A2B; display: flex; flex-direction: column; gap: 8px">
+          <div style="display: flex; align-items: center; gap: 10px"><span style="font-weight: 800; flex-grow: 1">Chicken kofta, saffron rice, tomato salad</span><span style="font-family: JetBrains Mono, monospace; font-weight: 800; color: #2F7A2B">0.82</span></div>
+          <div style="display: grid; grid-template-columns: 70px 1fr; gap: 4px 10px; align-items: center; font-size: 12px; font-weight: 800">
+            <span>Macros</span><span style="height: 8px; border-radius: 4px; background: #F1E7D6"><span style="display: block; width: 95%; height: 8px; border-radius: 4px; background: #C4411E"></span></span>
+            <span>Appeal</span><span style="height: 8px; border-radius: 4px; background: #F1E7D6"><span style="display: block; width: 78%; height: 8px; border-radius: 4px; background: #2F7A2B"></span></span>
+            <span>Economy</span><span style="height: 8px; border-radius: 4px; background: #F1E7D6"><span style="display: block; width: 86%; height: 8px; border-radius: 4px; background: #17706F"></span></span>
+          </div>
+          <span style="font-size: 13px; color: #3D3025">Reuses chicken, rice and tomato. No new ingredients. Everyone on target; Zayd gets yogurt sauce.</span>
+          <div style="display: flex; gap: 8px"><a href="WeekPlan.dc.html" style="height: 40px; padding: 0 14px; border-radius: 10px; background: #C4411E; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; text-decoration: none">Use this</a><a href="RecipePage.dc.html" style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1.5px solid #2B2118; color: #2B2118; font-weight: 800; display: flex; align-items: center; text-decoration: none">See plates</a></div>
+        </div>
+        <div style="background: #FFFFFF; border-radius: 16px; padding: 14px; box-shadow: 0 1px 0 #EADFCC; display: flex; align-items: center; gap: 10px"><span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-weight: 800">Hammour tikka, rice, cucumber raita</span><span style="font-size: 13px; color: #3D3025">Reuses hammour from Sunday · Indian</span></span><span style="font-family: JetBrains Mono, monospace; font-weight: 800">0.78</span></div>
+        <div style="background: #FFFFFF; border-radius: 16px; padding: 14px; box-shadow: 0 1px 0 #EADFCC; display: flex; align-items: center; gap: 10px"><span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-weight: 800">Chicken fajitas</span><span style="font-size: 13px; color: #3D3025">Kids love it · Sara is not keen on Tex-Mex</span></span><span style="font-family: JetBrains Mono, monospace; font-weight: 800">0.74</span></div>
+        <div style="background: #FFFFFF; border-radius: 16px; padding: 14px; box-shadow: 0 1px 0 #EADFCC; display: flex; align-items: center; gap: 10px"><span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-weight: 800">Beef &amp; broccoli stir-fry</span><span style="font-size: 13px; color: #3D3025">Needs 3 new ingredients</span></span><span style="font-family: JetBrains Mono, monospace; font-weight: 800">0.69</span></div>
+        
+      </div>
+      <div style="background: #FFFFFF; border-radius: 16px; padding: 14px; border: 1.5px dashed #7A4F00; display: flex; flex-direction: column; gap: 8px"><span style="font-weight: 800">Just this Wednesday: take someone out of the shared dinner</span><span style="font-size: 13px; color: #3D3025">They get their own dish, planned for them. Everyone else keeps the shared one.</span><div style="display: flex; gap: 6px"><span style="padding: 7px 12px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 13px">Omar</span><span style="padding: 7px 12px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 13px">Sara</span><span style="padding: 7px 12px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 13px">Layla</span><span style="padding: 7px 12px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 13px">Adam</span><span style="padding: 7px 12px; border-radius: 999px; background: #F1E7D6; font-weight: 800; font-size: 13px">Zayd</span></div><span style="font-size: 13px; color: #3D3025">Or make the whole meal <strong>individual</strong> for this day only.</span></div><div style="margin-top: auto; background: #5B2A86; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px">
+        <label style="color: #FFFFFF; font-weight: 800" for="ask">None of these? Ask for something</label>
+        <div style="display: flex; gap: 8px">
+          <input id="ask" type="text" value="Something Italian the kids will love, using chicken" style="flex-grow: 1; height: 46px; border-radius: 12px; border: none; padding: 0 12px; font: inherit">
+          <a href="ChatSidePanel.dc.html" style="height: 46px; padding: 0 16px; border-radius: 12px; background: #F3A712; color: #2B2118; font-weight: 800; display: flex; align-items: center; text-decoration: none">Ask</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

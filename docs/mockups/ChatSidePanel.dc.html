@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Assistant side panel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 960px; display: flex; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="plan" hint-size="240px,860px"></dc-import>
+  </div>
+  <div style="flex-grow: 1; box-sizing: border-box; padding: 26px 28px; display: flex; flex-direction: column; gap: 14px; opacity: 0.55">
+    <span style="font-family: Fraunces, serif; font-size: 30px; font-weight: 700">Week of 28 Sep</span>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+      <span style="height: 70px; border-radius: 10px; background: #FFFFFF"></span><span style="height: 70px; border-radius: 10px; background: #FFFFFF"></span><span style="height: 70px; border-radius: 10px; background: #FDE3D8; border: 2px solid #C4411E"></span><span style="height: 70px; border-radius: 10px; background: #FFFFFF"></span>
+      <span style="height: 70px; border-radius: 10px; background: #FFFFFF"></span><span style="height: 70px; border-radius: 10px; background: #FFFFFF"></span><span style="height: 70px; border-radius: 10px; background: #FFFFFF"></span><span style="height: 70px; border-radius: 10px; background: #FFFFFF"></span>
+    </div>
+  </div>
+  <aside aria-label="Assistant" style="width: 460px; box-sizing: border-box; background: #FFFFFF; border-left: 1px solid #EADFCC; box-shadow: -12px 0 32px rgba(43,33,24,0.08); display: flex; flex-direction: column">
+    <div style="padding: 16px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #F1E7D6">
+      <span style="width: 34px; height: 34px; border-radius: 10px; background: #5B2A86; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4zM12 8l1 2l2 1l-2 1l-1 2l-1-2l-2-1l2-1z"></path></svg></span>
+      <span style="display: flex; flex-direction: column"><span style="font-weight: 800">Assistant</span><span style="font-size: 12px; color: #5A4A3B">Looking at: Week of 28 Sep · Wed dinner</span></span>
+      <a href="ChatDesktop.dc.html" style="margin-left: auto; font-size: 13px; font-weight: 800">Full screen</a>
+    </div>
+    <div style="flex-grow: 1; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+      <div style="align-self: flex-end; max-width: 340px; padding: 12px 14px; border-radius: 16px 16px 4px 16px; background: #2B2118; color: #FFF8EE; font-size: 14px">Something Italian the kids will love for Wednesday, using chicken.</div>
+      <div style="display: flex; gap: 6px; font-size: 12px; font-weight: 800; color: #5A4A3B"><span style="padding: 5px 9px; border-radius: 999px; background: #F1E7D6">Wrote 1 new recipe</span><span style="padding: 5px 9px; border-radius: 999px; background: #F1E7D6">Checked 5 plates</span></div>
+      <span style="font-size: 14px; line-height: 1.5">This uses the chicken, tomatoes and pasta already in this week's plan, so there's nothing new to buy. The kids get it breaded and baked; you and Sara get it grilled.</span>
+      <div style="border-radius: 16px; border: 1.5px solid #E4D6C0; overflow: hidden">
+        <div style="height: 90px; background-color: #3F8F3A; background-image: radial-gradient(circle at 30% 50%, #E4572E 0 24px, transparent 25px), radial-gradient(circle at 60% 50%, #F3A712 0 20px, transparent 21px), radial-gradient(circle at 82% 45%, #FFF8EE 0 14px, transparent 15px)"></div>
+        <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+          <span style="display: flex; align-items: center; gap: 8px"><span style="font-weight: 800">Chicken parmigiana, spaghetti pomodoro</span><span style="padding: 2px 8px; border-radius: 999px; background: #EBDDF6; color: #5B2A86; font-size: 11px; font-weight: 800">NEW</span></span>
+          <span style="font-size: 13px; color: #5A4A3B">Italian · chicken: grilled / breaded-baked · light mozzarella on top as its own part</span>
+          <div style="display: grid; grid-template-columns: 70px 1fr 110px; gap: 4px 8px; font-size: 13px">
+            <span style="font-weight: 800">Omar</span><span>grilled 200 g · pasta 150 g</span><span style="color: #2F7A2B; font-weight: 800">on target</span>
+            <span style="font-weight: 800">Sara</span><span>grilled 150 g · pasta 110 g</span><span style="color: #2F7A2B; font-weight: 800">on target</span>
+            <span style="font-weight: 800">Kids</span><span>breaded-baked · regular portions</span><span style="color: #5A4A3B">no sesame</span>
+          </div>
+          <div style="display: flex; gap: 8px">
+            <a href="WeekPlan.dc.html" style="height: 40px; padding: 0 14px; border-radius: 10px; background: #C4411E; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; text-decoration: none">Use for Wed dinner</a>
+            <a href="RecipePage.dc.html" style="height: 40px; padding: 0 12px; border-radius: 10px; border: 1.5px solid #2B2118; color: #2B2118; font-weight: 800; display: flex; align-items: center; text-decoration: none">Open recipe</a>
+            <button type="button" style="height: 40px; padding: 0 12px; border-radius: 10px; border: 1.5px solid #D9CBB4; background: #FFFFFF; font: inherit; font-weight: 800">Another</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 12px 14px 16px; border-top: 1px solid #F1E7D6">
+      <div style="display: flex; gap: 8px; align-items: center; padding: 6px 6px 6px 14px; border-radius: 16px; border: 2px solid #5B2A86">
+        <label style="flex-grow: 1; display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Message</span><input type="text" placeholder="Ask about this page…" style="flex-grow: 1; border: none; outline: none; font: inherit; height: 38px"></label>
+        <button type="button" aria-label="Send" style="width: 42px; height: 42px; border-radius: 12px; border: none; background: #5B2A86"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6l-6 6"></path></svg></button>
+      </div>
+    </div>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

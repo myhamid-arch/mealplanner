@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create a household</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 860px; box-sizing: border-box; padding: 48px 0; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE; display: flex; flex-direction: column; align-items: center; gap: 28px">
+  <div style="display: flex; align-items: center; gap: 12px">
+    <span style="width: 40px; height: 40px; border-radius: 12px; background: #C4411E; display: flex; align-items: center; justify-content: center">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFF8EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17h10v3H7zM7 17c-2.5-.5-4-2.6-3.5-5A4 4 0 0 1 8 9a4.5 4.5 0 0 1 8 0a4 4 0 0 1 4.5 3c.5 2.4-1 4.5-3.5 5"></path></svg>
+    </span>
+    <span style="font-family: Fraunces, serif; font-size: 26px; font-weight: 700">Mise</span>
+  </div>
+  <div style="width: 760px; background: #FFFFFF; border-radius: 24px; padding: 40px; box-sizing: border-box; box-shadow: 0 1px 0 #EADFCC, 0 16px 40px rgba(43,33,24,0.08); display: flex; flex-direction: column; gap: 22px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-family: Fraunces, serif; font-size: 34px; font-weight: 700">Create your household</h1>
+      <p style="margin: 0; color: #5A4A3B; font-size: 16px">You'll be the first admin. You can invite other admins, family members and kitchen staff next.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Your name
+        <input type="text" value="Omar" style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; font-weight: 600; font-size: 16px">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Email
+        <input type="email" value="omar@example.com" style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; font-weight: 600; font-size: 16px">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Password
+        <input type="password" value="averylongpassword" style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; font-size: 16px">
+        <span style="font-weight: 600; font-size: 13px; color: #2F7A2B">Strong · at least 12 characters</span>
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Household name
+        <input type="text" value="Khalifa City home" style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; font-weight: 600; font-size: 16px">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Country
+        <select style="height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; font-weight: 600; font-size: 16px; background: #FFFFFF"><option>United Arab Emirates</option></select>
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px">Area (helps pick ingredients you can buy)
+        <input type="text" value="Khalifa City, Abu Dhabi" style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; font-weight: 600; font-size: 16px">
+      </label>
+    </div>
+    <div style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 14px; background: #F1E7D6; font-size: 14px; color: #3D3025">
+      <span style="font-weight: 800">Set automatically:</span>
+      <span>Units kg · g · L · ml</span><span>·</span><span>Time zone Asia/Dubai</span><span>·</span><span>Week starts Monday</span>
+      <a href="HouseholdSettings.dc.html" style="margin-left: auto; font-weight: 800">Change</a>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <a href="SignIn.dc.html" style="font-weight: 800">I already have an account</a>
+      <a href="Onboarding.dc.html" style="height: 52px; padding: 0 28px; border-radius: 14px; background: #C4411E; color: #FFFFFF; font-weight: 800; font-size: 17px; display: flex; align-items: center; text-decoration: none">Create household</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

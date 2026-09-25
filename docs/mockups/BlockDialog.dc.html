@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Block or remove a user</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Nunito:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8EE}
+a{color:#C4411E}a:hover{color:#8F2E14}
+</style>
+</helmet>
+<div style="width: 1280px; height: 960px; position: relative; font-family: Nunito, sans-serif; color: #2B2118; background: #FFF8EE; display: flex">
+  <div style="width: 240px; background: #2B2118; flex-shrink: 0">
+    <dc-import name="Rail" active="access" hint-size="240px,860px"></dc-import>
+  </div>
+  <div style="flex-grow: 1; padding: 32px 36px; box-sizing: border-box">
+    <div style="font-family: Fraunces, serif; font-size: 34px; font-weight: 700">People &amp; access</div>
+  </div>
+  <div style="position: absolute; left: 0; top: 0; width: 1280px; height: 960px; background: rgba(43,33,24,0.55); display: flex; align-items: center; justify-content: center">
+    <div role="dialog" aria-label="Block or remove Layla" style="width: 860px; background: #FFF8EE; border-radius: 26px; box-shadow: 0 30px 80px rgba(0,0,0,0.35); padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+      <div style="display: flex; align-items: center; gap: 14px">
+        <span style="width: 52px; height: 52px; border-radius: 26px; background: #B3263E; color: #FFFFFF; font-size: 22px; font-weight: 800; display: flex; align-items: center; justify-content: center">L</span>
+        <div style="display: flex; flex-direction: column">
+          <h2 style="margin: 0; font-family: Fraunces, serif; font-size: 28px; font-weight: 700">Layla's login</h2>
+          <span style="color: #5A4A3B">layla@example.com · Member · eats as Layla</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+        <label style="border-radius: 18px; padding: 18px; background: #FFFFFF; border: 2.5px solid #C4411E; display: flex; flex-direction: column; gap: 10px">
+          <span style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px"><input type="radio" name="act" checked style="width: 20px; height: 20px; accent-color: #C4411E">Block (reversible)</span>
+          <span style="font-size: 14px; color: #3D3025">Signed out on every device now. Can't sign in until unblocked.</span>
+          <span style="font-size: 14px; color: #3D3025">Layla still gets meals planned, her reviews stay, and you can unblock at any time.</span>
+        </label>
+        <label style="border-radius: 18px; padding: 18px; background: #FFFFFF; border: 1.5px solid #D9CBB4; display: flex; flex-direction: column; gap: 10px">
+          <span style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px"><input type="radio" name="act" style="width: 20px; height: 20px; accent-color: #C4411E">Remove login</span>
+          <span style="font-size: 14px; color: #3D3025">Deletes the login from this household. She'd need a new invite to come back.</span>
+          <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700"><input type="checkbox" style="width: 18px; height: 18px; accent-color: #C4411E">Also stop planning meals for Layla (archive, keeps history)</span>
+        </label>
+      </div>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 800">Reason (only admins see this)
+        <input type="text" placeholder="Optional" style="height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1.5px solid #D9CBB4; font: inherit; background: #FFFFFF">
+      </label>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #F1E7D6; font-size: 14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B2118" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"></path></svg>
+        Recorded in the change log. Blocking can be undone there or here.
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 12px">
+        <a href="PeopleAccess.dc.html" style="height: 50px; padding: 0 22px; border-radius: 14px; border: 1.5px solid #2B2118; color: #2B2118; font-weight: 800; display: flex; align-items: center; text-decoration: none">Cancel</a>
+        <a href="PeopleAccess.dc.html" style="height: 50px; padding: 0 24px; border-radius: 14px; background: #8E1C30; color: #FFFFFF; font-weight: 800; display: flex; align-items: center; text-decoration: none">Block Layla</a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
