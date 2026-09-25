@@ -1,0 +1,5 @@
+# unlazy working state (per-session, machine-specific)
+.unlazy/
+.unlazy-hook-state.json
+.claude/settings.local.json
+node_modules/
