@@ -1,6 +1,6 @@
 # leaf-1.1.1 ADR-1: pnpm workspaces + Turborepo, Node 22
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED; built for CP2)
 Requirement: ARC-1 (monorepo), ARC-2 (layout)
 
 ## Decision
@@ -10,6 +10,8 @@ Requirement: ARC-1 (monorepo), ARC-2 (layout)
 - Workspace globs: `apps/*`, `packages/*`.
 - Package scope: `@mealplanner/<name>`. The product name "Mise" is a placeholder (R2-UX-6), so the repo name is used.
 - All dependency specifiers are exact versions (no `^`/`~`); internal dependencies use `workspace:*`.
+
+- pnpm 10 skips dependency lifecycle scripts by default. It reports `esbuild` (a transitive dependency of drizzle-kit and vitest) as ignored. No `onlyBuiltDependencies` allow-list is set: esbuild ships its binary as an optional platform package, and the build, lint and tests all pass without its postinstall.
 
 ## Consequences
 - `pnpm install --frozen-lockfile` fails when a manifest drifts from `pnpm-lock.yaml`; G1 exercises this as its negative control.

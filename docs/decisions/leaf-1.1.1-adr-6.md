@@ -1,6 +1,6 @@
 # leaf-1.1.1 ADR-6: application dependencies declared up front (ARC-1)
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED; built for CP2)
 Requirement: ARC-1, 11-build-plan §4 "Shared manifests"
 
 Exact versions are the latest published on 2026-09-25 (`npm view <pkg> version`), except TypeScript (latest 5.x) and @types/node (latest 22.x).
@@ -21,6 +21,7 @@ Exact versions are the latest published on 2026-09-25 (`npm view <pkg> version`)
 | Auth | better-auth@1.7.6 (Drizzle adapter is the `better-auth/adapters/drizzle` subpath of the same package) | apps/web |
 | Tests | vitest@5.0.2 (root dev), @playwright/test@1.63.0 (apps/web dev) | |
 | Lint/format | eslint@10.11.0, @eslint/js@10.0.1, typescript-eslint@8.70.1, eslint-plugin-boundaries@7.2.0, eslint-config-prettier@10.1.8, prettier@3.9.9 | root (dev) |
+| ARC-3 lint resolver | eslint-import-resolver-typescript@4.4.5 | root (dev); see ADR-3 |
 
 `pg` is the driver because pg-boss already depends on node-postgres; one driver for ORM and queue.
 
