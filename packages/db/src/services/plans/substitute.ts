@@ -10,6 +10,7 @@ import type { ChangeOp } from "@mealplanner/core/changes";
 import type { PlanDish } from "@mealplanner/core/planner";
 import type { HouseholdContext } from "@mealplanner/core/types";
 import { createRepos, type Executor } from "../../repos/index.js";
+import { copyPayload, dishTree, freeSlug, type TreeComponent } from "./dish-tree.js";
 import { newId } from "../../schema/ids.js";
 import { addDays, loadPlanInput } from "./load-input.js";
 import { resolvePlates, solveMealWith, type MealState, type ResolveReport } from "./meal.js";
@@ -167,86 +168,37 @@ export async function substituteUnavailable(
   return { ...report, ...resolved, copies: report.copies, unresolved: report.unresolved };
 }
 
-/** `dish.create` for a household copy, from the original dish row and the in-memory copy. */
+/** `dish.create` for a household copy of the original with the in-memory copy's ids and lines. */
 async function copyOp(
   db: Executor,
   ctx: HouseholdContext,
   copy: PlanDish,
   originalDish: PlanDish,
 ): Promise<ChangeOp> {
-  const r = createRepos(db, ctx);
-  const row = await r.dish.get({ id: originalDish.id });
-  if (row === null) throw new PlanServiceError("not_found", `dish ${originalDish.id} not found`);
-  const taken = new Set(
-    (await r.dish.list()).filter((d) => d.householdId === ctx.householdId).map((d) => d.slug),
-  );
-  let slug = `${row.slug}-sub`.slice(0, 110);
-  for (let i = 2; taken.has(slug); i++) slug = `${row.slug.slice(0, 100)}-sub-${String(i)}`;
-  const components = [];
-  for (const [ci, c] of copy.components.entries()) {
-    const oc = originalDish.components[ci];
-    const componentRow = oc === undefined ? null : await r.component.get({ id: oc.id });
-    if (componentRow === null || oc === undefined)
-      throw new PlanServiceError("not_found", "component missing");
-    const variants = [];
-    for (const [vi, v] of c.variants.entries()) {
-      const ov = oc.variants[vi];
-      const variantRow = ov === undefined ? null : await r.variant.get({ id: ov.id });
-      if (variantRow === null || ov === undefined)
-        throw new PlanServiceError("not_found", "variant missing");
-      const lines = await r.variant_ingredient.list({ variantId: ov.id });
-      variants.push({
-        id: v.id,
-        methodId: variantRow.methodId,
-        label: variantRow.label,
-        isDefault: variantRow.isDefault,
-        steps: variantRow.steps,
-        cookTimeMin: variantRow.cookTimeMin,
-        notes: variantRow.notes,
-        referenceBatchCookedG: variantRow.referenceBatchCookedG,
-        ingredients: lines
-          .sort((a, b) => a.id.localeCompare(b.id))
-          .map((l, li) => ({
-            ingredientId: v.input.ingredients[li]?.ingredientId ?? l.ingredientId,
-            rawGPerBatch: l.rawGPerBatch,
-            roleNote: l.roleNote,
-            isAbsorbedOil: l.isAbsorbedOil,
-            cookingLiquid: l.cookingLiquid,
-            yieldOverride: l.yieldOverride,
+  const tree = await dishTree(db, originalDish.id);
+  const components: TreeComponent[] = tree.components.map((c, ci) => {
+    const cc = copy.components[ci];
+    if (cc === undefined) throw new PlanServiceError("invalid", "copy does not match its dish");
+    return {
+      ...c,
+      id: cc.id,
+      variants: c.variants.map((v, vi) => {
+        const cv = cc.variants[vi];
+        if (cv === undefined) throw new PlanServiceError("invalid", "copy does not match its dish");
+        return {
+          ...v,
+          id: cv.id,
+          ingredients: v.ingredients.map((l, li) => ({
+            ...l,
+            ingredientId: cv.input.ingredients[li]?.ingredientId ?? l.ingredientId,
           })),
-      });
-    }
-    components.push({
-      id: c.id,
-      name: componentRow.name,
-      role: componentRow.role,
-      portioning: componentRow.portioning,
-      unitLabel: componentRow.unitLabel,
-      minServingG: componentRow.minServingG,
-      maxServingG: componentRow.maxServingG,
-      defaultServingG: componentRow.defaultServingG,
-      stepG: componentRow.stepG,
-      required: componentRow.required,
-      variants,
-    });
-  }
+        };
+      }),
+    };
+  });
+  const slug = await freeSlug(db, ctx.householdId, `${tree.dish.slug}-sub`);
   return {
     kind: "dish.create",
-    payload: {
-      id: copy.id,
-      name: copy.name.slice(0, 120),
-      slug,
-      description: row.description,
-      cuisineId: row.cuisineId,
-      secondaryCuisineId: row.secondaryCuisineId,
-      slotKeys: row.slotKeys,
-      flavourTags: row.flavourTags,
-      isPackable: row.isPackable,
-      servedColdOk: row.servedColdOk,
-      status: "active",
-      source: "admin",
-      aiGenerationId: null,
-      components,
-    },
+    payload: copyPayload(tree, { id: copy.id, name: copy.name, slug, components }),
   };
 }

@@ -65,7 +65,11 @@ export async function createJob(
  * R-40: the worker's atomic claim. Returns the job when this call moved it from `queued` to
  * `running`, null when it was already claimed or withdrawn (a `recipe.*` undo deleted it).
  */
-export async function claimJob(db: Executor, jobId: string, now = new Date()): Promise<JobRow | null> {
+export async function claimJob(
+  db: Executor,
+  jobId: string,
+  now = new Date(),
+): Promise<JobRow | null> {
   const [row] = await db
     .update(job)
     .set({ status: "running", startedAt: now })
@@ -77,7 +81,10 @@ export async function claimJob(db: Executor, jobId: string, now = new Date()): P
 export async function finishJob(
   db: Executor,
   jobId: string,
-  outcome: { status: "succeeded" } | { status: "failed"; error: Json } | { status: "cancelled"; error?: Json },
+  outcome:
+    | { status: "succeeded" }
+    | { status: "failed"; error: Json }
+    | { status: "cancelled"; error?: Json },
   now = new Date(),
 ): Promise<void> {
   await db
@@ -110,11 +117,15 @@ export async function appendJobEvent(
     SELECT seq, pg_notify(${JOB_EVENT_CHANNEL}, job_id::text || ':' || seq::text) FROM ins`);
   const seq = result.rows[0]?.seq;
   if (seq === undefined) throw new Error(`job ${jobId} not found`);
-  return Number(seq);
+  return seq;
 }
 
 /** The job, only if it belongs to the household (other households' jobs read as absent, DM-1). */
-export async function jobOf(db: Executor, ctx: HouseholdContext, jobId: string): Promise<JobRow | null> {
+export async function jobOf(
+  db: Executor,
+  ctx: HouseholdContext,
+  jobId: string,
+): Promise<JobRow | null> {
   const [row] = await db
     .select()
     .from(job)
@@ -123,7 +134,11 @@ export async function jobOf(db: Executor, ctx: HouseholdContext, jobId: string):
 }
 
 /** Events of a job after `afterSeq`, in order. The caller has checked the job's household. */
-export async function jobEventsAfter(db: Executor, jobId: string, afterSeq: number): Promise<JobEventRow[]> {
+export async function jobEventsAfter(
+  db: Executor,
+  jobId: string,
+  afterSeq: number,
+): Promise<JobEventRow[]> {
   return db
     .select()
     .from(jobEvent)
@@ -150,7 +165,10 @@ export async function failedJobs(
 }
 
 /** Jobs still queued (for re-sending to the queue after a restart). */
-export async function queuedJobs(db: Executor, kinds: readonly JobKind[] = JOB_KINDS): Promise<JobRow[]> {
+export async function queuedJobs(
+  db: Executor,
+  kinds: readonly JobKind[] = JOB_KINDS,
+): Promise<JobRow[]> {
   return db
     .select()
     .from(job)

@@ -46,6 +46,7 @@ export function followUpJobs(row: { id: string; inverse: Json }, today: string):
   const recipe = has(RECIPE);
   if (recipe) out.push({ kind: "nutrition.recompute", payload: { changeSetId: row.id } });
   if (recipe || has(GRAPH)) out.push({ kind: "kg.sync", payload: { changeSetId: row.id } });
-  if (recipe || has(RESOLVE)) out.push({ kind: "plates.resolve", payload: { fromDate: today, changeSetId: row.id } });
+  if (recipe || has(RESOLVE))
+    out.push({ kind: "plates.resolve", payload: { fromDate: today, changeSetId: row.id } });
   return out;
 }

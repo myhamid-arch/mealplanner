@@ -93,3 +93,13 @@ export {
   type JobRow,
 } from "./jobs.js";
 export { followUpJobs, touchedEntityNames, type FollowUp } from "./followups.js";
+export {
+  copyPayload,
+  dishTree,
+  freeSlug,
+  withNewIds,
+  type DishTree,
+  type TreeComponent,
+  type TreeLine,
+  type TreeVariant,
+} from "./dish-tree.js";
