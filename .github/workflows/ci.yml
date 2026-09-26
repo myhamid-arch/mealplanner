@@ -64,6 +64,11 @@ jobs:
       - name: Unit tests
         run: pnpm test:unit
 
+      - name: Database service is PostgreSQL 16
+        run: psql "$DATABASE_URL" --tuples-only --no-align --command "SHOW server_version" | grep -E '^16\.'
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/mealplanner_test
+
       - name: Integration tests (postgres:16)
         run: pnpm test:integration
         env:
