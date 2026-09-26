@@ -878,6 +878,7 @@
       "aliases": [],
       "category": "grain",
       "dietary_flags": [
+        "contains_gluten",
         "vegan",
         "vegetarian"
       ],
@@ -2215,7 +2216,8 @@
       "aliases": [],
       "category": "sweetener",
       "dietary_flags": [
-        "vegan",
+        "contains_dairy",
+        "contains_soy",
         "vegetarian"
       ],
       "locale_availability": {
@@ -2894,7 +2896,9 @@
       "name": "Gelatine powder",
       "aliases": [],
       "category": "other",
-      "dietary_flags": [],
+      "dietary_flags": [
+        "contains_pork"
+      ],
       "locale_availability": {
         "AE": "available"
       },
@@ -4039,7 +4043,7 @@
       "aliases": [],
       "category": "oil_fat",
       "dietary_flags": [
-        "vegan",
+        "contains_dairy",
         "vegetarian"
       ],
       "locale_availability": {
@@ -4094,6 +4098,7 @@
       "category": "sweetener",
       "dietary_flags": [
         "contains_dairy",
+        "contains_soy",
         "vegetarian"
       ],
       "locale_availability": {

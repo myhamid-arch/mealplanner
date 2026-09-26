@@ -65,7 +65,7 @@
         "sha256": "8142ae85516cc8b6c9a9ef607ed681bed65ef8956f48cb47f212c7b27ff476f6"
       },
       "manifest": {
-        "sha256": "6df350cf6662e33d0a3e492f54c0798f0aa6faf288f58fe0aad5f795174b3e88"
+        "sha256": "c1ccecf17817943e9f002f6dacd2424c7d9288826b5fd2ac42e2e74d513e5196"
       },
       "off/products.csv": {
         "sha256": "e4e852c8114b73c4c9b1c3289a859768519ce85cf6f86fd1e8868b314cc6b658"
@@ -2309,6 +2309,7 @@
       "unit_label": null,
       "edible_portion": 1,
       "dietary_flags": [
+        "contains_gluten",
         "vegan",
         "vegetarian"
       ],
@@ -5739,7 +5740,8 @@
       "unit_label": null,
       "edible_portion": 1,
       "dietary_flags": [
-        "vegan",
+        "contains_dairy",
+        "contains_soy",
         "vegetarian"
       ],
       "nutrition_source": "usda_fdc:170273",
@@ -7385,7 +7387,9 @@
       "unit_weight_g": null,
       "unit_label": null,
       "edible_portion": 1,
-      "dietary_flags": [],
+      "dietary_flags": [
+        "contains_pork"
+      ],
       "nutrition_source": "usda_fdc:169599",
       "nutrition_confidence": "high",
       "locale_availability": {
@@ -10248,7 +10252,7 @@
       "unit_label": null,
       "edible_portion": 1,
       "dietary_flags": [
-        "vegan",
+        "contains_dairy",
         "vegetarian"
       ],
       "nutrition_source": "usda_fdc:172346",
@@ -10395,6 +10399,7 @@
       "edible_portion": 1,
       "dietary_flags": [
         "contains_dairy",
+        "contains_soy",
         "vegetarian"
       ],
       "nutrition_source": "usda_fdc:167587",

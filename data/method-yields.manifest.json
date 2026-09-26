@@ -471,10 +471,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "legume"
+          "raw",
+          "plant_protein"
         ],
-        "note": "No measured pair for this method and category; copies boiled x legume (same method, related category)."
+        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -514,7 +514,7 @@
           }
         ],
         "confidence": "medium",
-        "note": "SR Legacy and CoFID white rice, basmati, pasta, wholewheat pasta, bulgur, quinoa and couscous, dry and boiled; median. Recipes with a stated water ratio should set a yield override (03 §2)."
+        "note": "SR Legacy and CoFID white rice, basmati, pasta, wholewheat pasta, bulgur, quinoa and couscous, dry and boiled; median. Applies to dry grain; recipes with a stated water ratio, or grain that is already cooked, set a yield override (03 §2)."
       }
     },
     {
@@ -562,7 +562,7 @@
           }
         ],
         "confidence": "medium",
-        "note": "SR Legacy chickpeas and kidney beans, CoFID green/brown and red lentils, dry and boiled; median."
+        "note": "SR Legacy chickpeas and kidney beans, CoFID green/brown and red lentils, dry and boiled; median. Applies to dried legumes; canned or already-cooked legumes (and prepared items such as hummus) set a yield override of about 1 (03 §2)."
       }
     },
     {
@@ -663,10 +663,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -723,10 +723,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "shallow_fried",
+          "raw",
           "bakery"
         ],
-        "note": "No measured pair for this method and category; copies shallow_fried x bakery (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for bakery cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. bakery ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -771,10 +771,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "stewed",
           "poultry"
         ],
-        "note": "No measured pair for this method and category; copies roasted x poultry (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies stewed x poultry (same category, related method in the same family)."
       }
     },
     {
@@ -783,10 +783,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "baked",
+          "braised",
           "red_meat"
         ],
-        "note": "No measured pair for this method and category; copies baked x red_meat (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies braised x red_meat (same category, related method in the same family)."
       }
     },
     {
@@ -855,10 +855,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "legume"
+          "raw",
+          "plant_protein"
         ],
-        "note": "No measured pair for this method and category; copies boiled x legume (related method and category)."
+        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -943,10 +943,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1003,10 +1003,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "shallow_fried",
+          "raw",
           "bakery"
         ],
-        "note": "No measured pair for this method and category; copies shallow_fried x bakery (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for bakery cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. bakery ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1039,10 +1039,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "stewed",
           "poultry"
         ],
-        "note": "No measured pair for this method and category; copies roasted x poultry (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies stewed x poultry (same category, related method in the same family)."
       }
     },
     {
@@ -1051,10 +1051,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "baked",
+          "braised",
           "red_meat"
         ],
-        "note": "No measured pair for this method and category; copies baked x red_meat (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies braised x red_meat (same category, related method in the same family)."
       }
     },
     {
@@ -1119,10 +1119,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "legume"
+          "raw",
+          "plant_protein"
         ],
-        "note": "No measured pair for this method and category; copies boiled x legume (related method and category)."
+        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1203,10 +1203,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1263,10 +1263,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "shallow_fried",
+          "raw",
           "bakery"
         ],
-        "note": "No measured pair for this method and category; copies shallow_fried x bakery (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for bakery cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. bakery ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1379,10 +1379,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "egg"
         ],
-        "note": "No measured pair for this method and category; copies boiled x egg (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for egg cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. egg ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1403,10 +1403,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "grilled",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies grilled x vegetable (same method, related category)."
       }
     },
     {
@@ -1415,10 +1415,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "grain"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for grain cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. grain ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1631,10 +1631,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "egg"
         ],
-        "note": "No measured pair for this method and category; copies boiled x egg (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for egg cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. egg ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1655,10 +1655,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "grilled",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies grilled x vegetable (related method and category)."
       }
     },
     {
@@ -1667,10 +1667,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "grain"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for grain cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. grain ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1879,10 +1879,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "egg"
         ],
-        "note": "No measured pair for this method and category; copies boiled x egg (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for egg cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. egg ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -1903,10 +1903,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "roasted",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies roasted x vegetable (same method, related category)."
       }
     },
     {
@@ -1915,10 +1915,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "grain"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for grain cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. grain ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -2169,10 +2169,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "egg"
         ],
-        "note": "No measured pair for this method and category; copies boiled x egg (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for egg cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. egg ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -2193,10 +2193,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "baked",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies baked x vegetable (same method, related category)."
       }
     },
     {
@@ -2205,10 +2205,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "grain"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for grain cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. grain ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -2441,10 +2441,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "egg"
         ],
-        "note": "No measured pair for this method and category; copies boiled x egg (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for egg cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. egg ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -2465,10 +2465,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "roasted",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies roasted x vegetable (related method and category)."
       }
     },
     {
@@ -2477,10 +2477,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "grain"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for grain cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. grain ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -2709,10 +2709,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "shallow_fried",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies shallow_fried x vegetable (related method and category)."
       }
     },
     {
@@ -2721,10 +2721,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "grain"
+          "shallow_fried",
+          "bakery"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies shallow_fried x bakery (related method and category)."
       }
     },
     {
@@ -2793,10 +2793,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -2953,10 +2953,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "shallow_fried",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies shallow_fried x vegetable (related method and category)."
       }
     },
     {
@@ -2965,10 +2965,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "grain"
+          "shallow_fried",
+          "bakery"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies shallow_fried x bakery (related method and category)."
       }
     },
     {
@@ -3037,10 +3037,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -3205,10 +3205,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "shallow_fried",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies shallow_fried x vegetable (related method and category)."
       }
     },
     {
@@ -3217,10 +3217,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "grain"
+          "shallow_fried",
+          "bakery"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies shallow_fried x bakery (related method and category)."
       }
     },
     {
@@ -3289,10 +3289,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -3480,10 +3480,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "shallow_fried",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies shallow_fried x vegetable (same method, related category)."
       }
     },
     {
@@ -3492,10 +3492,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "grain"
+          "shallow_fried",
+          "bakery"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies shallow_fried x bakery (same method, related category)."
       }
     },
     {
@@ -3585,10 +3585,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -3746,10 +3746,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "shallow_fried",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies shallow_fried x vegetable (related method and category; deep frying absorbs at least as much oil as shallow frying, so this under-reports absorption)."
       }
     },
     {
@@ -3758,10 +3758,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "grain"
+          "shallow_fried",
+          "bakery"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family; deep frying absorbs at least as much oil as shallow frying, so this under-reports absorption)."
+        "note": "No measured pair for this method and category; copies shallow_fried x bakery (related method and category; deep frying absorbs at least as much oil as shallow frying, so this under-reports absorption)."
       }
     },
     {
@@ -3830,10 +3830,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family; deep frying absorbs at least as much oil as shallow frying, so this under-reports absorption)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -3962,10 +3962,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "egg"
         ],
-        "note": "No measured pair for this method and category; copies boiled x egg (same category, related method in the same family; substrate only (R-12): the coating is a separate variant ingredient with its own category row)."
+        "note": "No raw/cooked record pair for egg cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. egg ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -3986,10 +3986,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "baked",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies baked x vegetable (related method and category; substrate only (R-12): the coating is a separate variant ingredient with its own category row)."
       }
     },
     {
@@ -3998,10 +3998,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "grain"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family; substrate only (R-12): the coating is a separate variant ingredient with its own category row)."
+        "note": "No raw/cooked record pair for grain cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. grain ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -4226,10 +4226,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "shallow_fried",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies shallow_fried x vegetable (related method and category; substrate only (R-12): the coating is a separate variant ingredient with its own category row)."
       }
     },
     {
@@ -4238,10 +4238,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "grain"
+          "shallow_fried",
+          "bakery"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family; substrate only (R-12): the coating is a separate variant ingredient with its own category row)."
+        "note": "No measured pair for this method and category; copies shallow_fried x bakery (related method and category; substrate only (R-12): the coating is a separate variant ingredient with its own category row)."
       }
     },
     {
@@ -4310,10 +4310,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family; substrate only (R-12): the coating is a separate variant ingredient with its own category row)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -4426,10 +4426,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "baked",
+          "poached",
           "fish"
         ],
-        "note": "No measured pair for this method and category; copies baked x fish (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies poached x fish (same category, related method in the same family)."
       }
     },
     {
@@ -4474,10 +4474,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "legume"
+          "raw",
+          "plant_protein"
         ],
-        "note": "No measured pair for this method and category; copies boiled x legume (related method and category)."
+        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -4558,10 +4558,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -4618,10 +4618,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "shallow_fried",
+          "raw",
           "bakery"
         ],
-        "note": "No measured pair for this method and category; copies shallow_fried x bakery (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for bakery cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. bakery ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -4682,10 +4682,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "baked",
+          "poached",
           "fish"
         ],
-        "note": "No measured pair for this method and category; copies baked x fish (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies poached x fish (same category, related method in the same family)."
       }
     },
     {
@@ -4730,10 +4730,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "legume"
+          "raw",
+          "plant_protein"
         ],
-        "note": "No measured pair for this method and category; copies boiled x legume (related method and category)."
+        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -4826,10 +4826,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -4886,10 +4886,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "shallow_fried",
+          "raw",
           "bakery"
         ],
-        "note": "No measured pair for this method and category; copies shallow_fried x bakery (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for bakery cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. bakery ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -4946,10 +4946,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "baked",
+          "poached",
           "fish"
         ],
-        "note": "No measured pair for this method and category; copies baked x fish (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies poached x fish (same category, related method in the same family)."
       }
     },
     {
@@ -4994,10 +4994,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "legume"
+          "raw",
+          "plant_protein"
         ],
-        "note": "No measured pair for this method and category; copies boiled x legume (related method and category)."
+        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -5078,10 +5078,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -5138,10 +5138,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "shallow_fried",
+          "raw",
           "bakery"
         ],
-        "note": "No measured pair for this method and category; copies shallow_fried x bakery (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for bakery cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. bakery ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -5198,10 +5198,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "baked",
+          "poached",
           "fish"
         ],
-        "note": "No measured pair for this method and category; copies baked x fish (same category, related method in the same family)."
+        "note": "No measured pair for this method and category; copies poached x fish (same category, related method in the same family)."
       }
     },
     {
@@ -5246,10 +5246,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
-          "legume"
+          "raw",
+          "plant_protein"
         ],
-        "note": "No measured pair for this method and category; copies boiled x legume (related method and category)."
+        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -5330,10 +5330,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "roasted",
+          "raw",
           "nut_seed"
         ],
-        "note": "No measured pair for this method and category; copies roasted x nut_seed (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for nut_seed cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. nut_seed ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -5390,10 +5390,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "shallow_fried",
+          "raw",
           "bakery"
         ],
-        "note": "No measured pair for this method and category; copies shallow_fried x bakery (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for bakery cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. bakery ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -5474,10 +5474,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "egg"
         ],
-        "note": "No measured pair for this method and category; copies boiled x egg (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for egg cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. egg ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
@@ -5498,10 +5498,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "raw",
-          "plant_protein"
+          "roasted",
+          "vegetable"
         ],
-        "note": "No raw/cooked record pair for plant_protein cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. plant_protein ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
+        "note": "No measured pair for this method and category; copies roasted x vegetable (related method and category)."
       }
     },
     {
@@ -5510,10 +5510,10 @@
       "source": {
         "kind": "analogy",
         "from": [
-          "boiled",
+          "raw",
           "grain"
         ],
-        "note": "No measured pair for this method and category; copies boiled x grain (same category, related method in the same family)."
+        "note": "No raw/cooked record pair for grain cooked by this method was found in SR Legacy, CoFID 2019 or AFCD Release 1; the ingredient is treated as keeping its mass and fat, like the no-heat row. grain ingredients are used in small quantities or as sauces and liquids whose losses are not separately measured."
       }
     },
     {
