@@ -22,7 +22,7 @@ Notation: `?` = nullable. `→` = foreign key.
 
 **target_profile** — id, member_id →, kind (`default` | `training`), kcal, protein_g, carbs_g, fat_g, sat_fat_max_g?, soluble_fibre_min_g?, fibre_min_g?, sodium_max_mg?. Unique (member_id, kind). A training profile is optional; without one, training days use `default` (DM-2).
 
-**tolerance** — member_id → (PK), protein_g (default 5), carbs_g (default 5 — see OQ-1), fat_g (default 2), kcal (default 50 — see OQ-2), mode (`strict` | `flexible`, default `strict`). Applies per meal.
+**tolerance** — member_id → (PK), protein_g (default 5), carbs_g (default 5 — see OQ-1), fat_g (default 2), kcal (default 50 — see OQ-2), mode (`strict` | `flexible`, default `strict`). protein_g, carbs_g and fat_g apply **per meal**; kcal applies **per day** (OQ-2, R-28).
 
 **slot_type** — id, household_id →, key (text, e.g. `breakfast`, `packed_school_lunch`, `pre_workout`, `custom_ab12`), label, icon (text: an icon key, e.g. `sunrise`, `lunchbox`, `dumbbell`; R2-UX-5), sort_order, default_time (`time`), is_shared (bool: one dish for everyone attending; false = cooked per member), is_packed (bool), reheat_available (bool), is_training_slot (bool), constraints_note? (free text passed to recipe generation, e.g. "school is nut-free"), active (bool). Seeded per household from the defaults in [04-planner.md](04-planner.md) §2.
 

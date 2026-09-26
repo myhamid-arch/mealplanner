@@ -110,6 +110,7 @@ export const TABLES = {
   review_reaction: household(s.reviewReaction, ["reviewId", "userId", "kind"], {
     reviewId: "review",
   }),
+  review_revision: household(s.reviewRevision, ["id"], { reviewId: "review" }),
   preference: household(s.preference, ["id"], { memberId: "member" }),
   frequency_rule: household(s.frequencyRule, ["id"], { memberId: "member" }),
   exclusion: household(s.exclusion, ["id"], { memberId: "member" }),
@@ -172,6 +173,7 @@ export interface TableRows {
   meal_override: typeof s.mealOverride.$inferSelect;
   review: typeof s.review.$inferSelect;
   review_reaction: typeof s.reviewReaction.$inferSelect;
+  review_revision: typeof s.reviewRevision.$inferSelect;
   preference: typeof s.preference.$inferSelect;
   frequency_rule: typeof s.frequencyRule.$inferSelect;
   exclusion: typeof s.exclusion.$inferSelect;

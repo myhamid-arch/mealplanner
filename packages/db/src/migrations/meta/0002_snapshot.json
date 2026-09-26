@@ -1,0 +1,6274 @@
+{
+  "id": "b826b395-c1fc-4234-bb76-e1fb338baae1",
+  "prevId": "07239bb8-bfe6-4200-b85c-d4732809746c",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.account": {
+      "name": "account",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "account_id": {
+          "name": "account_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_id": {
+          "name": "provider_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token_expires_at": {
+          "name": "access_token_expires_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token_expires_at": {
+          "name": "refresh_token_expires_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "account_user_id_idx": {
+          "name": "account_user_id_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "account_user_id_user_id_fk": {
+          "name": "account_user_id_user_id_fk",
+          "tableFrom": "account",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.household": {
+      "name": "household",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "locale": {
+          "name": "locale",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'en-AE'"
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Asia/Dubai'"
+        },
+        "unit_system": {
+          "name": "unit_system",
+          "type": "unit_system",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'metric'"
+        },
+        "country_code": {
+          "name": "country_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AE'"
+        },
+        "region_note": {
+          "name": "region_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "members_see_plates": {
+          "name": "members_see_plates",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "agent_may_apply": {
+          "name": "agent_may_apply",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "require_totp_for_admins": {
+          "name": "require_totp_for_admins",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "kitchen_sees_names": {
+          "name": "kitchen_sees_names",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "members_review_for_siblings": {
+          "name": "members_review_for_siblings",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "insight_frequency": {
+          "name": "insight_frequency",
+          "type": "insight_frequency",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'nightly'"
+        },
+        "default_precision": {
+          "name": "default_precision",
+          "type": "tolerance_mode",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'strict'"
+        },
+        "sat_fat_default_pct": {
+          "name": "sat_fat_default_pct",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 10
+        },
+        "deletion_requested_at": {
+          "name": "deletion_requested_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deletion_requested_by_user_id": {
+          "name": "deletion_requested_by_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suspended_at": {
+          "name": "suspended_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "household_deletion_requested_by_user_id_user_id_fk": {
+          "name": "household_deletion_requested_by_user_id_user_id_fk",
+          "tableFrom": "household",
+          "tableTo": "user",
+          "columnsFrom": ["deletion_requested_by_user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "household_sat_fat_default_pct_range": {
+          "name": "household_sat_fat_default_pct_range",
+          "value": "\"household\".\"sat_fat_default_pct\" > 0 AND \"household\".\"sat_fat_default_pct\" <= 100"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.household_user": {
+      "name": "household_user",
+      "schema": "",
+      "columns": {
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "household_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "household_user_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "blocked_reason": {
+          "name": "blocked_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_active_at": {
+          "name": "last_active_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "household_user_household_id_idx": {
+          "name": "household_user_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "household_user_user_id_idx": {
+          "name": "household_user_user_id_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "household_user_household_id_household_id_fk": {
+          "name": "household_user_household_id_household_id_fk",
+          "tableFrom": "household_user",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "household_user_user_id_user_id_fk": {
+          "name": "household_user_user_id_user_id_fk",
+          "tableFrom": "household_user",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "household_user_member_fk": {
+          "name": "household_user_member_fk",
+          "tableFrom": "household_user",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "household_user_household_id_user_id_pk": {
+          "name": "household_user_household_id_user_id_pk",
+          "columns": ["household_id", "user_id"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.invite": {
+      "name": "invite",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "household_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "used_at": {
+          "name": "used_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "revoked_at": {
+          "name": "revoked_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by_user_id": {
+          "name": "created_by_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "invite_household_id_idx": {
+          "name": "invite_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "invite_household_id_household_id_fk": {
+          "name": "invite_household_id_household_id_fk",
+          "tableFrom": "invite",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invite_created_by_user_id_user_id_fk": {
+          "name": "invite_created_by_user_id_user_id_fk",
+          "tableFrom": "invite",
+          "tableTo": "user",
+          "columnsFrom": ["created_by_user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invite_member_fk": {
+          "name": "invite_member_fk",
+          "tableFrom": "invite",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "invite_code_unique": {
+          "name": "invite_code_unique",
+          "nullsNotDistinct": false,
+          "columns": ["code"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "invite_code_length": {
+          "name": "invite_code_length",
+          "value": "char_length(\"invite\".\"code\") = 10"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.platform_operator": {
+      "name": "platform_operator",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by_user_id": {
+          "name": "created_by_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "platform_operator_user_id_user_id_fk": {
+          "name": "platform_operator_user_id_user_id_fk",
+          "tableFrom": "platform_operator",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "platform_operator_created_by_user_id_user_id_fk": {
+          "name": "platform_operator_created_by_user_id_user_id_fk",
+          "tableFrom": "platform_operator",
+          "tableTo": "user",
+          "columnsFrom": ["created_by_user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.session": {
+      "name": "session",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_address": {
+          "name": "ip_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_agent": {
+          "name": "user_agent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "session_user_id_idx": {
+          "name": "session_user_id_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "session_user_id_user_id_fk": {
+          "name": "session_user_id_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "session_token_unique": {
+          "name": "session_token_unique",
+          "nullsNotDistinct": false,
+          "columns": ["token"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.support_grant": {
+      "name": "support_grant",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "operator_user_id": {
+          "name": "operator_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "granted_by_user_id": {
+          "name": "granted_by_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "revoked_at": {
+          "name": "revoked_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "support_grant_household_id_idx": {
+          "name": "support_grant_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "support_grant_household_id_household_id_fk": {
+          "name": "support_grant_household_id_household_id_fk",
+          "tableFrom": "support_grant",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "support_grant_operator_user_id_platform_operator_user_id_fk": {
+          "name": "support_grant_operator_user_id_platform_operator_user_id_fk",
+          "tableFrom": "support_grant",
+          "tableTo": "platform_operator",
+          "columnsFrom": ["operator_user_id"],
+          "columnsTo": ["user_id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "support_grant_granted_by_user_id_user_id_fk": {
+          "name": "support_grant_granted_by_user_id_user_id_fk",
+          "tableFrom": "support_grant",
+          "tableTo": "user",
+          "columnsFrom": ["granted_by_user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "support_grant_expires_after_created": {
+          "name": "support_grant_expires_after_created",
+          "value": "\"support_grant\".\"expires_at\" > \"support_grant\".\"created_at\""
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.two_factor": {
+      "name": "two_factor",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "secret": {
+          "name": "secret",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "backup_codes": {
+          "name": "backup_codes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "verified": {
+          "name": "verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "failed_verification_count": {
+          "name": "failed_verification_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "locked_until": {
+          "name": "locked_until",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "two_factor_user_id_idx": {
+          "name": "two_factor_user_id_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "two_factor_secret_idx": {
+          "name": "two_factor_secret_idx",
+          "columns": [
+            {
+              "expression": "secret",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "two_factor_user_id_user_id_fk": {
+          "name": "two_factor_user_id_user_id_fk",
+          "tableFrom": "two_factor",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "citext",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_verified": {
+          "name": "email_verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "two_factor_enabled": {
+          "name": "two_factor_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "platform_blocked_at": {
+          "name": "platform_blocked_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_email_unique": {
+          "name": "user_email_unique",
+          "nullsNotDistinct": false,
+          "columns": ["email"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_notification_pref": {
+      "name": "user_notification_pref",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "enabled": {
+          "name": "enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_notification_pref_user_id_user_id_fk": {
+          "name": "user_notification_pref_user_id_user_id_fk",
+          "tableFrom": "user_notification_pref",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_notification_pref_user_id_key_pk": {
+          "name": "user_notification_pref_user_id_key_pk",
+          "columns": ["user_id", "key"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.verification": {
+      "name": "verification",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "identifier": {
+          "name": "identifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "verification_identifier_idx": {
+          "name": "verification_identifier_idx",
+          "columns": [
+            {
+              "expression": "identifier",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.day_override": {
+      "name": "day_override",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "day_override_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot_type_id": {
+          "name": "slot_type_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "day_override_household_id_idx": {
+          "name": "day_override_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "day_override_household_id_household_id_fk": {
+          "name": "day_override_household_id_household_id_fk",
+          "tableFrom": "day_override",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "day_override_member_fk": {
+          "name": "day_override_member_fk",
+          "tableFrom": "day_override",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "day_override_slot_type_fk": {
+          "name": "day_override_slot_type_fk",
+          "tableFrom": "day_override",
+          "tableTo": "slot_type",
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "day_override_member_date_kind_slot_key": {
+          "name": "day_override_member_date_kind_slot_key",
+          "nullsNotDistinct": true,
+          "columns": ["member_id", "date", "kind", "slot_type_id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "day_override_slot_matches_kind": {
+          "name": "day_override_slot_matches_kind",
+          "value": "(\"day_override\".\"kind\" IN ('absent_slot', 'extra_slot')) = (\"day_override\".\"slot_type_id\" IS NOT NULL)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.detail_level": {
+      "name": "detail_level",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "section": {
+          "name": "section",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "name": "level",
+          "type": "detail_level_value",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "detail_level_household_id_idx": {
+          "name": "detail_level_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "detail_level_household_id_household_id_fk": {
+          "name": "detail_level_household_id_household_id_fk",
+          "tableFrom": "detail_level",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "detail_level_member_fk": {
+          "name": "detail_level_member_fk",
+          "tableFrom": "detail_level",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "detail_level_household_member_section_key": {
+          "name": "detail_level_household_member_section_key",
+          "nullsNotDistinct": true,
+          "columns": ["household_id", "member_id", "section"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.meal_distribution": {
+      "name": "meal_distribution",
+      "schema": "",
+      "columns": {
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "day_kind": {
+          "name": "day_kind",
+          "type": "day_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot_type_id": {
+          "name": "slot_type_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "share": {
+          "name": "share",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "meal_distribution_household_id_idx": {
+          "name": "meal_distribution_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "meal_distribution_household_id_household_id_fk": {
+          "name": "meal_distribution_household_id_household_id_fk",
+          "tableFrom": "meal_distribution",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "meal_distribution_member_fk": {
+          "name": "meal_distribution_member_fk",
+          "tableFrom": "meal_distribution",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "meal_distribution_slot_type_fk": {
+          "name": "meal_distribution_slot_type_fk",
+          "tableFrom": "meal_distribution",
+          "tableTo": "slot_type",
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "meal_distribution_member_id_day_kind_slot_type_id_pk": {
+          "name": "meal_distribution_member_id_day_kind_slot_type_id_pk",
+          "columns": ["member_id", "day_kind", "slot_type_id"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "meal_distribution_share_range": {
+          "name": "meal_distribution_share_range",
+          "value": "\"meal_distribution\".\"share\" >= 0 AND \"meal_distribution\".\"share\" <= 1"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.member": {
+      "name": "member",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "color": {
+          "name": "color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "birth_year": {
+          "name": "birth_year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sex": {
+          "name": "sex",
+          "type": "sex",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_targeted": {
+          "name": "is_targeted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "appetite": {
+          "name": "appetite",
+          "type": "appetite",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'medium'"
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "archived_at": {
+          "name": "archived_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "member_household_id_idx": {
+          "name": "member_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "member_household_id_household_id_fk": {
+          "name": "member_household_id_household_id_fk",
+          "tableFrom": "member",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "member_household_id_id_key": {
+          "name": "member_household_id_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.member_slot_schedule": {
+      "name": "member_slot_schedule",
+      "schema": "",
+      "columns": {
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot_type_id": {
+          "name": "slot_type_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "weekday": {
+          "name": "weekday",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "attends": {
+          "name": "attends",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "member_slot_schedule_household_id_idx": {
+          "name": "member_slot_schedule_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "member_slot_schedule_household_id_household_id_fk": {
+          "name": "member_slot_schedule_household_id_household_id_fk",
+          "tableFrom": "member_slot_schedule",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "member_slot_schedule_member_fk": {
+          "name": "member_slot_schedule_member_fk",
+          "tableFrom": "member_slot_schedule",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "member_slot_schedule_slot_type_fk": {
+          "name": "member_slot_schedule_slot_type_fk",
+          "tableFrom": "member_slot_schedule",
+          "tableTo": "slot_type",
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "member_slot_schedule_member_id_slot_type_id_weekday_pk": {
+          "name": "member_slot_schedule_member_id_slot_type_id_weekday_pk",
+          "columns": ["member_id", "slot_type_id", "weekday"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "member_slot_schedule_weekday_range": {
+          "name": "member_slot_schedule_weekday_range",
+          "value": "\"member_slot_schedule\".\"weekday\" BETWEEN 0 AND 6"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.portion_bias": {
+      "name": "portion_bias",
+      "schema": "",
+      "columns": {
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "component_role": {
+          "name": "component_role",
+          "type": "component_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bias": {
+          "name": "bias",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        }
+      },
+      "indexes": {
+        "portion_bias_household_id_idx": {
+          "name": "portion_bias_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "portion_bias_household_id_household_id_fk": {
+          "name": "portion_bias_household_id_household_id_fk",
+          "tableFrom": "portion_bias",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "portion_bias_member_fk": {
+          "name": "portion_bias_member_fk",
+          "tableFrom": "portion_bias",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "portion_bias_member_id_component_role_pk": {
+          "name": "portion_bias_member_id_component_role_pk",
+          "columns": ["member_id", "component_role"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "portion_bias_bias_range": {
+          "name": "portion_bias_bias_range",
+          "value": "\"portion_bias\".\"bias\" >= 0.6 AND \"portion_bias\".\"bias\" <= 1.6"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.slot_target_override": {
+      "name": "slot_target_override",
+      "schema": "",
+      "columns": {
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "day_kind": {
+          "name": "day_kind",
+          "type": "day_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot_type_id": {
+          "name": "slot_type_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kcal": {
+          "name": "kcal",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "protein_g": {
+          "name": "protein_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "carbs_g": {
+          "name": "carbs_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fat_g": {
+          "name": "fat_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "slot_target_override_household_id_idx": {
+          "name": "slot_target_override_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "slot_target_override_household_id_household_id_fk": {
+          "name": "slot_target_override_household_id_household_id_fk",
+          "tableFrom": "slot_target_override",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "slot_target_override_member_fk": {
+          "name": "slot_target_override_member_fk",
+          "tableFrom": "slot_target_override",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "slot_target_override_slot_type_fk": {
+          "name": "slot_target_override_slot_type_fk",
+          "tableFrom": "slot_target_override",
+          "tableTo": "slot_type",
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "slot_target_override_member_id_day_kind_slot_type_id_pk": {
+          "name": "slot_target_override_member_id_day_kind_slot_type_id_pk",
+          "columns": ["member_id", "day_kind", "slot_type_id"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.slot_type": {
+      "name": "slot_type",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "icon": {
+          "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sort_order": {
+          "name": "sort_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "default_time": {
+          "name": "default_time",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_shared": {
+          "name": "is_shared",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_packed": {
+          "name": "is_packed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reheat_available": {
+          "name": "reheat_available",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_training_slot": {
+          "name": "is_training_slot",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "constraints_note": {
+          "name": "constraints_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "active": {
+          "name": "active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "slot_type_household_id_idx": {
+          "name": "slot_type_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "slot_type_household_id_household_id_fk": {
+          "name": "slot_type_household_id_household_id_fk",
+          "tableFrom": "slot_type",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "slot_type_household_id_id_key": {
+          "name": "slot_type_household_id_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "id"]
+        },
+        "slot_type_household_id_key_key": {
+          "name": "slot_type_household_id_key_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "key"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.target_profile": {
+      "name": "target_profile",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "target_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kcal": {
+          "name": "kcal",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "protein_g": {
+          "name": "protein_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "carbs_g": {
+          "name": "carbs_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fat_g": {
+          "name": "fat_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sat_fat_max_g": {
+          "name": "sat_fat_max_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "soluble_fibre_min_g": {
+          "name": "soluble_fibre_min_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fibre_min_g": {
+          "name": "fibre_min_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sodium_max_mg": {
+          "name": "sodium_max_mg",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "target_profile_household_id_idx": {
+          "name": "target_profile_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "target_profile_household_id_household_id_fk": {
+          "name": "target_profile_household_id_household_id_fk",
+          "tableFrom": "target_profile",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "target_profile_member_fk": {
+          "name": "target_profile_member_fk",
+          "tableFrom": "target_profile",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "target_profile_member_id_kind_key": {
+          "name": "target_profile_member_id_kind_key",
+          "nullsNotDistinct": false,
+          "columns": ["member_id", "kind"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "target_profile_non_negative": {
+          "name": "target_profile_non_negative",
+          "value": "\"target_profile\".\"kcal\" >= 0 AND \"target_profile\".\"protein_g\" >= 0 AND \"target_profile\".\"carbs_g\" >= 0 AND \"target_profile\".\"fat_g\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.tolerance": {
+      "name": "tolerance",
+      "schema": "",
+      "columns": {
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "protein_g": {
+          "name": "protein_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 5
+        },
+        "carbs_g": {
+          "name": "carbs_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 5
+        },
+        "fat_g": {
+          "name": "fat_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 2
+        },
+        "kcal": {
+          "name": "kcal",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 50
+        },
+        "mode": {
+          "name": "mode",
+          "type": "tolerance_mode",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'strict'"
+        }
+      },
+      "indexes": {
+        "tolerance_household_id_idx": {
+          "name": "tolerance_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "tolerance_household_id_household_id_fk": {
+          "name": "tolerance_household_id_household_id_fk",
+          "tableFrom": "tolerance",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tolerance_member_fk": {
+          "name": "tolerance_member_fk",
+          "tableFrom": "tolerance",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "tolerance_non_negative": {
+          "name": "tolerance_non_negative",
+          "value": "\"tolerance\".\"protein_g\" >= 0 AND \"tolerance\".\"carbs_g\" >= 0 AND \"tolerance\".\"fat_g\" >= 0 AND \"tolerance\".\"kcal\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.training_schedule": {
+      "name": "training_schedule",
+      "schema": "",
+      "columns": {
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "weekday": {
+          "name": "weekday",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "session_time": {
+          "name": "session_time",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "intensity": {
+          "name": "intensity",
+          "type": "training_intensity",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "training_schedule_household_id_idx": {
+          "name": "training_schedule_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "training_schedule_household_id_household_id_fk": {
+          "name": "training_schedule_household_id_household_id_fk",
+          "tableFrom": "training_schedule",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "training_schedule_member_fk": {
+          "name": "training_schedule_member_fk",
+          "tableFrom": "training_schedule",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "training_schedule_member_id_weekday_pk": {
+          "name": "training_schedule_member_id_weekday_pk",
+          "columns": ["member_id", "weekday"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "training_schedule_weekday_range": {
+          "name": "training_schedule_weekday_range",
+          "value": "\"training_schedule\".\"weekday\" BETWEEN 0 AND 6"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.cuisine": {
+      "name": "cuisine",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_key": {
+          "name": "parent_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "cuisine_key_unique": {
+          "name": "cuisine_key_unique",
+          "nullsNotDistinct": false,
+          "columns": ["key"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ingredient": {
+      "name": "ingredient",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "aliases": {
+          "name": "aliases",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "category": {
+          "name": "category",
+          "type": "ingredient_category",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kcal": {
+          "name": "kcal",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "protein_g": {
+          "name": "protein_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "carbs_g": {
+          "name": "carbs_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fat_g": {
+          "name": "fat_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sat_fat_g": {
+          "name": "sat_fat_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fibre_g": {
+          "name": "fibre_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "soluble_fibre_g": {
+          "name": "soluble_fibre_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sugar_g": {
+          "name": "sugar_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sodium_mg": {
+          "name": "sodium_mg",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "density_g_per_ml": {
+          "name": "density_g_per_ml",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "unit_weight_g": {
+          "name": "unit_weight_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "unit_label": {
+          "name": "unit_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "edible_portion": {
+          "name": "edible_portion",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dietary_flags": {
+          "name": "dietary_flags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "nutrition_source": {
+          "name": "nutrition_source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nutrition_confidence": {
+          "name": "nutrition_confidence",
+          "type": "nutrition_confidence",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "locale_availability": {
+          "name": "locale_availability",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by_household_id": {
+          "name": "created_by_household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "needs_review": {
+          "name": "needs_review",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "verified_at": {
+          "name": "verified_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "verified_by_user_id": {
+          "name": "verified_by_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "ingredient_created_by_household_id_idx": {
+          "name": "ingredient_created_by_household_id_idx",
+          "columns": [
+            {
+              "expression": "created_by_household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ingredient_created_by_household_id_household_id_fk": {
+          "name": "ingredient_created_by_household_id_household_id_fk",
+          "tableFrom": "ingredient",
+          "tableTo": "household",
+          "columnsFrom": ["created_by_household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "ingredient_verified_by_user_id_user_id_fk": {
+          "name": "ingredient_verified_by_user_id_user_id_fk",
+          "tableFrom": "ingredient",
+          "tableTo": "user",
+          "columnsFrom": ["verified_by_user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "ingredient_slug_unique": {
+          "name": "ingredient_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": ["slug"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "ingredient_edible_portion_range": {
+          "name": "ingredient_edible_portion_range",
+          "value": "\"ingredient\".\"edible_portion\" > 0 AND \"ingredient\".\"edible_portion\" <= 1"
+        },
+        "ingredient_nutrients_non_negative": {
+          "name": "ingredient_nutrients_non_negative",
+          "value": "\"ingredient\".\"kcal\" >= 0 AND \"ingredient\".\"protein_g\" >= 0 AND \"ingredient\".\"carbs_g\" >= 0 AND \"ingredient\".\"fat_g\" >= 0 AND \"ingredient\".\"sat_fat_g\" >= 0 AND \"ingredient\".\"fibre_g\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.method_yield": {
+      "name": "method_yield",
+      "schema": "",
+      "columns": {
+        "method_id": {
+          "name": "method_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ingredient_category": {
+          "name": "ingredient_category",
+          "type": "ingredient_category",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "yield_factor": {
+          "name": "yield_factor",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fat_retention": {
+          "name": "fat_retention",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "oil_absorption_g_per_100g_raw": {
+          "name": "oil_absorption_g_per_100g_raw",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "method_yield_method_id_preparation_method_id_fk": {
+          "name": "method_yield_method_id_preparation_method_id_fk",
+          "tableFrom": "method_yield",
+          "tableTo": "preparation_method",
+          "columnsFrom": ["method_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "method_yield_method_id_ingredient_category_pk": {
+          "name": "method_yield_method_id_ingredient_category_pk",
+          "columns": ["method_id", "ingredient_category"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "method_yield_yield_factor_positive": {
+          "name": "method_yield_yield_factor_positive",
+          "value": "\"method_yield\".\"yield_factor\" > 0"
+        },
+        "method_yield_fat_retention_range": {
+          "name": "method_yield_fat_retention_range",
+          "value": "\"method_yield\".\"fat_retention\" >= 0 AND \"method_yield\".\"fat_retention\" <= 1"
+        },
+        "method_yield_oil_absorption_non_negative": {
+          "name": "method_yield_oil_absorption_non_negative",
+          "value": "\"method_yield\".\"oil_absorption_g_per_100g_raw\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.preparation_method": {
+      "name": "preparation_method",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "appeal_tags": {
+          "name": "appeal_tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "preparation_method_key_unique": {
+          "name": "preparation_method_key_unique",
+          "nullsNotDistinct": false,
+          "columns": ["key"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.component": {
+      "name": "component",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dish_id": {
+          "name": "dish_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "component_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "portioning": {
+          "name": "portioning",
+          "type": "portioning",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "unit_label": {
+          "name": "unit_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "min_serving_g": {
+          "name": "min_serving_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max_serving_g": {
+          "name": "max_serving_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "default_serving_g": {
+          "name": "default_serving_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "step_g": {
+          "name": "step_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 5
+        },
+        "sort_order": {
+          "name": "sort_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "required": {
+          "name": "required",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "component_household_id_idx": {
+          "name": "component_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "component_dish_id_idx": {
+          "name": "component_dish_id_idx",
+          "columns": [
+            {
+              "expression": "dish_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "component_household_id_household_id_fk": {
+          "name": "component_household_id_household_id_fk",
+          "tableFrom": "component",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "component_dish_id_dish_id_fk": {
+          "name": "component_dish_id_dish_id_fk",
+          "tableFrom": "component",
+          "tableTo": "dish",
+          "columnsFrom": ["dish_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "component_serving_bounds": {
+          "name": "component_serving_bounds",
+          "value": "\"component\".\"min_serving_g\" >= 0 AND \"component\".\"min_serving_g\" <= \"component\".\"default_serving_g\" AND \"component\".\"default_serving_g\" <= \"component\".\"max_serving_g\""
+        },
+        "component_step_positive": {
+          "name": "component_step_positive",
+          "value": "\"component\".\"step_g\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.dish": {
+      "name": "dish",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cuisine_id": {
+          "name": "cuisine_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "secondary_cuisine_id": {
+          "name": "secondary_cuisine_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "slot_keys": {
+          "name": "slot_keys",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "flavour_tags": {
+          "name": "flavour_tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "is_packable": {
+          "name": "is_packable",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "served_cold_ok": {
+          "name": "served_cold_ok",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "dish_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "dish_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ai_generation_id": {
+          "name": "ai_generation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version": {
+          "name": "version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "dish_household_id_idx": {
+          "name": "dish_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "dish_household_id_household_id_fk": {
+          "name": "dish_household_id_household_id_fk",
+          "tableFrom": "dish",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "dish_cuisine_id_cuisine_id_fk": {
+          "name": "dish_cuisine_id_cuisine_id_fk",
+          "tableFrom": "dish",
+          "tableTo": "cuisine",
+          "columnsFrom": ["cuisine_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "dish_secondary_cuisine_id_cuisine_id_fk": {
+          "name": "dish_secondary_cuisine_id_cuisine_id_fk",
+          "tableFrom": "dish",
+          "tableTo": "cuisine",
+          "columnsFrom": ["secondary_cuisine_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "dish_ai_generation_id_ai_generation_id_fk": {
+          "name": "dish_ai_generation_id_ai_generation_id_fk",
+          "tableFrom": "dish",
+          "tableTo": "ai_generation",
+          "columnsFrom": ["ai_generation_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "dish_household_id_slug_key": {
+          "name": "dish_household_id_slug_key",
+          "nullsNotDistinct": true,
+          "columns": ["household_id", "slug"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "dish_version_positive": {
+          "name": "dish_version_positive",
+          "value": "\"dish\".\"version\" >= 1"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.dish_nutrition_cache": {
+      "name": "dish_nutrition_cache",
+      "schema": "",
+      "columns": {
+        "variant_id": {
+          "name": "variant_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kcal": {
+          "name": "kcal",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "protein": {
+          "name": "protein",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "carbs": {
+          "name": "carbs",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fat": {
+          "name": "fat",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sat_fat": {
+          "name": "sat_fat",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fibre": {
+          "name": "fibre",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "soluble_fibre": {
+          "name": "soluble_fibre",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sugar": {
+          "name": "sugar",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sodium": {
+          "name": "sodium",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cooked_yield_g_per_batch": {
+          "name": "cooked_yield_g_per_batch",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "computed_at": {
+          "name": "computed_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "engine_version": {
+          "name": "engine_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "dish_nutrition_cache_household_id_idx": {
+          "name": "dish_nutrition_cache_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "dish_nutrition_cache_variant_id_variant_id_fk": {
+          "name": "dish_nutrition_cache_variant_id_variant_id_fk",
+          "tableFrom": "dish_nutrition_cache",
+          "tableTo": "variant",
+          "columnsFrom": ["variant_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "dish_nutrition_cache_household_id_household_id_fk": {
+          "name": "dish_nutrition_cache_household_id_household_id_fk",
+          "tableFrom": "dish_nutrition_cache",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.household_adjuster": {
+      "name": "household_adjuster",
+      "schema": "",
+      "columns": {
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dish_id": {
+          "name": "dish_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "enabled": {
+          "name": "enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "household_adjuster_household_id_idx": {
+          "name": "household_adjuster_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "household_adjuster_household_id_household_id_fk": {
+          "name": "household_adjuster_household_id_household_id_fk",
+          "tableFrom": "household_adjuster",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "household_adjuster_dish_id_dish_id_fk": {
+          "name": "household_adjuster_dish_id_dish_id_fk",
+          "tableFrom": "household_adjuster",
+          "tableTo": "dish",
+          "columnsFrom": ["dish_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "household_adjuster_household_id_dish_id_pk": {
+          "name": "household_adjuster_household_id_dish_id_pk",
+          "columns": ["household_id", "dish_id"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.variant": {
+      "name": "variant",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "component_id": {
+          "name": "component_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "method_id": {
+          "name": "method_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_default": {
+          "name": "is_default",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "steps": {
+          "name": "steps",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cook_time_min": {
+          "name": "cook_time_min",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reference_batch_cooked_g": {
+          "name": "reference_batch_cooked_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1000
+        },
+        "needs_review": {
+          "name": "needs_review",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {
+        "variant_household_id_idx": {
+          "name": "variant_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "variant_component_id_idx": {
+          "name": "variant_component_id_idx",
+          "columns": [
+            {
+              "expression": "component_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "variant_household_id_household_id_fk": {
+          "name": "variant_household_id_household_id_fk",
+          "tableFrom": "variant",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "variant_component_id_component_id_fk": {
+          "name": "variant_component_id_component_id_fk",
+          "tableFrom": "variant",
+          "tableTo": "component",
+          "columnsFrom": ["component_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "variant_method_id_preparation_method_id_fk": {
+          "name": "variant_method_id_preparation_method_id_fk",
+          "tableFrom": "variant",
+          "tableTo": "preparation_method",
+          "columnsFrom": ["method_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "variant_reference_batch_positive": {
+          "name": "variant_reference_batch_positive",
+          "value": "\"variant\".\"reference_batch_cooked_g\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.variant_ingredient": {
+      "name": "variant_ingredient",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "variant_id": {
+          "name": "variant_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ingredient_id": {
+          "name": "ingredient_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "raw_g_per_batch": {
+          "name": "raw_g_per_batch",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_note": {
+          "name": "role_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_absorbed_oil": {
+          "name": "is_absorbed_oil",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cooking_liquid": {
+          "name": "cooking_liquid",
+          "type": "cooking_liquid",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "yield_override": {
+          "name": "yield_override",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "variant_ingredient_household_id_idx": {
+          "name": "variant_ingredient_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "variant_ingredient_variant_id_idx": {
+          "name": "variant_ingredient_variant_id_idx",
+          "columns": [
+            {
+              "expression": "variant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "variant_ingredient_household_id_household_id_fk": {
+          "name": "variant_ingredient_household_id_household_id_fk",
+          "tableFrom": "variant_ingredient",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "variant_ingredient_variant_id_variant_id_fk": {
+          "name": "variant_ingredient_variant_id_variant_id_fk",
+          "tableFrom": "variant_ingredient",
+          "tableTo": "variant",
+          "columnsFrom": ["variant_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "variant_ingredient_ingredient_id_ingredient_id_fk": {
+          "name": "variant_ingredient_ingredient_id_ingredient_id_fk",
+          "tableFrom": "variant_ingredient",
+          "tableTo": "ingredient",
+          "columnsFrom": ["ingredient_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "variant_ingredient_raw_positive": {
+          "name": "variant_ingredient_raw_positive",
+          "value": "\"variant_ingredient\".\"raw_g_per_batch\" > 0"
+        },
+        "variant_ingredient_yield_override_positive": {
+          "name": "variant_ingredient_yield_override_positive",
+          "value": "\"variant_ingredient\".\"yield_override\" IS NULL OR \"variant_ingredient\".\"yield_override\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.cook_batch": {
+      "name": "cook_batch",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_meal_id": {
+          "name": "plan_meal_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "variant_id": {
+          "name": "variant_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_cooked_g": {
+          "name": "total_cooked_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "raw_ingredients": {
+          "name": "raw_ingredients",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "servings": {
+          "name": "servings",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "cook_batch_household_id_idx": {
+          "name": "cook_batch_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "cook_batch_plan_meal_id_idx": {
+          "name": "cook_batch_plan_meal_id_idx",
+          "columns": [
+            {
+              "expression": "plan_meal_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "cook_batch_household_id_household_id_fk": {
+          "name": "cook_batch_household_id_household_id_fk",
+          "tableFrom": "cook_batch",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cook_batch_variant_id_variant_id_fk": {
+          "name": "cook_batch_variant_id_variant_id_fk",
+          "tableFrom": "cook_batch",
+          "tableTo": "variant",
+          "columnsFrom": ["variant_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cook_batch_plan_meal_fk": {
+          "name": "cook_batch_plan_meal_fk",
+          "tableFrom": "cook_batch",
+          "tableTo": "plan_meal",
+          "columnsFrom": ["household_id", "plan_meal_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "cook_batch_servings_positive": {
+          "name": "cook_batch_servings_positive",
+          "value": "\"cook_batch\".\"servings\" >= 1"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.meal_override": {
+      "name": "meal_override",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_date": {
+          "name": "plan_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot_type_id": {
+          "name": "slot_type_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "meal_override_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_ids": {
+          "name": "member_ids",
+          "type": "uuid[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::uuid[]"
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "meal_override_household_id_idx": {
+          "name": "meal_override_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "meal_override_household_id_household_id_fk": {
+          "name": "meal_override_household_id_household_id_fk",
+          "tableFrom": "meal_override",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "meal_override_created_by_user_id_fk": {
+          "name": "meal_override_created_by_user_id_fk",
+          "tableFrom": "meal_override",
+          "tableTo": "user",
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "meal_override_slot_type_fk": {
+          "name": "meal_override_slot_type_fk",
+          "tableFrom": "meal_override",
+          "tableTo": "slot_type",
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "meal_override_household_date_slot_key": {
+          "name": "meal_override_household_date_slot_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "plan_date", "slot_type_id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "meal_override_members_match_kind": {
+          "name": "meal_override_members_match_kind",
+          "value": "(\"meal_override\".\"kind\" = 'split_member') = (cardinality(\"meal_override\".\"member_ids\") > 0)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.plan_day": {
+      "name": "plan_day",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "plan_day_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "weights_snapshot": {
+          "name": "weights_snapshot",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "generated_at": {
+          "name": "generated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "generator_version": {
+          "name": "generator_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "plan_day_household_id_idx": {
+          "name": "plan_day_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "plan_day_household_id_household_id_fk": {
+          "name": "plan_day_household_id_household_id_fk",
+          "tableFrom": "plan_day",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "plan_day_household_id_date_key": {
+          "name": "plan_day_household_id_date_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "date"]
+        },
+        "plan_day_household_id_id_key": {
+          "name": "plan_day_household_id_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.plan_meal": {
+      "name": "plan_meal",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_day_id": {
+          "name": "plan_day_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot_type_id": {
+          "name": "slot_type_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dish_id": {
+          "name": "dish_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dish_version": {
+          "name": "dish_version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_scope": {
+          "name": "member_scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "locked": {
+          "name": "locked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "score_breakdown": {
+          "name": "score_breakdown",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "plan_meal_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "plan_meal_household_id_idx": {
+          "name": "plan_meal_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "plan_meal_plan_day_id_idx": {
+          "name": "plan_meal_plan_day_id_idx",
+          "columns": [
+            {
+              "expression": "plan_day_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "plan_meal_household_id_household_id_fk": {
+          "name": "plan_meal_household_id_household_id_fk",
+          "tableFrom": "plan_meal",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plan_meal_dish_id_dish_id_fk": {
+          "name": "plan_meal_dish_id_dish_id_fk",
+          "tableFrom": "plan_meal",
+          "tableTo": "dish",
+          "columnsFrom": ["dish_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plan_meal_plan_day_fk": {
+          "name": "plan_meal_plan_day_fk",
+          "tableFrom": "plan_meal",
+          "tableTo": "plan_day",
+          "columnsFrom": ["household_id", "plan_day_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plan_meal_slot_type_fk": {
+          "name": "plan_meal_slot_type_fk",
+          "tableFrom": "plan_meal",
+          "tableTo": "slot_type",
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "plan_meal_household_id_id_key": {
+          "name": "plan_meal_household_id_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "plan_meal_member_scope_format": {
+          "name": "plan_meal_member_scope_format",
+          "value": "\"plan_meal\".\"member_scope\" = 'shared' OR \"plan_meal\".\"member_scope\" ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.plate": {
+      "name": "plate",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_meal_id": {
+          "name": "plan_meal_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fit_status": {
+          "name": "fit_status",
+          "type": "fit_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target": {
+          "name": "target",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actual": {
+          "name": "actual",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deviation": {
+          "name": "deviation",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "plate_household_id_idx": {
+          "name": "plate_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "plate_plan_meal_id_idx": {
+          "name": "plate_plan_meal_id_idx",
+          "columns": [
+            {
+              "expression": "plan_meal_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "plate_household_id_household_id_fk": {
+          "name": "plate_household_id_household_id_fk",
+          "tableFrom": "plate",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plate_plan_meal_fk": {
+          "name": "plate_plan_meal_fk",
+          "tableFrom": "plate",
+          "tableTo": "plan_meal",
+          "columnsFrom": ["household_id", "plan_meal_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plate_member_fk": {
+          "name": "plate_member_fk",
+          "tableFrom": "plate",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "plate_household_id_id_key": {
+          "name": "plate_household_id_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "id"]
+        },
+        "plate_plan_meal_id_member_id_key": {
+          "name": "plate_plan_meal_id_member_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["plan_meal_id", "member_id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.plate_item": {
+      "name": "plate_item",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plate_id": {
+          "name": "plate_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "component_id": {
+          "name": "component_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "variant_id": {
+          "name": "variant_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cooked_g": {
+          "name": "cooked_g",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "raw_equivalent": {
+          "name": "raw_equivalent",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "plate_item_household_id_idx": {
+          "name": "plate_item_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "plate_item_plate_id_idx": {
+          "name": "plate_item_plate_id_idx",
+          "columns": [
+            {
+              "expression": "plate_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "plate_item_household_id_household_id_fk": {
+          "name": "plate_item_household_id_household_id_fk",
+          "tableFrom": "plate_item",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plate_item_component_id_component_id_fk": {
+          "name": "plate_item_component_id_component_id_fk",
+          "tableFrom": "plate_item",
+          "tableTo": "component",
+          "columnsFrom": ["component_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plate_item_variant_id_variant_id_fk": {
+          "name": "plate_item_variant_id_variant_id_fk",
+          "tableFrom": "plate_item",
+          "tableTo": "variant",
+          "columnsFrom": ["variant_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "plate_item_plate_fk": {
+          "name": "plate_item_plate_fk",
+          "tableFrom": "plate_item",
+          "tableTo": "plate",
+          "columnsFrom": ["household_id", "plate_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "plate_item_cooked_g_non_negative": {
+          "name": "plate_item_cooked_g_non_negative",
+          "value": "\"plate_item\".\"cooked_g\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.exclusion": {
+      "name": "exclusion",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "exclusion_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "exclusion_reason",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hard": {
+          "name": "hard",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "exclusion_household_id_idx": {
+          "name": "exclusion_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "exclusion_household_id_household_id_fk": {
+          "name": "exclusion_household_id_household_id_fk",
+          "tableFrom": "exclusion",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "exclusion_member_fk": {
+          "name": "exclusion_member_fk",
+          "tableFrom": "exclusion",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "exclusion_household_member_kind_key_key": {
+          "name": "exclusion_household_member_kind_key_key",
+          "nullsNotDistinct": true,
+          "columns": ["household_id", "member_id", "kind", "key"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "exclusion_allergy_is_hard": {
+          "name": "exclusion_allergy_is_hard",
+          "value": "\"exclusion\".\"reason\" <> 'allergy' OR \"exclusion\".\"hard\""
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.frequency_rule": {
+      "name": "frequency_rule",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "entity_type": {
+          "name": "entity_type",
+          "type": "frequency_entity_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entity_key": {
+          "name": "entity_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "min_gap_days": {
+          "name": "min_gap_days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "max_per_week": {
+          "name": "max_per_week",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source": {
+          "name": "source",
+          "type": "preference_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "locked": {
+          "name": "locked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {
+        "frequency_rule_household_id_idx": {
+          "name": "frequency_rule_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "frequency_rule_household_id_household_id_fk": {
+          "name": "frequency_rule_household_id_household_id_fk",
+          "tableFrom": "frequency_rule",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "frequency_rule_member_fk": {
+          "name": "frequency_rule_member_fk",
+          "tableFrom": "frequency_rule",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "frequency_rule_household_member_entity_key": {
+          "name": "frequency_rule_household_member_entity_key",
+          "nullsNotDistinct": true,
+          "columns": ["household_id", "member_id", "entity_type", "entity_key"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "frequency_rule_has_limit": {
+          "name": "frequency_rule_has_limit",
+          "value": "\"frequency_rule\".\"min_gap_days\" IS NOT NULL OR \"frequency_rule\".\"max_per_week\" IS NOT NULL"
+        },
+        "frequency_rule_limits_positive": {
+          "name": "frequency_rule_limits_positive",
+          "value": "(\"frequency_rule\".\"min_gap_days\" IS NULL OR \"frequency_rule\".\"min_gap_days\" >= 1) AND (\"frequency_rule\".\"max_per_week\" IS NULL OR \"frequency_rule\".\"max_per_week\" >= 0)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.planning_weights": {
+      "name": "planning_weights",
+      "schema": "",
+      "columns": {
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "macro_precision": {
+          "name": "macro_precision",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "appeal": {
+          "name": "appeal",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0.6
+        },
+        "ingredient_economy": {
+          "name": "ingredient_economy",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0.4
+        },
+        "variety": {
+          "name": "variety",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0.3
+        },
+        "fairness": {
+          "name": "fairness",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0.5
+        },
+        "ai_generation": {
+          "name": "ai_generation",
+          "type": "ai_generation_mode",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'auto'"
+        },
+        "economy_window_days": {
+          "name": "economy_window_days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 7
+        },
+        "adjusters_enabled": {
+          "name": "adjusters_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "max_variants_per_component": {
+          "name": "max_variants_per_component",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 3
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "planning_weights_household_id_household_id_fk": {
+          "name": "planning_weights_household_id_household_id_fk",
+          "tableFrom": "planning_weights",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "planning_weights_range": {
+          "name": "planning_weights_range",
+          "value": "\"planning_weights\".\"macro_precision\" BETWEEN 0 AND 1 AND \"planning_weights\".\"appeal\" BETWEEN 0 AND 1 AND \"planning_weights\".\"ingredient_economy\" BETWEEN 0 AND 1 AND \"planning_weights\".\"variety\" BETWEEN 0 AND 1 AND \"planning_weights\".\"fairness\" BETWEEN 0 AND 1"
+        },
+        "planning_weights_window_positive": {
+          "name": "planning_weights_window_positive",
+          "value": "\"planning_weights\".\"economy_window_days\" >= 1"
+        },
+        "planning_weights_max_variants_positive": {
+          "name": "planning_weights_max_variants_positive",
+          "value": "\"planning_weights\".\"max_variants_per_component\" >= 1"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.preference": {
+      "name": "preference",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "entity_type": {
+          "name": "entity_type",
+          "type": "preference_entity_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entity_key": {
+          "name": "entity_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "score": {
+          "name": "score",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "evidence_weight": {
+          "name": "evidence_weight",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "source": {
+          "name": "source",
+          "type": "preference_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "locked": {
+          "name": "locked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "hard": {
+          "name": "hard",
+          "type": "preference_hardness",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'none'"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "preference_household_id_idx": {
+          "name": "preference_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "preference_household_id_household_id_fk": {
+          "name": "preference_household_id_household_id_fk",
+          "tableFrom": "preference",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "preference_member_fk": {
+          "name": "preference_member_fk",
+          "tableFrom": "preference",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "preference_household_member_entity_source_key": {
+          "name": "preference_household_member_entity_source_key",
+          "nullsNotDistinct": true,
+          "columns": ["household_id", "member_id", "entity_type", "entity_key", "source"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "preference_score_range": {
+          "name": "preference_score_range",
+          "value": "\"preference\".\"score\" >= -1 AND \"preference\".\"score\" <= 1"
+        },
+        "preference_evidence_weight_non_negative": {
+          "name": "preference_evidence_weight_non_negative",
+          "value": "\"preference\".\"evidence_weight\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.review": {
+      "name": "review",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author_user_id": {
+          "name": "author_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "on_behalf_of_member_id": {
+          "name": "on_behalf_of_member_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "target_type": {
+          "name": "target_type",
+          "type": "review_target_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_id": {
+          "name": "target_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_meal_id": {
+          "name": "plan_meal_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rating": {
+          "name": "rating",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_review_id": {
+          "name": "parent_review_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edited_at": {
+          "name": "edited_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "processed_at": {
+          "name": "processed_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "review_household_id_idx": {
+          "name": "review_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "review_target_idx": {
+          "name": "review_target_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "target_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "target_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "review_household_id_household_id_fk": {
+          "name": "review_household_id_household_id_fk",
+          "tableFrom": "review",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "review_author_user_id_user_id_fk": {
+          "name": "review_author_user_id_user_id_fk",
+          "tableFrom": "review",
+          "tableTo": "user",
+          "columnsFrom": ["author_user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "review_on_behalf_of_member_fk": {
+          "name": "review_on_behalf_of_member_fk",
+          "tableFrom": "review",
+          "tableTo": "member",
+          "columnsFrom": ["household_id", "on_behalf_of_member_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "review_plan_meal_fk": {
+          "name": "review_plan_meal_fk",
+          "tableFrom": "review",
+          "tableTo": "plan_meal",
+          "columnsFrom": ["household_id", "plan_meal_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "review_parent_review_fk": {
+          "name": "review_parent_review_fk",
+          "tableFrom": "review",
+          "tableTo": "review",
+          "columnsFrom": ["household_id", "parent_review_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "review_household_id_id_key": {
+          "name": "review_household_id_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "review_rating_range": {
+          "name": "review_rating_range",
+          "value": "\"review\".\"rating\" IS NULL OR \"review\".\"rating\" BETWEEN 1 AND 5"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.review_reaction": {
+      "name": "review_reaction",
+      "schema": "",
+      "columns": {
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "review_id": {
+          "name": "review_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "reaction_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "review_reaction_household_id_idx": {
+          "name": "review_reaction_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "review_reaction_household_id_household_id_fk": {
+          "name": "review_reaction_household_id_household_id_fk",
+          "tableFrom": "review_reaction",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "review_reaction_user_id_user_id_fk": {
+          "name": "review_reaction_user_id_user_id_fk",
+          "tableFrom": "review_reaction",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "review_reaction_review_fk": {
+          "name": "review_reaction_review_fk",
+          "tableFrom": "review_reaction",
+          "tableTo": "review",
+          "columnsFrom": ["household_id", "review_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "review_reaction_review_id_user_id_kind_pk": {
+          "name": "review_reaction_review_id_user_id_kind_pk",
+          "columns": ["review_id", "user_id", "kind"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.weight_preset": {
+      "name": "weight_preset",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "values": {
+          "name": "values",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "applies_to_weekdays": {
+          "name": "applies_to_weekdays",
+          "type": "integer[]",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "weight_preset_household_id_idx": {
+          "name": "weight_preset_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "weight_preset_household_id_household_id_fk": {
+          "name": "weight_preset_household_id_household_id_fk",
+          "tableFrom": "weight_preset",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "weight_preset_household_id_name_key": {
+          "name": "weight_preset_household_id_name_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "name"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.review_revision": {
+      "name": "review_revision",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "review_id": {
+          "name": "review_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rating": {
+          "name": "rating",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "replaced_at": {
+          "name": "replaced_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edited_by_user_id": {
+          "name": "edited_by_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "review_revision_household_id_idx": {
+          "name": "review_revision_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "review_revision_review_idx": {
+          "name": "review_revision_review_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "review_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "review_revision_household_id_household_id_fk": {
+          "name": "review_revision_household_id_household_id_fk",
+          "tableFrom": "review_revision",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "review_revision_edited_by_user_id_user_id_fk": {
+          "name": "review_revision_edited_by_user_id_user_id_fk",
+          "tableFrom": "review_revision",
+          "tableTo": "user",
+          "columnsFrom": ["edited_by_user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "review_revision_review_fk": {
+          "name": "review_revision_review_fk",
+          "tableFrom": "review_revision",
+          "tableTo": "review",
+          "columnsFrom": ["household_id", "review_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "review_revision_rating_range": {
+          "name": "review_revision_rating_range",
+          "value": "\"review_revision\".\"rating\" IS NULL OR \"review_revision\".\"rating\" BETWEEN 1 AND 5"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.change_set": {
+      "name": "change_set",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actor": {
+          "name": "actor",
+          "type": "change_actor",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actor_user_id": {
+          "name": "actor_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source": {
+          "name": "source",
+          "type": "change_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "forward": {
+          "name": "forward",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inverse": {
+          "name": "inverse",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "applied_at": {
+          "name": "applied_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "undone_at": {
+          "name": "undone_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "undone_by_change_set_id": {
+          "name": "undone_by_change_set_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "change_set_household_id_idx": {
+          "name": "change_set_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "applied_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "change_set_household_id_household_id_fk": {
+          "name": "change_set_household_id_household_id_fk",
+          "tableFrom": "change_set",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "change_set_actor_user_id_user_id_fk": {
+          "name": "change_set_actor_user_id_user_id_fk",
+          "tableFrom": "change_set",
+          "tableTo": "user",
+          "columnsFrom": ["actor_user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "change_set_undone_by_fk": {
+          "name": "change_set_undone_by_fk",
+          "tableFrom": "change_set",
+          "tableTo": "change_set",
+          "columnsFrom": ["household_id", "undone_by_change_set_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "change_set_household_id_id_key": {
+          "name": "change_set_household_id_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.chat_message": {
+      "name": "chat_message",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "conversation_id": {
+          "name": "conversation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "chat_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "chat_message_household_id_idx": {
+          "name": "chat_message_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "chat_message_conversation_id_idx": {
+          "name": "chat_message_conversation_id_idx",
+          "columns": [
+            {
+              "expression": "conversation_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "chat_message_household_id_household_id_fk": {
+          "name": "chat_message_household_id_household_id_fk",
+          "tableFrom": "chat_message",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "chat_message_conversation_fk": {
+          "name": "chat_message_conversation_fk",
+          "tableFrom": "chat_message",
+          "tableTo": "conversation",
+          "columnsFrom": ["household_id", "conversation_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "chat_message_household_id_id_key": {
+          "name": "chat_message_household_id_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.conversation": {
+      "name": "conversation",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "archived_at": {
+          "name": "archived_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "conversation_household_id_idx": {
+          "name": "conversation_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "conversation_household_id_household_id_fk": {
+          "name": "conversation_household_id_household_id_fk",
+          "tableFrom": "conversation",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "conversation_user_id_user_id_fk": {
+          "name": "conversation_user_id_user_id_fk",
+          "tableFrom": "conversation",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "conversation_household_id_id_key": {
+          "name": "conversation_household_id_id_key",
+          "nullsNotDistinct": false,
+          "columns": ["household_id", "id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.proposal": {
+      "name": "proposal",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "origin": {
+          "name": "origin",
+          "type": "proposal_origin",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "conversation_id": {
+          "name": "conversation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "message_id": {
+          "name": "message_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payload": {
+          "name": "payload",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rationale": {
+          "name": "rationale",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "evidence": {
+          "name": "evidence",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fingerprint": {
+          "name": "fingerprint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "proposal_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "decided_by_user_id": {
+          "name": "decided_by_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decided_at": {
+          "name": "decided_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "decision_note": {
+          "name": "decision_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "change_set_id": {
+          "name": "change_set_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "proposal_household_id_idx": {
+          "name": "proposal_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "proposal_fingerprint_idx": {
+          "name": "proposal_fingerprint_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "fingerprint",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "proposal_household_id_household_id_fk": {
+          "name": "proposal_household_id_household_id_fk",
+          "tableFrom": "proposal",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "proposal_decided_by_user_id_user_id_fk": {
+          "name": "proposal_decided_by_user_id_user_id_fk",
+          "tableFrom": "proposal",
+          "tableTo": "user",
+          "columnsFrom": ["decided_by_user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "proposal_conversation_fk": {
+          "name": "proposal_conversation_fk",
+          "tableFrom": "proposal",
+          "tableTo": "conversation",
+          "columnsFrom": ["household_id", "conversation_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "proposal_message_fk": {
+          "name": "proposal_message_fk",
+          "tableFrom": "proposal",
+          "tableTo": "chat_message",
+          "columnsFrom": ["household_id", "message_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "proposal_change_set_fk": {
+          "name": "proposal_change_set_fk",
+          "tableFrom": "proposal",
+          "tableTo": "change_set",
+          "columnsFrom": ["household_id", "change_set_id"],
+          "columnsTo": ["household_id", "id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.kg_edge": {
+      "name": "kg_edge",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "src_id": {
+          "name": "src_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dst_id": {
+          "name": "dst_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "weight": {
+          "name": "weight",
+          "type": "numeric(10, 3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "props": {
+          "name": "props",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "kg_edge_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "kg_edge_household_id_idx": {
+          "name": "kg_edge_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "kg_edge_src_id_type_idx": {
+          "name": "kg_edge_src_id_type_idx",
+          "columns": [
+            {
+              "expression": "src_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "kg_edge_dst_id_type_idx": {
+          "name": "kg_edge_dst_id_type_idx",
+          "columns": [
+            {
+              "expression": "dst_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "kg_edge_household_id_household_id_fk": {
+          "name": "kg_edge_household_id_household_id_fk",
+          "tableFrom": "kg_edge",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "kg_edge_src_id_kg_node_id_fk": {
+          "name": "kg_edge_src_id_kg_node_id_fk",
+          "tableFrom": "kg_edge",
+          "tableTo": "kg_node",
+          "columnsFrom": ["src_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "kg_edge_dst_id_kg_node_id_fk": {
+          "name": "kg_edge_dst_id_kg_node_id_fk",
+          "tableFrom": "kg_edge",
+          "tableTo": "kg_node",
+          "columnsFrom": ["dst_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "kg_edge_household_src_dst_type_key": {
+          "name": "kg_edge_household_src_dst_type_key",
+          "nullsNotDistinct": true,
+          "columns": ["household_id", "src_id", "dst_id", "type"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.kg_node": {
+      "name": "kg_node",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "props": {
+          "name": "props",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "kg_node_household_id_idx": {
+          "name": "kg_node_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "kg_node_household_id_household_id_fk": {
+          "name": "kg_node_household_id_household_id_fk",
+          "tableFrom": "kg_node",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "kg_node_household_type_key_key": {
+          "name": "kg_node_household_type_key_key",
+          "nullsNotDistinct": true,
+          "columns": ["household_id", "type", "key"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ai_generation": {
+      "name": "ai_generation",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "purpose": {
+          "name": "purpose",
+          "type": "ai_purpose",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model": {
+          "name": "model",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "request_summary": {
+          "name": "request_summary",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "response_raw": {
+          "name": "response_raw",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "input_tokens": {
+          "name": "input_tokens",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "output_tokens": {
+          "name": "output_tokens",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cache_read_tokens": {
+          "name": "cache_read_tokens",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stop_reason": {
+          "name": "stop_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "validation_errors": {
+          "name": "validation_errors",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "ai_generation_household_id_idx": {
+          "name": "ai_generation_household_id_idx",
+          "columns": [
+            {
+              "expression": "household_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ai_generation_household_id_household_id_fk": {
+          "name": "ai_generation_household_id_household_id_fk",
+          "tableFrom": "ai_generation",
+          "tableTo": "household",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.ai_generation_mode": {
+      "name": "ai_generation_mode",
+      "schema": "public",
+      "values": ["auto", "ask", "off"]
+    },
+    "public.ai_purpose": {
+      "name": "ai_purpose",
+      "schema": "public",
+      "values": ["recipe", "insights", "chat", "comment_extraction"]
+    },
+    "public.appetite": {
+      "name": "appetite",
+      "schema": "public",
+      "values": ["small", "medium", "large"]
+    },
+    "public.change_actor": {
+      "name": "change_actor",
+      "schema": "public",
+      "values": ["user", "agent", "system"]
+    },
+    "public.change_source": {
+      "name": "change_source",
+      "schema": "public",
+      "values": ["ui", "agent_apply", "proposal_accept", "learning"]
+    },
+    "public.chat_role": {
+      "name": "chat_role",
+      "schema": "public",
+      "values": ["user", "assistant", "tool", "event"]
+    },
+    "public.component_role": {
+      "name": "component_role",
+      "schema": "public",
+      "values": [
+        "protein",
+        "carb",
+        "vegetable",
+        "sauce",
+        "fat",
+        "garnish",
+        "side",
+        "drink",
+        "adjuster"
+      ]
+    },
+    "public.cooking_liquid": {
+      "name": "cooking_liquid",
+      "schema": "public",
+      "values": ["absorbed", "retained"]
+    },
+    "public.day_kind": {
+      "name": "day_kind",
+      "schema": "public",
+      "values": ["default", "training"]
+    },
+    "public.day_override_kind": {
+      "name": "day_override_kind",
+      "schema": "public",
+      "values": ["training", "rest", "absent_slot", "extra_slot"]
+    },
+    "public.detail_level_value": {
+      "name": "detail_level_value",
+      "schema": "public",
+      "values": ["basic", "detailed", "expert"]
+    },
+    "public.dish_source": {
+      "name": "dish_source",
+      "schema": "public",
+      "values": ["seed", "ai", "admin"]
+    },
+    "public.dish_status": {
+      "name": "dish_status",
+      "schema": "public",
+      "values": ["draft", "active", "retired"]
+    },
+    "public.exclusion_kind": {
+      "name": "exclusion_kind",
+      "schema": "public",
+      "values": ["ingredient", "category", "dietary_flag"]
+    },
+    "public.exclusion_reason": {
+      "name": "exclusion_reason",
+      "schema": "public",
+      "values": ["allergy", "religious", "dislike", "medical", "other"]
+    },
+    "public.fit_status": {
+      "name": "fit_status",
+      "schema": "public",
+      "values": ["in_tolerance", "flexible_miss", "infeasible", "untargeted"]
+    },
+    "public.frequency_entity_type": {
+      "name": "frequency_entity_type",
+      "schema": "public",
+      "values": ["dish", "ingredient", "cuisine", "method"]
+    },
+    "public.household_role": {
+      "name": "household_role",
+      "schema": "public",
+      "values": ["admin", "member", "kitchen"]
+    },
+    "public.household_user_status": {
+      "name": "household_user_status",
+      "schema": "public",
+      "values": ["active", "invited", "blocked"]
+    },
+    "public.ingredient_category": {
+      "name": "ingredient_category",
+      "schema": "public",
+      "values": [
+        "poultry",
+        "red_meat",
+        "fish",
+        "seafood",
+        "egg",
+        "dairy",
+        "plant_protein",
+        "grain",
+        "starch",
+        "legume",
+        "vegetable",
+        "leafy_green",
+        "fruit",
+        "nut_seed",
+        "oil_fat",
+        "sauce_condiment",
+        "herb_spice",
+        "sweetener",
+        "bakery",
+        "beverage",
+        "supplement",
+        "other"
+      ]
+    },
+    "public.insight_frequency": {
+      "name": "insight_frequency",
+      "schema": "public",
+      "values": ["nightly", "weekly", "on_demand"]
+    },
+    "public.kg_edge_source": {
+      "name": "kg_edge_source",
+      "schema": "public",
+      "values": ["seed", "derived", "learned", "ai"]
+    },
+    "public.meal_override_kind": {
+      "name": "meal_override_kind",
+      "schema": "public",
+      "values": ["split_member", "make_individual"]
+    },
+    "public.nutrition_confidence": {
+      "name": "nutrition_confidence",
+      "schema": "public",
+      "values": ["high", "medium", "low"]
+    },
+    "public.plan_day_status": {
+      "name": "plan_day_status",
+      "schema": "public",
+      "values": ["draft", "published", "cooked"]
+    },
+    "public.plan_meal_status": {
+      "name": "plan_meal_status",
+      "schema": "public",
+      "values": ["planned", "cooked", "skipped"]
+    },
+    "public.portioning": {
+      "name": "portioning",
+      "schema": "public",
+      "values": ["continuous", "unit", "fixed"]
+    },
+    "public.preference_entity_type": {
+      "name": "preference_entity_type",
+      "schema": "public",
+      "values": ["dish", "ingredient", "cuisine", "method", "flavour_tag", "component_role"]
+    },
+    "public.preference_hardness": {
+      "name": "preference_hardness",
+      "schema": "public",
+      "values": ["none", "never", "always_ok"]
+    },
+    "public.preference_source": {
+      "name": "preference_source",
+      "schema": "public",
+      "values": ["explicit", "learned", "proposal"]
+    },
+    "public.proposal_origin": {
+      "name": "proposal_origin",
+      "schema": "public",
+      "values": ["agent_chat", "insights", "rule"]
+    },
+    "public.proposal_status": {
+      "name": "proposal_status",
+      "schema": "public",
+      "values": ["pending", "accepted", "rejected", "expired", "superseded"]
+    },
+    "public.reaction_kind": {
+      "name": "reaction_kind",
+      "schema": "public",
+      "values": ["agree", "disagree", "helpful"]
+    },
+    "public.review_target_type": {
+      "name": "review_target_type",
+      "schema": "public",
+      "values": [
+        "dish",
+        "component",
+        "variant",
+        "ingredient",
+        "plan_meal",
+        "plate",
+        "plan_day",
+        "cuisine",
+        "method"
+      ]
+    },
+    "public.sex": {
+      "name": "sex",
+      "schema": "public",
+      "values": ["female", "male", "unspecified"]
+    },
+    "public.target_kind": {
+      "name": "target_kind",
+      "schema": "public",
+      "values": ["default", "training"]
+    },
+    "public.tolerance_mode": {
+      "name": "tolerance_mode",
+      "schema": "public",
+      "values": ["strict", "flexible"]
+    },
+    "public.training_intensity": {
+      "name": "training_intensity",
+      "schema": "public",
+      "values": ["light", "moderate", "hard"]
+    },
+    "public.unit_system": {
+      "name": "unit_system",
+      "schema": "public",
+      "values": ["metric"]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

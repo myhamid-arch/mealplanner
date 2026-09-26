@@ -52,8 +52,8 @@ For member `m` on date `d`:
    - Coarse: `shareₛ = wₛ / Σ_{s∈S} wₛ`, using the default weights above.
    - Detailed: `meal_distribution` rows for the day kind. They must cover every attended slot and sum to 1 ± 0.001, and the UI validates this.
    - Expert: `slot_target_override` fixes a slot's values. The remaining daily target is distributed across the other slots by share.
-5. Slot target = `T × shareₛ` for kcal, protein, carbs and fat, rounded to 1 g / 1 kcal. `sat_fat_max_slot = sat_fat_max × shareₛ`. `soluble_fibre_goal_slot = soluble_fibre_min × shareₛ` (a soft goal).
-6. Tolerance = member `tolerance` (per meal).
+5. Slot target = `T × shareₛ` for kcal, protein, carbs and fat, rounded to 1 g / 1 kcal. `sat_fat_max_slot = sat_fat_max × shareₛ`, where an unset `sat_fat_max` defaults to 6 % of the day's kcal (OQ-4). `fibre_goal_slot = fibre_min × shareₛ` and `soluble_fibre_goal_slot = soluble_fibre_min × shareₛ` (soft goals); an unset `fibre_min` defaults to 14 g per 1,000 kcal of the day's target and an unset `soluble_fibre_min` to 25 % of `fibre_min` (OQ-4, R-28).
+6. Tolerance: protein, carbs and fat = member `tolerance` per meal. kcal: the member's **daily** `tolerance.kcal` (default ±50) is split across the day's attended slots in proportion to shareₛ (largest remainder, whole kcal), so the slot bands sum to the daily band (OQ-2, R-28). The plan search (PLN-11, 1.2.3) re-targets later slots of the same member-day with the kcal actually consumed by earlier slots, so the daily total stays within ±`tolerance.kcal`.
 
 Output: `SlotTarget { memberId, date, slotKey, dayKind, kcal, protein, carbs, fat, satFatMax?, solubleFibreGoal?, tol: {kcal, protein, carbs, fat}, mode }`.
 

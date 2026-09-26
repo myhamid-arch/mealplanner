@@ -15,6 +15,20 @@
       "when": 1790416852390,
       "tag": "0001_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790421266586,
+      "tag": "0002_review_revision",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790424484378,
+      "tag": "0003_sat_fat_default_6",
+      "breakpoints": true
     }
   ]
 }

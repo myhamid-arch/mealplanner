@@ -146,7 +146,7 @@ export const household = pgTable(
     membersReviewForSiblings: boolean("members_review_for_siblings").notNull().default(true),
     insightFrequency: insightFrequency("insight_frequency").notNull().default("nightly"),
     defaultPrecision: toleranceMode("default_precision").notNull().default("strict"),
-    satFatDefaultPct: num("sat_fat_default_pct").notNull().default(10),
+    satFatDefaultPct: num("sat_fat_default_pct").notNull().default(6),
     // R2-ADM-6 deletion grace, R2-ADM-8 suspension (R-9 i).
     deletionRequestedAt: tstz("deletion_requested_at"),
     deletionRequestedByUserId: uuid("deletion_requested_by_user_id").references(() => user.id),

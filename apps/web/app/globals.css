@@ -1,0 +1,245 @@
+/*
+ * Global styles (UX-5, UX-6). The colour values are not written here: the root layout renders
+ * them as CSS variables from @mealplanner/ui-tokens (light, and dark under
+ * prefers-color-scheme). This file maps those variables into Tailwind v4 utilities.
+ */
+@import "tailwindcss";
+
+@theme inline {
+  /* Only token colours exist as utilities; Tailwind's default palette is removed. */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-tomato: var(--tomato);
+  --color-saffron: var(--saffron);
+  --color-basil: var(--basil);
+  --color-aubergine: var(--aubergine);
+  --color-sea: var(--sea);
+  --color-olive: var(--olive);
+  --color-pomegranate: var(--pomegranate);
+  --color-flour: var(--flour);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+  --color-on-action: var(--on-action);
+  --color-tomato-tint: var(--tomato-tint);
+  --color-tomato-text: var(--tomato-text);
+  --color-basil-tint: var(--basil-tint);
+  --color-basil-text: var(--basil-text);
+  --color-sea-tint: var(--sea-tint);
+  --color-sea-text: var(--sea-text);
+  --color-saffron-tint: var(--saffron-tint);
+  --color-saffron-text: var(--saffron-text);
+  --color-olive-tint: var(--olive-tint);
+  --color-olive-text: var(--olive-text);
+  --color-pomegranate-tint: var(--pomegranate-tint);
+  --color-pomegranate-text: var(--pomegranate-text);
+  --color-aubergine-tint: var(--aubergine-tint);
+  --color-aubergine-text: var(--aubergine-text);
+  --color-neutral: var(--neutral);
+  --color-neutral-tint: var(--neutral-tint);
+  --color-neutral-text: var(--neutral-text);
+  --color-agent: var(--agent);
+  --color-agent-raised: var(--agent-raised);
+  --color-on-agent: var(--on-agent);
+  --color-rail: var(--rail);
+  --color-rail-raised: var(--rail-raised);
+  --color-rail-ink: var(--rail-ink);
+  --color-rail-ink-strong: var(--rail-ink-strong);
+  --color-rail-ink-muted: var(--rail-ink-muted);
+  --color-rail-active: var(--rail-active);
+  --color-on-rail-active: var(--on-rail-active);
+  --color-rail-focus: var(--rail-focus);
+  --color-badge: var(--badge);
+  --color-on-badge: var(--on-badge);
+  --color-focus: var(--focus);
+  --color-star: var(--star);
+  --color-star-edge: var(--star-edge);
+
+  --font-display: var(--font-display-family);
+  --font-body: var(--font-body-family);
+  --font-mono: var(--font-mono-family);
+
+  --radius-xs: var(--radius-xs-px);
+  --radius-sm: var(--radius-sm-px);
+  --radius-md: var(--radius-md-px);
+  --radius-lg: var(--radius-lg-px);
+  --radius-card: var(--radius-card-px);
+  --radius-xl: var(--radius-xl-px);
+  --radius-2xl: var(--radius-2xl-px);
+  --radius-pill: var(--radius-pill-px);
+
+  --shadow-card: var(--shadow-card-value);
+  --shadow-raised: var(--shadow-raised-value);
+  --shadow-sheet: var(--shadow-sheet-value);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body-family);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display-family);
+    font-weight: 700;
+    font-optical-sizing: auto;
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  a {
+    color: var(--action);
+  }
+
+  a:hover {
+    color: var(--action-hover);
+  }
+
+  /* UX-6: a visible focus ring on everything focusable. */
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  [data-surface="rail"] :focus-visible {
+    outline-color: var(--rail-focus);
+  }
+
+  .tabular {
+    font-family: var(--font-mono-family);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  /* Gingham tablecloth (UX-5), used sparingly: empty states and the onboarding header. */
+  .gingham {
+    background-color: var(--tomato-tint);
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        color-mix(in srgb, var(--action) 16%, transparent) 0 14px,
+        transparent 14px 28px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--action) 16%, transparent) 0 14px,
+        transparent 14px 28px
+      );
+  }
+
+  /* Faint ruled recipe-card paper (UX-5), for recipe pages. */
+  .ruled {
+    line-height: 28px;
+    background-origin: content-box;
+    background-image: repeating-linear-gradient(
+      180deg,
+      transparent 0 27px,
+      color-mix(in srgb, var(--line) 70%, transparent) 27px 28px
+    );
+  }
+
+  .sr-only-focusable:not(:focus-visible) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* UX-5 motion: cards rise on load. */
+@keyframes mise-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mise-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes mise-sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes mise-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Macro-ring arcs draw from zero to their own stroke-dasharray (no `to` frame). */
+@keyframes mise-ring-draw {
+  from {
+    stroke-dasharray: 0 1000;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ring-arc {
+    animation: mise-ring-draw 600ms ease-out both;
+  }
+
+  .rise {
+    animation: mise-rise 320ms ease-out both;
+  }
+
+  .skeleton-pulse {
+    animation: mise-pulse 1.4s ease-in-out infinite;
+  }
+
+  .sheet-enter {
+    animation: mise-sheet-up 220ms ease-out both;
+  }
+
+  .fade-enter {
+    animation: mise-fade 180ms ease-out both;
+  }
+}
+
+/* Rating input: the radio is visually hidden, so its focus ring is drawn on the tile. */
+.star-tile:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}

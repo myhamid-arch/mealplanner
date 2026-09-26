@@ -307,6 +307,16 @@ export const SPEC_COLUMNS: Record<string, readonly string[]> = {
     "processed_at",
   ],
   review_reaction: ["household_id", "review_id", "user_id", "kind"],
+  review_revision: [
+    "id",
+    "household_id",
+    "review_id",
+    "rating",
+    "tags",
+    "comment",
+    "replaced_at",
+    "edited_by_user_id",
+  ],
   preference: [
     "id",
     "household_id",
