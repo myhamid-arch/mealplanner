@@ -1,6 +1,6 @@
 # Gates: leaf-1.4.6 Sign-in, People and access, account, platform
 
-OWNS: docs/decisions/leaf-1.4.6-*.md, apps/web/app/(auth)/**, apps/web/app/(app)/access/**, apps/web/app/(app)/account/**, apps/web/app/(app)/changelog/**, apps/web/app/(platform)/**, apps/web/components/admin/**, apps/web/e2e/admin.spec.ts, scripts/verify/leaf-1.4.6.mjs
+OWNS: docs/decisions/leaf-1.4.6-*.md, apps/web/app/(auth)/**, apps/web/app/(app)/access/**, apps/web/app/(app)/account/**, apps/web/app/(app)/changelog/**, apps/web/app/(app)/settings/household/**, apps/web/app/(platform)/**, apps/web/components/admin/**, apps/web/e2e/admin.spec.ts, scripts/verify/leaf-1.4.6.mjs
 
 Scope: Sign-in, People and access, account, platform, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 

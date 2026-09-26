@@ -36,6 +36,7 @@ export const ROUTES = {
   insights: "/insights",
   family: "/family",
   settings: "/settings",
+  changelog: "/changelog",
   access: "/access",
   chat: "/chat",
   account: "/account",
@@ -51,7 +52,14 @@ const ITEMS: Readonly<Record<NavKey, NavItem>> = {
   reviews: { key: "reviews", label: "Reviews", href: ROUTES.reviews, icon: "reviews" },
   insights: { key: "insights", label: "Insights", href: ROUTES.insights, icon: "insights" },
   family: { key: "family", label: "Family", href: ROUTES.family, icon: "family" },
-  settings: { key: "settings", label: "Settings", href: ROUTES.settings, icon: "settings" },
+  settings: {
+    key: "settings",
+    label: "Settings",
+    href: ROUTES.settings,
+    icon: "settings",
+    // HouseholdSettings / ChangeLog mockups: the change log is a Settings tab (R-45).
+    alsoActiveFor: [ROUTES.changelog],
+  },
   access: { key: "access", label: "People & access", href: ROUTES.access, icon: "access" },
   tastes: { key: "tastes", label: "My tastes", href: ROUTES.me, icon: "me" },
   me: {
@@ -62,6 +70,18 @@ const ITEMS: Readonly<Record<NavKey, NavItem>> = {
     alsoActiveFor: [ROUTES.account],
   },
 };
+
+/**
+ * The Settings tab strip (HouseholdSettings mockup: General · Planning balance · Meals & schedule ·
+ * Change log). Paths fixed by R-45: household is 1.4.6's, planning and schedule are 1.4.3's,
+ * the change log is 1.4.6's. Rendered with `TabLinks` from `components/ui`.
+ */
+export const SETTINGS_TABS = [
+  { label: "General", href: "/settings/household" },
+  { label: "Planning balance", href: "/settings/planning" },
+  { label: "Meals & schedule", href: "/settings/schedule" },
+  { label: "Change log", href: ROUTES.changelog },
+] as const;
 
 /** Desktop rail items per role. `null` (no session known) gets the member set. */
 const RAIL: Readonly<Record<Role, readonly NavKey[]>> = {
