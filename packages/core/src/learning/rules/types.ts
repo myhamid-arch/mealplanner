@@ -166,3 +166,100 @@ export interface RuleOutput {
   candidates: ProposalDraft[];
   notes: InsightNote[];
 }
+
+// Synthesis port (FBK-7 stage 2). The db service calls it; packages/ai implements it (R-2: the
+// service receives it by dependency injection, wired in apps/*).
+
+/** A member as the synthesiser pseudonymises it (never sent by name). */
+export interface SynthesisMember {
+  id: string;
+  displayName: string;
+  birthYear: number | null;
+  isTargeted: boolean;
+}
+
+/** An unprocessed review, with a label for what it is about. */
+export interface SynthesisReview {
+  id: string;
+  memberId: string;
+  /** e.g. "Chicken shawarma bowl — Garlic sauce". */
+  about: string;
+  rating: number | null;
+  tags: readonly string[];
+  comment: string | null;
+}
+
+/** A rejected proposal with the admin's note (FBK-9: fed back to the engine). */
+export interface SynthesisRejection {
+  title: string;
+  kind: string;
+  decisionNote: string | null;
+  decidedAt: string;
+}
+
+export interface SynthesisInput {
+  /** `YYYY-MM-DD`; members are labelled adult or child by their age on this date. */
+  referenceDate: string;
+  members: readonly SynthesisMember[];
+  /** The rule candidates of this run. */
+  candidates: readonly ProposalDraft[];
+  notes: readonly InsightNote[];
+  /** Unprocessed review texts since the last run. */
+  reviews: readonly SynthesisReview[];
+  /** Summary of the current weights and settings. */
+  settings: Record<string, string | number | boolean>;
+  /** The last 20 rejected proposals, newest first. */
+  rejected: readonly SynthesisRejection[];
+  /** Entities a proposal may name, by id. */
+  references: {
+    dishes: readonly { id: string; name: string }[];
+    ingredients: readonly { id: string; slug: string; name: string }[];
+    slots: readonly { id: string; key: string; label: string }[];
+  };
+}
+
+export const SYNTHESIS_DROP_REASONS = [
+  "invalid_kind",
+  "invalid_json",
+  "invalid_payload",
+  "unknown_member",
+  "unknown_reference",
+  "unknown_evidence",
+  "invalid_proposal",
+] as const;
+export type SynthesisDropReason = (typeof SYNTHESIS_DROP_REASONS)[number];
+
+/** A synthesised proposal dropped by validation, as logged in `ai_generation.validation_errors`. */
+export interface SynthesisDrop {
+  index: number;
+  title: string;
+  reason: SynthesisDropReason;
+  detail: string;
+  kind?: string;
+}
+
+export type SynthesisResult =
+  | {
+      status: "ok";
+      proposals: ProposalDraft[];
+      dropped: SynthesisDrop[];
+      generationId: string;
+      model: string;
+    }
+  | {
+      status: "disabled";
+      reason: string;
+      proposals: [];
+      dropped: [];
+      generationId: null;
+    }
+  | {
+      status: "failed";
+      code: string;
+      message: string;
+      proposals: [];
+      dropped: [];
+      generationId: string | null;
+    };
+
+export type Synthesize = (input: SynthesisInput) => Promise<SynthesisResult>;
