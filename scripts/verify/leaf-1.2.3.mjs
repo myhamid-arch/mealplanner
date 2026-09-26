@@ -800,7 +800,11 @@ async function gateG3() {
 
 async function gateG4() {
   const report = new Report("leaf-1.2.3 G4");
-  vitest(report, ["test/planner/select/beam.test.ts", "test/planner/solver/cutoff.test.ts"]);
+  vitest(report, [
+    "test/planner/select/beam.test.ts",
+    "test/planner/solver/cutoff.test.ts",
+    "test/planner/solver/cutoff-appeal.test.ts",
+  ]);
   const out = compileCore(report, "G4");
   if (out === null) return report.finish();
   try {

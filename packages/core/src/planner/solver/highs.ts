@@ -73,7 +73,7 @@ const PLATE_OPTIONS = {
  * With `cutoff`, HiGHS prunes every node whose bound exceeds it (`objective_bound`). A model whose
  * optimum is above the cutoff ends early, with no solution or with a feasible point, which can
  * never be better than that optimum. A model whose optimum is at or below the cutoff is solved to
- * the same proven optimum (leaf-1.2.3 ADR-2).
+ * the same proven optimum, unless the time limit ends the search first (leaf-1.2.3 ADR-2).
  */
 export function solveMilp(milp: Milp, timeLimitS: number, cutoff?: number): MilpResult {
   const highs = highsRuntime();

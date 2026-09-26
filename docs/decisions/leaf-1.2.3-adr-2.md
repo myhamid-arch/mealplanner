@@ -31,11 +31,27 @@ CP3 finding 1: the PLN-11 day budget failed on the architect's container. Almost
   - One above it ends early. It returns no solution, or a feasible point whose objective is above its own optimum, so above the cutoff. `evaluate` then rejects that point exactly as it would have rejected the true optimum.
 - Model, options, stage order and tie rule are unchanged.
 
+## Time limit
+
+The argument above holds when every MILP is solved to proven optimality. PLN-5 gives each combination 0.25 s (`TIME_LIMIT_PER_COMBINATION_S`). A model that runs out of time returns HiGHS's incumbent, which depends on machine speed with or without a cutoff. The cutoff prunes nodes, so such a model can reach its proven optimum in time where it did not before, and the plate can then differ.
+
+- Measured (CP3 round 2) on 300 seed-dish plates with random non-zero appeal, run with and without the cutoff under the 0.25 s limit, on the builder's container:
+  - 6 plates had a MILP time out without the cutoff; 2 did with it.
+  - 2 plates differed (`chicken-machboos`, `sheri-daqoos-rice`). Both are adjuster-stage plates where the run without the cutoff timed out on the winning combination. The cutoff returned the better plate: objective 9.294 against 9.449, and 9.303 against 9.442.
+  - 0 differences among plates where no MILP timed out. No plate was worse with the cutoff.
+- On F1 (zero appeal) no plate differs: see the 1,040-plate equivalence and the unchanged plan hashes below.
+
 ## Evidence
 
 - `test/planner/solver/cutoff.test.ts` builds plate models from 1.2.2's feasible cases and adjuster cases:
   - with a cutoff at or above the optimum, the integer columns are identical;
   - with a cutoff below the optimum, HiGHS returns no solution (28 of 31 models) or a point no better than the optimum (3 of 31).
+- `test/planner/solver/cutoff-appeal.test.ts` (in G4) runs `solvePlate` with and without the cutoff, with the per-MILP time limit lifted in both runs so the comparison does not depend on machine speed:
+  - a constructed dish whose winning combination has the higher MILP optimum and wins only through λ_appeal · appeal;
+  - 200 seed-dish plates (seed 38), with random appeal in [−1, 1] for every variant and adjuster, strict and flexible, and the adjuster stage reached on some plates.
+
+  Setting `cutoff = best.objective` (dropping the appeal term) fails both tests; `cutoff.test.ts` still passes under it, and the architect found that every gate does too. That is the CP3 round 2 mutation M4.
+
 - **Exhaustive equivalence:** every distinct F1 target of the week against every suitable seed dish with the seed adjusters, strict and flexible. That is 1,040 `solvePlate` calls, compared as whole `PlateSolution` JSON against the unchanged solver. 0 differences.
 - **F1 week plan hashes** (G4's `stablePlanHash`) are unchanged against `869f6a3`:
   - seed 1: `514085e89d548355a6a43bcb6802db2135f87bad8d95129b90718ffbb5841c25`
