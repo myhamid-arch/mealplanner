@@ -1,6 +1,6 @@
 # Gates: leaf-1.4.2 Design system, app shell, PWA
 
-OWNS: docs/decisions/leaf-1.4.2-*.md, packages/ui-tokens/**, apps/web/app/layout.tsx, apps/web/app/globals.css, apps/web/app/(shell)/**, apps/web/components/ui/**, apps/web/public/**, apps/web/next.config.*, apps/web/playwright.config.ts, apps/web/postcss.config.mjs, apps/web/e2e/shell.spec.ts, scripts/verify/leaf-1.4.2.mjs
+OWNS: docs/decisions/leaf-1.4.2-*.md, packages/ui-tokens/**, apps/web/app/layout.tsx, apps/web/app/globals.css, apps/web/app/(shell)/**, apps/web/app/(app)/layout.tsx, apps/web/components/ui/**, apps/web/public/**, apps/web/next.config.*, apps/web/playwright.config.ts, apps/web/postcss.config.mjs, apps/web/e2e/shell.spec.ts, scripts/verify/leaf-1.4.2.mjs
 
 Scope: Design system, app shell, PWA, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 

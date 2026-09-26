@@ -52,14 +52,15 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
+      # Build first: typed lint resolves workspace packages through their dist/ exports.
+      - name: Build
+        run: pnpm build
+
       - name: Lint
         run: pnpm lint
 
       - name: Typecheck
         run: pnpm typecheck
-
-      - name: Build
-        run: pnpm build
 
       - name: Unit tests
         run: pnpm test:unit
