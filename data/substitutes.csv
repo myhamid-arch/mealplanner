@@ -1,0 +1,105 @@
+from_slug,to_slug,weight,context,note
+chicken-breast,turkey-breast,0.9,lean grilled or roasted protein,similar lean white meat
+chicken-breast,chicken-thigh,0.8,grilled or stewed protein,darker and fattier; longer cooking
+chicken-thigh,chicken-breast,0.75,grilled or stewed protein,leaner; dries out if overcooked
+chicken-mince,turkey-mince,0.9,mince for kofta and sauces,similar lean mince
+turkey-mince,chicken-mince,0.9,mince for kofta and sauces,similar lean mince
+beef-mince,lamb-mince,0.8,mince for kofta and kibbeh,stronger flavour
+lamb-mince,beef-mince,0.8,mince for kofta and kibbeh,milder flavour
+beef-mince-lean,chicken-mince,0.6,mince for sauces,much leaner; milder
+lamb-shoulder,goat-meat,0.85,slow-cooked red meat,Gulf harees and machboos use either
+goat-meat,lamb-shoulder,0.85,slow-cooked red meat,Gulf harees and machboos use either
+lamb-shoulder,beef-chuck-stew,0.75,slow-cooked red meat,milder flavour
+camel-meat,beef-chuck-stew,0.7,slow-cooked red meat,similar lean braising meat
+lamb-leg,lamb-shoulder,0.85,roast or braise,shoulder needs longer cooking
+hammour,sea-bass,0.85,white fish fillet,similar firm white flesh
+hammour,sea-bream,0.8,white fish fillet,similar white flesh
+hammour,sheri,0.8,white fish fillet,local Gulf white fish
+sheri,hammour,0.8,white fish fillet,local Gulf white fish
+sea-bass,hammour,0.85,white fish fillet,similar firm white flesh
+cod,hammour,0.8,white fish fillet,firmer flesh
+tilapia,sea-bass,0.75,white fish fillet,firmer and richer
+kingfish,tuna-fresh,0.75,oily fish steak,both firm steak fish
+kingfish,mackerel,0.7,oily fish,stronger flavour
+salmon,trout,0.85,oily fish fillet,milder and smaller
+trout,salmon,0.85,oily fish fillet,richer
+shrimp,squid,0.5,seafood in rice or pasta,different texture
+tuna-canned-water,tuna-canned-oil,0.9,canned fish,more fat
+tuna-canned-oil,tuna-canned-water,0.9,canned fish,less fat
+egg,egg-white,0.6,omelette or scramble,no yolk fat; less richness
+halloumi,akkawi,0.8,grilled or fried cheese,Levantine white cheese that softens more
+akkawi,halloumi,0.8,grilled or fried cheese,firmer when grilled
+akkawi,nabulsi,0.85,Levantine white cheese,similar brined cheese
+feta,akkawi,0.7,white cheese for breakfast plates,milder and less salty
+labneh,greek-yogurt-whole,0.85,strained yogurt,looser texture
+greek-yogurt-whole,labneh,0.8,strained yogurt,thicker and tangier
+greek-yogurt-nonfat,greek-yogurt-low-fat,0.9,strained yogurt,a little more fat
+yogurt-plain-whole,greek-yogurt-whole,0.75,yogurt in sauces,thicker
+laban,yogurt-plain-low-fat,0.7,cultured milk drink,thicker; thin with water
+milk-whole,milk-low-fat,0.9,milk,less fat
+milk-low-fat,milk-skimmed,0.9,milk,less fat
+cream-cooking,evaporated-milk,0.6,creamy sauce,much less fat
+ricotta,cottage-cheese,0.8,soft fresh cheese,more curd texture
+mozzarella,mozzarella-part-skim,0.9,melting cheese,less fat
+basmati-rice,rice-white-long-grain,0.9,plain rice,less aromatic
+basmati-rice,basmati-rice-brown,0.8,plain rice,longer cooking; more fibre
+rice-white-long-grain,basmati-rice,0.9,plain rice,more aromatic
+basmati-rice,freekeh,0.6,grain side,smoky cracked wheat; contains gluten
+bulgur,freekeh,0.8,cracked wheat,smoky roasted green wheat
+freekeh,bulgur,0.8,cracked wheat,unroasted
+bulgur,couscous,0.75,grain side,finer and faster
+bulgur,quinoa,0.7,grain salad,gluten-free
+couscous,quinoa,0.7,grain side,gluten-free
+pasta-dry,pasta-wholewheat-dry,0.85,pasta,more fibre
+oats-rolled,barley-pearl,0.5,porridge or soup grain,chewier
+khubz,khubz-wholemeal,0.9,flatbread,more fibre
+khubz,tortilla-flour,0.7,wrap bread,thinner
+bread-white,bread-wholemeal,0.85,sliced bread,more fibre
+potato,sweet-potato,0.75,roasted or boiled starch,sweeter
+sweet-potato,potato,0.75,roasted or boiled starch,less sweet
+chickpeas-dried,white-beans,0.7,stews and salads,softer
+chickpeas-canned,chickpeas-boiled,0.95,cooked chickpeas,same food
+fava-beans-canned,chickpeas-canned,0.6,Gulf breakfast foul,different flavour
+lentils-red,split-peas,0.7,soup,longer cooking
+lentils-brown,lentils-red,0.6,lentil dishes,breaks down more
+kidney-beans,black-beans,0.85,bean stews,similar
+spinach,chard,0.8,cooked greens,coarser
+spinach,kale,0.7,cooked greens,tougher; longer cooking
+chard,spinach,0.8,cooked greens,more tender
+lettuce-romaine,lettuce-iceberg,0.8,salad leaf,crisper and milder
+rocket,watercress,0.8,peppery salad leaf,similar
+zucchini,eggplant,0.6,vegetable for stews and mahshi,softer and absorbs more oil
+eggplant,zucchini,0.6,vegetable for stews,firmer; absorbs less oil
+okra,green-beans,0.5,vegetable stew,no mucilage
+bell-pepper-red,bell-pepper-green,0.8,peppers,more bitter
+cauliflower,broccoli,0.75,roasted or boiled brassica,greener flavour
+onion,red-onion,0.9,onion,milder raw
+onion,leek,0.7,cooked onion flavour,milder
+lemon-juice,lime-juice,0.85,souring,more floral
+lime-juice,lemon-juice,0.85,souring,less floral
+pomegranate-molasses,lemon-juice,0.5,souring,no sweetness
+tamarind,lemon-juice,0.5,souring,sharper; less fruity
+olive-oil,sunflower-oil,0.7,cooking oil,neutral flavour
+olive-oil,canola-oil,0.7,cooking oil,neutral flavour
+sunflower-oil,canola-oil,0.95,neutral cooking oil,same use
+ghee,butter-unsalted,0.8,cooking fat,burns at a lower temperature
+butter,ghee,0.8,cooking fat,higher smoke point
+ghee,vegetable-ghee,0.8,cooking fat,dairy-free
+tahini,peanut-butter,0.5,nut or seed paste,different allergen (peanut)
+almonds,cashews,0.8,nuts,softer
+pistachios,almonds,0.7,garnish nuts,different colour and flavour
+pine-nuts,almonds,0.7,garnish nuts,flaked almonds are the common swap
+walnuts,pecans,0.9,nuts,sweeter
+honey,date-syrup,0.8,sweetener,deeper flavour
+date-syrup,honey,0.8,sweetener,lighter flavour
+sugar-white,sugar-brown,0.85,sweetener,caramel notes
+dates-dried,dates-deglet-noor,0.9,dates,firmer
+dried-thyme,oregano-dried,0.7,dried herb,sharper
+parsley,coriander-fresh,0.6,fresh herb,different flavour
+coriander-fresh,parsley,0.6,fresh herb,milder
+mint-fresh,basil-fresh,0.4,fresh herb,different flavour
+chicken-stock,vegetable-stock,0.8,cooking stock,vegetarian
+beef-stock,chicken-stock,0.8,cooking stock,lighter
+soy-sauce,salt,0.4,seasoning,no umami; gluten-free
+cornflour,flour-wheat-white,0.6,thickener,needs longer cooking; contains gluten
+breadcrumbs,oats-rolled,0.5,coating,coarser
