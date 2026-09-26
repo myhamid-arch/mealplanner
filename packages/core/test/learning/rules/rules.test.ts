@@ -260,25 +260,29 @@ describe("FBK-7 rule 2 — ingredient in negative component reviews", () => {
 });
 
 describe("FBK-7 rule 3 — repeated recipe notes", () => {
-  it("G1 rule 3 triggers: a note tag repeated twice on one dish → a revise-recipe note", () => {
+  const revisions = (i: ReturnType<typeof input>) =>
+    runRules(i).candidates.filter((c) => c.rule === "recipe_notes");
+
+  it("G1 rule 3 triggers: a note tag repeated twice on one dish → a recipe.revise proposal", () => {
     const reviews = [
       review(M.a, "dish", shawarma.id, { tags: ["too_salty"] }),
       review(M.b, "dish", shawarma.id, { tags: ["too_salty", "dry"] }),
     ];
-    const notes = recipeNotes(new RuleContext(input({ dishes: [shawarma], reviews })));
-    expect(notes).toHaveLength(1);
-    expect(notes[0]?.subject).toEqual({
-      dishId: shawarma.id,
-      variantId: null,
-      tags: { too_salty: 2 },
-    });
-    expect(notes[0]?.evidence.count).toBe(2);
+    const drafts = revisions(input({ dishes: [shawarma], reviews }));
+    expect(drafts).toHaveLength(1);
+    expect(drafts[0]?.ops).toEqual([
+      {
+        kind: "recipe.revise",
+        payload: { dishId: shawarma.id, variantId: null, notes: ["too_salty"] },
+      },
+    ]);
+    expect(drafts[0]?.evidence.count).toBe(2);
   });
 
   it("G1 rule 3 keys variant reviews by the variant", () => {
     const reviews = [0, 1].map(() => review(M.a, "variant", grilled.id, { tags: ["dry"] }));
-    const [note] = recipeNotes(new RuleContext(input({ dishes: [hammour], reviews })));
-    expect(note?.subject).toMatchObject({ dishId: hammour.id, variantId: grilled.id });
+    const [draft] = revisions(input({ dishes: [hammour], reviews }));
+    expect(draft?.ops[0]?.payload).toMatchObject({ dishId: hammour.id, variantId: grilled.id });
   });
 
   it("G1 rule 3 does not trigger: different tags once each, or non-note tags", () => {
@@ -290,22 +294,19 @@ describe("FBK-7 rule 3 — repeated recipe notes", () => {
       [0, 1].map(() => review(M.a, "dish", shawarma.id, { tags: ["loved_it", "more_often"] })),
     ];
     for (const reviews of cases)
-      expect(recipeNotes(new RuleContext(input({ dishes: [shawarma], reviews })))).toEqual([]);
+      expect(revisions(input({ dishes: [shawarma], reviews }))).toEqual([]);
   });
 
-  it("G1 rule 3 stays a note while no revision op exists (R-33), and the switch turns it into a proposal", () => {
-    expect(RECIPE_REVISION_OP).toBeNull();
+  it("G1 rule 3 is a proposal now that recipe.revise exists (R-40), and no longer a digest note", () => {
+    expect(RECIPE_REVISION_OP).toBe("recipe.revise");
     const reviews = [0, 1].map(() => review(M.a, "dish", shawarma.id, { tags: ["too_oily"] }));
     const i = input({ dishes: [shawarma], reviews });
     const out = runRules(i);
-    expect(out.candidates.filter((c) => c.rule === "recipe_notes")).toEqual([]);
-    expect(out.notes).toHaveLength(1);
-    const proposals = recipeRevisionProposals(new RuleContext(i), "recipe.revise");
-    expect(proposals).toHaveLength(1);
-    expect(proposals[0]?.ops[0]).toEqual({
-      kind: "recipe.revise",
-      payload: { dishId: shawarma.id, variantId: null, notes: ["too_oily"] },
-    });
+    expect(out.notes.filter((n) => n.rule === "recipe_notes")).toEqual([]);
+    expect(out.candidates.filter((c) => c.rule === "recipe_notes")).toHaveLength(1);
+    // The finding itself is unchanged; recipeNotes still renders it for callers that want a note.
+    expect(recipeNotes(new RuleContext(i))).toHaveLength(1);
+    expect(recipeRevisionProposals(new RuleContext(i), null)).toEqual([]);
   });
 });
 
