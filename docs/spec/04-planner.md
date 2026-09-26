@@ -75,7 +75,7 @@ Solves one **plate**: one member, one dish, one slot target.
 - `− λ_sf · solubleFibre`: soluble-fibre priority. Unknown values count as 0.
 - `+ λ_sat · satFat`: pushes saturated fat below the cap, not just to it.
 - `− λ_appeal · variantAppeal`: breaks ties towards the variants the member prefers. It is applied across combinations, not inside the MILP.
-- Defaults: `λ_ratio = 0.5`, `λ_sf = 0.05`, `λ_sat = 0.02`, `λ_appeal = 0.3`. They are constants in `planner/config.ts`, not user settings in v1.
+- Defaults: `λ_ratio = 2` (R-29; 0.5 let the centring term dominate), `λ_sat = 0.02`, `λ_appeal = 0.3`, and the fibre shortfall weights of R-28. They are constants in `planner/solver/config.ts`, not user settings in v1.
 
 **Engine.** HiGHS (WASM, `highs` npm package) MILP with absolute-value linearisation through deviation variables. Time limit 250 ms per combination. If HiGHS cannot run in a target runtime, `javascript-lp-solver` is the fallback, behind the same interface.
 
