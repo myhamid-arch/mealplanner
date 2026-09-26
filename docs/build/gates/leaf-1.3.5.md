@@ -1,6 +1,6 @@
 # Gates: leaf-1.3.5 Admin agent loop and tools
 
-OWNS: docs/decisions/leaf-1.3.5-*.md, packages/ai/src/agent/**, packages/ai/test/agent/**, evals/agent/**, scripts/verify/leaf-1.3.5.mjs
+OWNS: docs/decisions/leaf-1.3.5-*.md, packages/ai/src/agent/**, packages/ai/test/agent/**, evals/agent/**, scripts/verify/leaf-1.3.5.mjs, apps/web/app/api/v1/conversations/[id]/messages/route.ts, apps/web/test/api/conversations-messages.int.test.ts, packages/ai/src/reviews/**, packages/ai/test/reviews/**, apps/worker/src/jobs/reviews-extract.ts
 
 Scope: Admin agent loop and tools, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 
