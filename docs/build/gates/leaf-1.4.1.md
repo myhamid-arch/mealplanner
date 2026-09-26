@@ -1,6 +1,6 @@
 # Gates: leaf-1.4.1 API, auth, worker, SSE
 
-OWNS: docs/decisions/leaf-1.4.1-*.md, apps/web/Dockerfile, apps/worker/Dockerfile, apps/web/app/api/**, apps/web/lib/server/**, apps/web/lib/auth/**, apps/worker/src/**, packages/api-contract/src/**, packages/db/src/services/plans/**, apps/web/test/api/**, scripts/verify/leaf-1.4.1.mjs
+OWNS: docs/decisions/leaf-1.4.1-*.md, apps/web/Dockerfile, apps/worker/Dockerfile, apps/web/app/api/**, apps/web/lib/server/**, apps/web/lib/auth/**, apps/worker/src/**, packages/api-contract/src/**, packages/db/src/services/plans/**, packages/db/src/seed/**, apps/web/test/api/**, scripts/verify/leaf-1.4.1.mjs
 
 Scope: API, auth, worker, SSE, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 
