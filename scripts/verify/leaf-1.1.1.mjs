@@ -2,8 +2,16 @@
 // Usage: node scripts/verify/leaf-1.1.1.mjs --gate G1|G2
 // Prints "VERIFY leaf-1.1.1 <gate> PASSED" only when every assertion, including the
 // negative controls, holds; exits non-zero otherwise.
-import { existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   ARC1_DEPENDENCIES,
@@ -41,6 +49,12 @@ function gateG1() {
   report.check(
     /^pnpm@\d+\.\d+\.\d+$/.test(rootManifest.packageManager ?? ""),
     `root packageManager is an exact pnpm version (found "${String(rootManifest.packageManager)}")`,
+  );
+
+  const pnpmVersion = run("pnpm", ["--version"], { cwd: ROOT }).stdout.trim();
+  report.check(
+    rootManifest.packageManager === `pnpm@${pnpmVersion}`,
+    `the pnpm in use (${pnpmVersion}) is the one packageManager pins`,
   );
 
   // ARC-2: the workspace is exactly the v1 package set.
@@ -97,15 +111,18 @@ function gateG1() {
     brokenProblems.join("\n"),
   );
 
-  // Build every package.
+  // Build every package; each must write fresh output during this run (stale output does not count).
+  const buildStarted = Date.now() - 1000;
   const build = run("pnpm", ["-r", "build"], { cwd: ROOT, env: BUILD_ENV });
   report.check(build.code === 0, "pnpm -r build exits 0", tail(build, 40));
   for (const dir of Object.keys(ARC2_PACKAGES)) {
     const output =
-      dir === "apps/web" ? join(ROOT, dir, ".next", "BUILD_ID") : join(ROOT, dir, "dist", "src");
+      dir === "apps/web"
+        ? join(ROOT, dir, ".next", "BUILD_ID")
+        : join(ROOT, dir, "dist", "src", dir === "apps/worker" ? "main.js" : "index.js");
     report.check(
-      existsSync(output),
-      `${dir} produced build output (${output.slice(ROOT.length + 1)})`,
+      existsSync(output) && statSync(output).mtimeMs >= buildStarted,
+      `${dir} wrote ${relative(ROOT, output)} during this build`,
     );
   }
 
@@ -117,7 +134,7 @@ function gateG1() {
     for (const name of internal) {
       const result = resolveAndImport(join(ROOT, dir), name);
       const targetDir = Object.entries(ARC2_PACKAGES).find(([, n]) => n === name)?.[0] ?? "?";
-      const expected = realpathSync(join(ROOT, targetDir)) + "/dist/src/index.js";
+      const expected = join(realpathSync(join(ROOT, targetDir)), "dist", "src", "index.js");
       report.check(
         result.code === 0 && result.stdout.trim() === expected,
         `${dir} resolves and imports ${name} → ${targetDir}/dist/src/index.js`,
