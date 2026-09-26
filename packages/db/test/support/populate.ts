@@ -432,6 +432,16 @@ export async function populateAllTables(db: Executor, loaded: LoadedFixture): Pr
     userId: adminUserId,
     kind: "helpful",
   });
+  await write.review_revision.insert({
+    id: newId(),
+    householdId: ctx.householdId,
+    reviewId,
+    rating: 3,
+    tags: [],
+    comment: null,
+    replacedAt: now,
+    editedByUserId: adminUserId,
+  });
   const conversationId = newId();
   await write.conversation.insert({
     id: conversationId,
