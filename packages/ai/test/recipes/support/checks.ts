@@ -159,7 +159,7 @@ export function systemStabilityProblems(requests: readonly RecordedRequest[]): s
 
 /** The catalogue block lists every ingredient once, sorted by slug. */
 export function catalogueOrderProblems(catalogueText: string, slugs: readonly string[]): string[] {
-  const lines = catalogueText.split("\n").filter((l) => l.includes(" | "));
+  const lines = catalogueText.split("\n").filter((l) => /^[a-z0-9][a-z0-9_-]* \| /.test(l));
   const listed = lines.map((l) => l.split(" | ")[0] ?? "");
   const problems: string[] = [];
   const sorted = [...listed].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
@@ -167,6 +167,8 @@ export function catalogueOrderProblems(catalogueText: string, slugs: readonly st
     problems.push("catalogue lines are not sorted by slug");
   if (new Set(listed).size !== listed.length) problems.push("a slug is listed twice");
   const missing = slugs.filter((s) => !listed.includes(s));
+  if (listed.length !== slugs.length)
+    problems.push(`${String(listed.length)} lines for ${String(slugs.length)} ingredients`);
   if (missing.length > 0) problems.push(`missing slugs: ${missing.slice(0, 5).join(", ")}`);
   return problems;
 }
