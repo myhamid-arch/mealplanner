@@ -1,6 +1,6 @@
 // Lookups the rules share: what dish, component and variant a review is about, date windows, and
 // the member labels used in titles.
-import { DAY_MS } from "./config.js";
+import { DAY_MS, MAX_EVIDENCE_IDS } from "./config.js";
 import type {
   InsightComponent,
   InsightDish,
@@ -145,9 +145,18 @@ export function groupBy<T>(
   return out;
 }
 
-/** Distinct review ids, sorted (evidence is order-independent). */
+/**
+ * Distinct review ids of the evidence: the most recent `MAX_EVIDENCE_IDS`, sorted. `evidence.count`
+ * keeps the full size, so a busy household never exceeds the stored id list's bound.
+ */
 export function reviewIds(reviews: readonly InsightReview[]): string[] {
-  return [...new Set(reviews.map((r) => r.id))].sort();
+  const latest = new Map<string, number>();
+  for (const r of reviews) latest.set(r.id, Math.max(latest.get(r.id) ?? 0, r.createdAt.getTime()));
+  return [...latest]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, MAX_EVIDENCE_IDS)
+    .map(([id]) => id)
+    .sort();
 }
 
 export function round3(x: number): number {

@@ -17,11 +17,17 @@ function opSatisfied(op: ParsedChangeOp, state: SatisfactionState): boolean {
   switch (op.kind) {
     case "preference.set": {
       const p = op.payload;
-      return config.preferences.some(
+      const rows = config.preferences.filter(
         (row) =>
           row.memberId === p.memberId &&
           row.entityType === p.entityType &&
-          row.entityKey === p.entityKey &&
+          row.entityKey === p.entityKey,
+      );
+      // A dislike is already in effect when the key is marked "never" (FBK-6).
+      if (p.score < 0 && p.hard !== "always_ok" && rows.some((row) => row.hard === "never"))
+        return true;
+      return rows.some(
+        (row) =>
           Math.abs(row.score - p.score) <= SCORE_EPSILON &&
           (p.locked === undefined || row.locked === p.locked) &&
           (p.hard === undefined || row.hard === p.hard),

@@ -7,6 +7,7 @@ import {
   INSIGHTS_REVIEW_TRIGGER,
   RuleContext,
   SYNTHESIS_REJECTED_LIMIT,
+  fingerprintOf,
   runRules,
   type DroppedDraft,
   type InsightInput,
@@ -22,7 +23,7 @@ import { createRepos, type Executor } from "../../repos/index.js";
 import { review } from "../../schema/index.js";
 import { inHouseholdTransaction } from "../changes/apply.js";
 import { loadInsightInput } from "./load.js";
-import { storeDrafts, type ProposalRow } from "./store.js";
+import { previewDrafts, storeDrafts, type ProposalRow } from "./store.js";
 
 export const SYNTHESIS_NOT_WIRED =
   "insight synthesis is disabled: no synthesiser was configured for this run";
@@ -197,9 +198,25 @@ export async function runInsights(
   const unprocessedIds = new Set(loaded.unprocessed.map((r) => r.id));
   const ingredientNames = new Map([...loaded.ingredientRows].map(([id, row]) => [id, row.name]));
 
+  // Synthesis sees only the rule candidates that can still become proposals (not already pending,
+  // satisfied, recently decided or protected); over-budget ones stay, since it may reprioritise.
+  const preview = await previewDrafts(db, ctx, rules.candidates, now);
+  const settled = new Set(
+    preview.dropped.filter((d) => d.reason !== "budget").map((d) => d.fingerprint),
+  );
+  const live = rules.candidates.filter(
+    (c) => !settled.has(fingerprintOf(c.ops, loaded.input.config)),
+  );
   // The model call runs outside any database transaction.
   const synthesis = await synthesise(options.synthesize, () =>
-    synthesisInput(db, ctx, loaded.input, unprocessedIds, rules, ingredientNames),
+    synthesisInput(
+      db,
+      ctx,
+      loaded.input,
+      unprocessedIds,
+      { ...rules, candidates: live },
+      ingredientNames,
+    ),
   );
 
   const drafts = [...rules.candidates, ...synthesis.proposals];

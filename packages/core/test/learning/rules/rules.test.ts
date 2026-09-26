@@ -597,9 +597,9 @@ describe("runRules", () => {
       }),
     );
     const reviews = [
-      review(M.a, "dish", shawarma.id, { rating: 1 }),
       review(M.a, "dish", shawarma.id, { rating: 1, tags: ["never_again"] }),
-      review(M.b, "dish", shawarma.id, { tags: ["less_often"] }),
+      review(M.b, "dish", shawarma.id, { rating: 1 }),
+      review(M.b, "dish", shawarma.id, { rating: 2, tags: ["less_often"] }),
       review(M.c1, "dish", shawarma.id, { tags: ["less_often"] }),
     ];
     const out = runRules(input({ dishes: [shawarma], meals, reviews }));
@@ -609,6 +609,26 @@ describe("runRules", () => {
     );
     expectValidOps(out.candidates);
     expect(out.candidates.every((c) => c.origin === "rule")).toBe(true);
+  });
+
+  it("G1 never_again supersedes a dish dislike for the same member and dish", () => {
+    const reviews = [
+      review(M.a, "dish", shawarma.id, { rating: 1 }),
+      review(M.a, "dish", shawarma.id, { rating: 1, tags: ["never_again"] }),
+    ];
+    const out = runRules(input({ dishes: [shawarma], reviews }));
+    expect(out.candidates.map((c) => c.rule)).toEqual(["never_again"]);
+  });
+
+  it("G1 evidence keeps at most the 50 most recent review ids but counts them all", () => {
+    const reviews = Array.from({ length: 60 }, (_, i) =>
+      review(M.a, "dish", shawarma.id, { rating: 1, daysAgo: 1 + i * 0.25 }),
+    );
+    const [d] = run(dishDislike, input({ dishes: [shawarma], reviews }));
+    expect(d?.evidence.count).toBe(60);
+    expect(d?.evidence.reviewIds).toHaveLength(50);
+    const newest = new Set(reviews.slice(0, 50).map((r) => r.id));
+    expect(d?.evidence.reviewIds.every((id) => newest.has(id))).toBe(true);
   });
 
   it("G1 an empty household produces nothing", () => {

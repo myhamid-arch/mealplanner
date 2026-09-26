@@ -354,6 +354,29 @@ describe("accept and reject (FBK-9)", () => {
   });
 });
 
+describe("FBK-7 synthesis input", () => {
+  it("G2 synthesis is shown only rule candidates that can still become proposals", async () => {
+    const h = await household();
+    const ctx = h.loaded.adminContext;
+    await dishReviews(database, h, 2);
+    const shown: number[] = [];
+    const synthesize = (input: { candidates: readonly unknown[] }): Promise<SynthesisResult> => {
+      shown.push(input.candidates.length);
+      return Promise.resolve({
+        status: "disabled",
+        reason: "test",
+        proposals: [],
+        dropped: [],
+        generationId: null,
+      });
+    };
+    await runInsights(database.db, ctx, { synthesize });
+    await runInsights(database.db, ctx, { synthesize });
+    // First run: the dish dislike is new. Second run: it is pending, so synthesis is not shown it.
+    expect(shown).toEqual([1, 0]);
+  });
+});
+
 describe("FBK-7 trigger and synthesis failure", () => {
   it("G2 insightsDue after 10 unprocessed reviews; the run marks them processed", async () => {
     const h = await household();

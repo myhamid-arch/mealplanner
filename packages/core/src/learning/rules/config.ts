@@ -98,4 +98,7 @@ export const PRIORITY = {
   targetedQuantity: 2,
 } as const;
 
+/** Review ids kept in one proposal's evidence (the most recent); `count` keeps the full size. */
+export const MAX_EVIDENCE_IDS = 50;
+
 export const DAY_MS = 24 * 60 * 60 * 1000;

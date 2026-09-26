@@ -210,6 +210,27 @@ describe("fingerprint suppression (FBK-8)", () => {
     expect(unlocked.kept).toHaveLength(1);
   });
 
+  it("G2 a dislike is already satisfied when the key is marked never (R-33)", async () => {
+    const cfg = config();
+    const never = {
+      id: uuid(),
+      householdId: cfg.household.id,
+      memberId: M.a,
+      entityType: "dish" as const,
+      entityKey: DISH,
+      score: -1,
+      evidenceWeight: 0,
+      source: "proposal" as const,
+      locked: true,
+      hard: "never" as const,
+      updatedAt: NOW,
+    };
+    const r = await select([draft([pref(-0.8)])], [], {
+      state: { config: { ...cfg, preferences: [never] }, verifiedIngredientIds: new Set() },
+    });
+    expect(reasons(r)).toEqual(["satisfied"]);
+  });
+
   it("G2 two drafts with one fingerprint in a run keep the stronger", async () => {
     const r = await select([
       draft([pref(-0.8)], { count: 2, title: "weak" }),

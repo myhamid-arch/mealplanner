@@ -173,6 +173,28 @@ export async function storeDrafts(
 }
 
 /**
+ * The guardrails without storing anything and without the household lock: which drafts would be
+ * kept or dropped now. The insights run uses it to send synthesis only the rule candidates that
+ * can still become proposals; `storeDrafts` decides again under the lock.
+ */
+export async function previewDrafts(
+  db: Executor,
+  ctx: HouseholdContext,
+  drafts: readonly ProposalDraft[],
+  now: Date,
+): Promise<{ kept: CheckedDraft[]; dropped: DroppedDraft[] }> {
+  const config = await loadHouseholdConfig(db, ctx);
+  const tx = new DbChangeTx(db, ctx, now);
+  return selectProposals({
+    drafts,
+    existing: await existingProposals(db, ctx, now),
+    state: { config, verifiedIngredientIds: await verifiedIngredients(db, ctx, drafts) },
+    now,
+    isProtected: (op: ParsedChangeOp) => isProtected(op, tx).catch(() => true),
+  });
+}
+
+/**
  * Stores proposals from any origin through the FBK-8 guardrails (1.3.5's `propose_change` uses
  * this with origin `agent_chat`). Dropped drafts are returned with their reasons.
  */
