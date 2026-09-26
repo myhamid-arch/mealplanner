@@ -2878,7 +2878,7 @@
         "uae_specific_reason": "Emirati dairy staple (camel milk sold nationally)",
         "availability_basis": "builder assessment of UAE retail availability (not measured)",
         "derivations": {
-          "carbs_g": "available carbohydrate = carbohydrate by difference 4.583333492279053 - total dietary fibre 0",
+          "carbs_g": "available carbohydrate = carbohydrate by difference 4.583 - total dietary fibre 0",
           "edible_portion": "1: the source reports no refuse and the record describes the food as sold, edible as is",
           "soluble_fibre_g": "0 because total dietary fibre is 0 in off:0862979000043 (R-13)"
         }
@@ -13185,7 +13185,7 @@
         "uae_specific_reason": "Levantine souring condiment (muhammara, fattoush)",
         "availability_basis": "builder assessment of UAE retail availability (not measured)",
         "derivations": {
-          "carbs_g": "available carbohydrate = carbohydrate by difference 77.80000305175781 - total dietary fibre 0",
+          "carbs_g": "available carbohydrate = carbohydrate by difference 77.8 - total dietary fibre 0",
           "edible_portion": "1: the source reports no refuse and the record describes the food as sold, edible as is",
           "soluble_fibre_g": "0 because total dietary fibre is 0 in off:0015883154986 (R-13)"
         }
@@ -17932,7 +17932,7 @@
         "uae_specific_reason": "NUT-7 example (za'atar); sesame allergen expansion",
         "availability_basis": "builder assessment of UAE retail availability (not measured)",
         "derivations": {
-          "carbs_g": "available carbohydrate = carbohydrate by difference 50 - total dietary fibre 10.699999809265137",
+          "carbs_g": "available carbohydrate = carbohydrate by difference 50 - total dietary fibre 10.7",
           "edible_portion": "1: the source reports no refuse and the record describes the food as sold, edible as is"
         }
       }

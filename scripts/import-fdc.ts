@@ -595,14 +595,14 @@ function buildIngredient(
   if (carbsBasis === "available" && rec.carbsBasis === "by_difference") {
     const available = Math.max(0, carbs - fibre);
     derivations["carbs_g"] =
-      `available carbohydrate = carbohydrate by difference ${String(carbs)} - total dietary fibre ` +
-      String(fibre) +
+      `available carbohydrate = carbohydrate by difference ${String(round3(carbs))} - total ` +
+      `dietary fibre ${String(round3(fibre))}` +
       (carbs - fibre < 0 ? " (negative difference clamped to 0)" : "");
     carbs = available;
   } else if (carbsBasis === "by_difference" && rec.carbsBasis === "available") {
     derivations["carbs_g"] =
-      `carbohydrate by difference = available carbohydrate ${String(carbs)} + total dietary ` +
-      `fibre ${String(fibre)}`;
+      `carbohydrate by difference = available carbohydrate ${String(round3(carbs))} + total ` +
+      `dietary fibre ${String(round3(fibre))}`;
     carbs = carbs + fibre;
   }
 
