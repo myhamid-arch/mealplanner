@@ -605,11 +605,8 @@ function variantNutritionProblems(v, where, cat, ctx, factors, nutrition) {
     }
     if (!ingredientPassesNut4(ing))
       p.push(`${where}: ingredient ${ing.slug} fails NUT-4 under R-22`);
-    const needsYield = !r.is_absorbed_oil && r.cooking_liquid !== "absorbed";
-    if (
-      needsYield &&
-      !cat.yields.some((y) => y.method === v.method && y.ingredient_category === ing.category)
-    )
+    // NUT-5: every (method, category) pair listed, as 1.1.3 G3 re-derives it from these files.
+    if (!cat.yields.some((y) => y.method === v.method && y.ingredient_category === ing.category))
       p.push(`${where}: no method-yield row for (${v.method}, ${ing.category}) (NUT-5)`);
   }
   for (const s of v.steps ?? [])
