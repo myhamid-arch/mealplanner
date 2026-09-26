@@ -1,0 +1,20 @@
+{
+  "name": "@mealplanner/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/src/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:unit": "vitest run --dir test --passWithNoTests --exclude \"**/*.int.test.ts\"",
+    "test:integration": "vitest run --dir test --passWithNoTests .int.test."
+  },
+  "dependencies": {
+    "@mealplanner/ai": "workspace:*",
+    "@mealplanner/core": "workspace:*",
+    "@mealplanner/db": "workspace:*",
+    "@mealplanner/graph": "workspace:*",
+    "pg-boss": "12.34.0"
+  }
+}
