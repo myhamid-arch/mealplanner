@@ -1,0 +1,30 @@
+{
+  "name": "@mealplanner/graph",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./*": {
+      "types": "./dist/src/*/index.d.ts",
+      "default": "./dist/src/*/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:unit": "vitest run --dir test --passWithNoTests --exclude \"**/*.int.test.ts\"",
+    "test:integration": "vitest run --dir test --passWithNoTests .int.test."
+  },
+  "dependencies": {
+    "@mealplanner/core": "workspace:*",
+    "drizzle-orm": "0.45.3",
+    "pg": "8.23.0"
+  },
+  "devDependencies": {
+    "@types/pg": "8.23.1"
+  }
+}
