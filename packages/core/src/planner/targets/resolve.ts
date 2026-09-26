@@ -9,11 +9,15 @@ import {
 import { CARB_TARGET_BASIS } from "./config.js";
 import { assertIsoDate, attendedSlots } from "./day.js";
 import { TargetResolverError } from "./errors.js";
-import { round1, slotShares, slotValues } from "./shares.js";
+import { apportion, round1, slotShares, slotValues } from "./shares.js";
 import type { MacroTolerance, ResolveOptions, SlotTarget } from "./types.js";
 
 /** kcal per gram of fat, for the OQ-4 default sat-fat cap. */
 const KCAL_PER_G_FAT = 9;
+/** OQ-4 (R-28): total fibre goal when unset, grams per 1,000 kcal of the day's target. */
+export const FIBRE_G_PER_1000_KCAL = 14;
+/** OQ-4 (R-28): soluble-fibre goal when unset, as a share of the fibre goal. */
+export const SOLUBLE_SHARE_OF_FIBRE = 0.25;
 
 /** PLN-4 step 2: the day kind's profile, falling back to `default`. */
 function profileFor(cfg: HouseholdConfig, member: MemberRow, dayKind: string): TargetProfileRow {
@@ -27,7 +31,10 @@ function profileFor(cfg: HouseholdConfig, member: MemberRow, dayKind: string): T
   return profile;
 }
 
-/** PLN-4 step 6 (SPEC-Q-8): the member's tolerance row, else the 02 §2 defaults. */
+/**
+ * PLN-4 step 6 (SPEC-Q-8): the member's tolerance row, else the 02 §2 defaults. `kcal` here is the
+ * daily band (OQ-2, R-28); the caller splits it across slots.
+ */
 function toleranceFor(
   cfg: HouseholdConfig,
   memberId: string,
@@ -97,14 +104,18 @@ export function resolveSlotTargets(
       fixed((o) => o.fatG),
     );
 
-    // Step 5: sat-fat cap (OQ-4 default, SPEC-Q-7) and soluble-fibre goal, by share.
+    // Step 5: sat-fat cap and fibre goals by share, with the OQ-4 defaults (R-28).
     const satFatDaily =
       profile.satFatMaxG ?? (profile.kcal * cfg.household.satFatDefaultPct) / 100 / KCAL_PER_G_FAT;
+    const fibreDaily = profile.fibreMinG ?? (profile.kcal / 1000) * FIBRE_G_PER_1000_KCAL;
+    const solubleFibreDaily = profile.solubleFibreMinG ?? fibreDaily * SOLUBLE_SHARE_OF_FIBRE;
+    // Step 6: P/C/F tolerances per meal; the daily kcal band split by share (OQ-2, R-28).
     const { tol, mode } = toleranceFor(cfg, member.id);
+    const kcalTol = apportion(Math.round(tol.kcal), shares);
 
     slots.forEach((slot, i) => {
       const share = shares[i] ?? 0;
-      const target: SlotTarget = {
+      targets.push({
         memberId: member.id,
         date,
         slotKey: slot.key,
@@ -115,13 +126,12 @@ export function resolveSlotTargets(
         carbs: carbs[i] ?? 0,
         fat: fat[i] ?? 0,
         satFatMax: round1(satFatDaily * share),
-        tol: { ...tol },
+        fibreGoal: round1(fibreDaily * share),
+        solubleFibreGoal: round1(solubleFibreDaily * share),
+        tol: { ...tol, kcal: kcalTol[i] ?? 0 },
         mode,
         carbBasis,
-      };
-      if (profile.solubleFibreMinG !== null)
-        target.solubleFibreGoal = round1(profile.solubleFibreMinG * share);
-      targets.push(target);
+      });
     });
   }
   return targets;

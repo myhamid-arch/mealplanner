@@ -126,7 +126,24 @@ function randomPlate(rand: () => number, dish: DishForSolve): Witness {
 
 const round1 = (x: number) => Math.round(x * 10) / 10;
 
-/** G2 feasible cases, round-robin over the test dishes. */
+/**
+ * A dinner-sized share (0.3) of the daily ±50 kcal band (OQ-2, R-28): half of the feasible cases
+ * use it as their slot kcal tolerance, the other half the full ±50.
+ */
+export const SLOT_KCAL_TOL = 15;
+
+/** Known soluble fibre of a plate (unknown counts as 0, NUT-8). */
+function knownSolubleFibre(w: Witness): number {
+  return [...w.items, ...w.adjusters].reduce(
+    (a, x) => a + ((x.per100g.solubleFibre ?? 0) * x.cookedG) / 100,
+    0,
+  );
+}
+
+/**
+ * G2 feasible cases, round-robin over the test dishes. Every third case also carries fibre goals
+ * that the witness meets (80 % of its fibre and known soluble fibre).
+ */
 export function feasibleCases(n: number, basis: CarbBasis, seed: number): SolverCase[] {
   const rand = prng(seed);
   const { dishes } = testDishes();
@@ -136,14 +153,19 @@ export function feasibleCases(n: number, basis: CarbBasis, seed: number): Solver
     if (dish === undefined) throw new Error("no test dishes");
     const witness = randomPlate(rand, dish);
     const actual = witnessNutrients(witness);
+    const tol = { ...DEFAULT_TOL, kcal: i % 4 < 2 ? SLOT_KCAL_TOL : DEFAULT_TOL.kcal };
     const values = {} as Record<MacroKey, number>;
     for (const m of MACRO_KEYS)
       values[m] = Math.max(
         0,
-        Math.round(macroOf(actual, m, basis) + (rand() * 1.2 - 0.6) * DEFAULT_TOL[m]),
+        Math.round(macroOf(actual, m, basis) + (rand() * 1.2 - 0.6) * tol[m]),
       );
-    const target = slotTarget(values, basis);
+    const target = slotTarget(values, basis, { tol });
     if (i % 2 === 0) target.satFatMax = round1(actual.satFat + 0.5 + rand());
+    if (i % 3 === 0) {
+      target.fibreGoal = Math.floor(actual.fibre * 0.8 * 10) / 10;
+      target.solubleFibreGoal = Math.floor(knownSolubleFibre(witness) * 0.8 * 10) / 10;
+    }
     cases.push({
       id: `feasible-${basis}-${String(i)}`,
       dish,

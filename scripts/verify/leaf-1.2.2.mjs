@@ -72,10 +72,24 @@ function vitest(report, files, name, label) {
 
 /** Σ per100g · g / 100 over the items, own arithmetic (unknown soluble fibre ignored). */
 function sumNutrients(items) {
-  const n = { kcal: 0, protein: 0, carbs: 0, fat: 0, satFat: 0, fibre: 0 };
-  for (const { per100g, cookedG } of items)
-    for (const k of Object.keys(n)) n[k] += (per100g[k] * cookedG) / 100;
+  const n = { kcal: 0, protein: 0, carbs: 0, fat: 0, satFat: 0, fibre: 0, knownSolubleFibre: 0 };
+  for (const { per100g, cookedG } of items) {
+    for (const k of ["kcal", "protein", "carbs", "fat", "satFat", "fibre"])
+      n[k] += (per100g[k] * cookedG) / 100;
+    n.knownSolubleFibre += ((per100g.solubleFibre ?? 0) * cookedG) / 100;
+  }
   return n;
+}
+
+/** Shortfall below the fibre goals (OQ-4, R-28), own arithmetic. */
+function shortfallOf(n, target) {
+  return {
+    fibre: target.fibreGoal === undefined ? 0 : Math.max(0, target.fibreGoal - n.fibre),
+    solubleFibre:
+      target.solubleFibreGoal === undefined
+        ? 0
+        : Math.max(0, target.solubleFibreGoal - n.knownSolubleFibre),
+  };
 }
 
 function macro(n, m, basis) {
@@ -136,12 +150,17 @@ function plateProblems(input, solution) {
     items.push({ per100g: v.per100g, cookedG: a.cookedG });
   }
   const nutrients = sumNutrients(items);
-  if (input.target !== null && solution.status !== "untargeted")
+  if (input.target !== null && solution.status !== "untargeted") {
     for (const m of MACROS) {
       const expected = macro(nutrients, m, input.target.carbBasis) - input.target[m];
       if (Math.abs(solution.deviation[m] - expected) > 1e-6)
         problems.push(`deviation.${m} ${solution.deviation[m]} ≠ recomputed ${expected}`);
     }
+    const short = shortfallOf(nutrients, input.target);
+    for (const k of ["fibre", "solubleFibre"])
+      if (Math.abs((solution.shortfall?.[k] ?? NaN) - short[k]) > 1e-6)
+        problems.push(`shortfall.${k} ${solution.shortfall?.[k]} ≠ recomputed ${short[k]}`);
+  }
   return { problems, nutrients };
 }
 
@@ -325,6 +344,11 @@ function weekProblems(targets, f1, profiles) {
       const sum = slots.reduce((a, t) => a + t[m], 0);
       if (Math.abs(sum - daily[m]) > 1) problems.push(`${key}: Σ ${m} ${sum} vs daily ${daily[m]}`);
     }
+    // OQ-2 (R-28): the slot kcal bands sum exactly to the member's daily kcal tolerance.
+    const dailyTol = member.tolerance?.kcal ?? 50;
+    const tolSum = slots.reduce((a, t) => a + t.tol.kcal, 0);
+    if (tolSum !== dailyTol)
+      problems.push(`${key}: Σ slot kcal tol ${tolSum} vs daily ${dailyTol}`);
     const keys = slots.map((t) => t.slotKey);
     for (const k of ["pre_workout", "post_workout"])
       if (keys.includes(k) !== trains)
@@ -370,7 +394,7 @@ async function gateG1() {
   const problems = weekProblems(targets, f1, { days: 7 });
   report.check(
     problems.length === 0,
-    `F1 week: ${targets.length} slot targets; every member-day sums to its daily target within 1 g / 1 kcal; pre/post-workout exactly on each member's training days`,
+    `F1 week: ${targets.length} slot targets; every member-day sums to its daily target within 1 g / 1 kcal, its slot kcal bands sum to the daily ±kcal band (OQ-2), and pre/post-workout falls exactly on each member's training days`,
     problems.slice(0, 20).join("\n"),
   );
   const perMember = (id) =>
@@ -408,6 +432,13 @@ async function gateG1() {
   report.check(
     weekProblems(misplaced, f1, { days: 7 }).some((p) => p.includes("non-training")),
     "negative control: a pre-workout slot on Adult B's rest day is rejected",
+  );
+  const widened = targets.map((t, i) =>
+    i === 5 ? { ...t, tol: { ...t.tol, kcal: t.tol.kcal + 1 } } : t,
+  );
+  report.check(
+    weekProblems(widened, f1, { days: 7 }).some((p) => p.includes("kcal tol")),
+    "negative control: a slot kcal band widened by 1 kcal breaks the daily band and is rejected",
   );
   return report.finish();
 }
@@ -462,6 +493,28 @@ async function gateG2() {
     );
   }
 
+  // Fibre goals (OQ-4, R-28): every shortfall is recomputed in plateProblems above; plates that meet
+  // both goals report exactly zero.
+  const withGoals = total.filter((c) => c.target.fibreGoal !== undefined);
+  let meeting = 0;
+  const goalBad = [];
+  for (const c of withGoals) {
+    const s = m.solver.solvePlate(c);
+    const n = plateProblems(c, s).nutrients;
+    const meets =
+      n.fibre >= c.target.fibreGoal - EPS && n.knownSolubleFibre >= c.target.solubleFibreGoal - EPS;
+    if (meets) {
+      meeting++;
+      if (s.shortfall.fibre !== 0 || s.shortfall.solubleFibre !== 0)
+        goalBad.push(`${c.id}: meets both goals but reports ${JSON.stringify(s.shortfall)}`);
+    }
+  }
+  report.check(
+    withGoals.length > 0 && meeting > 0 && goalBad.length === 0,
+    `${withGoals.length} feasible cases carry fibre goals; ${meeting} plates meet both and report zero shortfall`,
+    goalBad.slice(0, 10).join("\n"),
+  );
+
   const infeasible = m.cases.infeasibleCases(50, "total", 3);
   const uncertified = infeasible.filter((c) => !certifiedInfeasible(c));
   report.check(
@@ -507,6 +560,18 @@ async function gateG2() {
   report.check(
     total.every((c) => !certifiedInfeasible(c)),
     "negative control: the certificate never fires on the 200 known-feasible cases",
+  );
+  const goalCase = withGoals[0];
+  const goalPlate = m.solver.solvePlate(goalCase);
+  report.check(
+    plateProblems(goalCase, {
+      ...goalPlate,
+      shortfall: {
+        fibre: goalPlate.shortfall.fibre + 1,
+        solubleFibre: goalPlate.shortfall.solubleFibre,
+      },
+    }).problems.some((p) => p.includes("shortfall")),
+    "negative control: a shortfall misreported by 1 g is rejected",
   );
   const miss = m.solver.solvePlate(infeasible[0]);
   report.check(

@@ -9,7 +9,8 @@ import {
   LAMBDA_ADJUSTER,
   LAMBDA_RATIO,
   LAMBDA_SAT_FAT,
-  LAMBDA_SOLUBLE_FIBRE,
+  LAMBDA_FIBRE_SHORTFALL,
+  LAMBDA_SOLUBLE_FIBRE_SHORTFALL,
   MAX_ADJUSTERS,
 } from "./config.js";
 import { SolverError } from "./errors.js";
@@ -73,6 +74,9 @@ export type PlateModelInput = {
   tol: Record<MacroKey, number>;
   basis: CarbBasis;
   satFatMax: number | undefined;
+  /** Soft goals (OQ-4, R-28): a shortfall below them is penalised. */
+  fibreGoal: number | undefined;
+  solubleFibreGoal: number | undefined;
   /** Reference plate weight, Σ default_serving_g. */
   gRef: number;
   /** Hard tolerances and cap (strict stage and adjuster retry) or soft (least deviation). */
@@ -94,6 +98,7 @@ export type PlateModel = {
 
 export function buildPlateModel(input: PlateModelInput): PlateModel {
   const { main, adjusters, target, tol, basis, satFatMax, gRef, hard } = input;
+  const { fibreGoal, solubleFibreGoal } = input;
   const relaxed = input.relaxed ?? false;
   const colCost: number[] = [];
   const colLower: number[] = [];
@@ -107,9 +112,7 @@ export function buildPlateModel(input: PlateModelInput): PlateModel {
     integrality.push(relaxed ? 0 : type);
     return colCost.length - 1;
   };
-  const nutrientCost = (n: Nutrients, unit: number) =>
-    unit *
-    ((-LAMBDA_SOLUBLE_FIBRE * (n.solubleFibre ?? 0)) / 100 + (LAMBDA_SAT_FAT * n.satFat) / 100);
+  const nutrientCost = (n: Nutrients, unit: number) => (unit * LAMBDA_SAT_FAT * n.satFat) / 100;
 
   const mainCols = main.map((term) => {
     const { unit, kMin, kMax, optional } = term.grid;
@@ -133,6 +136,10 @@ export function buildPlateModel(input: PlateModelInput): PlateModel {
   const ratioCols = main.map(() => addCol(LAMBDA_RATIO / gRef, 0, inf, 0));
   const satExcessCol =
     !hard && satFatMax !== undefined ? addCol(deviationWeight(tol.fat), 0, inf, 0) : undefined;
+  const fibreShortCol =
+    fibreGoal !== undefined ? addCol(LAMBDA_FIBRE_SHORTFALL, 0, inf, 0) : undefined;
+  const solubleShortCol =
+    solubleFibreGoal !== undefined ? addCol(LAMBDA_SOLUBLE_FIBRE_SHORTFALL, 0, inf, 0) : undefined;
 
   const rows: Milp["rows"] = [];
   const add = (entries: Map<number, number>, col: number, value: number) => {
@@ -168,6 +175,23 @@ export function buildPlateModel(input: PlateModelInput): PlateModel {
     if (satExcessCol !== undefined) add(entries, satExcessCol, -1);
     rows.push({ lower: -inf, upper: satFatMax, entries });
   }
+  // Fibre goals: Σ fibre·grams + shortfall ≥ goal (unknown soluble fibre counts as 0, NUT-8).
+  const goalRow = (goal: number, col: number, per100: (n: Nutrients) => number) => {
+    const entries = new Map<number, number>();
+    main.forEach((term, i) => {
+      if (term.per100g !== null)
+        add(entries, mainCols[i] ?? -1, (term.grid.unit * per100(term.per100g)) / 100);
+    });
+    adjusters.forEach((term, j) => {
+      add(entries, adjCols[j]?.x ?? -1, (term.grid.unit * per100(term.per100g)) / 100);
+    });
+    add(entries, col, 1);
+    rows.push({ lower: goal, upper: inf, entries });
+  };
+  if (fibreGoal !== undefined && fibreShortCol !== undefined)
+    goalRow(fibreGoal, fibreShortCol, (n) => n.fibre);
+  if (solubleFibreGoal !== undefined && solubleShortCol !== undefined)
+    goalRow(solubleFibreGoal, solubleShortCol, (n) => n.solubleFibre ?? 0);
   // Naturalness: u_i ≥ |g_i − ρ_i·G| with G = Σ g over main components.
   main.forEach((term, i) => {
     for (const sign of [1, -1]) {
@@ -220,8 +244,29 @@ export function buildPlateModel(input: PlateModelInput): PlateModel {
 }
 
 /**
+ * Fibre and soluble-fibre shortfall below the goals, grams (0 without a goal). Unknown soluble
+ * fibre counts as 0 (NUT-8), so the sum is over the known values of the served items.
+ */
+export function fibreShortfall(
+  items: ReadonlyArray<{ per100g: Nutrients; cookedG: number }>,
+  goals: { fibreGoal?: number | undefined; solubleFibreGoal?: number | undefined },
+): { fibre: number; solubleFibre: number } {
+  let fibre = 0;
+  let soluble = 0;
+  for (const { per100g, cookedG } of items) {
+    fibre += (per100g.fibre * cookedG) / 100;
+    soluble += ((per100g.solubleFibre ?? 0) * cookedG) / 100;
+  }
+  return {
+    fibre: goals.fibreGoal === undefined ? 0 : Math.max(0, goals.fibreGoal - fibre),
+    solubleFibre:
+      goals.solubleFibreGoal === undefined ? 0 : Math.max(0, goals.solubleFibreGoal - soluble),
+  };
+}
+
+/**
  * The PLN-5 objective of a plate, recomputed from its grams (appeal excluded): centring,
- * naturalness, soluble fibre, sat fat, adjuster count, and soft sat-fat excess.
+ * naturalness, fibre shortfalls, sat fat, adjuster count, and soft sat-fat excess.
  */
 export function plateObjective(args: {
   mainGrams: readonly number[];
@@ -229,6 +274,7 @@ export function plateObjective(args: {
   adjusterGrams: readonly number[];
   adjusters: readonly AdjusterTerm[];
   actual: Nutrients;
+  shortfall: { fibre: number; solubleFibre: number };
   target: Record<MacroKey, number>;
   tol: Record<MacroKey, number>;
   basis: CarbBasis;
@@ -236,7 +282,7 @@ export function plateObjective(args: {
   gRef: number;
   hard: boolean;
 }): number {
-  const { mainGrams, main, adjusterGrams, adjusters, actual, target, tol, basis } = args;
+  const { mainGrams, main, adjusterGrams, actual, shortfall, target, tol, basis } = args;
   let total = 0;
   for (const m of MACROS)
     total += Math.abs(macroValue(actual, m, basis) - target[m]) * deviationWeight(tol[m]);
@@ -244,13 +290,10 @@ export function plateObjective(args: {
   main.forEach((term, i) => {
     total += (LAMBDA_RATIO * Math.abs((mainGrams[i] ?? 0) - term.rho * plate)) / args.gRef;
   });
-  const knownSolubleFibre = (n: Nutrients | null, g: number) => ((n?.solubleFibre ?? 0) * g) / 100;
-  let solubleFibre = 0;
-  main.forEach((term, i) => (solubleFibre += knownSolubleFibre(term.per100g, mainGrams[i] ?? 0)));
-  adjusters.forEach(
-    (term, j) => (solubleFibre += knownSolubleFibre(term.per100g, adjusterGrams[j] ?? 0)),
-  );
-  total += -LAMBDA_SOLUBLE_FIBRE * solubleFibre + LAMBDA_SAT_FAT * actual.satFat;
+  total +=
+    LAMBDA_FIBRE_SHORTFALL * shortfall.fibre +
+    LAMBDA_SOLUBLE_FIBRE_SHORTFALL * shortfall.solubleFibre +
+    LAMBDA_SAT_FAT * actual.satFat;
   total += LAMBDA_ADJUSTER * adjusterGrams.filter((g) => g > 0).length;
   if (!args.hard && args.satFatMax !== undefined)
     total += Math.max(0, actual.satFat - args.satFatMax) * deviationWeight(tol.fat);

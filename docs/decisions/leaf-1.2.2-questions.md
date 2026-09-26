@@ -60,3 +60,10 @@ Defined from the PLN-5 naturalness term: for a plate with main-dish components `
 
 ## SPEC-Q-17: G4 median ratio deviation with λ_ratio = 0.5 (blocks G4; raised on PR #6)
 With the 04 §4 constants the centring term (`Σ|dev|/tol`, up to 4 inside the band) outweighs naturalness (`0.5·Σ|g−ρG|/G_ref ≈ 0.5·r`), so the solver picks dead-centre plates over natural ones. On the leaf's 25-dish test set against F1's week of slot targets, the median ratio deviation of the 350 in-tolerance plates is 0.273 (0.270 after the reference plates were set to high-protein defaults). Diagnostic runs, constants unchanged in code: λ_ratio 1 → 0.246, 2 → 0.210, 5 → 0.183, 20 → 0.130. Options put to the architect: raise `LAMBDA_RATIO` (recommended: 2), revise the G4 threshold or metric, or a different centring term. No constant, gate or threshold has been changed.
+
+## Superseded by R-28 (owner answers OQ-2, OQ-4, OQ-7; architect amendment on PR #6)
+- SPEC-Q-7: the sat-fat default is still read from `household.sat_fat_default_pct`, whose DB default is now 6 % (migration 0003). The soluble-fibre goal now has a default (25 % of the fibre goal), and a total-fibre goal (14 g per 1,000 kcal) is added. Both are soft, as penalised shortfall (ADR-2).
+- SPEC-Q-8 and step 6: `tolerance.kcal` is a daily band. The resolver splits it across the day's attended slots by share (largest remainder, whole kcal), so the slot bands sum to the daily band. P/C/F tolerances stay per meal.
+- SPEC-Q-16: the combination objective no longer rewards soluble fibre directly; it penalises the shortfall below the goals.
+
+SPEC-Q-17 re-measured after R-28 (daily kcal band split per slot, fibre shortfall), constants unchanged in code: median ratio deviation of the 350 in-tolerance F1 plates at λ_ratio 0.5 → 0.276, 1 → 0.264, 2 → 0.200, 5 → 0.190.

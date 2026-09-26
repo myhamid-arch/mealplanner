@@ -15,6 +15,7 @@ import {
   MACROS,
   buildPlateModel,
   deviationWeight,
+  fibreShortfall,
   gridOf,
   macroValue,
   plateObjective,
@@ -39,6 +40,7 @@ type Candidate = {
   adjusters: Array<{ option: AdjusterOption; cookedG: number }>;
   actual: Nutrients;
   deviation: Record<MacroKey, number>;
+  shortfall: PlateSolution["shortfall"];
   inTolerance: boolean;
   objective: number;
 };
@@ -105,6 +107,7 @@ function evaluate(
   });
   const actual = plateNutrients(items);
   const { tol, carbBasis, satFatMax } = p.target;
+  const shortfall = fibreShortfall(items, p.target);
   const deviation = {} as Record<MacroKey, number>;
   for (const m of MACROS) deviation[m] = macroValue(actual, m, carbBasis) - p.targetValues[m];
   const inTolerance =
@@ -117,6 +120,7 @@ function evaluate(
       adjusterGrams,
       adjusters: adjusterTerms,
       actual,
+      shortfall,
       target: p.targetValues,
       tol,
       basis: carbBasis,
@@ -125,7 +129,7 @@ function evaluate(
       hard,
     }) -
     LAMBDA_APPEAL * comboAppeal(combo, mainGrams, p.member);
-  return { combo, mainGrams, adjusters, actual, deviation, inTolerance, objective };
+  return { combo, mainGrams, adjusters, actual, deviation, shortfall, inTolerance, objective };
 }
 
 /**
@@ -156,6 +160,8 @@ function runStage(
     tol: p.target.tol,
     basis: p.target.carbBasis,
     satFatMax: p.target.satFatMax,
+    fibreGoal: p.target.fibreGoal,
+    solubleFibreGoal: p.target.solubleFibreGoal,
     gRef: p.gRef,
     hard,
     relaxed,
@@ -253,12 +259,17 @@ function toSolution(
   }));
   for (const a of adjusters) explain.push(`+ side: adjuster ${a.dishId} ${String(a.cookedG)} g`);
   explain.push(`Deviation: ${describeDeviation(c.deviation, p.target.carbBasis)}`);
+  if (c.shortfall.fibre > 0 || c.shortfall.solubleFibre > 0)
+    explain.push(
+      `Below the fibre goals by ${c.shortfall.fibre.toFixed(1)} g fibre and ${c.shortfall.solubleFibre.toFixed(1)} g soluble fibre`,
+    );
   return {
     status,
     items,
     adjusters,
     actual: c.actual,
     deviation: c.deviation,
+    shortfall: c.shortfall,
     objective: c.objective,
     fit: status === "infeasible" ? 0 : fitOf(c.deviation, p.target.tol),
     explain,
@@ -279,6 +290,7 @@ function emptyInfeasible(p: Problem, explain: string[]): PlateSolution {
     adjusters: [],
     actual,
     deviation,
+    shortfall: fibreShortfall([], p.target),
     objective,
     fit: 0,
     explain,

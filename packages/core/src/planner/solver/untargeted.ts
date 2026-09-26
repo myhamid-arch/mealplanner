@@ -52,6 +52,7 @@ export function solveUntargeted(dish: DishForSolve, member: MemberCtx): PlateSol
     adjusters: [],
     actual: plateNutrients(nutrients),
     deviation: { kcal: 0, protein: 0, carbs: 0, fat: 0 },
+    shortfall: { fibre: 0, solubleFibre: 0 },
     objective: 0,
     fit: 1,
     explain,

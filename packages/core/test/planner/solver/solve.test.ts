@@ -72,12 +72,26 @@ function expectConsistent(input: SolvePlateInput, r: PlateSolution) {
   }
   const actual = plateNutrients(perItem);
   expect(r.actual.kcal).toBeCloseTo(actual.kcal, 6);
-  if (input.target !== null && r.status !== "untargeted")
+  if (input.target !== null && r.status !== "untargeted") {
     for (const m of MACRO_KEYS)
       expect(r.deviation[m]).toBeCloseTo(
         macroOf(actual, m, input.target.carbBasis) - input.target[m],
         6,
       );
+    const soluble = perItem.reduce(
+      (a, x) => a + ((x.per100g.solubleFibre ?? 0) * x.cookedG) / 100,
+      0,
+    );
+    const { fibreGoal, solubleFibreGoal } = input.target;
+    expect(r.shortfall.fibre).toBeCloseTo(
+      fibreGoal === undefined ? 0 : Math.max(0, fibreGoal - actual.fibre),
+      6,
+    );
+    expect(r.shortfall.solubleFibre).toBeCloseTo(
+      solubleFibreGoal === undefined ? 0 : Math.max(0, solubleFibreGoal - soluble),
+      6,
+    );
+  }
 }
 
 function inTolerance(input: SolvePlateInput, r: PlateSolution): boolean {
@@ -111,6 +125,25 @@ describe("known-feasible cases are in tolerance on the grid (G2, PLN-5)", () => 
         expect(r.status, c.id).toBe("in_tolerance");
         expectConsistent(c, r);
       }
+    },
+    SLOW,
+  );
+  it(
+    "reports zero fibre shortfall for plates that meet both goals (OQ-4, R-28)",
+    () => {
+      let meeting = 0;
+      for (const c of feasibleCases(60, "total", 1).filter(
+        (x) => x.target.fibreGoal !== undefined,
+      )) {
+        const r = solvePlate(c);
+        expectConsistent(c, r);
+        const soluble = r.shortfall.solubleFibre;
+        if (r.shortfall.fibre === 0 && soluble === 0) meeting++;
+        const fibre = r.actual.fibre;
+        if (fibre >= (c.target.fibreGoal ?? 0) && r.shortfall.solubleFibre === 0)
+          expect(r.shortfall.fibre).toBe(0);
+      }
+      expect(meeting).toBeGreaterThan(0);
     },
     SLOW,
   );
@@ -241,6 +274,58 @@ describe("solver rules", () => {
     if (d === undefined) throw new Error(`no dish ${id}`);
     return d;
   };
+
+  it("penalises a fibre shortfall: the higher-fibre twin wins only when there is a goal", () => {
+    const base = dish("cod_quinoa_spinach");
+    const spinach = nth(base, 2);
+    const steamed = spinach.variants.find((v) => v.id.endsWith(".steamed"));
+    if (steamed === undefined) throw new Error("dish shape");
+    // Identical except for 3 g more fibre and 1 g more soluble fibre per 100 g.
+    const twin = {
+      ...steamed,
+      id: `${spinach.id}.fibre_twin`,
+      isDefault: false,
+      per100g: {
+        ...steamed.per100g,
+        fibre: steamed.per100g.fibre + 3,
+        solubleFibre: (steamed.per100g.solubleFibre ?? 0) + 1,
+      },
+    };
+    const d: DishForSolve = {
+      ...base,
+      components: [nth(base, 0), nth(base, 1), { ...spinach, variants: [steamed, twin] }],
+    };
+    // Available-carbohydrate basis, so the extra fibre changes no macro.
+    // Targets taken from a plate of the dish itself, so they are reachable.
+    const seed = solvePlate({
+      dish: { ...d, components: [nth(base, 0), nth(base, 1), { ...spinach, variants: [steamed] }] },
+      target: slotTarget({ kcal: 520, protein: 45, carbs: 50, fat: 13 }, "total"),
+      member: memberCtx(),
+      adjusters: [],
+    });
+    const values = {
+      kcal: Math.round(seed.actual.kcal),
+      protein: Math.round(seed.actual.protein),
+      carbs: Math.round(seed.actual.carbs),
+      fat: Math.round(seed.actual.fat),
+    };
+    const plain = solvePlate({
+      dish: d,
+      target: slotTarget(values, "available"),
+      member: memberCtx(),
+      adjusters: [],
+    });
+    const spinachOf = (r: PlateSolution) =>
+      r.items.find((i) => i.componentId === spinach.id)?.variantId;
+    expect(plain.status).toBe("in_tolerance");
+    expect(spinachOf(plain)).toBe(steamed.id);
+    expect(plain.shortfall).toEqual({ fibre: 0, solubleFibre: 0 });
+    const goals = slotTarget(values, "available", { fibreGoal: 40, solubleFibreGoal: 20 });
+    const withGoals = solvePlate({ dish: d, target: goals, member: memberCtx(), adjusters: [] });
+    expect(spinachOf(withGoals)).toBe(twin.id);
+    expect(withGoals.shortfall.fibre).toBeGreaterThan(0);
+    expect(withGoals.explain.some((e) => e.includes("fibre goals"))).toBe(true);
+  });
 
   it("matches carbs on the target's basis (R-20)", () => {
     const [c] = feasibleCases(1, "total", 11);

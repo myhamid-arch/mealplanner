@@ -3,8 +3,13 @@
 
 /** Weight of plate naturalness: Σ |g − ρ·G| / G_ref. */
 export const LAMBDA_RATIO = 0.5;
-/** Soluble-fibre priority, per gram (unknown counts as 0). */
-export const LAMBDA_SOLUBLE_FIBRE = 0.05;
+/**
+ * Fibre goals (OQ-4, R-28, leaf-1.2.2 ADR-2): penalty per gram of shortfall below the slot's
+ * total-fibre and soluble-fibre goals. Soft goals, not constraints; unknown soluble fibre counts
+ * as 0 (NUT-8).
+ */
+export const LAMBDA_FIBRE_SHORTFALL = 0.05;
+export const LAMBDA_SOLUBLE_FIBRE_SHORTFALL = 0.1;
 /** Saturated-fat pressure, per gram. */
 export const LAMBDA_SAT_FAT = 0.02;
 /** Tie-break towards the member's preferred variants, per unit of mean appeal. */

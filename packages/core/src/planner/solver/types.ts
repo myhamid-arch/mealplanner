@@ -76,6 +76,11 @@ export type PlateSolution = {
   actual: Nutrients;
   /** `actual − target`; carbs on the target's carbohydrate basis. Zero for untargeted plates. */
   deviation: Record<MacroKey, number>;
+  /**
+   * Grams below the target's fibre and soluble-fibre goals (soft goals, OQ-4, R-28); 0 when a goal
+   * is met or unset. Unknown soluble fibre counts as 0 (NUT-8). Zero for untargeted plates.
+   */
+  shortfall: { fibre: number; solubleFibre: number };
   objective: number;
   /** 1 − mean(|dev| / tol), clamped to [0, 1]; 0 when infeasible. */
   fit: number;

@@ -98,22 +98,46 @@ describe("F1 week (G1)", () => {
     const monB = week.filter((t) => t.memberId === "adult_b" && t.date === F1_WEEK[0]);
     // Monday is a rest day for B: breakfast 0.25, lunch 0.30, snack 0.10, dinner 0.30 → Σ 0.95
     expect(monB.map((t) => t.kcal)).toEqual(apportion(1655, [0.25, 0.3, 0.1, 0.3]));
+    // P/C/F tolerances are per meal; the daily ±50 kcal band is split by share (OQ-2, R-28).
+    expect(monB.map((t) => t.tol.kcal)).toEqual(apportion(50, [0.25, 0.3, 0.1, 0.3]));
     for (const t of week) {
-      expect(t.tol).toEqual({ kcal: 50, protein: 5, carbs: 5, fat: 2 });
+      expect({ ...t.tol, kcal: 0 }).toEqual({ kcal: 0, protein: 5, carbs: 5, fat: 2 });
       expect(t.mode).toBe("strict");
       expect(t.carbBasis).toBe(CARB_TARGET_BASIS);
       expect(t.slotTypeId).toBe(slotId(t.slotKey));
     }
   });
 
-  it("splits sat fat and soluble fibre by share", () => {
+  it("splits the daily kcal band so the slot bands sum to it on every member-day (OQ-2)", () => {
+    for (const [, slots] of byMemberDay(week)) {
+      expect(slots.reduce((a, t) => a + t.tol.kcal, 0)).toBe(50);
+      expect(slots.every((t) => Number.isInteger(t.tol.kcal) && t.tol.kcal > 0)).toBe(true);
+    }
+  });
+
+  it("splits sat fat and the fibre goals by share, with the OQ-4 defaults (R-28)", () => {
     const monA = week.filter((t) => t.memberId === "adult_a" && t.date === F1_WEEK[0]);
     expect(monA.reduce((a, t) => a + (t.satFatMax ?? 0), 0)).toBeCloseTo(22, 0);
+    // Adult A sets soluble fibre (10 g) but not total fibre: 14 g per 1,000 kcal of 2390 kcal.
     expect(monA.reduce((a, t) => a + (t.solubleFibreGoal ?? 0), 0)).toBeCloseTo(10, 0);
-    // Adult B has no soluble-fibre minimum (OQ-4: no default).
-    expect(
-      week.filter((t) => t.memberId === "adult_b").every((t) => t.solubleFibreGoal === undefined),
-    ).toBe(true);
+    expect(monA.reduce((a, t) => a + (t.fibreGoal ?? 0), 0)).toBeCloseTo(2.39 * 14, 0);
+    // Adult B sets neither: fibre 14 g / 1,000 kcal, soluble 25 % of that.
+    const monB = week.filter((t) => t.memberId === "adult_b" && t.date === F1_WEEK[0]);
+    expect(monB.reduce((a, t) => a + (t.fibreGoal ?? 0), 0)).toBeCloseTo(1.655 * 14, 0);
+    expect(monB.reduce((a, t) => a + (t.solubleFibreGoal ?? 0), 0)).toBeCloseTo(
+      1.655 * 14 * 0.25,
+      0,
+    );
+    const dinner = monB.find((t) => t.slotKey === "dinner");
+    expect(dinner?.fibreGoal).toBeCloseTo((1.655 * 14 * 0.3) / 0.95, 1);
+  });
+
+  it("uses a set fibre minimum and derives the soluble goal from it", () => {
+    const cfg = f1Config();
+    for (const p of cfg.targetProfiles) if (p.memberId === "adult_b") p.fibreMinG = 40;
+    const t = resolveSlotTargets(cfg, F1_WEEK[0]).filter((x) => x.memberId === "adult_b");
+    expect(t.reduce((a, x) => a + (x.fibreGoal ?? 0), 0)).toBeCloseTo(40, 0);
+    expect(t.reduce((a, x) => a + (x.solubleFibreGoal ?? 0), 0)).toBeCloseTo(10, 0);
   });
 });
 
@@ -346,23 +370,25 @@ describe("rounding, defaults and errors", () => {
     for (let total = 0; total < 300; total += 7)
       expect(apportion(total, [0.25, 0.3, 0.1, 0.15, 0.1]).reduce((a, b) => a + b, 0)).toBe(total);
   });
-  it("defaults the sat-fat cap to household.sat_fat_default_pct of kcal (OQ-4, SPEC-Q-7)", () => {
+  it("defaults the sat-fat cap to household.sat_fat_default_pct of kcal (OQ-4, R-28)", () => {
     const cfg = f1Config();
     for (const p of cfg.targetProfiles) if (p.memberId === "adult_b") p.satFatMaxG = null;
-    cfg.household.satFatDefaultPct = 10;
+    expect(cfg.household.satFatDefaultPct).toBe(6);
     const t = resolveSlotTargets(cfg, F1_WEEK[1]).filter((x) => x.memberId === "adult_b");
-    expect(t.reduce((a, x) => a + (x.satFatMax ?? 0), 0)).toBeCloseTo((1655 * 0.1) / 9, 0);
+    expect(t.reduce((a, x) => a + (x.satFatMax ?? 0), 0)).toBeCloseTo((1655 * 0.06) / 9, 0);
+    cfg.household.satFatDefaultPct = 8; // read from the household, not hard-coded
+    const t8 = resolveSlotTargets(cfg, F1_WEEK[1]).filter((x) => x.memberId === "adult_b");
+    expect(t8.reduce((a, x) => a + (x.satFatMax ?? 0), 0)).toBeCloseTo((1655 * 0.08) / 9, 0);
   });
   it("uses the 02 defaults and household precision without a tolerance row (SPEC-Q-8)", () => {
     const cfg = f1Config();
     cfg.tolerances = cfg.tolerances.filter((t) => t.memberId !== "adult_b");
     cfg.household.defaultPrecision = "flexible";
     const t = resolveSlotTargets(cfg, F1_WEEK[1]).filter((x) => x.memberId === "adult_b");
-    expect(
-      t.every(
-        (x) => x.mode === "flexible" && x.tol.protein === 5 && x.tol.fat === 2 && x.tol.kcal === 50,
-      ),
-    ).toBe(true);
+    expect(t.every((x) => x.mode === "flexible" && x.tol.protein === 5 && x.tol.fat === 2)).toBe(
+      true,
+    );
+    expect(t.reduce((a, x) => a + x.tol.kcal, 0)).toBe(50);
   });
   it("throws typed errors", () => {
     const cfg = f1Config();

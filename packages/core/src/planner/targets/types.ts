@@ -20,8 +20,14 @@ export type SlotTarget = {
   fat: number;
   /** Saturated-fat cap for this slot, grams (0.1 g). */
   satFatMax?: number;
-  /** Soluble-fibre goal for this slot, grams (0.1 g); a soft goal. */
+  /** Total-fibre goal for this slot, grams (0.1 g); a soft goal (OQ-4, R-28). */
+  fibreGoal?: number;
+  /** Soluble-fibre goal for this slot, grams (0.1 g); a soft goal (OQ-4, R-28). */
   solubleFibreGoal?: number;
+  /**
+   * P/C/F: the member's per-meal tolerance. kcal: this slot's part of the member's daily kcal band
+   * (OQ-2, R-28); the slot bands of a member-day sum to the daily band.
+   */
   tol: MacroTolerance;
   mode: ToleranceMode;
   carbBasis: CarbBasis;
