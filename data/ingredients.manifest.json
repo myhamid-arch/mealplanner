@@ -44,8 +44,7 @@
         "record_id": "171315",
         "record_description": "Spices, allspice, ground"
       },
-      "uae_specific_reason": "Base of Levantine seven-spice",
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 2.35 kcal/g, applied to carbohydrate by difference)"
+      "uae_specific_reason": "Base of Levantine seven-spice"
     },
     {
       "slug": "almond-butter",
@@ -360,8 +359,7 @@
         "dataset": "sr_legacy",
         "record_id": "172803",
         "record_description": "Leavening agents, baking powder, double-acting, sodium aluminum sulfate"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 1.50, fat 8.40, carbohydrate 1.90 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "banana",
@@ -420,8 +418,7 @@
         "dataset": "sr_legacy",
         "record_id": "172232",
         "record_description": "Basil, fresh"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.44, fat 8.37, carbohydrate 3.57 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "basmati-rice",
@@ -478,8 +475,7 @@
         "dataset": "sr_legacy",
         "record_id": "170917",
         "record_description": "Spices, bay leaf"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.44, fat 8.37, carbohydrate 3.00 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "beef-chuck-stew",
@@ -1681,8 +1677,7 @@
         "dataset": "sr_legacy",
         "record_id": "171321",
         "record_description": "Spices, cloves, ground"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 1.82, fat 8.37, carbohydrate 2.35 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "cocoa-powder",
@@ -1700,8 +1695,7 @@
         "dataset": "sr_legacy",
         "record_id": "169593",
         "record_description": "Cocoa, dry powder, unsweetened"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 1.83, fat 8.37, carbohydrate 1.33 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "coconut-flesh",
@@ -1833,7 +1827,7 @@
         "record_id": "173190",
         "record_description": "Alcoholic beverage, wine, table, red"
       },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 3.92 kcal/g, applied to carbohydrate by difference) plus alcohol at 6.93 kcal/g",
+      "atwater_reason": "energy includes alcohol (10.6 g per 100 g, SR nutrient 1018, about 6.93 kcal/g), which is neither protein, carbohydrate nor fat, so NUT-4 does not count it",
       "density_portion": "fl oz"
     },
     {
@@ -1854,7 +1848,7 @@
         "record_id": "174837",
         "record_description": "Alcoholic beverage, wine, table, white"
       },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 3.92 kcal/g, applied to carbohydrate by difference) plus alcohol at 6.93 kcal/g",
+      "atwater_reason": "energy includes alcohol (10.3 g per 100 g, SR nutrient 1018, about 6.93 kcal/g), which is neither protein, carbohydrate nor fat, so NUT-4 does not count it",
       "density_portion": "fl oz"
     },
     {
@@ -1894,8 +1888,7 @@
         "dataset": "sr_legacy",
         "record_id": "170922",
         "record_description": "Spices, coriander seed"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 1.95 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "corn-oil",
@@ -2146,7 +2139,6 @@
         "record_id": "168409",
         "record_description": "Cucumber, with peel, raw"
       },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.44, fat 8.37, carbohydrate 3.57 kcal/g, applied to carbohydrate by difference)",
       "unit": {
         "label": "cucumber",
         "portion": "cucumber (8-1/4\")"
@@ -2172,8 +2164,7 @@
         "record_id": "170923",
         "record_description": "Spices, cumin seed"
       },
-      "uae_specific_reason": "Core spice of Gulf baharat",
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 2.90 kcal/g, applied to carbohydrate by difference)"
+      "uae_specific_reason": "Core spice of Gulf baharat"
     },
     {
       "slug": "curry-powder",
@@ -3447,7 +3438,6 @@
         "record_id": "168556",
         "record_description": "Catsup"
       },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.44, fat 8.37, carbohydrate 3.57 kcal/g, applied to carbohydrate by difference)",
       "density_portion": "cup"
     },
     {
@@ -3524,8 +3514,7 @@
         "dataset": "sr_legacy",
         "record_id": "175193",
         "record_description": "Beans, kidney, all types, mature seeds, raw"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.47, fat 8.37, carbohydrate 4.07 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "kidney-beans-canned",
@@ -3759,7 +3748,6 @@
         "record_id": "167746",
         "record_description": "Lemons, raw, without peel"
       },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 2.48 kcal/g, applied to carbohydrate by difference)",
       "unit": {
         "label": "lemon",
         "portion": "fruit (2-1/8\" dia)"
@@ -3782,7 +3770,6 @@
         "record_id": "167747",
         "record_description": "Lemon juice, raw"
       },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 2.70 kcal/g, applied to carbohydrate by difference)",
       "density_portion": "cup"
     },
     {
@@ -3899,7 +3886,6 @@
         "record_id": "168155",
         "record_description": "Limes, raw"
       },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 2.48 kcal/g, applied to carbohydrate by difference)",
       "unit": {
         "label": "lime",
         "portion": "fruit (2\" dia)"
@@ -3922,7 +3908,6 @@
         "record_id": "168156",
         "record_description": "Lime juice, raw"
       },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 2.70 kcal/g, applied to carbohydrate by difference)",
       "density_portion": "cup"
     },
     {
@@ -4305,8 +4290,7 @@
         "record_description": "Jute, potherb, cooked, boiled, drained, without salt"
       },
       "proxy_note": "SR Legacy 168420 'Jute, potherb, cooked, boiled, drained, without salt': the raw record (168419) has no total fibre, so the boiled record is used; molokhia is always cooked.",
-      "uae_specific_reason": "Molokhia stew, common in Egyptian and Levantine homes in UAE",
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.44, fat 8.37, carbohydrate 3.57 kcal/g, applied to carbohydrate by difference)"
+      "uae_specific_reason": "Molokhia stew, common in Egyptian and Levantine homes in UAE"
     },
     {
       "slug": "mozzarella",
@@ -4419,8 +4403,7 @@
         "dataset": "sr_legacy",
         "record_id": "169251",
         "record_description": "Mushrooms, white, raw"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.62, fat 8.37, carbohydrate 3.48 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "mussels",
@@ -4553,8 +4536,7 @@
         "dataset": "sr_legacy",
         "record_id": "168872",
         "record_description": "Oat bran, raw"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 1.82, fat 8.37, carbohydrate 2.35 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "oats-rolled",
@@ -4846,8 +4828,7 @@
         "dataset": "sr_legacy",
         "record_id": "171329",
         "record_description": "Spices, paprika"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 2.35 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "parmesan",
@@ -5382,8 +5363,7 @@
         "dataset": "sr_legacy",
         "record_id": "168448",
         "record_description": "Pumpkin, raw"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.44, fat 8.37, carbohydrate 3.57 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "pumpkin-seeds",
@@ -5439,8 +5419,7 @@
         "dataset": "sr_legacy",
         "record_id": "169276",
         "record_description": "Radishes, raw"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.78, fat 8.37, carbohydrate 3.84 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "raisins",
@@ -5478,8 +5457,7 @@
         "dataset": "sr_legacy",
         "record_id": "167755",
         "record_description": "Raspberries, raw"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 3.36, fat 8.37, carbohydrate 3.60 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "red-cabbage",
@@ -5693,8 +5671,7 @@
         "record_id": "170934",
         "record_description": "Spices, saffron"
       },
-      "uae_specific_reason": "Emirati machboos, luqaimat and coffee spice",
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.44, fat 8.37, carbohydrate 3.57 kcal/g, applied to carbohydrate by difference)"
+      "uae_specific_reason": "Emirati machboos, luqaimat and coffee spice"
     },
     {
       "slug": "salmon",
@@ -6332,7 +6309,6 @@
         "record_id": "173227",
         "record_description": "Beverages, tea, black, brewed, prepared with tap water"
       },
-      "atwater_reason": "energy is 1 kcal/100 g; at this size the relative error is rounding of the whole-kcal value",
       "density_portion": "fl oz"
     },
     {
@@ -6675,7 +6651,7 @@
         "record_id": "173471",
         "record_description": "Vanilla extract"
       },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.44, fat 8.37, carbohydrate 3.90 kcal/g, applied to carbohydrate by difference) plus alcohol at 6.93 kcal/g",
+      "atwater_reason": "energy includes alcohol (34.4 g per 100 g, SR nutrient 1018, about 6.93 kcal/g), which is neither protein, carbohydrate nor fat, so NUT-4 does not count it",
       "density_portion": "cup"
     },
     {
@@ -6897,8 +6873,7 @@
         "dataset": "sr_legacy",
         "record_id": "170068",
         "record_description": "Watercress, raw"
-      },
-      "atwater_reason": "SR energy uses food-specific Atwater factors (SR28 FOOD_DES: protein 2.44, fat 8.37, carbohydrate 3.57 kcal/g, applied to carbohydrate by difference)"
+      }
     },
     {
       "slug": "watermelon",

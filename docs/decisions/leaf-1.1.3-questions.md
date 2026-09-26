@@ -75,3 +75,13 @@ Built with available carbohydrate. The manifest's `carbs_basis` switches it back
 - An entry where the clamp fires (fibre above carbohydrate by difference) says so in `meta` and is `low`. No entry in v1 triggers it; G2 asserts the rule and has a negative control for it.
 - G2 asserts that the snapshot is `available`. Its negative control regenerates in memory by difference, which raises NUT-4 failures from 31 to 144.
 - Total versus net carbohydrate for targets is OQ-7, handled downstream.
+
+## CP3 finding 1 (R-22): NUT-4 accepts source-specific factors
+Applied as ruled. 296 entries carry `meta.atwater_factors` from SR Legacy. 25 of the 31 former failures now pass with their own factors, and their confidence is restored.
+
+The 6 remaining failures (`low`, with reasons):
+- `vinegar`, `apple-cider-vinegar`: acetic acid energy;
+- `coffee-brewed`: 1 kcal/100 g, where rounding dominates the relative error;
+- `cooking-wine-red`, `cooking-wine-white`, `vanilla-extract`: alcohol energy, which NUT-4 does not count.
+
+Lemon and lime (fruit and juice), brewed tea and baking powder pass with their SR factors.

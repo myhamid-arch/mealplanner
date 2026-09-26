@@ -250,7 +250,11 @@ type SourceRecord = {
   /** SR Legacy food_portion rows: modifier text → grams per 1 unit. */
   portions: Map<string, number>;
   ndb: string | null;
+  /** Food-specific energy factors (kcal/g) published by the source (R-22), else null. */
+  atwaterFactors: AtwaterFactors | null;
 };
+
+type AtwaterFactors = { protein: number; fat: number; carbohydrate: number; source: string };
 
 type Inputs = {
   files: Record<string, string>;
@@ -273,6 +277,7 @@ function readFdcCsv(dir: string, dataset: Dataset, inputs: Inputs): void {
   }
   const portions = new Map<string, Map<string, number>>();
   const ndb = new Map<string, string>();
+  const factors = new Map<string, AtwaterFactors>();
   inputs.files[`${dataset}/food.csv`] = join(dir, "food.csv");
   inputs.files[`${dataset}/food_nutrient.csv`] = join(dir, "food_nutrient.csv");
   if (dataset === "sr_legacy") {
@@ -288,6 +293,31 @@ function readFdcCsv(dir: string, dataset: Dataset, inputs: Inputs): void {
     }
     for (const r of readCsvObjects(join(dir, "sr_legacy_food.csv")))
       ndb.set(r["fdc_id"] ?? "", r["NDB_number"] ?? "");
+    // R-22: food_nutrient_conversion_factor (id → fdc_id) joined to its calorie factors.
+    inputs.files[`${dataset}/food_nutrient_conversion_factor.csv`] = join(
+      dir,
+      "food_nutrient_conversion_factor.csv",
+    );
+    inputs.files[`${dataset}/food_calorie_conversion_factor.csv`] = join(
+      dir,
+      "food_calorie_conversion_factor.csv",
+    );
+    const factorFood = new Map<string, string>();
+    for (const r of readCsvObjects(join(dir, "food_nutrient_conversion_factor.csv")))
+      factorFood.set(r["id"] ?? "", r["fdc_id"] ?? "");
+    for (const r of readCsvObjects(join(dir, "food_calorie_conversion_factor.csv"))) {
+      const fid = factorFood.get(r["food_nutrient_conversion_factor_id"] ?? "");
+      const protein = reported(r["protein_value"]);
+      const fat = reported(r["fat_value"]);
+      const carbohydrate = reported(r["carbohydrate_value"]);
+      if (fid === undefined || protein === null || fat === null || carbohydrate === null) continue;
+      factors.set(fid, {
+        protein,
+        fat,
+        carbohydrate,
+        source: `SR Legacy food_calorie_conversion_factor (conversion factor id ${r["food_nutrient_conversion_factor_id"] ?? ""}, fdc_id ${fid})`,
+      });
+    }
   }
   for (const f of food) {
     const id = f["fdc_id"] ?? "";
@@ -307,6 +337,7 @@ function readFdcCsv(dir: string, dataset: Dataset, inputs: Inputs): void {
       derivations: {},
       portions: portions.get(id) ?? new Map<string, number>(),
       ndb: ndb.get(id) ?? null,
+      atwaterFactors: factors.get(id) ?? null,
     });
   }
 }
@@ -341,6 +372,20 @@ async function readFdcApi(
           portions.set((p.modifier ?? "").trim(), (p.gramWeight ?? 0) / (p.amount ?? 1));
       }
       const g = (nid: string): number | null => n.get(nid) ?? null;
+      const cal = (food.nutrientConversionFactors ?? []).find(
+        (f) => f.type === ".CalorieConversionFactor",
+      );
+      const atwaterFactors: AtwaterFactors | null =
+        cal?.proteinValue !== undefined &&
+        cal.fatValue !== undefined &&
+        cal.carbohydrateValue !== undefined
+          ? {
+              protein: cal.proteinValue,
+              fat: cal.fatValue,
+              carbohydrate: cal.carbohydrateValue,
+              source: `FDC API nutrientConversionFactors (.CalorieConversionFactor), fdc_id ${entry.id}`,
+            }
+          : null;
       inputs.records.set(key(entry.dataset, entry.id), {
         description: food.description ?? "",
         kcal: g(FDC.kcal),
@@ -355,6 +400,7 @@ async function readFdcApi(
         derivations: {},
         portions,
         ndb: food.ndbNumber === undefined ? null : String(food.ndbNumber),
+        atwaterFactors,
       });
     }
   }
@@ -366,6 +412,12 @@ type FdcApiFood = {
   ndbNumber?: number | string;
   foodNutrients?: { amount?: number; nutrient?: { id?: number } }[];
   foodPortions?: { amount?: number; gramWeight?: number; modifier?: string }[];
+  nutrientConversionFactors?: {
+    type?: string;
+    proteinValue?: number;
+    fatValue?: number;
+    carbohydrateValue?: number;
+  }[];
 };
 
 /** CoFID 2019 sheets "1.3 Proximates" and "1.4 Inorganics", saved as CSV (three header rows). */
@@ -422,6 +474,7 @@ function readCofid(proximatesPath: string, inorganicsPath: string, inputs: Input
       derivations,
       portions: new Map(),
       ndb: null,
+      atwaterFactors: null,
     });
   }
 }
@@ -460,6 +513,7 @@ function readAfcd(path: string, inputs: Inputs): void {
       derivations,
       portions: new Map(),
       ndb: null,
+      atwaterFactors: null,
     });
   }
 }
@@ -482,6 +536,7 @@ function readOff(path: string, inputs: Inputs): void {
       derivations: {},
       portions: new Map(),
       ndb: null,
+      atwaterFactors: null,
     });
   }
 }
@@ -562,6 +617,17 @@ function atwaterDeltaPct(n: {
   fibre_g: number;
 }): number {
   const predicted = 4 * n.protein_g + 4 * n.carbs_g + 9 * n.fat_g + 2 * n.fibre_g;
+  if (n.kcal === 0) return predicted === 0 ? 0 : Infinity;
+  return (Math.abs(n.kcal - predicted) / n.kcal) * 100;
+}
+
+/** NUT-4 with food-specific factors (R-22): carbohydrate by difference, no fibre term. */
+function specificDeltaPct(
+  n: { kcal: number; protein_g: number; carbs_g: number; fat_g: number; fibre_g: number },
+  f: AtwaterFactors,
+): number {
+  const predicted =
+    f.protein * n.protein_g + f.fat * n.fat_g + f.carbohydrate * (n.carbs_g + n.fibre_g);
   if (n.kcal === 0) return predicted === 0 ? 0 : Infinity;
   return (Math.abs(n.kcal - predicted) / n.kcal) * 100;
 }
@@ -693,16 +759,25 @@ function buildIngredient(
     fibre_g: round3(fibre),
   };
   const delta = atwaterDeltaPct(values);
-  if (delta > ATWATER_TOLERANCE_PCT) {
+  // R-22: an entry also passes with the source's own factors. USDA applies its carbohydrate
+  // factor to carbohydrate by difference (available + fibre), with no separate fibre term.
+  const f = rec.atwaterFactors;
+  const specificDelta = f === null ? null : specificDeltaPct(values, f);
+  if (
+    delta > ATWATER_TOLERANCE_PCT &&
+    (specificDelta === null || specificDelta > ATWATER_TOLERANCE_PCT)
+  ) {
     const reason =
       m.atwater_reason ??
       fail(`${where}: fails NUT-4 (${delta.toFixed(1)} %) and the manifest gives no reason`);
     confidence = "low";
-    confidenceReason = [confidenceReason, `NUT-4: ${delta.toFixed(1)} % off; ${reason}`]
+    const specific =
+      specificDelta === null ? "" : ` (${specificDelta.toFixed(1)} % with its own factors)`;
+    confidenceReason = [confidenceReason, `NUT-4: ${delta.toFixed(1)} % off${specific}; ${reason}`]
       .filter((s) => s !== null)
       .join("; ");
   } else if (m.atwater_reason !== undefined) {
-    fail(`${where}: passes NUT-4 (${delta.toFixed(1)} %) but the manifest gives a reason`);
+    fail(`${where}: passes NUT-4 but the manifest gives a reason`);
   }
 
   return {
@@ -738,7 +813,12 @@ function buildIngredient(
         proxy_note: m.proxy_note ?? null,
       },
       confidence_reason: confidenceReason,
-      atwater_delta_pct: Number(delta.toFixed(2)),
+      atwater_delta_pct: Number.isFinite(delta) ? Number(delta.toFixed(2)) : null,
+      atwater_factors: f,
+      atwater_specific_delta_pct:
+        specificDelta === null || !Number.isFinite(specificDelta)
+          ? null
+          : Number(specificDelta.toFixed(2)),
       uae_specific: m.uae_specific_reason !== undefined,
       uae_specific_reason: m.uae_specific_reason ?? null,
       availability_basis: "builder assessment of UAE retail availability (not measured)",

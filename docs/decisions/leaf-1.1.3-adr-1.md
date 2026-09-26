@@ -29,6 +29,13 @@ The non-FDC prefixes (`cofid:`, `afcd:`, `off:`) extend DM §3's `nutrition_sour
 - **high**: an analytical or official compiled value for the same food.
 - **medium**: an official value for a documented proxy. Examples: a congeneric species (kingfish/kanaad from *Scomberomorus maculatus*), or a regional product sold under another name (khubz from SR "Bread, pita, white"). The proxy is named in `provenance.proxy_note`.
 - **low**: label-derived values (tiers 4–5); a proxy with no close relative in any dataset; or an entry that fails NUT-4 for a documented reason. Every `low` entry has a non-empty `confidence_reason`.
+- **NUT-4 with source factors (R-22).** When the source publishes food-specific energy factors, they are stored in `meta.atwater_factors` (`protein`, `fat`, `carbohydrate`, `source`). SR Legacy provides them as `food_calorie_conversion_factor` joined through `food_nutrient_conversion_factor`; the FDC API gives the same as `nutrientConversionFactors`.
+  - An entry passes NUT-4 if either check is within 12 %:
+    - the generic 4/4/9/2 check on available carbohydrate;
+    - its own factors applied to carbohydrate by difference (`carbs_g + fibre_g`), with no fibre term.
+  - Passing never lowers confidence.
+  - v1: 296 entries carry factors. 357 of 363 pass: 332 on the generic check alone, 25 more with their own factors.
+  - The 6 that still fail are both vinegars (acetic acid energy), brewed coffee (1 kcal/100 g rounding), both cooking wines and vanilla extract (alcohol energy). They stay `low` with a reason.
 
 ## How each dataset was obtained (provenance chain)
 - **SR Legacy.** These are the official FDC CSV files `FoodData_Central_sr_legacy_food_csv_ 2019-04-02/` (food.csv, food_nutrient.csv, food_portion.csv, sr_legacy_food.csv …), committed unmodified to the public repo `github.com/tomwhite/ingreedy-data` (`data/raw/`). The rows match the file's own `all_downloaded_table_record_counts.csv` (food 7,793). I checked independently against the SR28 `ABBREV.txt` in the npm package `fda-nutrient-database@1.0.2`, joined on NDB number: energy, protein, fat and carbohydrate agree on 30,459 of 31,016 compared values. That is 98.2 %. The rest are SR28→SR Legacy revisions, mostly branded snack and fast-food records.
