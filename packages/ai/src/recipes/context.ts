@@ -92,9 +92,13 @@ function escapeRegExp(s: string): string {
 /**
  * Replaces e-mail addresses with "[email]", then every member's display name (and each word of it
  * of 3+ letters) in household free text with the member's pseudonymous label, or "a family member"
- * for a member not at this meal.
+ * for a member not at this meal. Terms in `keep` are left as they are.
  */
-export function scrubNames(text: string, names: ReadonlyMap<string, string>): string {
+export function scrubNames(
+  text: string,
+  names: ReadonlyMap<string, string>,
+  keep: readonly string[] = [],
+): string {
   // Each whole name maps to its member's label; each word of 3+ letters too, unless several
   // members share it (a family name), in which case it becomes "[family name]".
   const whole = new Map<string, string>();
@@ -111,6 +115,10 @@ export function scrubNames(text: string, names: ReadonlyMap<string, string>): st
     }
   }
   const replacement = new Map<string, string>(whole);
+  // Terms kept as they are (the attendee labels), so a name word such as "Child" never rewrites
+  // "Child B"; as the longer match, a kept label wins over any shorter name word inside it.
+  for (const term of keep)
+    if (!replacement.has(term.toLowerCase())) replacement.set(term.toLowerCase(), term);
   for (const [word, labels] of words) {
     if (whole.has(word)) continue;
     const [first = ""] = labels;
@@ -144,6 +152,8 @@ function sortedUnique(values: Iterable<string>): string[] {
 export function buildGenerationContext(input: GenerationContextInput): {
   context: GenerationContext;
   solveTargets: SolveTarget[];
+  /** The same pseudonymiser, for any later household text sent to the model (follow-ups). */
+  scrub: (text: string) => string;
 } {
   const { config, date, slotKey } = input;
   const slot = config.slotTypes.find((s) => s.key === slotKey && s.active);
@@ -168,7 +178,8 @@ export function buildGenerationContext(input: GenerationContextInput): {
   }
   const nameToLabel = new Map<string, string>();
   for (const m of members) nameToLabel.set(m.displayName, labels.get(m.id) ?? "a family member");
-  const scrub = (text: string) => scrubNames(text, nameToLabel);
+  const keep = [...labels.values()];
+  const scrub = (text: string) => scrubNames(text, nameToLabel, keep);
 
   const targets = resolveSlotTargets(config, date).filter((t) => t.slotTypeId === slot.id);
   const attendingIds = new Set(attending.map((m) => m.id));
@@ -287,5 +298,5 @@ export function buildGenerationContext(input: GenerationContextInput): {
       ...(regionNote === null ? {} : { regionNote: scrub(regionNote) }),
     },
   };
-  return { context, solveTargets };
+  return { context, solveTargets, scrub };
 }

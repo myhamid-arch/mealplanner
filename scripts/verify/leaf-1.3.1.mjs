@@ -473,6 +473,33 @@ async function gateG2(report, m) {
     "attendees are labelled, and the admin request is scrubbed to labels and [email]",
   );
 
+  // The follow-up also stays pseudonymous: a household dish name in a duplicate reason is scrubbed.
+  {
+    const { existingFrom } = m.scenario;
+    const chicken = batchFixture("valid-batch").dishes[0];
+    const library = [
+      { ...existingFrom(chicken), name: "Zayd's lemon chicken (from omar.haddad@example.ae)" },
+    ];
+    const sf = scenario(
+      [
+        batchResponse(batchFixture("defects-batch")),
+        batchResponse(batchFixture("follow-up-batch")),
+      ],
+      {
+        config: cfg,
+        existingDishes: library,
+      },
+    );
+    await generateRecipes(sf.deps, f1DinnerRequest(cfg, {}));
+    const followUp = sf.recorder.requests[1];
+    const leaked = followUp === undefined ? [["request", "missing"]] : leaks(followUp.raw);
+    report.check(
+      leaked.length === 0 && followUp.raw.includes("lemon chicken"),
+      "the follow-up quotes the duplicate reason without any personal data",
+      leaked.map(([k, v]) => `${k}: ${v}`).join("\n"),
+    );
+  }
+
   // Negative controls.
   const leaky = JSON.stringify({ members: cfg.members, household: cfg.household, adminRequest });
   const kinds = new Set(leaks(leaky).map(([k]) => k));

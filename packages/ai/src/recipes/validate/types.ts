@@ -10,6 +10,7 @@ export type DefectCode =
   | "unknown_method"
   | "unknown_cuisine"
   | "unknown_slot"
+  | "slot_mismatch"
   | "bad_serving_bounds"
   | "bad_component"
   | "bad_text"
@@ -39,6 +40,8 @@ export type ValidationEnv = {
   catalogue: RecipeCatalogue;
   /** The household's slot keys (REC-2 §2: slot suitability). */
   slotKeys: readonly string[];
+  /** The slot the dishes are requested for (REC-2 §2: packable, served cold, suitability). */
+  slot: GenerationContext["slot"];
   exclusions: GenerationContext["exclusions"];
   existingDishes: readonly ExistingDish[];
   /** Targeted attendees (REC-5 step 7). */

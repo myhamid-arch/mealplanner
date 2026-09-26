@@ -1,5 +1,6 @@
 // REC-5 step 2: references and structure (leaf-1.3.1 ADR-2).
 import { isIngredientCategory, type RecipeCatalogue } from "../catalogue.js";
+import type { GenerationContext } from "../context.js";
 import type { GeneratedDish, NewIngredient } from "../schema.js";
 import type { Reason } from "./types.js";
 
@@ -43,6 +44,7 @@ export function checkReferences(
   catalogue: RecipeCatalogue,
   slotKeys: readonly string[],
   newIngredients: ReadonlyMap<string, NewIngredient>,
+  slot: GenerationContext["slot"],
 ): Reason[] {
   const reasons: Reason[] = [];
   const add = (code: Reason["code"], message: string) => reasons.push({ step: 2, code, message });
@@ -66,6 +68,16 @@ export function checkReferences(
     add("unknown_cuisine", `unknown secondary cuisine "${dish.secondaryCuisine}"`);
   for (const key of dish.slotKeys)
     if (!slots.has(key)) add("unknown_slot", `unknown slot key "${key}"`);
+  // REC-2 §2: the dish must suit the slot it was requested for.
+  if (!dish.slotKeys.includes(slot.key))
+    add("slot_mismatch", `the dish does not list the requested slot "${slot.key}" in slotKeys`);
+  if (slot.isPacked && !dish.isPackable)
+    add("slot_mismatch", `the "${slot.key}" slot is packed, but the dish is not packable`);
+  if (slot.isPacked && !slot.reheat && !dish.servedColdOk)
+    add(
+      "slot_mismatch",
+      `the "${slot.key}" slot has no reheating, but the dish cannot be served cold`,
+    );
 
   for (const c of dish.components) {
     const where = `component "${c.name}"`;

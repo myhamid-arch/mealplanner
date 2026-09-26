@@ -191,6 +191,7 @@ describe("step 6: duplication", () => {
     const out = await validateBatch(batch, {
       catalogue,
       slotKeys: ["dinner", "lunch"],
+      slot: context.slot,
       exclusions: context.exclusions,
       existingDishes: [],
       solveTargets,
@@ -200,12 +201,14 @@ describe("step 6: duplication", () => {
   });
 });
 
+const DINNER = { key: "dinner", label: "Dinner", isPacked: false, reheat: false };
+
 describe("step 2: references and new ingredients", () => {
   const dish = batchFixture("valid-batch").dishes[0];
   if (dish === undefined) throw new Error("fixture");
 
   it("accepts the valid dish and flags unknown keys and bounds", () => {
-    expect(checkReferences(dish, catalogue, ["dinner", "lunch"], new Map())).toEqual([]);
+    expect(checkReferences(dish, catalogue, ["dinner", "lunch"], new Map(), DINNER)).toEqual([]);
     const bad = {
       ...dish,
       cuisine: "martian",
@@ -220,7 +223,7 @@ describe("step 2: references and new ingredients", () => {
           : c,
       ),
     };
-    const codes = checkReferences(bad, catalogue, ["dinner", "lunch"], new Map()).map(
+    const codes = checkReferences(bad, catalogue, ["dinner", "lunch"], new Map(), DINNER).map(
       (r) => r.code,
     );
     expect(codes).toEqual(
@@ -231,6 +234,27 @@ describe("step 2: references and new ingredients", () => {
         "unknown_method",
       ]),
     );
+  });
+
+  it("rejects a dish that does not suit the requested slot (REC-2 §2)", () => {
+    const packed = {
+      key: "packed_school_lunch",
+      label: "School lunch",
+      isPacked: true,
+      reheat: false,
+    };
+    const slots = ["dinner", "lunch", "packed_school_lunch"];
+    const notListed = checkReferences(dish, catalogue, slots, new Map(), packed);
+    expect(notListed.map((r) => r.code)).toEqual(["slot_mismatch", "slot_mismatch"]);
+    const listed = { ...dish, slotKeys: [...dish.slotKeys, "packed_school_lunch"] };
+    // The fixture dish is packable but not served cold, and the school lunch has no reheating.
+    expect(
+      checkReferences(listed, catalogue, slots, new Map(), packed).map((r) => r.message),
+    ).toEqual([
+      'the "packed_school_lunch" slot has no reheating, but the dish cannot be served cold',
+    ]);
+    const cold = { ...listed, servedColdOk: true };
+    expect(checkReferences(cold, catalogue, slots, new Map(), packed)).toEqual([]);
   });
 
   it("checks a proposed ingredient's slug, category and nutrition", () => {
@@ -298,6 +322,7 @@ describe("step 2: references and new ingredients", () => {
     const env = {
       catalogue,
       slotKeys: ["dinner", "lunch"],
+      slot: context.slot,
       existingDishes: [],
       solveTargets,
       adjusters: [],

@@ -54,7 +54,15 @@ export type RecipeGeneratorDeps = {
   saveSurvivors(dishes: readonly SurvivingDish[], generationIds: readonly string[]): Promise<void>;
 };
 
-export type RecipeRequest = { context: GenerationContext; solveTargets: readonly SolveTarget[] };
+export type RecipeRequest = {
+  context: GenerationContext;
+  solveTargets: readonly SolveTarget[];
+  /**
+   * Pseudonymises household text in the follow-up's rejection reasons (an existing dish's name
+   * can hold a member's name). `buildGenerationContext` returns it.
+   */
+  scrub: (text: string) => string;
+};
 
 export type SurvivingDish = AcceptedDish & {
   /** False for a dish kept in the library but infeasible for this slot's targets (step 7). */
@@ -120,6 +128,7 @@ export async function generateRecipes(
   const env = {
     catalogue: deps.catalogue,
     slotKeys: deps.slotKeys,
+    slot: request.context.slot,
     exclusions: request.context.exclusions,
     existingDishes: deps.existingDishes,
     solveTargets: request.solveTargets,
@@ -244,8 +253,8 @@ export async function generateRecipes(
   if (needed > 0) {
     calls = 2;
     const notes: RejectionNote[] = rejected.map((r) => ({
-      dishName: r.dishName,
-      reasons: r.reasons.map((x) => x.message),
+      dishName: request.scrub(r.dishName),
+      reasons: r.reasons.map((x) => request.scrub(x.message)),
     }));
     const returned = one.result.output.dishes.length;
     if (returned < request.context.count)

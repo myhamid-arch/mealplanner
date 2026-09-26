@@ -7,11 +7,12 @@ REC-5 names seven checks. Several use terms the spec does not define. This ADR f
 ## Order and outcome
 Each dish runs steps 2–7 in order; the first failing step rejects it with one or more reasons (a step reports every violation it finds, not only the first). Step 1 (schema) applies to the whole response (ADR-1). Step 7 does not reject: an infeasible dish is a *survivor* that is saved (`active`) but is not returned as a candidate for this slot (SPEC-Q-6). Every outcome carries `{ dishName, step, code, message }` reasons, which are returned to the caller, written into the audit record's `validation_errors`, and quoted in the follow-up message.
 
-Defect codes: `unknown_ingredient`, `unknown_method`, `unknown_cuisine`, `unknown_slot`, `bad_serving_bounds`, `bad_component` (default-variant count, unit label), `bad_text` (empty or over-long names, labels, tags and steps, against the `dish.create` op's limits, so a survivor can be saved), `bad_new_ingredient`, `excluded_ingredient`, `excluded_category`, `excluded_dietary_flag`, `unverifiable_new_ingredient`, `variant_drift`, `atwater_variant`, `atwater_new_ingredient`, `nutrition_error`, `duplicate_name`, `duplicate_ingredients`, `infeasible`, `solver_error` (the solver rejects the dish as invalid input; a solver that cannot run is an error, not a rejection).
+Defect codes: `unknown_ingredient`, `unknown_method`, `unknown_cuisine`, `unknown_slot`, `slot_mismatch`, `bad_serving_bounds`, `bad_component` (default-variant count, unit label), `bad_text` (empty or over-long names, labels, tags and steps, against the `dish.create` op's limits, so a survivor can be saved), `bad_new_ingredient`, `excluded_ingredient`, `excluded_category`, `excluded_dietary_flag`, `unverifiable_new_ingredient`, `variant_drift`, `atwater_variant`, `atwater_new_ingredient`, `nutrition_error`, `duplicate_name`, `duplicate_ingredients`, `infeasible`, `solver_error` (the solver rejects the dish as invalid input; a solver that cannot run is an error, not a rejection).
 
 ## Step 2 — references
 - Every `slug` resolves to the catalogue or to this response's `newIngredients`; a new-ingredient slug must not shadow a catalogue slug and its `category` must be a catalogue ingredient category.
 - `method` ∈ preparation-method keys; `cuisine` and `secondaryCuisine` ∈ cuisine keys; every `slotKeys` entry ∈ the household's slot keys.
+- Slot suitability (REC-2 §2, added in the build's expert reread): `slotKeys` includes the requested slot; a packed slot needs `isPackable`; a packed slot without reheating needs `servedColdOk`. Failures are `slot_mismatch`.
 - `minServingG ≤ defaultServingG ≤ maxServingG`, all ≥ 0, max > 0.
 - Exactly one variant per component has `isDefault` (the `dish.create` op requires it; 02 §4).
 
@@ -39,4 +40,6 @@ The context's exclusions (union over attendees, hard) are checked against every 
 Each dish that passed steps 2–6 becomes a `DishForSolve` (per-100 g cooked from step 5, `stepG` 5, `unitWeightG = defaultServingG` for `unit` components (SPEC-Q-7), `fixed` served at default). `solvePlate` (1.2.2) runs for every targeted attendee's `SlotTarget` with the attendee's exclusions and the household's adjuster dishes (empty when adjusters are off). Status `infeasible` for any attendee marks the dish `infeasible` with the attendee's pseudonymous label and the solver's explanation.
 
 ## Follow-up
+The reasons quoted to the model pass through the same pseudonymiser as the context (`buildGenerationContext` returns it as `scrub`), because a duplicate reason names an existing household dish, and a household dish name can hold a member's name. The caller and the audit record keep the unscrubbed reasons.
+
 If fewer than `count` dishes survive steps 1–6, one follow-up call appends the model's previous response (its full `content`, thinking blocks included, unchanged) and a user message listing each rejection reason by dish name, and asks for `count − survivors` replacement dishes. The message list is only appended to. The follow-up's survivors are validated with the same pipeline, with the first call's survivors counted for duplication.

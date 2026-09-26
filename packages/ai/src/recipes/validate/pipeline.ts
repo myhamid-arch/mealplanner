@@ -42,7 +42,7 @@ export async function validateBatch(
       dish.components.flatMap((c) => c.variants.flatMap((v) => v.ingredients.map((l) => l.slug))),
     );
 
-    const step2 = checkReferences(dish, catalogue, env.slotKeys, newBySlug);
+    const step2 = checkReferences(dish, catalogue, env.slotKeys, newBySlug, env.slot);
     for (const slug of used)
       if (declaredTwice.has(slug))
         step2.push({

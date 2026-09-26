@@ -19,7 +19,7 @@ import {
 } from "./support/checks.js";
 import { F1_DINNER_DATE, REALISTIC, f1Config, realisticF1 } from "./support/household.js";
 import { batchFixture, batchResponse, type RecordedRequest } from "./support/recorded.js";
-import { f1DinnerRequest, scenario } from "./support/scenario.js";
+import { existingFrom, f1DinnerRequest, scenario } from "./support/scenario.js";
 
 const EMAILS = REALISTIC.members.map((m) => m.email);
 const ADMIN_REQUEST =
@@ -162,5 +162,33 @@ describe("G2 pseudonymisation (REC-3, ARC-10)", () => {
     expect(user).toContain("a British breakfast using labneh");
     expect(user).toContain("plateTarget");
     expect(system).not.toContain("plateTarget");
+  });
+
+  it("pseudonymises the follow-up too: household dish names in rejection reasons are scrubbed", async () => {
+    const config = realisticF1();
+    const chicken = batchFixture("valid-batch").dishes[0];
+    if (chicken === undefined) throw new Error("fixture");
+    const library = [
+      { ...existingFrom(chicken), name: "Zayd's lemon chicken (from omar.haddad@example.ae)" },
+    ];
+    const s = scenario(
+      [
+        batchResponse(batchFixture("defects-batch")),
+        batchResponse(batchFixture("follow-up-batch")),
+      ],
+      { config, existingDishes: library },
+    );
+    const run = await generateRecipes(s.deps, f1DinnerRequest(config));
+    expect(run.calls).toBe(2);
+    // The caller still sees the real name in the reason …
+    const duplicate = run.rejected.find((r) =>
+      r.reasons.some((x) => x.code === "duplicate_ingredients"),
+    );
+    expect(duplicate?.reasons.map((x) => x.message).join(" ")).toContain("Zayd's lemon chicken");
+    // … the model does not.
+    const followUp = s.recorder.requests[1];
+    expect(followUp).toBeDefined();
+    expect(findLeaks(followUp?.raw ?? "", personalData(config, EMAILS))).toEqual([]);
+    expect(followUp?.raw).toContain("Child B's lemon chicken (from [email])");
   });
 });
