@@ -18,13 +18,13 @@ Notation: `?` = nullable. `→` = foreign key.
 
 ## 2. Members, targets, schedules
 
-**member** — id, household_id →, display_name, emoji_avatar?, color (token name), birth_year?, sex? (`female` | `male` | `unspecified`), is_targeted (bool), appetite (`small` | `medium` | `large`, default `medium`; used for untargeted portions), notes?, archived_at?.
+**member** — id, household_id →, display_name, color (token name), birth_year?, sex? (`female` | `male` | `unspecified`), is_targeted (bool), appetite (`small` | `medium` | `large`, default `medium`; used for untargeted portions), notes?, archived_at?.
 
 **target_profile** — id, member_id →, kind (`default` | `training`), kcal, protein_g, carbs_g, fat_g, sat_fat_max_g?, soluble_fibre_min_g?, fibre_min_g?, sodium_max_mg?. Unique (member_id, kind). A training profile is optional; without one, training days use `default` (DM-2).
 
 **tolerance** — member_id → (PK), protein_g (default 5), carbs_g (default 5 — see OQ-1), fat_g (default 2), kcal (default 50 — see OQ-2), mode (`strict` | `flexible`, default `strict`). Applies per meal.
 
-**slot_type** — id, household_id →, key (text, e.g. `breakfast`, `packed_school_lunch`, `pre_workout`, `custom_ab12`), label, emoji, sort_order, default_time (`time`), is_shared (bool: one dish for everyone attending; false = cooked per member), is_packed (bool), reheat_available (bool), is_training_slot (bool), constraints_note? (free text passed to recipe generation, e.g. "school is nut-free"), active (bool). Seeded per household from the defaults in [04-planner.md](04-planner.md) §2.
+**slot_type** — id, household_id →, key (text, e.g. `breakfast`, `packed_school_lunch`, `pre_workout`, `custom_ab12`), label, icon (text: an icon key, e.g. `sunrise`, `lunchbox`, `dumbbell`; R2-UX-5), sort_order, default_time (`time`), is_shared (bool: one dish for everyone attending; false = cooked per member), is_packed (bool), reheat_available (bool), is_training_slot (bool), constraints_note? (free text passed to recipe generation, e.g. "school is nut-free"), active (bool). Seeded per household from the defaults in [04-planner.md](04-planner.md) §2.
 
 **member_slot_schedule** — member_id →, slot_type_id →, weekday (0–6), attends (bool). This is the detailed layer. The coarse layer is "attends every day" (row absent = attends, if the slot is active and not a training slot).
 
@@ -40,7 +40,7 @@ Notation: `?` = nullable. `→` = foreign key.
 
 **preparation_method** — id, key (unique: `raw`, `boiled`, `steamed`, `poached`, `grilled`, `broiled`, `roasted`, `baked`, `air_fried`, `pan_seared`, `sauteed`, `stir_fried`, `shallow_fried`, `deep_fried`, `breaded_baked`, `breaded_fried`, `braised`, `stewed`, `slow_cooked`, `pressure_cooked`, `smoked`, `blended`, `marinated_raw`), label, description, appeal_tags (text[] e.g. `crispy`, `smoky`, `tender`). Yield and absorption parameters live in **method_yield** — method_id →, ingredient_category, yield_factor (cooked ÷ raw weight), fat_retention (share of the ingredient's own fat retained, 0–1), oil_absorption_g_per_100g_raw (default oil absorbed). A coating is an ordinary variant ingredient (BLD-8 R-12). See [03-nutrition-engine.md](03-nutrition-engine.md).
 
-**cuisine** — id, key (unique: `american`, `british`, `italian`, `levantine`, `emirati_gulf`, `persian`, `turkish`, `indian`, `pakistani`, `mexican`, `tex_mex`, `mediterranean`, `greek`, `spanish`, `french`, `japanese`, `chinese`, `thai`, `korean`, `vietnamese`, `north_african`, `east_african`, `fusion`, extensible), label, flag_emoji?, parent_key?.
+**cuisine** — id, key (unique: `american`, `british`, `italian`, `levantine`, `emirati_gulf`, `persian`, `turkish`, `indian`, `pakistani`, `mexican`, `tex_mex`, `mediterranean`, `greek`, `spanish`, `french`, `japanese`, `chinese`, `thai`, `korean`, `vietnamese`, `north_african`, `east_african`, `fusion`, extensible), label, parent_key?.
 
 ## 4. Recipes
 
