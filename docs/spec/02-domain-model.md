@@ -70,6 +70,8 @@ DM-3 **Variant ingredient sets.** Variants of one component SHOULD share their c
 
 **review** — id, household_id →, author_user_id →, on_behalf_of_member_id →?, target_type (`dish` | `component` | `variant` | `ingredient` | `plan_meal` | `plate` | `plan_day` | `cuisine` | `method`), target_id (uuid or key), plan_meal_id →? (context: which meal it was eaten at), rating (1–5)?, tags (text[]; vocabulary in [06-feedback-and-learning.md](06-feedback-and-learning.md) §2), comment?, parent_review_id →? (threaded replies), created_at, edited_at?, processed_at? (by the learning pipeline).
 
+**review_revision** — id, household_id →, review_id →, rating (1–5)?, tags (text[]), comment?, replaced_at (timestamptz), edited_by_user_id →. One row per edit, holding the values the edit replaced (FBK-2 "edits are kept"; R-26).
+
 **review_reaction** — review_id →, user_id →, kind (`agree` | `disagree` | `helpful`).
 
 **preference** — id, household_id →, member_id →? (null = household-level), entity_type (`dish` | `ingredient` | `cuisine` | `method` | `flavour_tag` | `component_role`), entity_key, score (−1…1), evidence_weight (numeric, Σw), source (`explicit` | `learned` | `proposal`), locked (bool: admin-set, learning must not change it), hard (`none` | `never` | `always_ok`), updated_at. Unique (household_id, member_id, entity_type, entity_key, source).
