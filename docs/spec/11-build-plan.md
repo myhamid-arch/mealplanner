@@ -343,3 +343,12 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
 ### Wave 4 dispatch
 
 - **R-30 (R-22 variant check).** 1.2.4 adds to `packages/core/src/nutrition/atwater.ts` a variant-level check that compares the variant's kcal with the sum of its ingredients' predicted energy, each ingredient using its `atwater_factors` where recorded (carbohydrate factor on `carbs + fibre`, no fibre term) and 4/4/9/2 otherwise, within 12 %. It may add the export to `nutrition/index.ts` and tests to `test/nutrition/atwater.test.ts`. The existing `atwaterCheck` is unchanged. 1.2.1's G1–G4 (including 100 % line coverage on `nutrition/`) must still pass on the 1.2.4 branch; the CP2 PR shows that output. 1.2.4 G3 ("every variant passes nutrition validation") uses the new check.
+
+### Rulings from wave 4 CP1 (leaves 1.2.4, 1.3.1)
+
+- **R-31 (1.2.4 SPEC-Q-1 … 6).**
+  - SPEC-Q-2: G4 "feasible" means strict `in_tolerance` at every distinct F1 dinner target **with up to 2 adjusters from `data/adjusters.json`**, as the planner will run it (PLN-6). The rate without adjusters is also printed. Gate threshold unchanged (≥ 80 %).
+  - SPEC-Q-1, 3, 4, 5 and 6 (no pork or alcohol in the seed library): accepted as proposed.
+- **R-32 (1.3.1 SPEC-Q-1 … 13).** Accepted as proposed, including the beta `messages.parse` (fallbacks live on beta params), persistence through injected ports wired by 1.4.1 (R-2), and G4 as an explicit `ABANDON` handoff while no `ANTHROPIC_API_KEY` is present.
+  - SPEC-Q-5: until 1.2.4 merges, 1.3.1 uses its own R-22 variant check in `validate/nutrition.ts`; after both merge, the architect replaces it with the `variantAtwaterCheck` export (import change plus deletion of the local helper) and re-runs 1.3.1 G1.
+  - Default model: `DEFAULT_MODEL` must be the most capable current model in the `claude-api` skill's model table at build time; the ADR cites the table row. `ANTHROPIC_MODEL` overrides it.
