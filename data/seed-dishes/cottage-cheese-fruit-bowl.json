@@ -1,0 +1,214 @@
+{
+  "slug": "cottage-cheese-fruit-bowl",
+  "name": "Cottage cheese with mango and pineapple",
+  "description": "Cottage cheese with fresh mango and pineapple, a drizzle of honey and toasted almonds.",
+  "cuisine": "american",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "snack",
+    "pre_workout",
+    "breakfast",
+    "packed_school_lunch"
+  ],
+  "flavour_tags": [
+    "creamy",
+    "sweet",
+    "fresh"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "cheese",
+      "name": "Cottage cheese",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 300,
+      "default_serving_g": 130,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Cottage cheese",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Spoon the cottage cheese into a bowl or lidded pot."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cottage-cheese",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "whipped",
+          "method": "blended",
+          "label": "Whipped with yogurt",
+          "is_default": false,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Blend the cottage cheese with the Greek yogurt until smooth and fluffy."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cottage-cheese",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "fruit",
+      "name": "Mango and pineapple",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 250,
+      "default_serving_g": 110,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 1000,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Peel and cube the mango and pineapple into 2 cm pieces."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "mango",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "pineapple",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "honey",
+      "name": "Honey",
+      "role": "garnish",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 20,
+      "default_serving_g": 8,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "drizzle",
+          "method": "raw",
+          "label": "Honey",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Weigh the honey and drizzle over."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "honey",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "almonds",
+      "name": "Toasted almonds",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 25,
+      "default_serving_g": 10,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "toasted",
+          "method": "roasted",
+          "label": "Toasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 98,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Toast the flaked almonds in a dry pan over medium heat for 4 minutes until golden."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "almonds",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Spoon the cottage cheese into the bowl, add the fruit, then the honey and almonds."
+  ]
+}

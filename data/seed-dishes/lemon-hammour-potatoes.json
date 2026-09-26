@@ -1,0 +1,635 @@
+{
+  "slug": "lemon-hammour-potatoes",
+  "name": "Lemon-garlic hammour with potatoes and greens",
+  "description": "Hammour fillets with lemon, garlic and parsley, served with potatoes, green vegetables and garlic yogurt.",
+  "cuisine": "mediterranean",
+  "secondary_cuisine": "emirati_gulf",
+  "slot_keys": [
+    "lunch",
+    "dinner"
+  ],
+  "flavour_tags": [
+    "lemony",
+    "light",
+    "herby"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "fish",
+      "name": "Lemon-garlic hammour",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 300,
+      "default_serving_g": 170,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": true,
+          "reference_batch_cooked_g": 868,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Pat the fillets dry. Mix the lemon juice, crushed garlic, chopped parsley, olive oil, salt and pepper and brush over the fish. Leave for 10 minutes.",
+            "Grill over medium-high heat for 4 minutes per side, until the flesh flakes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "hammour",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "baked",
+          "method": "baked",
+          "label": "Baked in foil",
+          "is_default": false,
+          "reference_batch_cooked_g": 855,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Pat the fillets dry. Mix the lemon juice, crushed garlic, chopped parsley, olive oil, salt and pepper and brush over the fish. Leave for 10 minutes.",
+            "Heat the oven to 200 °C (fan 180 °C). Wrap loosely in foil and bake for 14 minutes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "hammour",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "breaded-baked",
+          "method": "breaded_baked",
+          "label": "Crumbed and baked",
+          "is_default": false,
+          "reference_batch_cooked_g": 980,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Pat the fillets dry. Mix the lemon juice, crushed garlic, chopped parsley, olive oil, salt and pepper and brush over the fish. Leave for 10 minutes.",
+            "Heat the oven to 220 °C (fan 200 °C). Dip the fillets in beaten egg, then press into the breadcrumbs.",
+            "Bake on a rack over a tray for 14–16 minutes until golden and the flesh flakes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "hammour",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 60,
+              "role_note": "coating",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "breadcrumbs",
+              "raw_g_per_batch": 80,
+              "role_note": "coating",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "potatoes",
+      "name": "Potatoes",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 400,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Roasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 776,
+          "cook_time_min": 45,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 220 °C (fan 200 °C).",
+            "Cut the potatoes (skin on) into 3 cm chunks. Toss with the olive oil, paprika and salt on a lined tray in one layer.",
+            "Roast for 35–40 minutes, turning once, until golden and tender when pierced."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 25,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled",
+          "is_default": false,
+          "reference_batch_cooked_g": 1034,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Cut the potatoes (skin on) into 4 cm chunks and cover with cold water and the salt.",
+            "Bring to a boil and simmer for 15–18 minutes, until a knife slides in easily. Drain.",
+            "Toss with the chopped parsley and paprika while hot."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "air-fried",
+          "method": "air_fried",
+          "label": "Air-fried wedges",
+          "is_default": false,
+          "reference_batch_cooked_g": 766,
+          "cook_time_min": 30,
+          "notes": null,
+          "steps": [
+            "Cut the potatoes into wedges 2 cm thick. Soak in cold water for 10 minutes, drain and pat completely dry.",
+            "Toss with the sunflower oil, paprika and salt.",
+            "Air-fry at 200 °C for 20–22 minutes in one layer, shaking the basket every 7 minutes, until crisp."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "greens",
+      "name": "Broccoli and green beans",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 250,
+      "default_serving_g": 100,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "steamed",
+          "method": "steamed",
+          "label": "Steamed",
+          "is_default": true,
+          "reference_batch_cooked_g": 939,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Cut the broccoli into florets and trim the green beans.",
+            "Steam over boiling water for 5–6 minutes, until bright green and just tender.",
+            "Toss with the lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "broccoli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "sauteed",
+          "method": "sauteed",
+          "label": "Garlic sautéed",
+          "is_default": false,
+          "reference_batch_cooked_g": 671,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Cut the broccoli into florets and trim the green beans. Blanch in boiling salted water for 2 minutes and drain.",
+            "Heat the olive oil in a wide pan over medium-high heat, add the sliced garlic and cook for 30 seconds.",
+            "Add the vegetables and toss for 3–4 minutes. Finish with the lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "broccoli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "garlic-sauce",
+      "name": "Garlic yogurt sauce",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 10,
+      "max_serving_g": 100,
+      "default_serving_g": 45,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Garlic yogurt",
+          "is_default": true,
+          "reference_batch_cooked_g": 507,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Crush the garlic with the salt to a paste.",
+            "Whisk into the yogurt with the lemon juice, then whisk in the olive oil in a thin stream. Stir in the chopped mint."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Weigh the potatoes and fish onto the plate. Add the greens and a pot of garlic yogurt."
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "slug": "yogurt-parfait",
+  "name": "Greek yogurt parfait with granola",
+  "description": "Layers of Greek yogurt, crunchy granola, berries and a little honey.",
+  "cuisine": "american",
+  "secondary_cuisine": "greek",
+  "slot_keys": [
+    "breakfast",
+    "snack",
+    "pre_workout",
+    "post_workout",
+    "packed_school_lunch"
+  ],
+  "flavour_tags": [
+    "creamy",
+    "crunchy",
+    "sweet"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "yogurt",
+      "name": "Greek yogurt",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 350,
+      "default_serving_g": 160,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "nonfat",
+          "method": "raw",
+          "label": "Fat-free",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Spoon the yogurt into a glass or pot."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "whey",
+          "method": "blended",
+          "label": "With whey",
+          "is_default": false,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Whisk the whey powder into the yogurt until smooth."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 450,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "whey-protein",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "granola",
+      "name": "Granola",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 10,
+      "max_serving_g": 80,
+      "default_serving_g": 35,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Granola",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Weigh the granola; pack it separately for lunch boxes so it stays crunchy."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "granola",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "fruit",
+      "name": "Mixed berries",
+      "role": "side",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 200,
+      "default_serving_g": 80,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 900,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Rinse the berries and hull and halve the strawberries."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "strawberries",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "blueberries",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "raspberries",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "honey",
+      "name": "Honey",
+      "role": "garnish",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 25,
+      "default_serving_g": 10,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "drizzle",
+          "method": "raw",
+          "label": "Honey",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Weigh the honey and drizzle over."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "honey",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Layer yogurt, berries and granola; finish with the honey."
+  ]
+}

@@ -1,0 +1,291 @@
+{
+  "slug": "tuna-pasta-salad",
+  "name": "Tuna pasta salad",
+  "description": "Cold pasta salad with tuna, sweetcorn, cucumber, cherry tomatoes and a light yogurt-mayo dressing.",
+  "cuisine": "italian",
+  "secondary_cuisine": "british",
+  "slot_keys": [
+    "lunch",
+    "packed_school_lunch",
+    "packed_work_lunch",
+    "post_workout"
+  ],
+  "flavour_tags": [
+    "creamy",
+    "fresh",
+    "simple"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "tuna",
+      "name": "Tuna, sweetcorn and vegetables",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 380,
+      "default_serving_g": 150,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Tuna mix",
+          "is_default": true,
+          "reference_batch_cooked_g": 1180,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Drain the tuna well and flake it. Mix with the sweetcorn, diced cucumber, halved cherry tomatoes and sliced spring onion."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "tuna-canned-water",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "corn-sweet",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cherry-tomato",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "spring-onion",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "pasta",
+      "name": "Pasta shells",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 300,
+      "default_serving_g": 150,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled al dente",
+          "is_default": true,
+          "reference_batch_cooked_g": 1210,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Bring the water and salt to a rolling boil in a large pot.",
+            "Add the pasta and cook for 1 minute less than the packet time (about 9–10 minutes), stirring in the first minute.",
+            "Drain, keeping 100 ml of the cooking water to loosen the sauce if needed. Weigh the cooked pasta for portions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "pasta-dry",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 2.4
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 5000,
+              "role_note": "cooking water, drained",
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "dressing",
+      "name": "Yogurt-mayo dressing",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 10,
+      "max_serving_g": 80,
+      "default_serving_g": 30,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Yogurt mayo",
+          "is_default": true,
+          "reference_batch_cooked_g": 314,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Whisk the yogurt, mayonnaise, lemon juice, mustard, salt and pepper."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mayonnaise",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mustard",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "olive-oil",
+          "method": "raw",
+          "label": "Lemon and olive oil",
+          "is_default": false,
+          "reference_batch_cooked_g": 304,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Whisk the yogurt, olive oil, lemon juice, mustard, salt and pepper."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mustard",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Cool the pasta under cold water and drain well. Toss the portion of pasta with the tuna mix and dressing. Keep chilled (below 5 °C) until lunch."
+  ]
+}

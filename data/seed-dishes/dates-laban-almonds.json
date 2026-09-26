@@ -1,0 +1,184 @@
+{
+  "slug": "dates-laban-almonds",
+  "name": "Dates with thick laban and almonds",
+  "description": "A Gulf pre-training snack: dates with a glass of thick laban (with Greek yogurt) and a few almonds.",
+  "cuisine": "emirati_gulf",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "snack",
+    "pre_workout",
+    "packed_school_lunch"
+  ],
+  "flavour_tags": [
+    "sweet",
+    "traditional",
+    "quick"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "laban",
+      "name": "Thick laban",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 400,
+      "default_serving_g": 180,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "blended",
+          "method": "blended",
+          "label": "Laban with Greek yogurt",
+          "is_default": true,
+          "reference_batch_cooked_g": 1005,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Whisk the Greek yogurt into the cold laban until smooth; add the salt and the chopped mint."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "laban",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "dates",
+      "name": "Dates",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 15,
+      "max_serving_g": 100,
+      "default_serving_g": 40,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Dates",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Weigh the dates (pits removed)."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "dates-dried",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "almonds",
+      "name": "Almonds",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 25,
+      "default_serving_g": 10,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "raw",
+          "method": "raw",
+          "label": "Raw",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Weigh the almonds."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "almonds",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "toasted",
+          "method": "roasted",
+          "label": "Toasted",
+          "is_default": false,
+          "reference_batch_cooked_g": 98,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Toast the almonds in a dry pan over medium heat for 5 minutes, shaking the pan."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "almonds",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Serve the laban in a glass with the dates and almonds on a small plate (or in a lunch-box section)."
+  ]
+}

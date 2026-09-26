@@ -1,0 +1,536 @@
+{
+  "slug": "chicken-cacciatore",
+  "name": "Chicken cacciatore with potatoes",
+  "description": "Hunter-style chicken braised with tomato, peppers, mushrooms and olives, with potatoes and green vegetables.",
+  "cuisine": "italian",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner",
+    "packed_work_lunch"
+  ],
+  "flavour_tags": [
+    "rustic",
+    "tomatoey",
+    "comforting"
+  ],
+  "is_packable": true,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "Chicken cacciatore",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 100,
+      "max_serving_g": 400,
+      "default_serving_g": 220,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "braised",
+          "method": "braised",
+          "label": "Stove-top braised",
+          "is_default": true,
+          "reference_batch_cooked_g": 1925,
+          "cook_time_min": 55,
+          "notes": null,
+          "steps": [
+            "Season the skinless chicken thighs with half the salt and brown in the olive oil in a wide pan, 3 minutes per side. Set aside.",
+            "Cook the sliced onion, pepper and mushrooms in the same pan for 8 minutes. Add the garlic and oregano for 1 minute.",
+            "Add the tomatoes, olives, the rest of the salt and the pepper, return the chicken, cover and simmer for 30 minutes until tender."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-thigh",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bell-pepper-red",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mushrooms",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato-canned",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 0.7
+            },
+            {
+              "ingredient_slug": "olives-black",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "oregano-dried",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 9,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "oven-braised",
+          "method": "baked",
+          "label": "Oven-braised",
+          "is_default": false,
+          "reference_batch_cooked_g": 1720,
+          "cook_time_min": 65,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 180 °C (fan 160 °C). Season the skinless chicken thighs with half the salt and brown in the olive oil in a casserole, 3 minutes per side.",
+            "Add the sliced onion, pepper and mushrooms, the garlic, oregano, tomatoes, olives, the rest of the salt and the pepper.",
+            "Cover and bake for 45 minutes until the chicken is tender."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-thigh",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bell-pepper-red",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mushrooms",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato-canned",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 0.7
+            },
+            {
+              "ingredient_slug": "olives-black",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "oregano-dried",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 9,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "potatoes",
+      "name": "Potatoes",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 400,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Roasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 776,
+          "cook_time_min": 45,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 220 °C (fan 200 °C).",
+            "Cut the potatoes (skin on) into 3 cm chunks. Toss with the olive oil, paprika and salt on a lined tray in one layer.",
+            "Roast for 35–40 minutes, turning once, until golden and tender when pierced."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 25,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled",
+          "is_default": false,
+          "reference_batch_cooked_g": 1034,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Cut the potatoes (skin on) into 4 cm chunks and cover with cold water and the salt.",
+            "Bring to a boil and simmer for 15–18 minutes, until a knife slides in easily. Drain.",
+            "Toss with the chopped parsley and paprika while hot."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "air-fried",
+          "method": "air_fried",
+          "label": "Air-fried wedges",
+          "is_default": false,
+          "reference_batch_cooked_g": 766,
+          "cook_time_min": 30,
+          "notes": null,
+          "steps": [
+            "Cut the potatoes into wedges 2 cm thick. Soak in cold water for 10 minutes, drain and pat completely dry.",
+            "Toss with the sunflower oil, paprika and salt.",
+            "Air-fry at 200 °C for 20–22 minutes in one layer, shaking the basket every 7 minutes, until crisp."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "greens",
+      "name": "Broccoli and green beans",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 250,
+      "default_serving_g": 100,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "steamed",
+          "method": "steamed",
+          "label": "Steamed",
+          "is_default": true,
+          "reference_batch_cooked_g": 939,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Cut the broccoli into florets and trim the green beans.",
+            "Steam over boiling water for 5–6 minutes, until bright green and just tender.",
+            "Toss with the lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "broccoli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "sauteed",
+          "method": "sauteed",
+          "label": "Garlic sautéed",
+          "is_default": false,
+          "reference_batch_cooked_g": 671,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Cut the broccoli into florets and trim the green beans. Blanch in boiling salted water for 2 minutes and drain.",
+            "Heat the olive oil in a wide pan over medium-high heat, add the sliced garlic and cook for 30 seconds.",
+            "Add the vegetables and toss for 3–4 minutes. Finish with the lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "broccoli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Weigh the potatoes and the chicken with its sauce onto the plate; add the greens."
+  ]
+}

@@ -1,0 +1,457 @@
+{
+  "slug": "fish-and-chips",
+  "name": "Fish and chips with peas",
+  "description": "Crumbed white fish, oven-baked or fried, with chips, minted peas and a light tartare sauce.",
+  "cuisine": "british",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner"
+  ],
+  "flavour_tags": [
+    "crispy",
+    "comforting",
+    "family-favourite"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "fish",
+      "name": "Crumbed cod",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 280,
+      "default_serving_g": 150,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "breaded-baked",
+          "method": "breaded_baked",
+          "label": "Oven-baked",
+          "is_default": true,
+          "reference_batch_cooked_g": 1037,
+          "cook_time_min": 30,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 220 °C (fan 200 °C). Cut the cod into 150 g portions, pat dry and season with the salt.",
+            "Dust in the flour, dip in the beaten egg and press into the breadcrumbs mixed with the paprika.",
+            "Spray or brush the crumbs with the oil and bake on a rack over a tray for 15–18 minutes until golden and the fish flakes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cod",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "flour-wheat-white",
+              "raw_g_per_batch": 40,
+              "role_note": "coating",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 100,
+              "role_note": "coating",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "breadcrumbs",
+              "raw_g_per_batch": 120,
+              "role_note": "coating",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "breaded-fried",
+          "method": "breaded_fried",
+          "label": "Deep-fried",
+          "is_default": false,
+          "reference_batch_cooked_g": 1160,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Heat the frying oil to 180 °C. Cut the cod into 150 g portions, pat dry and season with the salt.",
+            "Dust in the flour, dip in the beaten egg and press into the breadcrumbs mixed with the paprika.",
+            "Fry 2 pieces at a time for 5–6 minutes until deep golden. Drain on a rack."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cod",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "flour-wheat-white",
+              "raw_g_per_batch": 40,
+              "role_note": "coating",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 100,
+              "role_note": "coating",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "breadcrumbs",
+              "raw_g_per_batch": 120,
+              "role_note": "coating",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 1000,
+              "role_note": "frying oil, mostly discarded",
+              "is_absorbed_oil": true,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "chips",
+      "name": "Chips",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 350,
+      "default_serving_g": 180,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "oven",
+          "method": "baked",
+          "label": "Oven chips",
+          "is_default": true,
+          "reference_batch_cooked_g": 964,
+          "cook_time_min": 45,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 220 °C (fan 200 °C). Cut the potatoes into 1.5 cm batons, soak for 10 minutes in cold water, drain and dry well.",
+            "Toss with the oil and salt and spread on a lined tray in one layer.",
+            "Bake for 35–40 minutes, turning twice, until golden and crisp."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "air-fried",
+          "method": "air_fried",
+          "label": "Air-fried chips",
+          "is_default": false,
+          "reference_batch_cooked_g": 759,
+          "cook_time_min": 30,
+          "notes": null,
+          "steps": [
+            "Cut the potatoes into 1.5 cm batons, soak for 10 minutes in cold water, drain and dry well.",
+            "Toss with the oil and salt. Air-fry at 200 °C for 22–25 minutes, shaking every 7 minutes, until crisp."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 12,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "deep-fried",
+          "method": "deep_fried",
+          "label": "Double-fried chips",
+          "is_default": false,
+          "reference_batch_cooked_g": 754,
+          "cook_time_min": 35,
+          "notes": null,
+          "steps": [
+            "Cut the potatoes into 1.5 cm batons, soak for 10 minutes in cold water, drain and dry very well.",
+            "Fry at 150 °C for 6 minutes until soft but pale; drain.",
+            "Raise the oil to 185 °C and fry again for 3 minutes until golden. Drain on a rack and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 1500,
+              "role_note": "frying oil, mostly discarded",
+              "is_absorbed_oil": true,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "peas",
+      "name": "Minted peas",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 200,
+      "default_serving_g": 90,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Minted peas",
+          "is_default": true,
+          "reference_batch_cooked_g": 829,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Boil the peas for 3 minutes, drain, and toss with the chopped mint, lemon juice and salt. Crush lightly with a fork."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "green-peas-frozen",
+              "raw_g_per_batch": 800,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tartare",
+      "name": "Light tartare sauce",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 10,
+      "max_serving_g": 60,
+      "default_serving_g": 30,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Yogurt tartare",
+          "is_default": true,
+          "reference_batch_cooked_g": 362,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Finely chop the gherkins and dill. Mix with the yogurt, mayonnaise, lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-low-fat",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mayonnaise",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "pickled-cucumber",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dill-fresh",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Plate the fish and chips; add the peas and a pot of tartare sauce."
+  ]
+}

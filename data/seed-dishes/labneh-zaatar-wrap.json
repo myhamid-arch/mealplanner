@@ -1,0 +1,260 @@
+{
+  "slug": "labneh-zaatar-wrap",
+  "name": "Labneh and za'atar wrap with eggs",
+  "description": "Warm khubz spread with labneh and za'atar, rolled with cucumber, tomato and mint, with boiled eggs on the side.",
+  "cuisine": "levantine",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "breakfast",
+    "snack",
+    "packed_school_lunch",
+    "pre_workout"
+  ],
+  "flavour_tags": [
+    "tangy",
+    "herby",
+    "fresh"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "bread",
+      "name": "Khubz",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 120,
+      "default_serving_g": 60,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "soft",
+          "method": "raw",
+          "label": "Soft",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Warm the khubz for 10 seconds so it rolls without cracking."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "khubz-wholemeal",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "toasted",
+          "method": "grilled",
+          "label": "Grill-pressed",
+          "is_default": false,
+          "reference_batch_cooked_g": 410,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "After rolling, press on a hot griddle for 1 minute per side."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "khubz-wholemeal",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "labneh",
+      "name": "Labneh with za'atar and olive oil",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 15,
+      "max_serving_g": 100,
+      "default_serving_g": 40,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Labneh and za'atar",
+          "is_default": true,
+          "reference_batch_cooked_g": 470,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Spread the labneh on the bread, sprinkle with the za'atar and drizzle with the olive oil."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "labneh",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "zaatar",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "eggs",
+      "name": "Boiled eggs",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 25,
+      "max_serving_g": 250,
+      "default_serving_g": 70,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": true,
+      "variants": [
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled",
+          "is_default": true,
+          "reference_batch_cooked_g": 998,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Lower the eggs into boiling water and cook for 8 minutes, cool in cold water and peel."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "whites",
+          "method": "boiled",
+          "label": "Boiled, extra whites",
+          "is_default": false,
+          "reference_batch_cooked_g": 998,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Boil the eggs for 8 minutes, cool and peel. Serve 1 whole egg and whites only for the rest of the portion."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 350,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg-white",
+              "raw_g_per_batch": 650,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "veg",
+      "name": "Cucumber, tomato and mint",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 20,
+      "max_serving_g": 120,
+      "default_serving_g": 50,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 715,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Slice the cucumber and tomato thinly and pick the mint leaves."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Roll the vegetables in the labneh-spread bread. Serve or pack the eggs alongside."
+  ]
+}

@@ -1,0 +1,285 @@
+{
+  "slug": "tuna-rice-cakes",
+  "name": "Tuna and cucumber rice cakes",
+  "description": "Crisp rice cakes topped with lemony tuna and yogurt, cucumber and a slice of avocado.",
+  "cuisine": "mediterranean",
+  "secondary_cuisine": "japanese",
+  "slot_keys": [
+    "snack",
+    "pre_workout",
+    "post_workout"
+  ],
+  "flavour_tags": [
+    "crunchy",
+    "fresh",
+    "quick"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "tuna",
+      "name": "Lemony tuna",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 200,
+      "default_serving_g": 80,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Tuna and yogurt",
+          "is_default": true,
+          "reference_batch_cooked_g": 776,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Drain the tuna well, flake and mix with the yogurt, lemon juice, chopped dill and pepper."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "tuna-canned-water",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dill-fresh",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "spiced",
+          "method": "marinated_raw",
+          "label": "Tuna with lemon, chilli and spring onion",
+          "is_default": false,
+          "reference_batch_cooked_g": 797,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Drain the tuna well, flake and mix with the yogurt, lemon juice, chopped dill, chilli powder, sliced spring onion and pepper. Leave for 10 minutes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "tuna-canned-water",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dill-fresh",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chilli-powder",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "spring-onion",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "rice-cakes",
+      "name": "Rice cakes",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 9,
+      "max_serving_g": 60,
+      "default_serving_g": 27,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Plain",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Use plain rice cakes (about 9 g each)."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "rice-cakes",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "cucumber",
+      "name": "Cucumber",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 10,
+      "max_serving_g": 100,
+      "default_serving_g": 40,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "sliced",
+          "method": "raw",
+          "label": "Sliced",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Slice the cucumber into thin rounds."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "avocado",
+      "name": "Avocado",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 10,
+      "max_serving_g": 60,
+      "default_serving_g": 20,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "sliced",
+          "method": "raw",
+          "label": "Sliced",
+          "is_default": true,
+          "reference_batch_cooked_g": 310,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Slice the avocado thinly and squeeze over lemon juice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "avocado",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Top each rice cake with cucumber, the tuna and a slice of avocado just before eating."
+  ]
+}

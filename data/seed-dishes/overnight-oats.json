@@ -1,0 +1,292 @@
+{
+  "slug": "overnight-oats",
+  "name": "Overnight oats with berries",
+  "description": "Oats soaked overnight in milk with chia and cinnamon, or cooked as porridge, with Greek yogurt and berries.",
+  "cuisine": "british",
+  "secondary_cuisine": "american",
+  "slot_keys": [
+    "breakfast",
+    "snack",
+    "pre_workout",
+    "packed_school_lunch"
+  ],
+  "flavour_tags": [
+    "creamy",
+    "sweet",
+    "make-ahead"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "oats",
+      "name": "Oats",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 350,
+      "default_serving_g": 180,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "overnight",
+          "method": "raw",
+          "label": "Overnight (cold)",
+          "is_default": true,
+          "reference_batch_cooked_g": 1252,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Mix the oats, milk, chia seeds and cinnamon in a lidded container and refrigerate for at least 8 hours; the oats take up all the milk. Stir before portioning."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "oats-rolled",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 3.05
+            },
+            {
+              "ingredient_slug": "milk-low-fat",
+              "raw_g_per_batch": 800,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chia-seeds",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cinnamon",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "porridge",
+          "method": "boiled",
+          "label": "Warm porridge",
+          "is_default": false,
+          "reference_batch_cooked_g": 1132,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Bring the milk to a simmer, stir in the oats, chia and cinnamon and cook for 5 minutes, stirring, until thick."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "oats-rolled",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 2.75
+            },
+            {
+              "ingredient_slug": "milk-low-fat",
+              "raw_g_per_batch": 800,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chia-seeds",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cinnamon",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "yogurt",
+      "name": "Greek yogurt",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 300,
+      "default_serving_g": 120,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Greek yogurt",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Spoon the yogurt over the oats."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "whey",
+          "method": "blended",
+          "label": "Greek yogurt with whey",
+          "is_default": false,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Whisk the whey powder into the yogurt until smooth."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 450,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "whey-protein",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "fruit",
+      "name": "Mixed berries",
+      "role": "side",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 200,
+      "default_serving_g": 80,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 900,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Rinse the berries and hull and halve the strawberries."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "strawberries",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "blueberries",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "raspberries",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "nuts",
+      "name": "Chopped almonds",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 25,
+      "default_serving_g": 10,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "raw",
+          "method": "raw",
+          "label": "Chopped",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Roughly chop the almonds."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "almonds",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Portion the oats into a jar or bowl, top with the yogurt, berries and almonds."
+  ]
+}

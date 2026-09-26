@@ -1,0 +1,401 @@
+{
+  "slug": "foul-medames",
+  "name": "Foul medames with eggs and bread",
+  "description": "Warm fava beans mashed with cumin, garlic and lemon, olive oil to finish, with boiled eggs, bread and vegetables.",
+  "cuisine": "levantine",
+  "secondary_cuisine": "emirati_gulf",
+  "slot_keys": [
+    "breakfast"
+  ],
+  "flavour_tags": [
+    "earthy",
+    "lemony",
+    "homestyle"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "foul",
+      "name": "Foul medames",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 350,
+      "default_serving_g": 180,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "stewed",
+          "method": "stewed",
+          "label": "Warm, lightly mashed",
+          "is_default": true,
+          "reference_batch_cooked_g": 1252,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Warm the fava beans with their liquid for 5 minutes, then drain, keeping 100 ml of the liquid.",
+            "Mash roughly with the crushed garlic, cumin, lemon juice and salt, loosening with the liquid.",
+            "Top with the diced tomato and chopped parsley."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "fava-beans-canned",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "blended",
+          "method": "blended",
+          "label": "Smooth",
+          "is_default": false,
+          "reference_batch_cooked_g": 1244,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Warm the fava beans with their liquid for 5 minutes and drain.",
+            "Blend with the garlic, cumin, lemon juice, salt and a little of the liquid until smooth.",
+            "Top with the diced tomato and chopped parsley."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "fava-beans-canned",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "eggs",
+      "name": "Boiled eggs",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 250,
+      "default_serving_g": 110,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled",
+          "is_default": true,
+          "reference_batch_cooked_g": 998,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Lower the eggs into boiling water and cook for 8 minutes, cool in cold water and peel."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "whites",
+          "method": "boiled",
+          "label": "Boiled, extra whites",
+          "is_default": false,
+          "reference_batch_cooked_g": 998,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Boil the eggs for 8 minutes, cool and peel. Serve 1 whole egg and whites only for the rest of the portion (keep the yolks for another use)."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 350,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg-white",
+              "raw_g_per_batch": 650,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "olive-oil",
+      "name": "Olive oil to finish",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 20,
+      "default_serving_g": 10,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "drizzle",
+          "method": "raw",
+          "label": "Drizzle",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Weigh the olive oil and drizzle over the foul."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "bread",
+      "name": "Arabic bread (khubz)",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 140,
+      "default_serving_g": 60,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": true,
+      "variants": [
+        {
+          "key": "soft",
+          "method": "raw",
+          "label": "Soft",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Warm the loaves wrapped in a clean cloth for 20 seconds in the microwave, or 1 minute in a dry pan. Cut into quarters."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "khubz",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "toasted",
+          "method": "baked",
+          "label": "Toasted",
+          "is_default": false,
+          "reference_batch_cooked_g": 410,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 200 °C.",
+            "Split each loaf, cut into triangles and bake on a tray for 6–8 minutes until crisp and golden."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "khubz",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "veg",
+      "name": "Cucumber, tomato and mint",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 150,
+      "default_serving_g": 70,
+      "step_g": 5,
+      "sort_order": 5,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 715,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Cut the cucumber into sticks and the tomato into wedges; add the mint leaves."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Spoon the foul into a bowl and drizzle with the olive oil. Serve the eggs, bread and vegetables alongside."
+  ]
+}

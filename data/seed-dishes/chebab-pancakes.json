@@ -1,0 +1,367 @@
+{
+  "slug": "chebab-pancakes",
+  "name": "Chebab pancakes with yogurt and honey",
+  "description": "Emirati saffron and cardamom yeast pancakes with thick yogurt, honey and fruit.",
+  "cuisine": "emirati_gulf",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "breakfast",
+    "snack",
+    "pre_workout",
+    "post_workout"
+  ],
+  "flavour_tags": [
+    "sweet",
+    "saffron",
+    "traditional"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "pancakes",
+      "name": "Chebab",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 200,
+      "default_serving_g": 90,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "pan",
+          "method": "baked",
+          "label": "Griddled",
+          "is_default": true,
+          "reference_batch_cooked_g": 940,
+          "cook_time_min": 40,
+          "notes": null,
+          "steps": [
+            "Warm the milk to 37 °C and whisk in the yeast, sugar, soaked saffron and cardamom. Whisk in the flour, egg and salt to a thick pourable batter.",
+            "Cover and leave to rise for 30 minutes until bubbly.",
+            "Ladle 60 ml rounds onto a lightly oiled non-stick griddle over medium heat and cook for 2 minutes until the top is set, turn and cook 1 minute more."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "flour-wheat-white",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 2
+            },
+            {
+              "ingredient_slug": "milk-low-fat",
+              "raw_g_per_batch": 450,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sugar-white",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "yeast-dry",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "saffron",
+              "raw_g_per_batch": 0.2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "thin",
+          "method": "baked",
+          "label": "Thin and crisp-edged",
+          "is_default": false,
+          "reference_batch_cooked_g": 940,
+          "cook_time_min": 40,
+          "notes": null,
+          "steps": [
+            "Warm the milk to 37 °C and whisk in the yeast, sugar, soaked saffron and cardamom. Whisk in the flour, egg and salt to a thick pourable batter.",
+            "Cover and leave to rise for 30 minutes.",
+            "Spread 40 ml of batter thinly on a hot griddle and cook for 2 minutes until the edges crisp; turn for 30 seconds."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "flour-wheat-white",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 2
+            },
+            {
+              "ingredient_slug": "milk-low-fat",
+              "raw_g_per_batch": 450,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sugar-white",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "yeast-dry",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "saffron",
+              "raw_g_per_batch": 0.2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "yogurt",
+      "name": "Thick yogurt",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 350,
+      "default_serving_g": 140,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Greek yogurt",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Serve the yogurt chilled."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "honey",
+      "name": "Honey",
+      "role": "garnish",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 25,
+      "default_serving_g": 10,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "drizzle",
+          "method": "raw",
+          "label": "Honey",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Weigh the honey and drizzle over."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "honey",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "fruit",
+      "name": "Mixed berries",
+      "role": "side",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 150,
+      "default_serving_g": 60,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 900,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Rinse the berries and hull and halve the strawberries."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "strawberries",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "blueberries",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "raspberries",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "nuts",
+      "name": "Chopped pistachios",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 30,
+      "default_serving_g": 12,
+      "step_g": 5,
+      "sort_order": 5,
+      "required": false,
+      "variants": [
+        {
+          "key": "chopped",
+          "method": "raw",
+          "label": "Chopped",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Roughly chop the shelled pistachios."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "pistachios",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Stack the pancakes, spoon the yogurt beside them and drizzle with honey. Add the fruit."
+  ]
+}

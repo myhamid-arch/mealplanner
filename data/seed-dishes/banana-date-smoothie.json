@@ -1,0 +1,201 @@
+{
+  "slug": "banana-date-smoothie",
+  "name": "Banana, date and laban smoothie",
+  "description": "Laban blended with whey, banana, dates and cardamom, with an optional spoon of peanut butter.",
+  "cuisine": "emirati_gulf",
+  "secondary_cuisine": "american",
+  "slot_keys": [
+    "snack",
+    "pre_workout",
+    "post_workout",
+    "breakfast"
+  ],
+  "flavour_tags": [
+    "sweet",
+    "creamy",
+    "quick"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "base",
+      "name": "Laban and whey",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 450,
+      "default_serving_g": 220,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "blended",
+          "method": "blended",
+          "label": "Laban and whey",
+          "is_default": true,
+          "reference_batch_cooked_g": 1000,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Whisk or blend the whey into the cold laban until smooth."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "laban",
+              "raw_g_per_batch": 900,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "whey-protein",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "yogurt",
+          "method": "blended",
+          "label": "Laban, whey and Greek yogurt",
+          "is_default": false,
+          "reference_batch_cooked_g": 1000,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Blend the whey and Greek yogurt into the cold laban until smooth and thick."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "laban",
+              "raw_g_per_batch": 700,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "whey-protein",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "fruit",
+      "name": "Banana and dates",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 220,
+      "default_serving_g": 100,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "blended",
+          "method": "blended",
+          "label": "Banana and dates",
+          "is_default": true,
+          "reference_batch_cooked_g": 1002,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Pit the dates. Weigh the banana and dates for the portion and blend with that portion's laban base and the cardamom until smooth."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "banana",
+              "raw_g_per_batch": 700,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dates-dried",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "nut-butter",
+      "name": "Peanut butter",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 25,
+      "default_serving_g": 10,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "spoon",
+          "method": "raw",
+          "label": "Peanut butter",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Add the weighed peanut butter to the blender."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "peanut-butter",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Blend each portion's laban base, fruit and peanut butter together for 30 seconds and pour into a glass."
+  ]
+}
