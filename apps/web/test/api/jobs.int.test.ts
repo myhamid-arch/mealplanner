@@ -552,6 +552,7 @@ describe("graph, insights, substitution and purge jobs", () => {
         ingredient: target.slug,
         remaining: still.rows[0]?.n,
         changeSet: result?.changeSetId ?? null,
+        report: r.result,
       });
       expect(r.status, JSON.stringify(r.error)).toBe("succeeded");
       expect(result?.changeSetId).toBeTruthy();

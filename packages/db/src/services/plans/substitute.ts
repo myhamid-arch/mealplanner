@@ -133,8 +133,14 @@ export async function substituteUnavailable(
     stored,
   };
   const inWindow = stored.filter((m) => m.date >= args.date && m.date <= to);
+  // Variants on the plates: the dish's items and the adjuster sides.
   const servedOf = (m: (typeof stored)[number]) =>
-    new Set(m.plates.flatMap((p) => p.solution.items.map((i) => i.variantId)));
+    new Set(
+      m.plates.flatMap((p) => [
+        ...p.solution.items.map((i) => i.variantId),
+        ...p.solution.adjusters.map((a) => a.variantId),
+      ]),
+    );
   const affected = inWindow.filter((m) => {
     const dish = pool.byId.get(m.dishId);
     return dish !== undefined && uses(dish, args.ingredientId, servedOf(m));
