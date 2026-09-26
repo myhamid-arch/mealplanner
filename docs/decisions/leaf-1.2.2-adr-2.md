@@ -18,3 +18,13 @@ The owner answered OQ-4: total fibre ≥ 14 g per 1,000 kcal of the day's target
 ## Consequences
 - The LP-relaxation pruning (ADR-1) stays exact: the shortfall columns are continuous and appear in both the relaxation and the MILP.
 - The weights are constants, not user settings, like the other λ values (04 §4).
+
+## R-29: λ_ratio = 2 (SPEC-Q-17)
+The architect ruled SPEC-Q-17 (BLD-8 R-29): `LAMBDA_RATIO = 2`, up from 04's 0.5. The fibre weights above are scaled against the centring term, which is unchanged, so they stay as they are. Median ratio deviation on the G4 plates (350 in-tolerance F1 plates) before the change, and in a diagnostic run at 2:
+
+| λ_ratio | median ratio deviation | p90 |
+|---|---|---|
+| 0.5 | 0.276 | 0.440 |
+| 2 | 0.200 | 0.373 |
+
+The verify-script measurement after the change is in the PR's CP2 record.

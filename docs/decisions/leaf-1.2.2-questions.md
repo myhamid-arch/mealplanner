@@ -67,3 +67,5 @@ With the 04 §4 constants the centring term (`Σ|dev|/tol`, up to 4 inside the b
 - SPEC-Q-16: the combination objective no longer rewards soluble fibre directly; it penalises the shortfall below the goals.
 
 SPEC-Q-17 re-measured after R-28 (daily kcal band split per slot, fibre shortfall), constants unchanged in code: median ratio deviation of the 350 in-tolerance F1 plates at λ_ratio 0.5 → 0.276, 1 → 0.264, 2 → 0.200, 5 → 0.190.
+
+Ruling on SPEC-Q-17 (BLD-8 R-29): option 1, `LAMBDA_RATIO = 2`. G4's threshold and metric are unchanged; 04 PLN-5 is amended.
