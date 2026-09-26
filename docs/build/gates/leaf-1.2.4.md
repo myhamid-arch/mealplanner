@@ -26,3 +26,8 @@ Scope: Seed dish library, as specified in docs/spec (see 11-build-plan.md §5 an
 
 - [ ] G5: architect review of 10 random recipes for plausibility, UAE availability and step clarity
   EVIDENCE: pending
+
+- [ ] G6: plate naturalness on the seed library: no solved F1 plate has a component outside its [min,max], and the median ratio deviation is at most 25% (PLN-5)
+  CHECK: node scripts/verify/leaf-1.2.4.mjs --gate G6
+  EXPECT: VERIFY leaf-1.2.4 G6 PASSED
+  EVIDENCE: pending

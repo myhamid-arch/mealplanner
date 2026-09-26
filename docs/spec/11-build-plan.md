@@ -84,7 +84,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 | 1.1.3 | `data/ingredients.*`, `data/method-yields.*`, `data/cuisines.json`, `data/soluble-fibre.csv`, `data/substitutes.csv`, `scripts/import-fdc.ts`, `scripts/verify/leaf-1.1.3.mjs` | 1.1.1 | judgment | 2 |
 | 1.2.1 | `packages/core/src/nutrition/**`, `packages/core/test/nutrition/**`, `scripts/verify/leaf-1.2.1.mjs` | 1.1.1 | judgment | 2 |
 | 1.4.2 | `packages/ui-tokens/**`, `apps/web/app/layout.tsx`, `apps/web/app/globals.css`, `apps/web/app/(shell)/**`, `apps/web/components/ui/**`, `apps/web/public/**`, `apps/web/next.config.*`, `apps/web/playwright.config.ts`, `apps/web/postcss.config.mjs`, `apps/web/e2e/shell.spec.ts`, `scripts/verify/leaf-1.4.2.mjs` | 1.1.1 | judgment | 2 |
-| 1.2.2 | `packages/core/src/planner/targets/**`, `packages/core/src/planner/solver/**`, `packages/core/test/planner/solver/**`, `packages/core/test/planner/targets/**`, `scripts/verify/leaf-1.2.2.mjs` | 1.2.1 | judgment | 3 |
+| 1.2.2 | `packages/core/src/planner/targets/**`, `packages/core/src/planner/solver/**`, `packages/core/test/planner/solver/**`, `packages/core/test/planner/targets/**`, `scripts/verify/leaf-1.2.2.mjs` | 1.1.2, 1.2.1 | judgment | 3 |
 | 1.2.4 | `data/seed-dishes/**`, `data/adjusters.json`, `scripts/verify/leaf-1.2.4.mjs` | 1.1.3, 1.2.2 | judgment | 4 |
 | 1.3.2 | `packages/core/src/learning/preferences/**`, `packages/core/src/learning/portions/**`, `packages/core/test/learning/prefs/**`, `packages/db/src/services/reviews/**`, `scripts/verify/leaf-1.3.2.mjs` | 1.1.2 | judgment | 3 |
 | 1.2.3 | `packages/core/src/planner/select/**`, `packages/core/src/planner/cooksheet/**`, `packages/core/src/planner/index.ts`, `packages/core/test/planner/select/**`, `scripts/verify/leaf-1.2.3.mjs` | 1.2.2, 1.2.4 | judgment | 5 |
@@ -272,3 +272,6 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - Accepted as proposed: SPEC-Q-1 (the engine keeps its own structural input types; the db and planner leaves map rows onto them), SPEC-Q-5, SPEC-Q-6 and SPEC-Q-7.
   - The dependency `@vitest/coverage-v8@5.0.2` is added at the root on the base branch.
 - **R-15 (1.1.2 SPEC-Q-7/8/9).** Accepted as proposed.
+- **R-16. Plan correction (architect error).**
+  - Leaf 1.2.2 also needs 1.1.2: its gates use fixture F1 and `HouseholdConfig` from `@mealplanner/core/types`.
+  - 1.2.2 G4 no longer measures against the seed library, which 1.2.4 builds after 1.2.2 and would make the plan circular. G4 now measures the leaf's own test dish set, and the seed-library check moves to the new 1.2.4 G6.

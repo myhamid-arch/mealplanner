@@ -19,7 +19,7 @@ Scope: Target resolver and portion solver, as specified in docs/spec (see 11-bui
   EXPECT: VERIFY leaf-1.2.2 G3 PASSED
   EVIDENCE: pending
 
-- [ ] G4: no component outside [min,max]; median ratio deviation at most 25% on the seed library
+- [ ] G4: no component outside [min,max]; median ratio deviation at most 25% on this leaf's own test dish set of at least 20 multi-component dishes (the seed-library check is 1.2.4 G6)
   CHECK: node scripts/verify/leaf-1.2.2.mjs --gate G4
   EXPECT: VERIFY leaf-1.2.2 G4 PASSED
   EVIDENCE: pending
