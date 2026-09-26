@@ -330,3 +330,11 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
 
 - **R-27 (R-21 hand-over).** 1.4.2 is merged; `apps/web/app/(shell)/_shell/viewer.ts` now belongs to 1.4.1, which replaces its body with the session lookup.
 - **W-1 (watch item).** In the architect's CP3 of 1.4.2 at `04f43f1`, G2 failed once in nine runs (three `gate-check --reverify` runs, six direct runs, some under CPU load); the checker truncated the output, and the failure did not reproduce. The next leaf that runs the shell e2e (1.4.4 or 1.4.6) prints full failure output on any G2-style failure; a second occurrence is a finding against `apps/web/e2e/shell.spec.ts`.
+
+### Owner answers (2026-09-26)
+
+- **R-28. OQ-2, OQ-4 and OQ-7 answered by the owner.**
+  - **OQ-7: carbohydrate targets are total** (`carbs_g + fibre_g`), the R-20 default. `CARB_TARGET_BASIS = "total"` stays.
+  - **OQ-2: kcal tolerance is ±50 per day, not per meal.** P/C/F tolerances stay per meal. The target resolver (1.2.2) splits the daily kcal band across attended slots by share (04 PLN-4 step 6); the plan search (1.2.3) re-targets later slots with the kcal already consumed, and asserts every member-day total within ±`tolerance.kcal`. `tolerance.kcal` keeps its column and default 50; only its meaning changes.
+  - **OQ-4: saturated fat ≤ 6 % of kcal** when a member sets no `sat_fat_max_g` (hard, as before). `household.sat_fat_default_pct` defaults to 6 via migration `0003_sat_fat_default_6` (architect-applied).
+  - **OQ-4: fibre goals** when a member sets none: total fibre ≥ 14 g per 1,000 kcal of the day's target, of which ≥ 25 % soluble. Both are **soft** goals in the solver objective (penalised shortfall), split by slot share, and misses are reported. They are not hard constraints: soluble fibre is unknown (null, counted as 0) for 208 of the 363 catalogue ingredients, so a hard soluble minimum would make most plans infeasible on missing data rather than on food.

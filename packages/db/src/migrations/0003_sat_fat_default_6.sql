@@ -1,0 +1,1 @@
+ALTER TABLE "household" ALTER COLUMN "sat_fat_default_pct" SET DEFAULT 6;
