@@ -22,6 +22,7 @@ Before starting, confirm that every leaf in your row's `Needs` is merged into `c
   - It must run the real tests or measurements for that gate and print `VERIFY leaf-{LEAF} G<n> PASSED` only after every assertion passes. Otherwise it exits non-zero.
   - Each gate must include a **negative control**: the same assertion run on a known-bad fixture must fail.
   - Measured figures (such as SC-1 and SC-2) are computed, never hard-coded.
+  - Gates must be safe to run concurrently (`gate-check` runs them in parallel): no shared build directories, ports or temp files between gates.
 - Workflow:
   1. `node .claude/skills/unlazy/scripts/gate-lint.mjs docs/build/gates/leaf-{LEAF}.md`
   2. `node .claude/skills/unlazy/scripts/gate-check.mjs --root . --status docs/build/gates/leaf-{LEAF}.md` (`--status` rejects `--cwd`)
@@ -41,6 +42,7 @@ Before starting, confirm that every leaf in your row's `Needs` is merged into `c
   - `SPEC-Q`s.
 
   Push, comment `CP1 READY` on the PR, and **stop**. Continue only after the architect's `CP1 APPROVED` comment (it may include amendments; apply them).
+- **Questions to the architect mid-build:** put them in a PR comment whose first line starts with `ARCHITECT QUESTION`, then continue with whatever does not depend on the answer.
 - **Build**, using the four passes in the unlazy skill: implement completely → reread as a domain expert → hunt defects → polish. Repeat until a full pass finds nothing. Commit in small, clear commits.
 - **CP2 — evidence.** Update the PR body:
   - the full `--reverify` output;
