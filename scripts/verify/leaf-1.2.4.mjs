@@ -317,16 +317,10 @@ function gateG1() {
     [
       "no pre_workout dish",
       (l) =>
-        l.dishes.forEach(
-          (x) =>
-            (x.dish.slot_keys = x.dish.slot_keys
-              .filter((k) => k !== "pre_workout")
-              .concat(
-                x.dish.slot_keys.length === 1 && x.dish.slot_keys[0] === "pre_workout"
-                  ? ["snack"]
-                  : [],
-              )),
-        ),
+        l.dishes.forEach(({ dish }) => {
+          const kept = dish.slot_keys.filter((k) => k !== "pre_workout");
+          dish.slot_keys = kept.length > 0 ? kept : ["snack"];
+        }),
     ],
     ["an emoji in a name", (l) => (l.dishes[0].dish.name += " \u{1F957}")],
     [

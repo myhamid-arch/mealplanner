@@ -31,3 +31,6 @@ G6 re-runs 1.2.2's G4 measurement on the seed library instead of 1.2.2's test di
 
 ## SPEC-Q-6: pork and alcohol
 F1 declares no religious exclusion, but the reference locale is Abu Dhabi. The seed library uses no ingredient flagged `contains_pork` or `contains_alcohol`, so a household that excludes them (R2-ONB-3) keeps the whole library. G1 asserts it. This is a content choice, not a new rule for other leaves.
+
+## SPEC-Q-7: low-confidence ingredients (correction to SPEC-Q-4 item 5; ARCHITECT QUESTION on PR #8, pending)
+SPEC-Q-4 item 5 barred every `nutrition_confidence: low` ingredient on the premise that the loader marks it `needs_review`. Under R-17 and R-22 the loader marks `needs_review` only for an ingredient that fails NUT-4 after its own factors, so the premise is wrong, and the rule would exclude `zaatar` (which the brief expects to carry sesame) and `labneh`. Reading taken: every ingredient used must pass NUT-4 under R-22 (this excludes `vinegar`, `apple-cider-vinegar`, `coffee-brewed`, `vanilla-extract` and the cooking wines); `low` ingredients that pass are allowed, and G3 prints which dishes use them. They are limited to `labneh-zaatar-wrap` (labneh, za'atar) and `adjuster-labneh-light` (labneh), so a reversal is a two-record swap.
