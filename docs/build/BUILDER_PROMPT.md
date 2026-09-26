@@ -24,7 +24,7 @@ Before starting, confirm that every leaf in your row's `Needs` is merged into `c
   - Measured figures (such as SC-1 and SC-2) are computed, never hard-coded.
 - Workflow:
   1. `node .claude/skills/unlazy/scripts/gate-lint.mjs docs/build/gates/leaf-{LEAF}.md`
-  2. `node .claude/skills/unlazy/scripts/gate-check.mjs --root . --cwd . --status docs/build/gates/leaf-{LEAF}.md`
+  2. `node .claude/skills/unlazy/scripts/gate-check.mjs --root . --status docs/build/gates/leaf-{LEAF}.md` (`--status` rejects `--cwd`)
   3. After reading your own verify script: `node .claude/skills/unlazy/scripts/gate-check.mjs --root . --cwd . --approve docs/build/gates/leaf-{LEAF}.md`
   4. Before CP2: `node .claude/skills/unlazy/scripts/gate-check.mjs --root . --cwd . --reverify docs/build/gates/leaf-{LEAF}.md`, which must print `ALL MET`.
 - Manual gates (no CHECK) are for the architect. Leave them `pending`, and list in the PR what the architect needs in order to review them (screenshots at 390 px and 1280 px for UI).

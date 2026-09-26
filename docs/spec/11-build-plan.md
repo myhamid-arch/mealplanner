@@ -79,23 +79,23 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 
 | Leaf | Owns | Needs | Tier | Wave |
 |---|---|---|---|---|
-| 1.1.1 | `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `turbo.json`, `tsconfig.base.json`, `eslint.config.mjs`, `.prettierrc`, `.github/workflows/**`, `docker-compose.yml`, `.env.example`, `scripts/verify/lib/**`, `scripts/verify/leaf-1.1.1.mjs`, `apps/*/package.json`, `packages/*/package.json`, `packages/*/tsconfig.json`, `apps/*/tsconfig.json` | – | mechanical | 1 |
-| 1.1.2 | `packages/db/src/schema/**`, `packages/db/src/migrations/**`, `packages/db/src/repos/**`, `packages/db/src/services/changes/**`, `packages/db/src/services/config/**`, `packages/db/test/**`, `packages/core/src/changes/**`, `packages/core/src/types/**`, `packages/core/test/fixtures/**`, `scripts/verify/leaf-1.1.2.mjs` | 1.1.1 | judgment | 2 |
+| 1.1.1 | `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `turbo.json`, `tsconfig.base.json`, `eslint.config.mjs`, `.prettierrc`, `.github/workflows/**`, `packages/*/src/index.ts`, `apps/worker/src/main.ts`, `apps/web/app/layout.tsx`, `apps/web/app/page.tsx`, `docker-compose.yml`, `.env.example`, `scripts/verify/lib/**`, `scripts/verify/leaf-1.1.1.mjs`, `apps/*/package.json`, `packages/*/package.json`, `packages/*/tsconfig.json`, `apps/*/tsconfig.json` | – | mechanical | 1 |
+| 1.1.2 | `packages/db/drizzle.config.ts`, `packages/db/src/schema/**`, `packages/db/src/migrations/**`, `packages/db/src/repos/**`, `packages/db/src/services/changes/**`, `packages/db/src/services/config/**`, `packages/db/test/**`, `packages/core/src/changes/**`, `packages/core/src/types/**`, `packages/core/test/fixtures/**`, `scripts/verify/leaf-1.1.2.mjs` | 1.1.1 | judgment | 2 |
 | 1.1.3 | `data/ingredients.*`, `data/method-yields.*`, `data/cuisines.json`, `data/soluble-fibre.csv`, `data/substitutes.csv`, `scripts/import-fdc.ts`, `scripts/verify/leaf-1.1.3.mjs` | 1.1.1 | judgment | 2 |
 | 1.2.1 | `packages/core/src/nutrition/**`, `packages/core/test/nutrition/**`, `scripts/verify/leaf-1.2.1.mjs` | 1.1.1 | judgment | 2 |
-| 1.4.2 | `packages/ui-tokens/**`, `apps/web/app/layout.tsx`, `apps/web/app/globals.css`, `apps/web/app/(shell)/**`, `apps/web/components/ui/**`, `apps/web/public/**`, `apps/web/next.config.*`, `apps/web/e2e/shell.spec.ts`, `scripts/verify/leaf-1.4.2.mjs` | 1.1.1 | judgment | 2 |
+| 1.4.2 | `packages/ui-tokens/**`, `apps/web/app/layout.tsx`, `apps/web/app/globals.css`, `apps/web/app/(shell)/**`, `apps/web/components/ui/**`, `apps/web/public/**`, `apps/web/next.config.*`, `apps/web/playwright.config.ts`, `apps/web/postcss.config.mjs`, `apps/web/next-env.d.ts`, `apps/web/e2e/shell.spec.ts`, `scripts/verify/leaf-1.4.2.mjs` | 1.1.1 | judgment | 2 |
 | 1.2.2 | `packages/core/src/planner/targets/**`, `packages/core/src/planner/solver/**`, `packages/core/test/planner/solver/**`, `packages/core/test/planner/targets/**`, `scripts/verify/leaf-1.2.2.mjs` | 1.2.1 | judgment | 3 |
 | 1.2.4 | `data/seed-dishes/**`, `data/adjusters.json`, `scripts/verify/leaf-1.2.4.mjs` | 1.1.3, 1.2.2 | judgment | 4 |
 | 1.3.2 | `packages/core/src/learning/preferences/**`, `packages/core/src/learning/portions/**`, `packages/core/test/learning/prefs/**`, `packages/db/src/services/reviews/**`, `scripts/verify/leaf-1.3.2.mjs` | 1.1.2 | judgment | 3 |
 | 1.2.3 | `packages/core/src/planner/select/**`, `packages/core/src/planner/cooksheet/**`, `packages/core/src/planner/index.ts`, `packages/core/test/planner/select/**`, `scripts/verify/leaf-1.2.3.mjs` | 1.2.2, 1.2.4 | judgment | 5 |
 | 1.3.1 | `packages/ai/src/client/**`, `packages/ai/src/recipes/**`, `packages/ai/test/recipes/**`, `scripts/verify/leaf-1.3.1.mjs` | 1.1.2, 1.2.2 | judgment | 4 |
 | 1.3.4 | `packages/graph/**`, `scripts/kg-rebuild.ts`, `scripts/verify/leaf-1.3.4.mjs` | 1.1.2, 1.2.4 | judgment | 5 |
-| 1.4.1 | `apps/web/app/api/**`, `apps/web/lib/server/**`, `apps/web/lib/auth/**`, `apps/worker/src/**`, `packages/api-contract/src/**`, `packages/db/src/services/plans/**`, `apps/web/test/api/**`, `scripts/verify/leaf-1.4.1.mjs` | 1.1.2, 1.2.3 | judgment | 6 |
+| 1.4.1 | `apps/web/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/app/api/**`, `apps/web/lib/server/**`, `apps/web/lib/auth/**`, `apps/worker/src/**`, `packages/api-contract/src/**`, `packages/db/src/services/plans/**`, `apps/web/test/api/**`, `scripts/verify/leaf-1.4.1.mjs` | 1.1.2, 1.2.3 | judgment | 6 |
 | 1.3.3 | `packages/core/src/learning/rules/**`, `packages/core/test/learning/rules/**`, `packages/ai/src/insights/**`, `packages/db/src/services/proposals/**`, `scripts/verify/leaf-1.3.3.mjs` | 1.3.1, 1.3.2 | judgment | 5 |
 | 1.3.5 | `packages/ai/src/agent/**`, `packages/ai/test/agent/**`, `evals/agent/**`, `scripts/verify/leaf-1.3.5.mjs` | 1.3.1, 1.3.3, 1.4.1 | judgment | 7 |
 | 1.4.3 | `apps/web/app/(app)/onboarding/**`, `apps/web/app/(app)/family/**`, `apps/web/app/(app)/settings/**`, `apps/web/components/config/**`, `apps/web/components/detail-level/**`, `packages/core/src/onboarding/**`, `packages/core/test/onboarding/**`, `apps/web/e2e/config.spec.ts`, `scripts/verify/leaf-1.4.3.mjs` | 1.4.1, 1.4.2 | judgment | 7 |
 | 1.4.6 | `apps/web/app/(auth)/**`, `apps/web/app/(app)/access/**`, `apps/web/app/(app)/account/**`, `apps/web/app/(app)/changelog/**`, `apps/web/app/(platform)/**`, `apps/web/components/admin/**`, `apps/web/e2e/admin.spec.ts`, `scripts/verify/leaf-1.4.6.mjs` | 1.4.1, 1.4.2 | judgment | 7 |
-| 1.4.4 | `apps/web/app/(app)/today/**`, `apps/web/app/(app)/plan/**`, `apps/web/app/(app)/recipes/**`, `apps/web/app/(app)/kitchen/**`, `apps/web/components/plan/**`, `apps/web/components/recipe/**`, `apps/web/e2e/plan.spec.ts`, `scripts/verify/leaf-1.4.4.mjs` | 1.4.1, 1.4.2, 1.2.4 | judgment | 7 |
+| 1.4.4 | `apps/web/app/page.tsx`, `apps/web/app/(app)/today/**`, `apps/web/app/(app)/plan/**`, `apps/web/app/(app)/recipes/**`, `apps/web/app/(app)/kitchen/**`, `apps/web/components/plan/**`, `apps/web/components/recipe/**`, `apps/web/e2e/plan.spec.ts`, `scripts/verify/leaf-1.4.4.mjs` | 1.4.1, 1.4.2, 1.2.4 | judgment | 7 |
 | 1.4.5 | `apps/web/app/(app)/reviews/**`, `apps/web/app/(app)/insights/**`, `apps/web/app/(app)/chat/**`, `apps/web/components/chat/**`, `apps/web/components/reviews/**`, `apps/web/e2e/chat.spec.ts`, `scripts/verify/leaf-1.4.5.mjs` | 1.4.1, 1.4.2, 1.3.3, 1.3.5 | judgment | 8 |
 
 **Shared manifests.** `package.json` files, `pnpm-lock.yaml` and workspace config belong to 1.1.1, which declares every dependency named in ARC-1 up front. A later leaf that needs a new dependency lists it in its return report, and the architect adds it on the integration branch before merging that leaf. Builders never edit files outside their OWNS.
@@ -226,3 +226,22 @@ Every leaf passes three checkpoints. The builder **stops and waits** at CP1 and 
 6. When unsure, choose the more conservative reading, record it as `SPEC-Q-<n>` in `docs/decisions/leaf-<id>-questions.md` (every leaf owns `docs/decisions/leaf-<id>-*.md`), and carry on. Stop only if the question blocks a gate.
 7. Report honestly. A gate that cannot pass is `ABANDON:`ed with a reason, never marked done.
 8. One leaf per PR, and one PR at a time unless the architect dispatches a wave in parallel.
+
+## 8. Architect rulings (BLD-8)
+
+Recorded from leaf CP1 reviews. They are binding for all leaves.
+
+- **R-1 (SPEC-Q-1, leaf 1.1.1). Compile roots and hand-over.**
+  - 1.1.1 owns `packages/*/src/index.ts`, `apps/worker/src/main.ts`, `apps/web/app/layout.tsx` and `apps/web/app/page.tsx` as minimal bootstrap entry points.
+  - Hand-over: `apps/web/app/layout.tsx` goes to 1.4.2 (already in its OWNS), `apps/web/app/page.tsx` to 1.4.4, and `apps/worker/src/main.ts` to 1.4.1 (inside `apps/worker/src/**`).
+  - Packages expose **subpath exports** (`@mealplanner/core/nutrition`, `…/planner`, `…/changes` …), mapped `"./*": "./dist/src/*/index.js"`. Each leaf owns its own subdirectory `index.ts`, and the package root `src/index.ts` stays an empty barrel owned by 1.1.1. This is the one permitted bootstrap stub.
+- **R-2 (SPEC-Q-2). ARC-3 is an exhaustive allow-list** exactly as in leaf-1.1.1 ADR-3.
+  - `ai` and `graph` do not import `db`.
+  - Services from `db` reach `ai` by dependency injection, wired in `apps/*`.
+- **R-3 (SPEC-Q-4).** Leaves keep `--passWithNoTests` until node-1.1. node-1.1 N4 removes it, once every package has tests.
+- **R-4 (SPEC-Q-6).** `docker-compose.yml` has only `postgres:16` until 1.4.1. 1.4.1 owns `apps/web/Dockerfile` and `apps/worker/Dockerfile`, and requests the `web`/`worker` compose services from the architect.
+- **R-5 (SPEC-Q-8). Tool config owners.**
+  - `packages/db/drizzle.config.ts` → 1.1.2.
+  - `apps/web/playwright.config.ts`, `apps/web/postcss.config.mjs`, `apps/web/next-env.d.ts` → 1.4.2.
+  - Vitest runs from CLI flags; there is no shared config file.
+- **R-6.** Accepted as proposed: SPEC-Q-3 (1.1.1 creates the ui-tokens/graph manifests only), SPEC-Q-5 (no `apps/mobile` in v1), SPEC-Q-7 (`EMAIL_FROM`, `EMAIL_SERVER`).
