@@ -126,3 +126,29 @@ Reading: `GET /households/current/export?format=json` returns every household-sc
 ## SPEC-Q-19: ARC-12 and R2-UX-1 are not cited by this leaf's gates
 
 ARC-12 (pino logs, admin diagnostics page) and R2-UX-1's "unavailable flag → substitution and re-solve" have no gate here and no owner in §4. Reading: not built (anti-drift rule 3). The platform console's failed-jobs list (R2-ADM-8) is built from the `job` table. Flagged for the architect.
+
+## SPEC-Q-20: a variant with an ingredient that needs review
+
+NUT-4 flags an ingredient whose energy does not reconcile; the spec does not say what happens to the dishes using it. Reading: the catalogue loader and `nutrition.recompute` mark a variant `needs_review` when any of its ingredients needs review, so the planner's existing rules for unreviewed variants apply. Six catalogue ingredients currently need review.
+
+## SPEC-Q-21: global adjusters used by a saved plan
+
+The planner treats a global adjuster as enabled unless the household disabled it, but `plan.save_days` refuses an adjuster without an enabled `household_adjuster` row. Reading: the plan service adds `adjusters.set` for every adjuster the saved days use, in the same change set as `plan.save_days`, so the save succeeds and one undo removes both.
+
+## SPEC-Q-22: account deletion (R2-ADM-5)
+
+Reading: `DELETE /api/v1/account` (password confirmed) is refused for a household's last active admin (409). Otherwise each login is removed through an `access.remove` change set (the change log keeps its history), the user's sessions, credentials, TOTP secret and notification settings are deleted, and the user row is anonymised (`deleted-<id>@deleted.invalid`, "Deleted user"), because reviews and change sets keep referring to it.
+
+## SPEC-Q-23: `support_access.grant_id` has no foreign key
+
+1.1.2 G1's negative control drops `support_grant` to prove its check detects a missing table; a foreign key from `support_access` blocked that drop. Reading: `grant_id` stays a plain uuid written only by `withSupport`, which reads the grant row in the same request. The log therefore survives a grant row's removal.
+
+## Outcomes at CP2 (R-40, R-41)
+
+- SPEC-Q-7, 8, 13, 16 (schema and ops): granted as R-a/R-b/R-c; built. The undo of a `recipe.*` change set succeeds only while its job is queued (trigger, `409 job_started` otherwise); the worker's claim is atomic; G2 races them 30 times with a staggered start and requires exactly one winner each time.
+- SPEC-Q-9, 10: 1.3.5's; no chat POST route and no `reviews.extract` job here (G1 asserts the route's absence).
+- SPEC-Q-11: built as described, except that the scheduler ticks every minute (not hourly). Each tick re-sends jobs still queued after 30 s, enqueues `insights.run` at 02:00 in each household's time zone (nightly, or Mondays for weekly), `kg.nightly` at 01:00 UTC and `household.purge` at 03:00 UTC. The `plates.substitute` job (R2-UX-1, R-40) is added.
+- SPEC-Q-18: the CSV export is `GET /api/v1/households/current/export/{table}` (one table per request), and JSON is `GET …/export`.
+- SPEC-Q-19: assigned by R-40 and built. Pino logs carry request id, household and user (web) and job id, kind and duration (worker); the plan job logs `PlanResult.stats`. `GET /api/v1/diagnostics` (admin) returns the last 50 `ai_generation` rows and the failed jobs. `POST /api/v1/cook-sheets/{date}/flags` (admin, kitchen) stores the flag as a kitchen-tag review, and an `unavailable` flag enqueues `plates.substitute`. The job uses the graph's `substitutes` under the household's exclusions, creates household copies of the affected dishes with the substitute, and re-solves the affected future meals through the plan service in one change set that admins see in the change log.
+- R-41: the `HouseholdRow` test literal (1.2.2), the registry list in `changes.int.test.ts` (1.1.2, title unchanged) and the 1.3.3 required test name were edited as granted.
+- Found by the gate tests and fixed: the TOTP-verify session replacement (ADR-1), and the plan job's `done` progress event, which closed the SSE stream before the job finished (ADR-2).

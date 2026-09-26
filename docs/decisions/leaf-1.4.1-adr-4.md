@@ -1,6 +1,6 @@
 # leaf-1.4.1 ADR-4: email delivery
 
-Status: proposed (CP1)
+Status: accepted at CP1 (R-40); as built at CP2
 Requirement: R2-ADM-1 (magic link, password reset), R2-ADM-2 (email invites), ARC-9 (`EMAIL_*` optional; R-6: `EMAIL_FROM`, `EMAIL_SERVER`)
 
 ## Decision
