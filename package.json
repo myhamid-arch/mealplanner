@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run typecheck && tsc -p scripts",
     "lint": "eslint .",
     "format": "prettier --write --ignore-unknown \"apps/**\" \"packages/**\" \"scripts/**\" \".github/workflows/**\" \"*.{json,yaml,yml,mjs}\" \".prettierrc\" \"!**/dist/**\" \"!**/.next/**\" \"!**/next-env.d.ts\" \"!pnpm-lock.yaml\"",
     "format:check": "prettier --check --ignore-unknown \"apps/**\" \"packages/**\" \"scripts/**\" \".github/workflows/**\" \"*.{json,yaml,yml,mjs}\" \".prettierrc\" \"!**/dist/**\" \"!**/.next/**\" \"!**/next-env.d.ts\" \"!pnpm-lock.yaml\"",

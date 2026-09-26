@@ -29,5 +29,5 @@ Scope: Catalogue data, as specified in docs/spec (see 11-build-plan.md §5 and 1
   EXPECT: VERIFY leaf-1.1.3 G5 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=bd8d4843c26fb6b224bab7dd47e73812de7745db4430910d24ad6e58a1c3b53a; exit=0; EXPECT=matched; output-sha256=018bc13c455f627653fd825d47b45c90d98fe87116470c2c6f8c709c5c46091d; output-bytes=726; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G6: architect spot-check of 20 random ingredients against cited sources
-  EVIDENCE: pending
+- [x] G6: architect spot-check of 20 random ingredients against cited sources
+  EVIDENCE: architect review 2026-09-26 at 02fd36c: 20 sr_legacy entries drawn with mulberry32 seed 20260926 from 343, compared with food.csv/food_nutrient.csv of the SR Legacy 2019-04-02 CSV (GitHub mirror tomwhite/ingreedy-data): 20/20 match on record description, kcal, protein, available carbohydrate (1005-1079), fat, fibre; nutrient values unchanged 7a22180..02fd36c (0 diffs over 363 entries); R-22 meta.atwater_factors of all 296 sr_legacy entries match food_calorie_conversion_factor.csv (0 mismatches, 29 factor-dependent entries included)
