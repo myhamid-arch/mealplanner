@@ -111,11 +111,16 @@ export const accountTotpVerify = endpoint({
   id: "account.totpVerify",
   method: "POST",
   path: `${V}/account/totp/verify`,
-  summary: "Confirm TOTP setup with a current code",
+  summary:
+    "Confirm TOTP setup with a current code; the session is replaced, and the new bearer token returned",
   tag: "account",
   auth: "session",
   body: z.object({ code: z.string().regex(/^\d{6}$/) }).strict(),
-  response: z.object({ twoFactorEnabled: z.literal(true) }),
+  response: z.object({
+    twoFactorEnabled: z.literal(true),
+    /** The replacement session's bearer token (null when the session was kept). */
+    token: z.string().nullable(),
+  }),
 });
 
 export const accountTotpDisable = endpoint({

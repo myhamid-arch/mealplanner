@@ -3,7 +3,13 @@
 // with the error, and the row's final status. Events are appended in order (one chain per job).
 // Durations are logged (ARC-12).
 import type { HouseholdContext, Json } from "@mealplanner/core/types";
-import { appendJobEvent, claimJob, finishJob, type JobRow } from "@mealplanner/db/services/plans";
+import {
+  TERMINAL_EVENTS,
+  appendJobEvent,
+  claimJob,
+  finishJob,
+  type JobRow,
+} from "@mealplanner/db/services/plans";
 import type { Logger } from "./log.js";
 import type { WorkerRuntime } from "./runtime.js";
 
@@ -42,6 +48,9 @@ export async function runJob(rt: WorkerRuntime, jobId: string, handler: JobHandl
   const started = performance.now();
   let chain: Promise<unknown> = Promise.resolve();
   const emit = (type: string, payload: Json) => {
+    // Terminal events close the stream; only the runner appends them, after the handler.
+    if (TERMINAL_EVENTS.has(type))
+      throw new Error(`a handler cannot emit the terminal event ${type}`);
     chain = chain.then(() => appendJobEvent(rt.db, jobId, type, payload));
   };
   const ctx: JobContext = {

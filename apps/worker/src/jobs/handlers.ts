@@ -66,7 +66,8 @@ export const planGenerate: JobHandler = async (ctx) => {
     seed: p.seed ?? 1,
     by,
     onProgress: (e) => {
-      ctx.emit(e.type, progressPayload(e));
+      // The planner's own `done` is not the job's terminal event (the runner appends that).
+      ctx.emit(e.type === "done" ? "planned" : e.type, progressPayload(e));
     },
     requestDishes: requestDishesFor(ctx.rt, hh, config, by, (type, data) => {
       ctx.emit(type, data);

@@ -605,13 +605,28 @@ export async function enableTotp(rt: Runtime, request: Request, password: string
   }
 }
 
+/**
+ * Confirms TOTP setup. Enabling two-step sign-in replaces the session (the auth library deletes
+ * the old one), so the new bearer token is returned and the session cookie forwarded.
+ */
 export async function verifyTotp(rt: Runtime, request: Request, code: string) {
+  let headers: Headers;
   try {
-    await rt.auth.api.verifyTOTP({ body: { code }, headers: authHeaders(request) });
+    const result = await rt.auth.api.verifyTOTP({
+      body: { code },
+      headers: authHeaders(request),
+      returnHeaders: true,
+    });
+    headers = result.headers;
   } catch (error) {
     throw authFailure(error, "invalid_code");
   }
-  return { twoFactorEnabled: true as const };
+  const forwarded = new Headers();
+  for (const cookie of headers.getSetCookie()) forwarded.append("set-cookie", cookie);
+  return new Reply(
+    { twoFactorEnabled: true as const, token: headers.get("set-auth-token") },
+    { headers: forwarded },
+  );
 }
 
 export async function disableTotp(rt: Runtime, request: Request, s: SessionInfo, password: string) {
