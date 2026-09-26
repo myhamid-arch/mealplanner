@@ -83,14 +83,14 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 | 1.1.2 | `packages/db/drizzle.config.ts`, `packages/db/src/schema/**`, `packages/db/src/migrations/**`, `packages/db/src/repos/**`, `packages/db/src/services/changes/**`, `packages/db/src/services/config/**`, `packages/db/test/**`, `packages/core/src/changes/**`, `packages/core/src/types/**`, `packages/core/test/fixtures/**`, `scripts/verify/leaf-1.1.2.mjs` | 1.1.1 | judgment | 2 |
 | 1.1.3 | `data/ingredients.*`, `data/method-yields.*`, `data/cuisines.json`, `data/soluble-fibre.csv`, `data/substitutes.csv`, `scripts/import-fdc.ts`, `scripts/verify/leaf-1.1.3.mjs` | 1.1.1 | judgment | 2 |
 | 1.2.1 | `packages/core/src/nutrition/**`, `packages/core/test/nutrition/**`, `scripts/verify/leaf-1.2.1.mjs` | 1.1.1 | judgment | 2 |
-| 1.4.2 | `packages/ui-tokens/**`, `apps/web/app/layout.tsx`, `apps/web/app/globals.css`, `apps/web/app/(shell)/**`, `apps/web/components/ui/**`, `apps/web/public/**`, `apps/web/next.config.*`, `apps/web/playwright.config.ts`, `apps/web/postcss.config.mjs`, `apps/web/e2e/shell.spec.ts`, `scripts/verify/leaf-1.4.2.mjs` | 1.1.1 | judgment | 2 |
-| 1.2.2 | `packages/core/src/planner/targets/**`, `packages/core/src/planner/solver/**`, `packages/core/test/planner/solver/**`, `packages/core/test/planner/targets/**`, `scripts/verify/leaf-1.2.2.mjs` | 1.2.1 | judgment | 3 |
+| 1.4.2 | `packages/ui-tokens/**`, `apps/web/app/layout.tsx`, `apps/web/app/globals.css`, `apps/web/app/(shell)/**`, `apps/web/app/(app)/layout.tsx`, `apps/web/components/ui/**`, `apps/web/public/**`, `apps/web/next.config.*`, `apps/web/playwright.config.ts`, `apps/web/postcss.config.mjs`, `apps/web/e2e/shell.spec.ts`, `scripts/verify/leaf-1.4.2.mjs` | 1.1.1 | judgment | 2 |
+| 1.2.2 | `packages/core/src/planner/targets/**`, `packages/core/src/planner/solver/**`, `packages/core/test/planner/solver/**`, `packages/core/test/planner/targets/**`, `scripts/verify/leaf-1.2.2.mjs` | 1.1.2, 1.2.1 | judgment | 3 |
 | 1.2.4 | `data/seed-dishes/**`, `data/adjusters.json`, `scripts/verify/leaf-1.2.4.mjs` | 1.1.3, 1.2.2 | judgment | 4 |
 | 1.3.2 | `packages/core/src/learning/preferences/**`, `packages/core/src/learning/portions/**`, `packages/core/test/learning/prefs/**`, `packages/db/src/services/reviews/**`, `scripts/verify/leaf-1.3.2.mjs` | 1.1.2 | judgment | 3 |
 | 1.2.3 | `packages/core/src/planner/select/**`, `packages/core/src/planner/cooksheet/**`, `packages/core/src/planner/index.ts`, `packages/core/test/planner/select/**`, `scripts/verify/leaf-1.2.3.mjs` | 1.2.2, 1.2.4 | judgment | 5 |
 | 1.3.1 | `packages/ai/src/client/**`, `packages/ai/src/recipes/**`, `packages/ai/test/recipes/**`, `scripts/verify/leaf-1.3.1.mjs` | 1.1.2, 1.2.2 | judgment | 4 |
 | 1.3.4 | `packages/graph/**`, `scripts/kg-rebuild.ts`, `scripts/verify/leaf-1.3.4.mjs` | 1.1.2, 1.2.4 | judgment | 5 |
-| 1.4.1 | `apps/web/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/app/api/**`, `apps/web/lib/server/**`, `apps/web/lib/auth/**`, `apps/worker/src/**`, `packages/api-contract/src/**`, `packages/db/src/services/plans/**`, `apps/web/test/api/**`, `scripts/verify/leaf-1.4.1.mjs` | 1.1.2, 1.2.3 | judgment | 6 |
+| 1.4.1 | `apps/web/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/app/api/**`, `apps/web/lib/server/**`, `apps/web/lib/auth/**`, `apps/worker/src/**`, `packages/api-contract/src/**`, `packages/db/src/services/plans/**`, `packages/db/src/seed/**`, `apps/web/test/api/**`, `scripts/verify/leaf-1.4.1.mjs` | 1.1.2, 1.2.3 | judgment | 6 |
 | 1.3.3 | `packages/core/src/learning/rules/**`, `packages/core/test/learning/rules/**`, `packages/ai/src/insights/**`, `packages/db/src/services/proposals/**`, `scripts/verify/leaf-1.3.3.mjs` | 1.3.1, 1.3.2 | judgment | 5 |
 | 1.3.5 | `packages/ai/src/agent/**`, `packages/ai/test/agent/**`, `evals/agent/**`, `scripts/verify/leaf-1.3.5.mjs` | 1.3.1, 1.3.3, 1.4.1 | judgment | 7 |
 | 1.4.3 | `apps/web/app/(app)/onboarding/**`, `apps/web/app/(app)/family/**`, `apps/web/app/(app)/settings/**`, `apps/web/components/config/**`, `apps/web/components/detail-level/**`, `packages/core/src/onboarding/**`, `packages/core/test/onboarding/**`, `apps/web/e2e/config.spec.ts`, `scripts/verify/leaf-1.4.3.mjs` | 1.4.1, 1.4.2 | judgment | 7 |
@@ -272,3 +272,30 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - Accepted as proposed: SPEC-Q-1 (the engine keeps its own structural input types; the db and planner leaves map rows onto them), SPEC-Q-5, SPEC-Q-6 and SPEC-Q-7.
   - The dependency `@vitest/coverage-v8@5.0.2` is added at the root on the base branch.
 - **R-15 (1.1.2 SPEC-Q-7/8/9).** Accepted as proposed.
+- **R-16. Plan correction (architect error).**
+  - Leaf 1.2.2 also needs 1.1.2: its gates use fixture F1 and `HouseholdConfig` from `@mealplanner/core/types`.
+  - 1.2.2 G4 no longer measures against the seed library, which 1.2.4 builds after 1.2.2 and would make the plan circular. G4 now measures the leaf's own test dish set, and the seed-library check moves to the new 1.2.4 G6.
+
+### Rulings from wave 2 CP1 (leaf 1.1.3)
+
+- **R-17 (1.1.3 SPEC-Q-3). Catalogue loader.** Leaf 1.4.1 owns `packages/db/src/seed/**`: an idempotent loader from `data/*` into the catalogue tables (ARC deployment: "seed data loads idempotently"). It maps rows by DM column name, resolves slugs and keys to foreign keys, ignores `meta`, and marks an ingredient `needs_review` when it fails NUT-4 (1.1.3 SPEC-Q-10). Until then, leaves that need catalogue data read the JSON files directly in tests.
+- **R-18 (1.1.3 SPEC-Q-9).** The architect adds `scripts/tsconfig.json` (no emit, `.ts` import extensions allowed, erasable syntax only), so typed lint covers `scripts/*.ts`. When 1.1.3 merges, the architect adds `tsc -p scripts` to the root `typecheck`.
+- **R-19 (1.1.3 other questions).**
+  - Accepted as proposed: SPEC-Q-1 (all method × category pairs except a reasoned exclusion list; G3 re-derives the used pairs from `data/seed-dishes/**` once it exists), Q-2 (`cofid:`, `afcd:`, `off:` source prefixes), Q-4 (mirrored FDC data with fidelity checks), Q-5, Q-7, Q-8, Q-10, Q-11 and Q-12.
+  - SPEC-Q-6 is settled by R-13: soluble fibre is 0 where total fibre is 0, and sugar is 0 where carbohydrate is 0.
+  - Under R-12, `breaded_*` yield rows describe the substrate only. The coating's mass and nutrients are excluded, and the file has no coating columns.
+- **R-20 (1.1.3 SPEC-Q-13). Carbohydrate basis — architect error in NUT-4/NUT-7.** NUT-4's formula `4P + 4C + 9F + 2·fibre` balances only when `C` is **available** carbohydrate, but NUT-7 mapped `carbs_g` to FDC 1005, which is carbohydrate by difference and includes fibre.
+  - `ingredient.carbs_g` and the engine's `carbs` are **available carbohydrate**: FDC `1005 − 1079` (clamped at 0, derivation in `meta`), CoFID `CHO` and AFCD available carbohydrate as reported. `fibre_g` is FDC 1079 / AOAC. NUT-4 is unchanged.
+  - Total carbohydrate is `carbs + fibre`. Whether a member's carb target means total or net is owner question OQ-7; its default is **total**. The target resolver (1.2.2) and every UI that shows carbs against a target follow OQ-7, and label which basis they show.
+
+### Rulings from wave 2 CP1 (leaf 1.4.2)
+
+- **R-21 (1.4.2 SPEC-Qs).**
+  - Q-1: 1.4.2 also owns `apps/web/app/(app)/layout.tsx`, a re-export of the shell layout.
+  - Q-2: the approved mockups win over UX-3: the phone tab bar ends with **Me**, and the rail has nine items including People & access.
+  - Q-3: route paths as proposed; Me → `/family/me`.
+  - Q-4: G2 checks installability through Chromium's `Page.getInstallabilityErrors`; Lighthouse is not added.
+  - Q-5: accepted. `apps/web/app/(shell)/_shell/viewer.ts` passes to **1.4.1** when 1.4.2 merges; 1.4.1 replaces its body with the session lookup.
+  - Q-6, Q-7, Q-8: accepted. 1.4.6's sign-out calls `clearOfflineCache()`.
+  - Q-9: **overruled.** 1.4.4 needs star ratings (TodayDesktop, RecipePage, RecipeLibrary) before 1.4.5 exists, so `StarRating` is a 1.4.2 primitive.
+  - Dependencies `@fontsource-variable/fraunces`, `@fontsource/nunito`, `@fontsource/jetbrains-mono` (5.3.0) are added to `apps/web`. The optional CI e2e job is declined: the architect re-runs G1 and G2 at CP3.

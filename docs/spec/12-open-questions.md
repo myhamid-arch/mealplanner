@@ -10,5 +10,6 @@ Each question has the default the spec currently assumes. The build can start wi
 | OQ-4 | Saturated-fat limit and soluble-fibre priority: are there default numbers for members who don't enter them? | Sat fat ≤ 10 % of kcal if unset. Soluble fibre is maximised within tolerance with no minimum. | PLN-4, PLN-5 |
 | OQ-5 | Should AI-generated recipes go straight into plans, or wait for your approval? | Straight in, marked "New" (`ai_generation = auto`) | PLN-12 |
 | OQ-6 | Hosting: any requirement on provider or on data staying in the UAE? | None assumed. Docker Compose on a single VM. | ARC-11 |
+| OQ-7 | Are your carbohydrate targets **total** carbs (fibre included, as on a US-style label) or **net** carbs (fibre excluded)? | Total: the planner matches the carb target against `carbs_g + fibre_g` | PLN-5, target resolver (1.2.2), UI macro display (R-20) |
 
 Needed from the owner before the Claude-dependent gates can pass (1.3.1-G4, 1.3.5-G4): an Anthropic API credential available to the build environment as `ANTHROPIC_API_KEY`. Without it, those gates end as explicit handoffs, and everything else is built and verified with recorded or stubbed model responses.
