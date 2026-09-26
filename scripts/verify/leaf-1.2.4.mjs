@@ -694,8 +694,13 @@ async function gateG3() {
             r.ingredient_slug,
             new Set([...(lowUsed.get(r.ingredient_slug) ?? []), d.slug]),
           );
+    const source = (slug) => {
+      const i = cat.ingredients.get(slug);
+      const pv = i.meta?.provenance;
+      return `${i.nutrition_source}${pv ? `, ${pv.dataset} record ${pv.record_id} "${pv.record_description}"` : ""}`;
+    };
     console.log(
-      `info - low-confidence ingredients used (all pass NUT-4): ${[...lowUsed].map(([s, ds]) => `${s} in ${[...ds].join(", ")}`).join("; ") || "none"}`,
+      `info - low-confidence ingredients used (SPEC-Q-7; all pass NUT-4 under R-22): ${[...lowUsed].map(([s, ds]) => `${s} [${source(s)}] in ${[...ds].join(", ")}`).join("; ") || "none"}`,
     );
 
     const adjusters = lib.adjusters.filter(
