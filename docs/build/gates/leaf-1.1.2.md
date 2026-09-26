@@ -1,6 +1,6 @@
 # Gates: leaf-1.1.2 Schema, repositories, change-set service
 
-OWNS: docs/decisions/leaf-1.1.2-*.md, packages/db/src/schema/**, packages/db/src/migrations/**, packages/db/src/repos/**, packages/db/src/services/changes/**, packages/db/src/services/config/**, packages/db/test/**, packages/core/src/changes/**, packages/core/src/types/**, packages/core/test/fixtures/**, scripts/verify/leaf-1.1.2.mjs
+OWNS: docs/decisions/leaf-1.1.2-*.md, packages/db/drizzle.config.ts, packages/db/src/schema/**, packages/db/src/migrations/**, packages/db/src/repos/**, packages/db/src/services/changes/**, packages/db/src/services/config/**, packages/db/test/**, packages/core/src/changes/**, packages/core/src/types/**, packages/core/test/fixtures/**, scripts/verify/leaf-1.1.2.mjs
 
 Scope: Schema, repositories, change-set service, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 

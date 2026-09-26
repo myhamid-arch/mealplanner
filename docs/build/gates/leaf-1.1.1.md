@@ -1,6 +1,6 @@
 # Gates: leaf-1.1.1 Monorepo, tooling, CI
 
-OWNS: docs/decisions/leaf-1.1.1-*.md, package.json, pnpm-workspace.yaml, pnpm-lock.yaml, turbo.json, tsconfig.base.json, eslint.config.mjs, .prettierrc, .github/workflows/**, docker-compose.yml, .env.example, scripts/verify/lib/**, scripts/verify/leaf-1.1.1.mjs, apps/*/package.json, packages/*/package.json, packages/*/tsconfig.json, apps/*/tsconfig.json
+OWNS: docs/decisions/leaf-1.1.1-*.md, package.json, pnpm-workspace.yaml, pnpm-lock.yaml, turbo.json, tsconfig.base.json, eslint.config.mjs, .prettierrc, .github/workflows/**, packages/*/src/index.ts, apps/worker/src/main.ts, apps/web/app/layout.tsx, apps/web/app/page.tsx, docker-compose.yml, .env.example, scripts/verify/lib/**, scripts/verify/leaf-1.1.1.mjs, apps/*/package.json, packages/*/package.json, packages/*/tsconfig.json, apps/*/tsconfig.json
 
 Scope: Monorepo, tooling, CI, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 
