@@ -1,0 +1,25 @@
+{
+  "status": 200,
+  "body": {
+    "id": "msg_wire_4",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-fable-5-1",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "sig_wire"
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 2100,
+      "output_tokens": 300,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14000
+    }
+  }
+}

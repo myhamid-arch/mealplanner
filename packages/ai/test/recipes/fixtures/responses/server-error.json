@@ -1,0 +1,14 @@
+{
+  "status": 500,
+  "body": {
+    "type": "error",
+    "error": {
+      "type": "api_error",
+      "message": "Internal server error."
+    },
+    "request_id": "req_wire_500"
+  },
+  "headers": {
+    "retry-after-ms": "1"
+  }
+}
