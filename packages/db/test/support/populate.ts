@@ -492,6 +492,38 @@ export async function populateAllTables(db: Executor, loaded: LoadedFixture): Pr
     validationErrors: null,
     createdAt: now,
   });
+  // R-40: a job with one event, and one support-access log row for the grant above.
+  const jobId = newId();
+  await write.job.insert({
+    id: jobId,
+    householdId: ctx.householdId,
+    kind: "plan.generate",
+    payload: { dates: [PLAN_DATE] },
+    status: "succeeded",
+    error: null,
+    createdByUserId: adminUserId,
+    createdAt: now,
+    startedAt: now,
+    finishedAt: now,
+  });
+  await write.job_event.insert({
+    jobId,
+    seq: 1,
+    householdId: ctx.householdId,
+    type: "done",
+    payload: {},
+    createdAt: now,
+  });
+  const grant = need((await read.support_grant.list())[0], "support grant");
+  await write.support_access.insert({
+    id: newId(),
+    householdId: ctx.householdId,
+    grantId: grant.id,
+    operatorUserId,
+    method: "GET",
+    path: "/api/v1/platform/households/support/summary",
+    createdAt: now,
+  });
   const nodeA = newId();
   const nodeB = newId();
   await write.kg_node.insert({

@@ -44,6 +44,8 @@ export const ENTITY_AREAS: { readonly [E in MutableEntityName]: ChangeArea } = {
   variant: "recipes",
   variant_ingredient: "recipes",
   dish_nutrition_cache: "recipes",
+  // A queued recipe job (`recipe.generate`, `recipe.revise`; BLD-8 R-40).
+  job: "recipes",
   plan_day: "plans",
   plan_meal: "plans",
   plate: "plans",

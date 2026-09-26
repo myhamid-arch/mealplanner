@@ -68,6 +68,9 @@ export interface HouseholdRow {
   satFatDefaultPct: number;
   deletionRequestedAt: Date | null;
   deletionRequestedByUserId: string | null;
+  /** R2-ADM-6: the second admin's confirmation, when the household has two or more (R-40). */
+  deletionConfirmedAt: Date | null;
+  deletionConfirmedByUserId: string | null;
   suspendedAt: Date | null;
   createdAt: Date;
 }
@@ -608,6 +611,25 @@ export interface AiGenerationRow {
   createdAt: Date;
 }
 
+// Jobs (ARC-7) and the support-access log (R2-ADM-8); BLD-8 R-40 ---------------------------------
+
+export const JOB_STATUSES = ["queued", "running", "succeeded", "failed", "cancelled"] as const;
+export type JobStatus = (typeof JOB_STATUSES)[number];
+
+/** A background job. `householdId` is null for platform jobs. */
+export interface JobRow {
+  id: string;
+  householdId: string | null;
+  kind: string;
+  payload: Json;
+  status: JobStatus;
+  error: Json | null;
+  createdByUserId: string | null;
+  createdAt: Date;
+  startedAt: Date | null;
+  finishedAt: Date | null;
+}
+
 /**
  * Row type of every entity the change-op registry can read or write, keyed by table name.
  * Each of these is written only through the change-set service (DM-6).
@@ -644,6 +666,8 @@ export interface MutableEntityRows {
   exclusion: ExclusionRow;
   planning_weights: PlanningWeightsRow;
   weight_preset: WeightPresetRow;
+  /** Only a `queued` row is written by change ops (`recipe.generate`, `recipe.revise`; R-40). */
+  job: JobRow;
 }
 
 /** Entities the registry reads but never writes. */
@@ -690,6 +714,7 @@ export const ENTITY_KEYS = {
   exclusion: ["id"],
   planning_weights: ["householdId"],
   weight_preset: ["id"],
+  job: ["id"],
   review: ["id"],
   cuisine: ["id"],
   preparation_method: ["id"],

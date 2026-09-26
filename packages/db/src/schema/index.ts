@@ -10,4 +10,5 @@ export * from "./review-revision.js";
 export * from "./agent.js";
 export * from "./graph.js";
 export * from "./audit.js";
+export * from "./jobs.js";
 export { newId } from "./ids.js";

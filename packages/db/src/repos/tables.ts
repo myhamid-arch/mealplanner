@@ -125,6 +125,10 @@ export const TABLES = {
   }),
   change_set: household(s.changeSet, ["id"], { undoneByChangeSetId: "change_set" }),
   ai_generation: household(s.aiGeneration, ["id"]),
+  support_access: household(s.supportAccess, ["id"], { grantId: "support_grant" }),
+  // Platform jobs have no household (R-40): readable as shared rows, writable by none.
+  job: shared(s.job, ["id"]),
+  job_event: shared(s.jobEvent, ["jobId", "seq"], { jobId: "job" }),
   ingredient: shared(s.ingredient, ["id"], {}, "createdByHouseholdId"),
   dish: shared(s.dish, ["id"], {
     cuisineId: "cuisine",
@@ -184,6 +188,9 @@ export interface TableRows {
   proposal: typeof s.proposal.$inferSelect;
   change_set: typeof s.changeSet.$inferSelect;
   ai_generation: typeof s.aiGeneration.$inferSelect;
+  support_access: typeof s.supportAccess.$inferSelect;
+  job: typeof s.job.$inferSelect;
+  job_event: typeof s.jobEvent.$inferSelect;
   ingredient: typeof s.ingredient.$inferSelect;
   dish: typeof s.dish.$inferSelect;
   component: typeof s.component.$inferSelect;
