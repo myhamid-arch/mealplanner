@@ -21,14 +21,6 @@ export function mealKey(date: string, slotTypeId: string, memberScope: string): 
   return `${date}|${slotTypeId}|${memberScope}`;
 }
 
-/** Time order within a date: the slot's time, then its sort order (as the target resolver). */
-export function compareMealTime(
-  a: { slot: SlotTypeRow; memberScope: string },
-  b: { slot: SlotTypeRow; memberScope: string },
-): number {
-  return compareSlots(a.slot, b.slot);
-}
-
 /**
  * Meals of one date in planning order (PLN-11): shared meals in time order, then individual meals
  * per member (members in configuration order), each member's in time order.

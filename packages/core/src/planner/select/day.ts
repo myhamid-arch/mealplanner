@@ -196,9 +196,9 @@ function plannedMeal(run: Run, choice: Choice & { locked: null }): PlannedMeal {
     locked: false,
     scoreBreakdown: choice.score,
     plates: candidate.plates,
+    frequencyRelaxed: choice.relaxed,
     variantLimits: candidate.variantLimits,
     explain: [
-      ...(choice.relaxed === null ? [] : [choice.relaxed]),
       ...candidate.explain,
       ...(candidate.eligible
         ? []
@@ -345,14 +345,5 @@ export async function planDay(
 
   const bestState = states[0];
   if (bestState === undefined) return [];
-  for (const c of bestState.choices)
-    if (c.relaxed !== null)
-      out.flags.push({
-        kind: "frequency_relaxed",
-        date,
-        slotKey: c.spec.slot.key,
-        memberId: c.spec.kind === "individual" ? c.spec.memberScope : null,
-        reason: `${c.relaxed}; ${c.candidate.dish.name} used`,
-      });
   return bestState.choices.map((c) => (c.locked === null ? plannedMeal(run, c) : c.locked));
 }

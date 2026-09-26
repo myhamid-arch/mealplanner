@@ -119,6 +119,8 @@ export type PlannedMeal = {
   locked: boolean;
   scoreBreakdown: ScoreBreakdown;
   plates: PlannedPlate[];
+  /** SPEC-Q-15: why the frequency filter was relaxed for this meal; null when it was not. */
+  frequencyRelaxed: string | null;
   /** Components limited by PLN-9 §6.4 variant merging: component id → the variants kept. */
   variantLimits: Record<string, string[]>;
   explain: string[];

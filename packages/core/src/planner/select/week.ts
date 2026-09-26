@@ -96,7 +96,15 @@ export async function planDays(input: PlanInput, opts: PlanOptions): Promise<Pla
   const flags: PlanFlag[] = [...out.flags];
   let infeasiblePlates = 0;
   for (const day of days)
-    for (const m of day.meals)
+    for (const m of day.meals) {
+      if (m.frequencyRelaxed !== null)
+        flags.push({
+          kind: "frequency_relaxed",
+          date: m.date,
+          slotKey: m.slotKey,
+          memberId: m.kind === "individual" ? m.memberScope : null,
+          reason: `${m.frequencyRelaxed}; ${run.pool.dish(m.dishId)?.name ?? m.dishId} used`,
+        });
       for (const p of m.plates) {
         if (!p.targeted || p.fitStatus === "in_tolerance") continue;
         if (p.fitStatus === "infeasible") infeasiblePlates++;
@@ -108,6 +116,7 @@ export async function planDays(input: PlanInput, opts: PlanOptions): Promise<Pla
           reason: p.flag ?? p.fitStatus,
         });
       }
+    }
   for (const md of memberDays)
     if (md.flaggedSlots.length > 0 || !md.within)
       flags.push({

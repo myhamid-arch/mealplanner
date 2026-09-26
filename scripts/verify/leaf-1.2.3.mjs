@@ -253,9 +253,11 @@ function g1Evaluate(m, plan, cfg) {
         );
         const key = `${date}|${t.slotKey}|${member}`;
         if (hits.length !== 1) {
-          const ok = hits.length === 0 && flagged.has(key);
-          if (!ok) failures.push(`${key}: ${hits.length} plates and no flag`);
-          rows.push({ key, status: "no plate", flagged: flagged.has(key) });
+          // A meal with no dish is flagged per member (individual) or per meal (shared).
+          const isFlagged = flagged.has(key) || sharedFlagged.has(`${date}|${t.slotKey}`);
+          if (!(hits.length === 0 && isFlagged))
+            failures.push(`${key}: ${hits.length} plates and no flag`);
+          rows.push({ key, status: "no plate", flagged: isFlagged });
           dayFlagged = true;
           continue;
         }
@@ -653,7 +655,7 @@ function sesameOnC3(results, idx) {
 
 async function gateG3() {
   const report = new Report("leaf-1.2.3 G3");
-  vitest(report, ["test/planner/select/filters.test.ts"]);
+  vitest(report, ["test/planner/select/filters.test.ts", "test/planner/select/config.test.ts"]);
   const out = compileCore(report, "G3");
   if (out === null) return report.finish();
   try {

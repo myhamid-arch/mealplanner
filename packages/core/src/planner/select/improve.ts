@@ -219,6 +219,7 @@ export function improvePass(run: Run, meals: PlannedMeal[], context: readonly Se
         dishId: c.dish.id,
         dishVersion: c.dish.version,
         plates: c.plates,
+        frequencyRelaxed: null,
         variantLimits: c.variantLimits,
         explain: [...c.explain, `Improvement pass: replaced ${meal.dishId}`],
       };
