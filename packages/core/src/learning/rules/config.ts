@@ -2,6 +2,11 @@
 // They are constants in v1.
 import { NEGATIVE_TASTE_TAGS } from "../preferences/config.js";
 
+/** FBK-7: the insights job runs after every 10 unprocessed reviews (SPEC-Q-8). */
+export const INSIGHTS_REVIEW_TRIGGER = 10;
+/** FBK-7: synthesis sees the last 20 rejected proposals with their notes. */
+export const SYNTHESIS_REJECTED_LIMIT = 20;
+
 /** Rules read reviews from this window (SPEC-Q-8, SPEC-Q-13). */
 export const REVIEW_WINDOW_DAYS = 30;
 /** FBK-7 rule 4: "≥ 3 days in 14". */
