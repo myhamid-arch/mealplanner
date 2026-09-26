@@ -1,6 +1,6 @@
 # leaf-1.1.3 ADR-4: the importer `scripts/import-fdc.ts`
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, rulings R-17 to R-19); built for CP2
 Requirement: NUT-7 (importer, versioned snapshot, `nutrition_source` per entry)
 
 ## Decision
@@ -8,9 +8,12 @@ Requirement: NUT-7 (importer, versioned snapshot, `nutrition_source` per entry)
 - Node built-ins only (`node:fs`, `node:path`, `node:crypto`, global `fetch`). No new dependency.
 - The input is `data/ingredients.manifest.json` (ADR-2). The output is `data/ingredients.v<N>.json`, written deterministically: stable key order, entries sorted by slug, numbers as given by the source, and no timestamp apart from `generated_at`, which is taken from `--date`.
 - **Modes.**
-  - `--fdc-api` (spec default): reads `FDC_API_KEY` and fetches `POST /v1/foods` in batches of 20 `fdcIds`, taking the nutrient IDs of NUT-7.
-  - `--fdc-csv <dir>...`: reads one or more FDC CSV download directories (the `food.csv` / `food_nutrient.csv` / `food_portion.csv` / `sr_legacy_food.csv` layout, common to SR Legacy, Foundation and Branded).
-  - `--cofid <csv>`, `--afcd <csv>`, `--fineli <dir>`, `--sr28-food-des <FOOD_DES.txt>`: the other ADR-1 datasets, and the refuse data for `edible_portion`.
+  - `--fdc-api` (spec default): reads `FDC_API_KEY` and fetches `POST /v1/foods` in batches of 20 `fdcIds`, taking the nutrient IDs of NUT-7, `foodPortions` and `ndbNumber`. `--fdc-api-base` overrides the base URL.
+    - FDC is unreachable here. I exercised this path against a local server that serves FDC-shaped JSON built from the same SR Legacy and extra CSVs. Its `ingredients` output was identical to the CSV mode.
+    - The `yields` command reads local datasets only, because most of its pairs are CoFID and AFCD records.
+  - `--sr-legacy <dir>` and `--fdc-extra <dir>` (repeatable): FDC CSV download directories (`food.csv`, `food_nutrient.csv`, plus `food_portion.csv` and `sr_legacy_food.csv` for SR Legacy). The extra directory holds the Branded rows in the same layout.
+  - `--cofid-proximates <csv> --cofid-inorganics <csv>`, `--afcd <csv>`, `--off <csv>`: the other ADR-1 datasets.
+  - `--sr28-food-des <FOOD_DES.txt>`: SR refuse for `edible_portion`.
   - `--soluble-fibre data/soluble-fibre.csv`: merged into `soluble_fibre_g`.
 - It records the sha256 of every input file in `sources`, so a re-run on the same inputs is byte-identical.
 - It fails loudly on:
@@ -24,12 +27,18 @@ Requirement: NUT-7 (importer, versioned snapshot, `nutrition_source` per entry)
   - kcal: `KCALS` / "Energy, with dietary fibre" ÷ 4.184;
   - protein: `PROT` / "Protein";
   - fat: `FAT` / "Total Fat";
-  - carbohydrate: `CHO` (available carbohydrate, UK) / "Available carbohydrate, without sugar alcohols" + "Total dietary fibre". This converts AFCD to the by-difference basis that FDC uses, so the NUT-4 formula means the same thing for every source; the conversion is recorded in `meta.derivations`.
+  - carbohydrate: `CHO` / "Available carbohydrate, without sugar alcohols". Both are already available carbohydrate, the basis chosen in SPEC-Q-13. FDC and US-label values are converted by subtracting fibre, recorded in `meta.derivations.carbs_g`.
   - Fibre: `AOACFIB` / "Total dietary fibre".
   - Saturated fat: `SATFOD` / "Total saturated fatty acids".
   - Sugars: `TOTSUG` / "Total sugars".
   - Sodium: `NA` / "Sodium (Na)".
-  - UK `CHO` excludes fibre. For CoFID the importer stores carbs as `CHO + AOACFIB`, the same by-difference basis, and records this.
+  - AFCD energy is converted from kJ at 4.184. AFCD saturated fatty acids (% of fatty acids) become grams as an upper bound (ADR-1).
 
 ## Lint / typecheck
-`eslint.config.mjs` (1.1.1) applies `projectService` to every `**/*.ts`. No tsconfig includes `scripts/`, so I expect `pnpm lint` to reject `scripts/import-fdc.ts` ("not found by the project service"). I could not confirm this locally: installing workspace dependencies was not permitted in this session. It goes to the architect as a request (a `scripts/tsconfig.json`, or `allowDefaultProject` for `scripts/*.ts`); both are outside my OWNS.
+`scripts/tsconfig.json` (R-18) covers the importer. `pnpm lint`, `pnpm format:check` and `tsc -p scripts` pass (output in the PR).
+
+## Commands
+- `node scripts/import-fdc.ts ingredients --manifest data/ingredients.manifest.json …`
+- `node scripts/import-fdc.ts yields --manifest data/method-yields.manifest.json …`
+
+The full invocation with this session's input paths is in the PR. Running it twice gives byte-identical output (sha256 checked).

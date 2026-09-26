@@ -1,6 +1,6 @@
 # leaf-1.1.3 ADR-1: nutrition sources, provenance and confidence
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, rulings R-17 to R-19); built for CP2
 Requirement: NUT-7, NUT-8, NUT-4, DM §3 (`nutrition_source`, `nutrition_confidence`)
 
 ## Context
@@ -33,8 +33,17 @@ The non-FDC prefixes (`cofid:`, `afcd:`, `off:`) extend DM §3's `nutrition_sour
 ## How each dataset was obtained (provenance chain)
 - **SR Legacy.** These are the official FDC CSV files `FoodData_Central_sr_legacy_food_csv_ 2019-04-02/` (food.csv, food_nutrient.csv, food_portion.csv, sr_legacy_food.csv …), committed unmodified to the public repo `github.com/tomwhite/ingreedy-data` (`data/raw/`). The rows match the file's own `all_downloaded_table_record_counts.csv` (food 7,793). I checked independently against the SR28 `ABBREV.txt` in the npm package `fda-nutrient-database@1.0.2`, joined on NDB number: energy, protein, fat and carbohydrate agree on 30,459 of 31,016 compared values. That is 98.2 %. The rest are SR28→SR Legacy revisions, mostly branded snack and fast-food records.
 - **Foundation and Branded.** These come from the SQLite build `foods-US.db` in the GitHub release `codejetnet/food-data` `data-20260925-3` (public-domain USDA rows, ODbL database). That build carries `fdc_id` as `source_id`. Its SR Legacy rows are identical to the official CSV on all 58,680 compared values (8 nutrients, 7,681 foods, 0 differences). I take that as evidence that its USDA extraction is faithful. It is not proof for the Branded and Foundation rows, so those entries note the route in `provenance.retrieved_via`.
-- **CoFID 2019 and AFCD Release 1.** These are the government CSV/XLSX files in the same `ingreedy-data/data/raw/`.
+- **CoFID 2019 and AFCD Release 1.** These are the government files in the same `ingreedy-data/data/raw/`. The CoFID 2019 workbook's sheets "1.3 Proximates" and "1.4 Inorganics" were saved as CSV by a one-off reshaping script (recorded in the PR). The script copies cell values verbatim and computes nothing.
+  - The older CoFID CSV in that directory uses pre-2019 food codes. Every `cofid:` code here is a 2019 code.
+- **Saturated fat in AFCD.** AFCD reports saturated fatty acids as % of total fatty acids. The importer stores `% / 100 × total fat` as an upper bound and records the working in `meta.derivations.sat_fat_g`. Fatty acids are a fraction of total lipid, so the true value is lower.
 - **Soluble fibre.** Sources are in ADR-2 §soluble-fibre.csv.
+
+- **Missing AOAC fibre in CoFID.** When CoFID gives no AOAC fibre value but the same record reports carbohydrate 0 and non-starch polysaccharide 0, fibre is 0. AOAC fibre is NSP plus resistant starch plus lignin. The derivation is recorded. Only flesh foods meet this condition.
+- **Carbohydrate basis (SPEC-Q-13).** `carbs_g` is **available** carbohydrate:
+  - FDC 1005 − 1079 and US label total carbohydrate − fibre, each recorded in `meta.derivations.carbs_g`;
+  - CoFID `CHO` and AFCD "available carbohydrate, without sugar alcohols" as reported.
+
+  The manifest's `carbs_basis` switches this to `by_difference`.
 
 Every entry records `provenance`: dataset, release, record id, the record's own description, retrieval route and, for proxies, the proxy note. With that, the architect can check any value against the cited record (G6).
 

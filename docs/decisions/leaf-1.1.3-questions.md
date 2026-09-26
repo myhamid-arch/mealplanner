@@ -56,3 +56,17 @@ Rows use `definition` (no heat: Y = R = 1, A = 0) or `analogy:<row>` with confid
 
 ## SPEC-Q-12: cuisine `flag_emoji` and `parent_key`
 Both are `null`: R2-UX-5 bans emoji UI, and no spec rule defines a cuisine hierarchy.
+
+## Rulings at CP1 (R-17 to R-19)
+- SPEC-Q-1, 2, 4, 5, 7, 8, 10, 11, 12: accepted as proposed (R-19).
+- SPEC-Q-3: 1.4.1 owns the loader (R-17).
+- SPEC-Q-6: settled by R-13. Soluble fibre is 0 where total fibre is 0, and sugar is 0 where carbohydrate is 0. Both cite the source record.
+- SPEC-Q-9: `scripts/tsconfig.json` added by the architect (R-18).
+- SPEC-Q-5 as built: the rule is the engine's `atwaterCheck`. `kcal = 0` passes only when the prediction is exactly 0, which is stricter than the ≤ 0.5 I proposed.
+
+## SPEC-Q-13 (raised at build): what `carbs_g` means
+NUT-4's formula `4·P + 4·C + 9·F + 2·fibre` balances only if `C` excludes fibre. NUT-7's nutrient 1005 is carbohydrate by difference, which includes fibre. Measured on 349 candidate records:
+- with 1005 as-is, 143 fail NUT-4 (most vegetables, fruit and spices). R-17 would then mark them `needs_review` and exclude them from planning.
+- with available carbohydrate (1005 − 1079), 32 fail.
+
+Built with available carbohydrate. The manifest's `carbs_basis` switches it back, which is a one-line regeneration. Whether coach targets mean total or net carbohydrate is an owner question outside this leaf.

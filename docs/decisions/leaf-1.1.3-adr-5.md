@@ -1,6 +1,6 @@
 # leaf-1.1.3 ADR-5: dietary-flag vocabulary and allergen assignment
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, rulings R-17 to R-19); built for CP2
 Requirement: DM §3 `dietary_flags`, R2-ONB-3 (allergen expansion via flags), DM-5
 
 ## Vocabulary
@@ -21,6 +21,16 @@ Exactly the 12 DM §3 flags: `contains_nuts`, `contains_gluten`, `contains_dairy
 - `contains_alcohol`: wines and spirits used in cooking, vanilla extract (ethanol-based) and similar. Stored so the religious exclusion in R2-ONB-3 can cover sauces and marinades.
 - `vegan` implies `vegetarian`. `vegan` never co-occurs with dairy, egg, fish, shellfish or honey. `vegetarian` never co-occurs with fish, shellfish, pork, meat categories or gelatine.
 - Cheese is flagged `vegetarian`. Rennet type is not in any source record; SPEC-Q-7.
+- **Added at the expert reread**, each a possible false positive, which is the safe error:
+  - margarine → `contains_dairy`, and not `vegan` (commercial margarine commonly contains whey or buttermilk);
+  - dark and milk chocolate → `contains_dairy` + `contains_soy` (milk solids, soy lecithin);
+  - corn flakes → `contains_gluten` (barley malt);
+  - gelatine → `contains_pork` (the SR record is US gelatine of unstated animal origin).
+- **Aliases that are ambiguous for allergen matching were removed:**
+  - "hummus", which is Arabic for chickpeas, from dried chickpeas;
+  - "za'atar", which is also Arabic for the thyme herb, from dried thyme.
+
+  The dish hummus and the blend za'atar are their own entries and carry `contains_sesame`.
 
 ## Expansion check (G5)
 R2-ONB-3's deterministic rule ("sesame → any ingredient flagged `contains_sesame`") belongs to 1.4.3. The G5 verify script implements the same one-line filter independently. It asserts that the result for `sesame` includes the entries for tahini, hummus and za'atar. As a negative control, it removes the flag from one of them and requires the assertion to fail.

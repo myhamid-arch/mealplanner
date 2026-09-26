@@ -1,6 +1,6 @@
 # leaf-1.1.3 ADR-2: data file formats and how they load into 1.1.2's tables
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, rulings R-17 to R-19); built for CP2
 Requirement: DM §3 (ingredient, preparation_method, method_yield, cuisine), ARC-2 (`data/` file names), NUT-7, NUT-8, KG `SUBSTITUTES_FOR` seed
 
 ## Principle
@@ -62,15 +62,20 @@ That way nothing outside the schema can leak into a column, and nothing needed f
   "methods": [ { "key": "grilled", "label": "Grilled", "description": "...", "appeal_tags": ["smoky", "charred"] } ],   // preparation_method rows, all 23 DM keys
   "yields": [
     { "method": "grilled", "ingredient_category": "poultry", "yield_factor": 0.737, "fat_retention": 0.891,
-      "oil_absorption_g_per_100g_raw": 0, "coating_ingredient_slug": null, "coating_g_per_100g_raw": null,
-      "meta": { "source": "usda_sr_pair:171077→171534", "method": "protein mass balance", "confidence": "medium", "note": "..." } }
+      "oil_absorption_g_per_100g_raw": 0,
+      "meta": { "source": "paired_records:sr_legacy:171077→sr_legacy:171534", "method": "protein mass balance", "confidence": "medium", "note": "...", "pairs": [ ... ], "pair_yield_range": [0.737, 0.737] } }
   ],
-  "coverage": { "required_pairs": "all", "excluded": [ { "method": "blended", "ingredient_category": "...", "reason": "..." } ] }
+  "coverage": { "required_pairs": "all", "excluded": [ { "method": "grilled", "ingredient_category": "beverage", "reason": "..." } ] }
 }
 ```
 - `method` is the `preparation_method.key`.
-- `coating_ingredient_slug` resolves to `method_yield.coating_ingredient_id`.
+- There are no coating columns (R-12): `breaded_*` rows describe the substrate only, and a coating is its own variant ingredient.
+- `meta.source` is one of:
+  - `definition` (no heat);
+  - `paired_records:<raw>→<cooked>,…`;
+  - `analogy:<method>×<category>`.
 - Derivation and sources are in ADR-3.
+- `data/method-yields.manifest.json` is the importer's input: method texts, and the record pairs or analogy for each row.
 
 ## `data/cuisines.json`
 An array of `{ key, label, flag_emoji, parent_key }` for the 23 DM §3 keys.
@@ -82,12 +87,16 @@ Header: `ingredient_slug,soluble_fibre_g_per_100g,source,method,citation`
 - `source`: `usda_fdc:<id>` (FDC nutrient 1082, Foundation) or `fineli:<FOODID>` (Fineli, Finnish food composition database, THL, CC-BY 4.0).
 - `method`:
   - `measured`: the source reports soluble fibre directly;
-  - `total_minus_insoluble`: Fineli `FIBC` − `FIBINS`, which is valid because both are AOAC totals, TDF = IDF + SDF;
-  - `zero_total_fibre`: the ingredient's own source reports total dietary fibre 0, so soluble fibre is 0 (SPEC-Q-6).
-- `citation`: the full reference (dataset, release, record id, record description).
-- One row per known value. Ingredients with no row get `soluble_fibre_g: null` in the snapshot, never 0.
+  - `total_minus_insoluble`: Fineli `FIBC` − `FIBINS`, which is valid because both are AOAC totals, TDF = IDF + SDF.
+- `citation`: the full reference (dataset, release, record id, record description, and the two component values).
+- A Fineli row is used only when both of these hold:
+  - both fibre values are Fineli's own analytical or calculated values: `FIBC` acquisition type is not F or L, and both method types are in A/AG/CG/D/S. A total borrowed from another table is not comparable with Fineli's insoluble value; without this rule oat bran would get 0.8 g soluble.
+  - Fineli's total fibre is within ±25 % of the catalogue's own `fibre_g`, so the two records describe comparable food.
+- 28 rows met these rules. Legumes have none: their Fineli totals are borrowed values, or disagree with SR by more than 25 %.
+- R-13 known zeros are not rows in this file. When an ingredient's own record reports total fibre 0, the importer sets `soluble_fibre_g` to 0 and cites that record in `meta.derivations.soluble_fibre_g`. Likewise, sugar is 0 when available carbohydrate is 0.
+- Every other ingredient has `soluble_fibre_g: null`, never 0.
 
-Fineli data: `github.com/theel0ja/fineli-data` `basic-package-2` (Fineli release 18, THL, CC-BY 4.0). Only Fineli foods whose `FIBINS` value has `METHTYPE` ≠ `R` (not recipe-calculated) are used.
+Fineli data: `github.com/theel0ja/fineli-data` `basic-package-2` (Fineli release 18, THL, CC-BY 4.0). The selection rules are in the `method` bullets above. The row-by-row computation is in the PR.
 
 ## `data/substitutes.csv` (seed for KG `SUBSTITUTES_FOR`, 08-knowledge-graph)
 Header: `from_slug,to_slug,weight,context,note`
