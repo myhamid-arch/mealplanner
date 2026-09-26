@@ -6,6 +6,7 @@ import { createRepos } from "../src/repos/index.js";
 import {
   AlreadyUndoneError,
   ChangeConflictError,
+  ChangeSetNotFoundError,
   applyChangeSet,
   canUndo,
   listChangeSets,
@@ -183,6 +184,13 @@ describe(
         reason: "conflict",
       });
       expect(entry(first).areas).toEqual(["planning"]);
+      // Paging back with `before` gives the same answer for the older entry.
+      const page = await listChangeSets(database.db, ctx, {
+        before: entry(second).changeSet.appliedAt,
+        limit: 1,
+      });
+      expect(page.map((e) => e.changeSet.id)).toEqual([first]);
+      expect(must(page[0]).undo).toMatchObject({ ok: false, reason: "conflict" });
       // Area filter.
       const planning = await listChangeSets(database.db, ctx, { area: "planning", limit: 50 });
       expect(planning.every((e) => e.areas.includes("planning"))).toBe(true);
@@ -194,6 +202,13 @@ describe(
           ),
         ).undo,
       ).toMatchObject({ ok: false, reason: "already_undone" });
+      // The undo is logged under the same area as the change it undid.
+      const latest = must((await listChangeSets(database.db, ctx, { limit: 1 }))[0]);
+      expect(latest.changeSet.summary).toBe("Undo: log: second");
+      expect(latest.areas).toEqual(["planning"]);
+      await expect(canUndo(database.db, ctx, newId())).rejects.toBeInstanceOf(
+        ChangeSetNotFoundError,
+      );
     });
 
     it("an undone change set cannot be undone again; the undo is linked by undone_by_change_set_id", async () => {

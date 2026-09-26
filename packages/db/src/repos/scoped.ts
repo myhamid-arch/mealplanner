@@ -83,6 +83,7 @@ export class ScopedTable {
         throw new Error(`${this.name}: primary key ${k} cannot change`);
     }
     await this.checkRefs(patch);
+    if (Object.values(patch).every((value) => value === undefined)) return existing;
     const [updated] = await this.db
       .update(this.spec.table)
       .set(patch)

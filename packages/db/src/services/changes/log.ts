@@ -1,11 +1,11 @@
 // Change log reads (R2-ADM-7): entries with actor, areas and whether Undo is available, with the
 // reason when it is not.
-import { and, desc, eq, lt } from "drizzle-orm";
-import { areaOf, type ChangeArea } from "@mealplanner/core/changes";
+import { desc, eq } from "drizzle-orm";
+import { ENTITY_AREAS, areaOf, type ChangeArea, type RowImage } from "@mealplanner/core/changes";
 import type { HouseholdContext } from "@mealplanner/core/types";
 import { createRepos, type Executor } from "../../repos/index.js";
 import { changeSet } from "../../schema/index.js";
-import type { UndoConflict } from "./errors.js";
+import { ChangeSetNotFoundError, type UndoConflict } from "./errors.js";
 import { findConflicts, touchedEntities } from "./undo.js";
 
 type ChangeSetRow = typeof changeSet.$inferSelect;
@@ -22,16 +22,24 @@ export interface ChangeLogEntry {
   undo: UndoAvailability;
 }
 
+/**
+ * Areas of a change set's forward ops. An undo's forward ops are `rows.restore`; their area is
+ * that of the entities they restore.
+ */
 export function areasOf(row: Pick<ChangeSetRow, "forward">): ChangeArea[] {
-  const kinds = Array.isArray(row.forward)
-    ? row.forward
-        .map((op) => (op as { kind?: unknown } | null)?.kind)
-        .filter((k): k is string => typeof k === "string")
-    : [];
+  const ops = Array.isArray(row.forward) ? row.forward : [];
   const areas = new Set<ChangeArea>();
-  for (const kind of kinds) {
-    const area = areaOf(kind);
-    if (area !== undefined) areas.add(area);
+  for (const op of ops) {
+    const { kind, payload } = (op ?? {}) as { kind?: unknown; payload?: { images?: RowImage[] } };
+    if (kind === "rows.restore") {
+      for (const image of payload?.images ?? []) {
+        const area = (ENTITY_AREAS as Record<string, ChangeArea | undefined>)[image.entity];
+        if (area !== undefined) areas.add(area);
+      }
+    } else if (typeof kind === "string") {
+      const area = areaOf(kind);
+      if (area !== undefined) areas.add(area);
+    }
   }
   return [...areas];
 }
@@ -42,7 +50,7 @@ export async function canUndo(
   changeSetId: string,
 ): Promise<UndoAvailability> {
   const row = await createRepos(db, ctx).change_set.get({ id: changeSetId });
-  if (row === null) throw new Error(`change set ${changeSetId} not found`);
+  if (row === null) throw new ChangeSetNotFoundError(changeSetId);
   if (row.undoneAt !== null)
     return { ok: false, reason: "already_undone", undoneByChangeSetId: row.undoneByChangeSetId };
   const conflicts = await findConflicts(db, row);
@@ -50,8 +58,9 @@ export async function canUndo(
 }
 
 /**
- * The newest change sets first. Undo availability is computed in one pass: an entry conflicts
- * with the later entries that touched the same entities.
+ * The newest change sets first. Undo availability is computed in one pass over the household's
+ * change sets, newest first: an entry conflicts with the newer entries that touched the same
+ * entities (the same rule as undoChangeSet). `before` pages back without changing that answer.
  */
 export async function listChangeSets(
   db: Executor,
@@ -61,49 +70,40 @@ export async function listChangeSets(
   const rows = await db
     .select()
     .from(changeSet)
-    .where(
-      and(
-        eq(changeSet.householdId, ctx.householdId),
-        options.before === undefined ? undefined : lt(changeSet.appliedAt, options.before),
-      ),
-    )
+    .where(eq(changeSet.householdId, ctx.householdId))
     .orderBy(desc(changeSet.appliedAt));
-  // Entities touched by change sets newer than the one being looked at; starts with every change
-  // set newer than `before`, so a paged read agrees with canUndo().
-  const newer: { row: ChangeSetRow; touched: Set<string> }[] = [];
-  if (options.before !== undefined) {
-    const newerRows = await db
-      .select()
-      .from(changeSet)
-      .where(and(eq(changeSet.householdId, ctx.householdId)))
-      .orderBy(desc(changeSet.appliedAt));
-    for (const row of newerRows)
-      if (row.appliedAt >= options.before) newer.push({ row, touched: touchedEntities(row) });
-  }
-  const entries: ChangeLogEntry[] = [];
   const limit = options.limit ?? 50;
+  const newer: { row: ChangeSetRow; touched: Set<string> }[] = [];
+  const entries: ChangeLogEntry[] = [];
   for (const row of rows) {
     const touched = touchedEntities(row);
-    const areas = areasOf(row);
-    let undo: UndoAvailability;
-    if (row.undoneAt !== null) {
-      undo = { ok: false, reason: "already_undone", undoneByChangeSetId: row.undoneByChangeSetId };
-    } else {
-      const conflicts = newer
-        .map(({ row: later, touched: laterTouched }) => ({
-          changeSetId: later.id,
-          summary: later.summary,
-          appliedAt: later.appliedAt,
-          entities: [...laterTouched].filter((id) => touched.has(id)),
-        }))
-        .filter((c) => c.entities.length > 0)
-        .reverse();
-      undo = conflicts.length > 0 ? { ok: false, reason: "conflict", conflicts } : { ok: true };
+    const listed = options.before === undefined || row.appliedAt < options.before;
+    if (listed) {
+      const areas = areasOf(row);
+      if (options.area === undefined || areas.includes(options.area))
+        entries.push({ changeSet: row, areas, undo: undoAvailability(row, touched, newer) });
+      if (entries.length >= limit) break;
     }
     newer.push({ row, touched });
-    if (options.area === undefined || areas.includes(options.area))
-      entries.push({ changeSet: row, areas, undo });
-    if (entries.length >= limit) break;
   }
   return entries;
+}
+
+function undoAvailability(
+  row: ChangeSetRow,
+  touched: Set<string>,
+  newer: readonly { row: ChangeSetRow; touched: Set<string> }[],
+): UndoAvailability {
+  if (row.undoneAt !== null)
+    return { ok: false, reason: "already_undone", undoneByChangeSetId: row.undoneByChangeSetId };
+  const conflicts = newer
+    .map(({ row: later, touched: laterTouched }) => ({
+      changeSetId: later.id,
+      summary: later.summary,
+      appliedAt: later.appliedAt,
+      entities: [...laterTouched].filter((id) => touched.has(id)),
+    }))
+    .filter((c) => c.entities.length > 0)
+    .reverse(); // oldest first, as findConflicts returns them
+  return conflicts.length > 0 ? { ok: false, reason: "conflict", conflicts } : { ok: true };
 }

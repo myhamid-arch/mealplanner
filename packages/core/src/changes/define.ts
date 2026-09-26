@@ -17,6 +17,40 @@ export const CHANGE_AREAS = [
 ] as const;
 export type ChangeArea = (typeof CHANGE_AREAS)[number];
 
+/** The change-log area of each writable entity, used for undo change sets (R2-ADM-7). */
+export const ENTITY_AREAS: { readonly [E in MutableEntityName]: ChangeArea } = {
+  household: "household",
+  household_user: "access",
+  support_grant: "access",
+  member: "members",
+  target_profile: "targets",
+  tolerance: "targets",
+  meal_distribution: "targets",
+  slot_target_override: "targets",
+  slot_type: "schedule",
+  member_slot_schedule: "schedule",
+  training_schedule: "schedule",
+  day_override: "schedule",
+  planning_weights: "planning",
+  weight_preset: "planning",
+  household_adjuster: "planning",
+  preference: "taste",
+  frequency_rule: "taste",
+  exclusion: "taste",
+  ingredient: "recipes",
+  dish: "recipes",
+  component: "recipes",
+  variant: "recipes",
+  variant_ingredient: "recipes",
+  dish_nutrition_cache: "recipes",
+  plan_day: "plans",
+  plan_meal: "plans",
+  plate: "plans",
+  plate_item: "plans",
+  cook_batch: "plans",
+  meal_override: "plans",
+};
+
 /**
  * The state of one row before a write, as JSON (timestamps as ISO strings). `before: null` means
  * the row did not exist. Captured by the ChangeTx implementation, never predicted by the op.

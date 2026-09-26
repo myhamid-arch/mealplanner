@@ -146,7 +146,13 @@ export async function applyChangeSet(
   input: ApplyChangeSetInput,
 ): Promise<AppliedChangeSet> {
   const ops = parseOps(input.ops);
+  if (ops.length === 0) throw new Error("a change set needs at least one op");
   if (input.summary.trim() === "") throw new Error("a change set needs a summary");
+  // AGT-1: user and agent changes are made with a login's authority; only system jobs have none.
+  if (input.actor !== "system" && ctx.userId === null)
+    throw new Error(
+      `a change set by ${input.actor} needs the acting user in the household context`,
+    );
   return inHouseholdTransaction(db, ctx, async (trx, timestamp) => {
     const tx = new DbChangeTx(trx, ctx, timestamp);
     // AGT-5: enforced on the server, before anything is written.
