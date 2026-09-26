@@ -17,7 +17,7 @@ Scope: Schema, repositories, change-set service, as specified in docs/spec (see 
 - [x] G3: for every AGT-6 op, apply then inverse restores the exact prior state on F1 and F3; protected ops are flagged (DM-6)
   CHECK: node scripts/verify/leaf-1.1.2.mjs --gate G3
   EXPECT: VERIFY leaf-1.1.2 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=718780399b5a99d9ff085f2c779153dc42132f01b2b1d6e71022003478d4d28f; exit=0; EXPECT=matched; output-sha256=a421887de61130270b03728bac7d8bfaf7c382a910fe29617d3f8edc33b3cb4d; output-bytes=2295; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=718780399b5a99d9ff085f2c779153dc42132f01b2b1d6e71022003478d4d28f; exit=0; EXPECT=matched; output-sha256=a436ff30d166441209f2482e989fbad1c25fb103dad8ca146504aa497d12d134; output-bytes=2455; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: undo refuses with a conflict when a later change set touched the same entity
   CHECK: node scripts/verify/leaf-1.1.2.mjs --gate G4
