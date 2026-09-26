@@ -235,7 +235,16 @@ describe("G1 migrations and schema", { timeout: 120_000 }, () => {
   it("negative control: an edited committed migration is detected", async () => {
     const edited = join(SCRATCH, `edited-${newId()}`);
     cpSync(MIGRATIONS_FOLDER, edited, { recursive: true, filter: (src) => !src.endsWith(".ts") });
-    const file = join(edited, must(sqlFiles(edited).at(-1)));
+    // Tamper with the migration that creates household_user (0001), not simply the newest one:
+    // later migrations (0002 onwards, R-9) do not contain this column.
+    const file = join(
+      edited,
+      must(
+        sqlFiles(edited).find((f) =>
+          readFileSync(join(edited, f), "utf8").includes('\t"blocked_reason" text,\n'),
+        ),
+      ),
+    );
     const original = readFileSync(file, "utf8");
     const tampered = original.replace(/\t"blocked_reason" text,\n/, "");
     expect(tampered).not.toBe(original);
