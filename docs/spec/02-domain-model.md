@@ -6,7 +6,7 @@ Notation: `?` = nullable. `→` = foreign key.
 
 ## 1. Tenancy and identity
 
-**user** — id, email (unique, citext), name, password_hash?, created_at.
+**user** — id, email (unique, citext), name, created_at. (The password hash lives in the auth library's `account.password`, BLD-8 R-11.)
 
 **session** — managed by the auth library (see [10-architecture.md](10-architecture.md) §5).
 
@@ -38,7 +38,7 @@ Notation: `?` = nullable. `→` = foreign key.
 
 **ingredient** — id, slug (unique), name, aliases (text[]), category (enum: `poultry`, `red_meat`, `fish`, `seafood`, `egg`, `dairy`, `plant_protein`, `grain`, `starch`, `legume`, `vegetable`, `leafy_green`, `fruit`, `nut_seed`, `oil_fat`, `sauce_condiment`, `herb_spice`, `sweetener`, `bakery`, `beverage`, `supplement`, `other`), per 100 g edible raw: kcal, protein_g, carbs_g, fat_g, sat_fat_g, fibre_g, soluble_fibre_g?, sugar_g?, sodium_mg?; density_g_per_ml? (for ml/L display), unit_weight_g? (e.g. one egg = 50 g), unit_label? ("egg", "slice", "piece"), edible_portion (0–1; share of purchased weight that is edible), dietary_flags (text[]: `contains_nuts`, `contains_gluten`, `contains_dairy`, `contains_egg`, `contains_fish`, `contains_shellfish`, `contains_soy`, `contains_sesame`, `contains_pork`, `contains_alcohol`, `vegan`, `vegetarian`), nutrition_source (text: `usda_fdc:<id>`, `manual`, `ai_estimate`), nutrition_confidence (`high` | `medium` | `low`), locale_availability (jsonb: `{ "AE": "common" | "available" | "rare" }`), created_by_household_id →? (non-null = household-private ingredient added by that household or by the AI for it).
 
-**preparation_method** — id, key (unique: `raw`, `boiled`, `steamed`, `poached`, `grilled`, `broiled`, `roasted`, `baked`, `air_fried`, `pan_seared`, `sauteed`, `stir_fried`, `shallow_fried`, `deep_fried`, `breaded_baked`, `breaded_fried`, `braised`, `stewed`, `slow_cooked`, `pressure_cooked`, `smoked`, `blended`, `marinated_raw`), label, description, appeal_tags (text[] e.g. `crispy`, `smoky`, `tender`). Yield and absorption parameters live in **method_yield** — method_id →, ingredient_category, yield_factor (cooked ÷ raw weight), fat_retention (share of the ingredient's own fat retained, 0–1), oil_absorption_g_per_100g_raw (default oil absorbed), coating_ingredient_id →? with coating_g_per_100g_raw?. See [03-nutrition-engine.md](03-nutrition-engine.md).
+**preparation_method** — id, key (unique: `raw`, `boiled`, `steamed`, `poached`, `grilled`, `broiled`, `roasted`, `baked`, `air_fried`, `pan_seared`, `sauteed`, `stir_fried`, `shallow_fried`, `deep_fried`, `breaded_baked`, `breaded_fried`, `braised`, `stewed`, `slow_cooked`, `pressure_cooked`, `smoked`, `blended`, `marinated_raw`), label, description, appeal_tags (text[] e.g. `crispy`, `smoky`, `tender`). Yield and absorption parameters live in **method_yield** — method_id →, ingredient_category, yield_factor (cooked ÷ raw weight), fat_retention (share of the ingredient's own fat retained, 0–1), oil_absorption_g_per_100g_raw (default oil absorbed). A coating is an ordinary variant ingredient (BLD-8 R-12). See [03-nutrition-engine.md](03-nutrition-engine.md).
 
 **cuisine** — id, key (unique: `american`, `british`, `italian`, `levantine`, `emirati_gulf`, `persian`, `turkish`, `indian`, `pakistani`, `mexican`, `tex_mex`, `mediterranean`, `greek`, `spanish`, `french`, `japanese`, `chinese`, `thai`, `korean`, `vietnamese`, `north_african`, `east_african`, `fusion`, extensible), label, flag_emoji?, parent_key?.
 
@@ -50,7 +50,7 @@ Notation: `?` = nullable. `→` = foreign key.
 
 **variant** — id, component_id →, method_id →, label (e.g. "Grilled"), is_default (bool), steps (jsonb: ordered strings), cook_time_min?, notes?. At least one per component.
 
-**variant_ingredient** — variant_id →, ingredient_id →, raw_g_per_batch (numeric), role_note? (e.g. "marinade"), is_absorbed_oil (bool: the oil counts through absorption rather than being fully consumed). The batch is the variant's reference recipe, with ingredient ratios expressed as raw grams for a reference batch of `reference_batch_cooked_g` (stored on **variant**, default 1000 g cooked).
+**variant_ingredient** — variant_id →, ingredient_id →, raw_g_per_batch (numeric), role_note? (e.g. "marinade"), is_absorbed_oil (bool: the oil counts through absorption rather than being fully consumed), cooking_liquid? (`absorbed` | `retained`), yield_override? (numeric; BLD-8 R-12). The batch is the variant's reference recipe, with ingredient ratios expressed as raw grams for a reference batch of `reference_batch_cooked_g` (stored on **variant**, default 1000 g cooked).
 
 DM-3 **Variant ingredient sets.** Variants of one component SHOULD share their core ingredients and differ in method, coating and cooking fat. This is how "same ingredients, different preparation" is represented. The planner's ingredient-economy score counts ingredients, not dishes or variants.
 
