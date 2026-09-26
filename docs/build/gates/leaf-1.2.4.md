@@ -24,8 +24,8 @@ Scope: Seed dish library, as specified in docs/spec (see 11-build-plan.md §5 an
   EXPECT: VERIFY leaf-1.2.4 G4 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=0fc4d98fa1157078616ca11eb321ca4c097904c9e454321c0461ad69e47bcf01; exit=0; EXPECT=matched; output-sha256=d72844014af7a6c88f82f372eb78d5dcb7eca3b9d8de0c789eb3dbcae630fe00; output-bytes=1095; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G5: architect review of 10 random recipes for plausibility, UAE availability and step clarity
-  EVIDENCE: pending
+- [x] G5: architect review of 10 random recipes for plausibility, UAE availability and step clarity
+  EVIDENCE: architect review 2026-09-26 at 04adc38, re-checked at e9abe38: 10 dishes drawn with mulberry32 seed 20260926 (hummus-chicken-box, chicken-pesto-pasta, chana-masala-rice, tuna-pasta-salad, beef-broccoli-stir-fry, chicken-saloona, mujaddara-chicken, chicken-machboos, foul-medames, beef-burger); sample regenerates identically; all cookable with specific numbered steps, AE-available ingredients, correct allergen flags on compound ingredients (worcestershire fish, oyster sauce shellfish, pesto dairy+nuts, mayonnaise egg, hummus sesame). Findings 1-5 (brief-warm bread costed at full-toast yield 0.82 in 5 variants; machboos pan-juice double count; unlisted stir-fry water; two step-text nits) fixed in cc7e268; gates G1-G4, G6 and 1.2.1/1.1.3 G1-G4 re-pass at e9abe38
 
 - [x] G6: plate naturalness on the seed library: no solved F1 plate has a component outside its [min,max], and the median ratio deviation is at most 25% (PLN-5)
   CHECK: node scripts/verify/leaf-1.2.4.mjs --gate G6
