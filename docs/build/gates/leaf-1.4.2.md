@@ -12,7 +12,7 @@ Scope: Design system, app shell, PWA, as specified in docs/spec (see 11-build-pl
 - [x] G2: shell renders at 390 px and 1280 px without horizontal scroll; PWA installability check passes
   CHECK: node scripts/verify/leaf-1.4.2.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.2 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=4e32809e3b28a45bd479347be602e7c8fa6ae2adbaa4b61444de42309f6800aa; exit=0; EXPECT=matched; output-sha256=121349335da1774de3c752defcb9989fcefb4e98be6a1b794584f33bb37d6dd0; output-bytes=3333; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=4e32809e3b28a45bd479347be602e7c8fa6ae2adbaa4b61444de42309f6800aa; exit=0; EXPECT=matched; output-sha256=56d96c9bef1b08c2e5ecebfff371533093e32190186af5cebd5288ffd0d206e4; output-bytes=3481; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G3: architect visual review against UX-5 and docs/mockups/Rail.dc.html and TabBar.dc.html
   EVIDENCE: pending
