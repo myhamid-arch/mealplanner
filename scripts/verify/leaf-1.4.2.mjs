@@ -13,7 +13,17 @@
 //
 // Browser: PLAYWRIGHT_CHROMIUM_EXECUTABLE, else /opt/pw-browsers/chromium when it exists, else
 // Playwright's own Chromium.
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
@@ -151,32 +161,128 @@ function rawColours(files) {
   return out;
 }
 
+// ---------------------------------------------------------------------------------------------
+// Builds and servers that are safe when G1 and G2 run at the same time (CP3 finding 2)
+// ---------------------------------------------------------------------------------------------
+
+function sleepMs(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+function processAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return error.code === "EPERM";
+  }
+}
+
+/** A cross-process lock (an atomic mkdir); a lock left by a dead process is taken over. */
+function withLock(name, fn) {
+  const lock = join(
+    tmpdir(),
+    `mealplanner-${name}-${createHash("sha256").update(ROOT).digest("hex").slice(0, 12)}.lock`,
+  );
+  const deadline = Date.now() + 20 * 60_000;
+  for (;;) {
+    try {
+      mkdirSync(lock);
+      writeFileSync(join(lock, "pid"), String(process.pid));
+      break;
+    } catch (error) {
+      if (error.code !== "EEXIST") throw error;
+      const pidFile = join(lock, "pid");
+      const holder = existsSync(pidFile) ? Number(readFileSync(pidFile, "utf8")) : NaN;
+      if (Number.isInteger(holder) && holder > 0 && !processAlive(holder)) {
+        rmSync(lock, { recursive: true, force: true });
+        continue;
+      }
+      if (Date.now() > deadline) {
+        throw new Error(`timed out waiting for ${lock}`, { cause: error });
+      }
+      sleepMs(500);
+    }
+  }
+  try {
+    return fn();
+  } finally {
+    rmSync(lock, { recursive: true, force: true });
+  }
+}
+
+/**
+ * Compiles ui-tokens into a private staging directory, then moves each file into dist/ with an
+ * atomic rename, so a process reading dist/ at the same time never sees a half-written file.
+ */
 async function buildTokens(report) {
-  const build = run("pnpm", ["--filter", "@mealplanner/ui-tokens", "build"], { cwd: ROOT });
+  const dist = join(TOKENS_PKG, "dist");
+  const stage = join(dist, `.stage-${String(process.pid)}`);
+  rmSync(stage, { recursive: true, force: true });
+  const build = run(
+    "pnpm",
+    ["--filter", "@mealplanner/ui-tokens", "exec", "tsc", "-p", "tsconfig.json", "--outDir", stage],
+    { cwd: ROOT },
+  );
   report.check(build.code === 0, "@mealplanner/ui-tokens builds with tsc", tail(build));
-  if (build.code !== 0) return undefined;
-  const load = (p) => import(pathToFileURL(join(TOKENS_PKG, "dist/src", p)).href);
+  if (build.code !== 0) {
+    rmSync(stage, { recursive: true, force: true });
+    return undefined;
+  }
+  for (const file of walk(stage, () => true)) {
+    const target = join(dist, relative(stage, file));
+    mkdirSync(dirname(target), { recursive: true });
+    renameSync(file, target);
+  }
+  rmSync(stage, { recursive: true, force: true });
+  const load = (p) => import(pathToFileURL(join(dist, "src", p)).href);
   return { tokens: await load("tokens/index.js"), contrastModule: await load("contrast/index.js") };
 }
 
-function buildWeb(report) {
-  const build = run("pnpm", ["--filter", "@mealplanner/web", "build"], {
-    cwd: ROOT,
-    env: { NEXT_TELEMETRY_DISABLED: "1" },
-  });
-  report.check(build.code === 0, "apps/web builds (next build, typecheck included)", tail(build));
+/** Each gate's own Next.js build directory (under the gitignored .next/). */
+const distDirFor = (gate) => `.next/verify-${gate.toLowerCase()}`;
+
+/**
+ * `next build` into the gate's own directory. Builds run one at a time (a lock): Next.js refuses
+ * a second concurrent build, and every build rewrites the shared next-env.d.ts that its own
+ * typecheck then reads.
+ */
+function buildWeb(report, gate) {
+  const build = withLock("leaf-1.4.2-next-build", () =>
+    run("pnpm", ["--filter", "@mealplanner/web", "build"], {
+      cwd: ROOT,
+      env: { NEXT_TELEMETRY_DISABLED: "1", MISE_NEXT_DIST_DIR: distDirFor(gate) },
+    }),
+  );
+  report.check(
+    build.code === 0,
+    `apps/web builds into ${distDirFor(gate)} (next build, typecheck included)`,
+    tail(build),
+  );
   return build.code === 0;
 }
 
-function freePort() {
-  return new Promise((resolvePort, reject) => {
+function portFree(port) {
+  return new Promise((resolvePort) => {
     const server = createServer();
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", () => {
-      const { port } = server.address();
-      server.close(() => resolvePort(port));
+    server.once("error", () => {
+      resolvePort(false);
+    });
+    server.listen(port, () => {
+      server.close(() => {
+        resolvePort(true);
+      });
     });
   });
+}
+
+/** A free port from the gate's own range: G1 odd ports from 3151, G2 even ports from 3152. */
+async function gatePort(gate) {
+  const start = gate === "G1" ? 3151 : 3152;
+  for (let port = start; port < start + 800; port += 2) {
+    if (await portFree(port)) return port;
+  }
+  throw new Error(`no free port for ${gate}`);
 }
 
 function collectResults(suite, prefix = []) {
@@ -193,12 +299,14 @@ function collectResults(suite, prefix = []) {
 }
 
 /** Runs the e2e spec for one tag and checks every expected test passed (none skipped). */
-async function runE2E(report, tag, expectedTitles) {
+async function runE2E(report, gate, expectedTitles) {
+  const tag = `@${gate}`;
   const dir = mkdtempSync(join(tmpdir(), "leaf-1.4.2-"));
   const jsonFile = join(dir, "results.json");
   const env = {
     PLAYWRIGHT_SKIP_BUILD: "1",
-    PLAYWRIGHT_PORT: String(await freePort()),
+    PLAYWRIGHT_PORT: String(await gatePort(gate)),
+    MISE_NEXT_DIST_DIR: distDirFor(gate),
     PLAYWRIGHT_JSON_OUTPUT_NAME: jsonFile,
     PLAYWRIGHT_OUTPUT_DIR: join(dir, "out"),
     NEXT_TELEMETRY_DISABLED: "1",
@@ -393,8 +501,8 @@ async function gateG1() {
   );
 
   // Rendered pairs in the browser (includes its own negative controls).
-  if (buildWeb(report)) {
-    await runE2E(report, "@G1", [
+  if (buildWeb(report, "G1")) {
+    await runE2E(report, "G1", [
       ...COMBOS.map((c) => `@G1 /offline ${c}: every text pair is AA and declared`),
       ...COMBOS.map((c) => `@G1 shells and primitives ${c}: every text pair is AA and declared`),
       "@G1 negative control: an injected low-contrast element fails the audit",
@@ -486,8 +594,8 @@ async function gateG2() {
   );
 
   const loaded = await buildTokens(report);
-  if (loaded !== undefined && buildWeb(report)) {
-    await runE2E(report, "@G2", [
+  if (loaded !== undefined && buildWeb(report, "G2")) {
+    await runE2E(report, "G2", [
       ...COMBOS.map((c) => `@G2 /offline ${c}: no horizontal scroll, correct navigation`),
       ...COMBOS.map((c) => `@G2 role shells ${c}: no horizontal scroll, targets ≥ 44 px`),
       "@G2 navigation per role (UX-3, R-21)",

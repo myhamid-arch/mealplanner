@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 // Headers for the PWA files (ARC-8 phase A, leaf-1.4.2 ADR-3). The service worker must never be
 // served from an HTTP cache, or a fixed worker would not reach installed clients.
 const nextConfig: NextConfig = {
+  // The verify script builds each gate into its own directory under .next/ (gitignored), so G1
+  // and G2 can run at the same time without sharing a build (leaf-1.4.2 ADR-4).
+  distDir: process.env.MISE_NEXT_DIST_DIR ?? ".next",
   poweredByHeader: false,
   headers() {
     return Promise.resolve([

@@ -403,7 +403,21 @@ async function showMarkup(page: Page, request: APIRequestContext, body: string):
       waitUntil: "load",
     },
   );
-  await page.evaluate(() => document.fonts.ready);
+  await settle(page);
+}
+
+/**
+ * Waits until fonts are loaded and every CSS transition and animation has finished, so colours
+ * are read at rest (a `transition-colors` still running after the stylesheet applies would be
+ * measured half-way between two tokens).
+ */
+async function settle(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    await Promise.all(
+      document.getAnimations().map((animation) => animation.finished.catch(() => undefined)),
+    );
+  });
 }
 
 async function setup(page: Page, width: number, height: number, scheme: Theme): Promise<void> {
@@ -608,7 +622,7 @@ test.describe("@G1 rendered contrast", () => {
       }) => {
         await setup(page, vp.width, vp.height, scheme);
         await page.goto(ROUTES.offline);
-        await page.evaluate(() => document.fonts.ready);
+        await settle(page);
         await expectCleanAudit(page, scheme, `/offline ${vp.name} ${scheme}`);
       });
 
@@ -726,7 +740,7 @@ test.describe("@G2 shell layout", () => {
         });
         await setup(page, vp.width, vp.height, scheme);
         await page.goto(ROUTES.offline);
-        await page.evaluate(() => document.fonts.ready);
+        await settle(page);
 
         expect(await horizontalOverflow(page), "horizontal overflow in px").toBeLessThanOrEqual(0);
         const desktop = vp.width >= layout.desktopMinWidth;
@@ -1191,7 +1205,7 @@ test.describe("@G3 screenshots", () => {
       for (const scheme of SCHEMES) {
         await setup(page, vp.width, vp.height, scheme);
         await page.goto(ROUTES.offline);
-        await page.evaluate(() => document.fonts.ready);
+        await settle(page);
         await page.screenshot({ path: join(out, `offline-${vp.name}-${scheme}.png`) });
         for (const variant of SHELL_VARIANTS) {
           await showMarkup(page, request, shellMarkup(variant, PrimitivesGallery()));

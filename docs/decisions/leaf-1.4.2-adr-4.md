@@ -34,3 +34,10 @@ The browser-side assertions and their negative controls are Playwright tests in 
 
 ## Browser
 `playwright.config.ts` uses `PLAYWRIGHT_CHROMIUM_EXECUTABLE` when set (this container's Chromium is `/opt/pw-browsers/chromium`, a different build from the one @playwright/test 1.63.0 downloads), otherwise Playwright's own Chromium.
+
+## Running G1 and G2 at the same time (CP3 finding 2)
+Both gates build and serve the web app, and the checker may run them concurrently. Each shared step is made safe:
+- **Next.js build:** each gate builds into its own directory, `.next/verify-g1` or `.next/verify-g2` (under the gitignored `.next/`; `next.config.ts` reads `MISE_NEXT_DIST_DIR`), and `next start` serves that directory. The builds run one at a time under a cross-process lock (an atomic `mkdir` in the OS temp dir, taken over if its holder has died), because Next.js refuses a second concurrent build and every build rewrites the shared, gitignored `next-env.d.ts` that its own typecheck then reads.
+- **`ui-tokens` build:** compiled into a private staging directory in `dist/`, then moved into place file by file with atomic renames, so a concurrent reader never sees a half-written module.
+- **Ports:** G1 uses the first free odd port from 3151, G2 the first free even port from 3152; the two ranges never overlap.
+- **Measurements at rest:** the browser tests wait for fonts and for every CSS transition and animation to finish before reading colours or layout. Under the load of two concurrent gates, a `transition-colors` still running after the stylesheet applied was measured half-way between two tokens (found while reproducing the finding).
