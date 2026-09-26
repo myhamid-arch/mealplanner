@@ -19,7 +19,11 @@ It returns typed proposals (`kind` + `payload`) with a rationale and evidence re
 - **Effort** `high`. The spec names none for insights. This is a low-volume, judgment-heavy call (at most nightly, or every 10 reviews).
 - **Wire schema.** Structured outputs do not support free-form objects: every object needs `additionalProperties: false` (claude-api skill, JSON Schema limitations). Op payloads differ per kind, so each op is sent as `{ kind: string, payloadJson: string }`. Each proposal is `{ title, rationale, priority: 1–5, evidenceReviewIds: string[], ops: [...] }`, all inside `{ proposals: [...] }`. `kind` is a plain string, not an enum, so that a wrong kind reaches local validation instead of failing the whole parse.
 - **Local validation.** Each proposal is checked in turn:
-  - Each op's `kind` must be in the allowed set: public registry kinds, minus the R-10 never-proposed kinds, minus ops the registry flags statically protected.
+  - Each op's `kind` must be in the allowed set, `INSIGHT_KINDS`: `preference.set`, `preference.reset`, `exclusion.add`, `frequency.set`, `distribution.set`, `weights.set`, `ingredient.verify`.
+    - These are the ops whose payloads the model can fill in from its input.
+    - Any R-10 kind or statically protected kind is filtered out of the list in code. The system prompt carries each allowed kind's payload JSON schema (`z.toJSONSchema`), sorted so it caches.
+    - Conditional protections, such as an `exclusion.add` that would relax an allergy, are checked again against stored state by the service's guardrails.
+    - Built as proposed at CP1, except that CP1 proposed "all public kinds minus protected". A curated list keeps the prompt's schema block short and keeps the model to kinds it has the data for.
   - `payloadJson` must parse as JSON and pass `ChangeOpSchema`.
   - `evidenceReviewIds` must be a subset of the review ids sent.
   - A proposal with any invalid op is dropped whole; a proposal is not applied partially.

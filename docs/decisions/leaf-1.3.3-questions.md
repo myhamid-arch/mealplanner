@@ -1,6 +1,9 @@
 # leaf-1.3.3 spec questions
 
-Each question states the conservative reading this leaf builds on unless the architect rules otherwise. SPEC-Q-1 (OWNS) blocks gate tests; none of the others blocks a gate.
+Each question states the conservative reading this leaf built on. The architect ruled on all of them at CP1 in BLD-8 **R-33**:
+- SPEC-Q-1 was granted.
+- SPEC-Q-3, 5, 8 and 10 were amended. The amendments are noted under each question and are what the code implements.
+- The rest were accepted as proposed.
 
 ## SPEC-Q-1: test directories for `ai` and `db` (request)
 The OWNS covers `packages/core/test/learning/rules/**` but no test directory for `packages/ai/src/insights/**` or `packages/db/src/services/proposals/**`. G3 (synthesis with a stubbed model) cannot run from `core` tests, because ARC-3 forbids core importing ai. G2 (fingerprint cooldown, budget, expiry) and SC-3's proposal half need PostgreSQL tests of the service.
@@ -17,6 +20,7 @@ The OWNS covers `packages/core/test/learning/rules/**` but no test directory for
 FBK-7 rule 3 proposes `revise_recipe`, "which triggers a regenerate-variant job". AGT-6 has no such op, and `packages/core/src/changes/**` is 1.1.2's. A proposal whose accept cannot apply a registered op would be a second write path (DM-6).
 - **Reading:** the rule is built and tested (G1). Its candidate is reported in the run's digest as a non-actionable **note** and passed to synthesis as context, but it is not stored as a proposal.
 - **Question:** should the architect add a `recipe.revise` op (payload: dish, variant, notes), with the regenerate job wired by 1.4.1? If so, this leaf stores the candidate as a proposal once the op exists.
+- **R-33:** it stays a digest note; W-2 assigns the op and its job to 1.4.1. `RECIPE_REVISION_OP` in `rules/config.ts` is the single switch that turns rule 3's findings into proposals.
 
 ## SPEC-Q-4: rule 4, "target distribution changes or dish swaps"
 `plan.swap_dish` needs solved plates, which the pure rules cannot produce. Reading:
@@ -30,6 +34,10 @@ FBK-7 rule 3 proposes `revise_recipe`, "which triggers a regenerate-variant job"
 - **Queue:** over-budget drafts are not stored. The next run re-derives them from the same evidence, because rules are deterministic.
 - **Scope:** the budget counts every pending proposal and applies to every origin, `agent_chat` included, which is the literal reading.
 - **Question:** should `agent_chat` proposals (an admin talking to the agent) be exempt?
+- **R-33 (amended):**
+  - The budget counts and limits only `rule` and `insights` proposals; `agent_chat` proposals are neither blocked nor counted.
+  - Over-budget drafts are kept highest priority first.
+  - Dropped drafts appear in the digest with reason `budget`.
 
 ## SPEC-Q-6: which ops are never proposed
 - **Every origin:** R-10's `access.block`, `access.remove`, `access.link_member` and `support.grant`.
@@ -47,6 +55,10 @@ FBK-7: "results are posted to the admin's current conversation as an insight mes
 - `runInsights` sets `processed_at` on every review it read as unprocessed, in the transaction that stores the proposals.
 - `insightsDue(db, ctx)` is true when ≥ 10 reviews are unprocessed.
 - Rules look at a window of all reviews (30 days, 14 days for rule 4), not only unprocessed ones. Counts therefore survive across runs, and the fingerprint rules prevent repeats.
+- **R-33 (amended):** a candidate is also suppressed when:
+  - a proposal with the same fingerprint is pending (`pending`);
+  - one was accepted in the last 30 days (`recently_accepted`);
+  - its ops are already satisfied by current state (`satisfied`), including a dislike on a key that is already marked `never`.
 
 ## SPEC-Q-9: "new evidence has doubled"
 - A rejected proposal's evidence size is `evidence.count`: the number of distinct evidence reviews, or the number of miss days or planned meals for rules 4 and 5.
@@ -62,6 +74,10 @@ FBK-7: "results are posted to the admin's current conversation as an insight mes
   - ingredient.verify: ingredient.
 - **Other kinds:** the canonical JSON of the payload's id fields.
 - **Multi-op proposals:** the sorted op fingerprints joined with `+`.
+- **R-33 (amended):** the fingerprint also carries the direction:
+  - the sign of the `preference.set` score, plus `never` when it sets `hard: never`;
+  - `more` or `less` than the default gap for `frequency.set`;
+  - `away:<slot>` or `toward:<slot>` for `distribution.set`, measured against the member's current split.
 
 ## SPEC-Q-11: "negative component review" and the ingredient rule
 - **Negative:** rating ≤ 2, or at least one negative FBK-3 taste tag, on a review whose target is a `component`.
