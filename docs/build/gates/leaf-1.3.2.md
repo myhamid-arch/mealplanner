@@ -1,6 +1,6 @@
 # Gates: leaf-1.3.2 Reviews and preference learning
 
-OWNS: docs/decisions/leaf-1.3.2-*.md, packages/core/src/learning/preferences/**, packages/core/src/learning/portions/**, packages/core/test/learning/prefs/**, packages/db/src/services/reviews/**, scripts/verify/leaf-1.3.2.mjs
+OWNS: docs/decisions/leaf-1.3.2-*.md, packages/core/src/learning/preferences/**, packages/core/src/learning/portions/**, packages/core/test/learning/prefs/**, packages/db/src/services/reviews/**, packages/db/test/reviews/**, packages/db/src/schema/review-revision.ts, packages/db/src/migrations/0002_*, packages/db/src/migrations/meta/**, packages/db/src/schema/index.ts, packages/db/src/repos/tables.ts, packages/db/test/spec-columns.ts, scripts/verify/leaf-1.3.2.mjs
 
 Scope: Reviews and preference learning, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 
