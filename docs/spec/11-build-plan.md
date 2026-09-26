@@ -90,7 +90,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 | 1.2.3 | `packages/core/src/planner/select/**`, `packages/core/src/planner/cooksheet/**`, `packages/core/src/planner/index.ts`, `packages/core/test/planner/select/**`, `scripts/verify/leaf-1.2.3.mjs` | 1.2.2, 1.2.4 | judgment | 5 |
 | 1.3.1 | `packages/ai/src/client/**`, `packages/ai/src/recipes/**`, `packages/ai/test/recipes/**`, `scripts/verify/leaf-1.3.1.mjs` | 1.1.2, 1.2.2 | judgment | 4 |
 | 1.3.4 | `packages/graph/**`, `scripts/kg-rebuild.ts`, `scripts/verify/leaf-1.3.4.mjs` | 1.1.2, 1.2.4 | judgment | 5 |
-| 1.4.1 | `apps/web/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/app/api/**`, `apps/web/lib/server/**`, `apps/web/lib/auth/**`, `apps/worker/src/**`, `packages/api-contract/src/**`, `packages/db/src/services/plans/**`, `apps/web/test/api/**`, `scripts/verify/leaf-1.4.1.mjs` | 1.1.2, 1.2.3 | judgment | 6 |
+| 1.4.1 | `apps/web/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/app/api/**`, `apps/web/lib/server/**`, `apps/web/lib/auth/**`, `apps/worker/src/**`, `packages/api-contract/src/**`, `packages/db/src/services/plans/**`, `packages/db/src/seed/**`, `apps/web/test/api/**`, `scripts/verify/leaf-1.4.1.mjs` | 1.1.2, 1.2.3 | judgment | 6 |
 | 1.3.3 | `packages/core/src/learning/rules/**`, `packages/core/test/learning/rules/**`, `packages/ai/src/insights/**`, `packages/db/src/services/proposals/**`, `scripts/verify/leaf-1.3.3.mjs` | 1.3.1, 1.3.2 | judgment | 5 |
 | 1.3.5 | `packages/ai/src/agent/**`, `packages/ai/test/agent/**`, `evals/agent/**`, `scripts/verify/leaf-1.3.5.mjs` | 1.3.1, 1.3.3, 1.4.1 | judgment | 7 |
 | 1.4.3 | `apps/web/app/(app)/onboarding/**`, `apps/web/app/(app)/family/**`, `apps/web/app/(app)/settings/**`, `apps/web/components/config/**`, `apps/web/components/detail-level/**`, `packages/core/src/onboarding/**`, `packages/core/test/onboarding/**`, `apps/web/e2e/config.spec.ts`, `scripts/verify/leaf-1.4.3.mjs` | 1.4.1, 1.4.2 | judgment | 7 |
@@ -275,3 +275,12 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
 - **R-16. Plan correction (architect error).**
   - Leaf 1.2.2 also needs 1.1.2: its gates use fixture F1 and `HouseholdConfig` from `@mealplanner/core/types`.
   - 1.2.2 G4 no longer measures against the seed library, which 1.2.4 builds after 1.2.2 and would make the plan circular. G4 now measures the leaf's own test dish set, and the seed-library check moves to the new 1.2.4 G6.
+
+### Rulings from wave 2 CP1 (leaf 1.1.3)
+
+- **R-17 (1.1.3 SPEC-Q-3). Catalogue loader.** Leaf 1.4.1 owns `packages/db/src/seed/**`: an idempotent loader from `data/*` into the catalogue tables (ARC deployment: "seed data loads idempotently"). It maps rows by DM column name, resolves slugs and keys to foreign keys, ignores `meta`, and marks an ingredient `needs_review` when it fails NUT-4 (1.1.3 SPEC-Q-10). Until then, leaves that need catalogue data read the JSON files directly in tests.
+- **R-18 (1.1.3 SPEC-Q-9).** The architect adds `scripts/tsconfig.json` (no emit, `.ts` import extensions allowed, erasable syntax only), so typed lint covers `scripts/*.ts`. When 1.1.3 merges, the architect adds `tsc -p scripts` to the root `typecheck`.
+- **R-19 (1.1.3 other questions).**
+  - Accepted as proposed: SPEC-Q-1 (all method × category pairs except a reasoned exclusion list; G3 re-derives the used pairs from `data/seed-dishes/**` once it exists), Q-2 (`cofid:`, `afcd:`, `off:` source prefixes), Q-4 (mirrored FDC data with fidelity checks), Q-5, Q-7, Q-8, Q-10, Q-11 and Q-12.
+  - SPEC-Q-6 is settled by R-13: soluble fibre is 0 where total fibre is 0, and sugar is 0 where carbohydrate is 0.
+  - Under R-12, `breaded_*` yield rows describe the substrate only. The coating's mass and nutrients are excluded, and the file has no coating columns.
