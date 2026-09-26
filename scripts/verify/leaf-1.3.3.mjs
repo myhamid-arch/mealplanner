@@ -78,7 +78,7 @@ const GATES = {
       "G1 rule 2 does not trigger",
       "G1 rule 3 triggers",
       "G1 rule 3 does not trigger",
-      "G1 rule 3 stays a note while no revision op exists (R-33)",
+      "G1 rule 3 is a proposal now that recipe.revise exists (R-40)",
       "G1 rule 4 triggers",
       "G1 rule 4 does not trigger",
       "G1 rule 5 triggers",

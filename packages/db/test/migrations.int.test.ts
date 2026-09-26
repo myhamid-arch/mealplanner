@@ -169,7 +169,8 @@ describe("G1 migrations and schema", { timeout: 120_000 }, () => {
   it("introspection finds every table and column of 02, 13 and the BLD-8 rulings", async () => {
     const db = await database();
     await runMigrations(db.url);
-    expect(await specProblems(db.pool)).toEqual([]);
+    // BLD-8 R-42: exactly verification.id is text (Better Auth writes non-UUID verification ids).
+    expect(await specProblems(db.pool)).toEqual(["verification.id is text, not uuid"]);
   });
 
   it("the database enforces the spec's value rules (R-12 bias range, DM-5 allergy is hard, citext email)", async () => {

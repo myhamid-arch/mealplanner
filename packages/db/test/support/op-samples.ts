@@ -607,6 +607,33 @@ export function opGenerators(
         },
       };
     },
+    // BLD-8 R-40: requests that queue a job.
+    "recipe.generate": async (r) => ({
+      kind: "recipe.generate",
+      payload: {
+        date: futureDate(r),
+        slotKey: pick(r, await slots(), "slot").key,
+        count: 1 + Math.floor(r() * 3),
+        reason: `fewer than 4 candidates ${tag(r)}`,
+      },
+    }),
+    "recipe.revise": async (r) => {
+      const variants = (
+        await Promise.all(
+          (await repos().component.list({ dishId: populated.dishId })).map((c) =>
+            repos().variant.list({ componentId: c.id }),
+          ),
+        )
+      ).flat();
+      return {
+        kind: "recipe.revise",
+        payload: {
+          dishId: populated.dishId,
+          variantId: r() < 0.3 ? null : pick(r, variants, "variant").id,
+          notes: [pick(r, ["too_oily", "too_salty", "dry", "recipe_unclear"] as const, "note")],
+        },
+      };
+    },
     "plan.save_days": async (r) => {
       const component = must(
         (await repos().component.list({ dishId: populated.dishId })).find(

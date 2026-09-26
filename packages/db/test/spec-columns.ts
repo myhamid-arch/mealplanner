@@ -30,6 +30,9 @@ export const SPEC_COLUMNS: Record<string, readonly string[]> = {
     "deletion_requested_at",
     "deletion_requested_by_user_id",
     "suspended_at",
+    // R-40 (R2-ADM-6 second-admin confirmation)
+    "deletion_confirmed_at",
+    "deletion_confirmed_by_user_id",
   ],
   // 02 §1 + 13 R2-ADM-4 status/blocked_reason + R-9 k
   household_user: [
@@ -414,6 +417,29 @@ export const SPEC_COLUMNS: Record<string, readonly string[]> = {
     "cache_read_tokens",
     "stop_reason",
     "validation_errors",
+    "created_at",
+  ],
+  // R-40: ARC-7 jobs and job events, R2-ADM-8 support-access log
+  job: [
+    "id",
+    "household_id",
+    "kind",
+    "payload",
+    "status",
+    "error",
+    "created_by_user_id",
+    "created_at",
+    "started_at",
+    "finished_at",
+  ],
+  job_event: ["job_id", "seq", "household_id", "type", "payload", "created_at"],
+  support_access: [
+    "id",
+    "household_id",
+    "grant_id",
+    "operator_user_id",
+    "method",
+    "path",
     "created_at",
   ],
 };

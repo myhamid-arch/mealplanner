@@ -40,6 +40,8 @@ import {
   dishUpdate,
   ingredientCreate,
   ingredientVerify,
+  recipeGenerate,
+  recipeRevise,
 } from "./ops/recipes.js";
 import {
   distributionSet,
@@ -102,6 +104,9 @@ export const PUBLIC_OPS = [
   planSaveDays,
   // BLD-8 R-24
   portionBiasSet,
+  // BLD-8 R-40 (W-2, PLN-12)
+  recipeGenerate,
+  recipeRevise,
 ] as const;
 
 type PublicOp = (typeof PUBLIC_OPS)[number];

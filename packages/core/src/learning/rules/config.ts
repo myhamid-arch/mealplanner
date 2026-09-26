@@ -44,11 +44,11 @@ export const RECIPE_NOTE_TAGS: readonly string[] = [
   "quantity_wrong",
 ];
 /**
- * BLD-8 R-33 / W-2: the op kind a recipe revision is proposed with. `null` while the registry has
- * no such op; rule 3's candidates are then digest notes, not proposals. Setting it is the single
- * switch that turns them into proposals.
+ * BLD-8 R-33 / W-2: the op kind a recipe revision is proposed with. `null` while the registry had
+ * no such op (rule 3's candidates were digest notes); R-40 added `recipe.revise`, so rule 3's
+ * findings are proposals.
  */
-export const RECIPE_REVISION_OP: string | null = null;
+export const RECIPE_REVISION_OP: string | null = "recipe.revise";
 
 /** FBK-7 rule 5: an AI-estimated ingredient used in ≥ 3 planned meals (SPEC-Q-16). */
 export const AI_INGREDIENT_MIN_MEALS = 3;

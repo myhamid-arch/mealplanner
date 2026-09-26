@@ -1,6 +1,9 @@
-# Local development database (ARC-11; web and worker services arrive with leaf 1.4.1, BLD-8 R-4).
-# Start: docker compose up -d postgres
-# Then:  DATABASE_URL=postgres://postgres:postgres@localhost:5432/mealplanner
+# Local stack (ARC-11, BLD-8 R-4): PostgreSQL 16, the web app and the worker (leaf 1.4.1 R-e).
+# Database only (development with pnpm dev): docker compose up -d postgres
+#   then DATABASE_URL=postgres://postgres:postgres@localhost:5432/mealplanner
+# Everything: cp .env.example .env, set AUTH_SECRET, then docker compose up --build
+#   The worker applies the migrations and loads the catalogue and seed library first
+#   (idempotent); the web app starts once that is done. Open http://localhost:3000.
 services:
   postgres:
     image: postgres:16
@@ -17,6 +20,54 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/mealplanner
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-5}
+      AI_RECIPE_DAILY_LIMIT: ${AI_RECIPE_DAILY_LIMIT:-60}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    command:
+      - sh
+      - -c
+      - node packages/db/dist/src/seed/run.js && touch /tmp/migrated && exec node apps/worker/dist/src/main.js
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Longer than the worker's graceful stop (running jobs finish or are reaped later).
+    stop_grace_period: 30s
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/migrated"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/mealplanner
+      AUTH_SECRET: ${AUTH_SECRET:-}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      EMAIL_SERVER: ${EMAIL_SERVER:-}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+      CHAT_TURNS_PER_HOUR: ${CHAT_TURNS_PER_HOUR:-30}
+      AI_RECIPE_DAILY_LIMIT: ${AI_RECIPE_DAILY_LIMIT:-60}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      worker:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   postgres-data:

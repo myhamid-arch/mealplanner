@@ -76,7 +76,9 @@ export const account = pgTable(
 export const verification = pgTable(
   "verification",
   {
-    id: uuid("id").primaryKey(),
+    // text, not uuid (BLD-8 R-42): Better Auth 1.7.6 `reserveVerificationValue` writes its own
+    // non-UUID primary key (base64url of a SHA-256), e.g. on magic-link sign-in.
+    id: text("id").primaryKey(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: tstz("expires_at").notNull(),
@@ -150,6 +152,9 @@ export const household = pgTable(
     // R2-ADM-6 deletion grace, R2-ADM-8 suspension (R-9 i).
     deletionRequestedAt: tstz("deletion_requested_at"),
     deletionRequestedByUserId: uuid("deletion_requested_by_user_id").references(() => user.id),
+    // R2-ADM-6 second-admin confirmation (BLD-8 R-40).
+    deletionConfirmedAt: tstz("deletion_confirmed_at"),
+    deletionConfirmedByUserId: uuid("deletion_confirmed_by_user_id").references(() => user.id),
     suspendedAt: tstz("suspended_at"),
     createdAt: tstz("created_at").notNull(),
   },

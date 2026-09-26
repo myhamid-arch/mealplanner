@@ -12,11 +12,12 @@ import {
   NUTRITION_CONFIDENCES,
   PORTIONINGS,
   type ComponentRow,
+  type Json,
   type VariantRow,
 } from "../../types/index.js";
 import { defineOp, definedFields, requireRow } from "../define.js";
 import { ChangeOpError, type ChangeTx } from "../tx.js";
-import { grams, id, slotKey } from "./common.js";
+import { grams, id, isoDate, slotKey } from "./common.js";
 
 const IngredientLine = z
   .object({
@@ -453,5 +454,79 @@ export const ingredientVerify = defineOp({
         verifiedByUserId: tx.actorUserId,
       },
     );
+  },
+});
+
+// BLD-8 R-40 (W-2, PLN-12 `ask`): requests whose effect is a queued job. Applying the op inserts a
+// `job` row (status `queued`); the API or worker enqueues it after the change set commits. The
+// inverse (undo) deletes that row, which the database allows only while the job is still `queued`:
+// the worker claims a job atomically, so undo and pickup cannot both succeed.
+
+/** A tag or short note the revision addresses (FBK-3 quality and kitchen notes). */
+const note = z.string().trim().min(1).max(120);
+
+async function queueJob(tx: ChangeTx, kind: string, payload: Json) {
+  await tx.insert("job", {
+    id: tx.newId(),
+    householdId: tx.householdId,
+    kind,
+    payload,
+    status: "queued",
+    error: null,
+    createdByUserId: tx.actorUserId,
+    createdAt: tx.now(),
+    startedAt: null,
+    finishedAt: null,
+  });
+}
+
+/** PLN-12 `ask`: generate new dishes for a slot on a date (accepted from a proposal). */
+export const recipeGenerate = defineOp({
+  kind: "recipe.generate",
+  area: "recipes",
+  schema: z
+    .object({
+      date: isoDate,
+      slotKey,
+      count: z.number().int().min(1).max(10),
+      reason: z.string().trim().min(1).max(500),
+    })
+    .strict(),
+  title: (p) => `Generate ${String(p.count)} new ${p.slotKey.replaceAll("_", " ")} recipes`,
+  apply: async (tx, payload) => {
+    const slots = await tx.find("slot_type", { key: payload.slotKey });
+    if (slots.length === 0)
+      throw new ChangeOpError("recipe.generate", `no slot ${payload.slotKey} in this household`);
+    await queueJob(tx, "recipe.generate", payload);
+  },
+});
+
+/** FBK-7 rule 3 (W-2): regenerate a dish's variant (or every variant) to address repeated notes. */
+export const recipeRevise = defineOp({
+  kind: "recipe.revise",
+  area: "recipes",
+  schema: z
+    .object({ dishId: id, variantId: id.nullable(), notes: z.array(note).min(1).max(20) })
+    .strict(),
+  title: (p) => `Revise the recipe (${p.notes.join(", ").replaceAll("_", " ")})`,
+  apply: async (tx, payload) => {
+    const dish = await requireRow(
+      "recipe.revise",
+      `dish ${payload.dishId}`,
+      tx.get("dish", { id: payload.dishId }),
+    );
+    if (dish.status === "retired")
+      throw new ChangeOpError("recipe.revise", "a retired dish is not revised");
+    if (payload.variantId !== null) {
+      const variant = await requireRow(
+        "recipe.revise",
+        `variant ${payload.variantId}`,
+        tx.get("variant", { id: payload.variantId }),
+      );
+      const component = await tx.get("component", { id: variant.componentId });
+      if (component?.dishId !== dish.id)
+        throw new ChangeOpError("recipe.revise", "the variant is not part of the dish");
+    }
+    await queueJob(tx, "recipe.revise", payload);
   },
 });

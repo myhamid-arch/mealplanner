@@ -4,27 +4,27 @@ OWNS: docs/decisions/leaf-1.4.1-*.md, apps/web/Dockerfile, apps/worker/Dockerfil
 
 Scope: API, auth, worker, SSE, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 
-- [ ] G1: every endpoint has a contract test and an authorisation-matrix test including cross-household denial (ARC-5, ARC-6)
+- [x] G1: every endpoint has a contract test and an authorisation-matrix test including cross-household denial (ARC-5, ARC-6)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.1 G1 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=18666222dcb1d6c12046cffe7ad0ad31b15b201c9321e8432241f741c1c26f11; exit=0; EXPECT=matched; output-sha256=f1d4303b2e539e4d8ee95feaa5126b061f5bb1e2b6cba0d8d0238857c8cb2f15; output-bytes=3178; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G2: a plan job runs in the worker and streams progress over SSE to a test client (ARC-7)
+- [x] G2: a plan job runs in the worker and streams progress over SSE to a test client (ARC-7)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.1 G2 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=d3cbf8d120eaf3246897d77f0239ff95ecaf2be31604b9180ee03fefeaadca37; exit=0; EXPECT=matched; output-sha256=7dbd6f1fe37cbdf1c285badca344be77ae40d3b474ee612a93c56d889f0c2282; output-bytes=4719; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G3: OpenAPI document generated and valid
+- [x] G3: OpenAPI document generated and valid
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.1 G3 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=74255a58a0a14257647dd81e0a3bae0ec0f1d9ba25c1b687d48af4000545aa5d; exit=0; EXPECT=matched; output-sha256=0461705beb7694c53f1e5a306cbf2f6b1899773930c3089cbf3273e17870fc09; output-bytes=1553; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G4: block revokes all sessions immediately (next request 401); invites single-use with expiry; TOTP enforced when required (R2-ADM)
+- [x] G4: block revokes all sessions immediately (next request 401); invites single-use with expiry; TOTP enforced when required (R2-ADM)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G4
   EXPECT: VERIFY leaf-1.4.1 G4 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=c8f7f2995d5f417e1c1b45dc53ad1189125fa1f3e46ee7c83b113703f5e4e965; exit=0; EXPECT=matched; output-sha256=5a9f7616a160d0508006943007caa9b366f3e4351c7eef8d1e9a9f6140c6261d; output-bytes=3675; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G5: platform endpoints refuse household data without an active support grant, and each access is logged (R2-ADM-8)
+- [x] G5: platform endpoints refuse household data without an active support grant, and each access is logged (R2-ADM-8)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G5
   EXPECT: VERIFY leaf-1.4.1 G5 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=56850e8142218b7681be8d2094c65423ed37b41d772fa47ef856499b19260a9e; exit=0; EXPECT=matched; output-sha256=48967da5460d4c1dba13fdafded03ce0986cdeb21964e5ae043f9885dbcfeee2; output-bytes=1645; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
