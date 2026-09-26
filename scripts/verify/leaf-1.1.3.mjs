@@ -426,8 +426,11 @@ function checkG1(data) {
     keys.length === CUISINES.length && CUISINES.every((k) => keys.includes(k)),
     "cuisines.json holds exactly the 23 DM §3 keys",
   );
-  for (const c of cuisines)
-    p.add(isStr(c.label) && "flag_emoji" in c && "parent_key" in c, `cuisine ${String(c.key)}`);
+  for (const c of cuisines) {
+    p.add(isStr(c.label) && "parent_key" in c, `cuisine ${String(c.key)}`);
+    // R-23: 02 removed cuisine.flag_emoji (no emoji in data, R2-UX-5).
+    p.add(!("flag_emoji" in c), `cuisine ${String(c.key)}: flag_emoji must be absent (R-23)`);
+  }
   // Substitutes (KG SUBSTITUTES_FOR seed)
   for (const s of substitutes) {
     const w = Number(s.weight);
@@ -926,6 +929,13 @@ const GATES = {
           i.nutrition_confidence = "high";
         },
         "label values must be low",
+      ],
+      [
+        "a cuisine carrying flag_emoji",
+        (d) => {
+          d.cuisines[0].flag_emoji = null;
+        },
+        "flag_emoji must be absent",
       ],
     ],
   },

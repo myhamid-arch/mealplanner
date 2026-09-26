@@ -85,3 +85,6 @@ The 6 remaining failures (`low`, with reasons):
 - `cooking-wine-red`, `cooking-wine-white`, `vanilla-extract`: alcohol energy, which NUT-4 does not count.
 
 Lemon and lime (fruit and juice), brewed tea and baking powder pass with their SR factors.
+
+## CP3 finding 2 (R-23): no `flag_emoji` in cuisines
+SPEC-Q-12's `flag_emoji: null` is superseded. The key is removed from `data/cuisines.json`, and G1 asserts that it is absent, with a negative control that adds it back. `parent_key` stays `null`.

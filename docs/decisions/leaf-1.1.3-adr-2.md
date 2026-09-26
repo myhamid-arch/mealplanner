@@ -78,8 +78,8 @@ That way nothing outside the schema can leak into a column, and nothing needed f
 - `data/method-yields.manifest.json` is the importer's input: method texts, and the record pairs or analogy for each row.
 
 ## `data/cuisines.json`
-An array of `{ key, label, flag_emoji, parent_key }` for the 23 DM §3 keys.
-- `flag_emoji` is `null` for all: R2-UX-5 forbids emoji as UI, and the column is nullable.
+An array of `{ key, label, parent_key }` for the 23 DM §3 keys.
+- No `flag_emoji` key: R-23 removed the column from 02 (R2-UX-5, no emoji in data). G1 asserts it is absent.
 - `parent_key` is `null` for all: no spec rule uses the hierarchy, and inventing one would be drift (SPEC-Q-12).
 
 ## `data/soluble-fibre.csv` (NUT-8 override table)
