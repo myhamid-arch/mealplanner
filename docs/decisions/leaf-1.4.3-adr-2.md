@@ -1,0 +1,21 @@
+# leaf-1.4.3 ADR-2: how the gates are verified, and run concurrently
+
+Status: proposed (CP1)
+Requirement: BLD-5 1.4.3 G1–G5 (ledger `docs/build/gates/leaf-1.4.3.md`); BUILDER_PROMPT §2 (negative controls, measured figures, concurrent gates)
+
+`scripts/verify/leaf-1.4.3.mjs --gate G<n>` imports only `scripts/verify/lib/*` and prints `VERIFY leaf-1.4.3 G<n> PASSED` only after every assertion, negative controls included, holds.
+
+## Isolation (gates run in parallel with each other and with 1.4.6 / 1.3.5)
+- **Database.** Each gate creates its own database, `leaf143_<gate>_<pid>_<random>`, on the server named by `DATABASE_URL` (CI), else on `localhost:5432` if it answers, else on a throwaway PostgreSQL 16 cluster started with `/usr/lib/postgresql/16/bin/initdb` + `pg_ctl` on a free port in a private temp dir (the 1.4.1 pattern). Every path checks `server_version` is 16.x, migrates and seeds with `migrateAndSeed` (R-17 loader), and drops the database / stops the cluster on exit, also on failure.
+- **Build.** `next build` per gate into `apps/web/.next/verify-1.4.3-<gate>` (`MISE_NEXT_DIST_DIR`, leaf-1.4.2 ADR-4). Workspace packages and the worker are built once under a lock file, only when stale (the 1.4.1 pattern).
+- **Ports.** `next start` on a free port per gate; nothing on a fixed port.
+- **Worker.** Gates that generate a plan (G1, G5) start `apps/worker` against their own database and stop it on exit.
+- **Output.** Playwright JSON and failure artefacts in a per-gate temp dir; nothing in the working tree.
+- **W-1.** Any failing e2e test prints its full error and stdout/stderr, never a truncated tail.
+
+## Gates
+- **G1** `config.spec.ts --grep @G1` at 390 × 844 and 1280 × 800: sign up → the five questions answered with the Onboarding mockup's answers → review → confirm → plan job over SSE → `GET /plans` has tomorrow with a meal for every attending member; Family edits (add a person, change targets, add an allergy) and Settings edits (turn a slot on, change a weight) each produce one change set visible in `GET /change-sets` and survive a reload; no horizontal scroll on any screen state; the layout landmarks the mockups show are present (question counter, "What I've worked out" panel, member list + detail, section headers with the detail control). Negative control: a page with a forced 1600 px element fails the scroll check.
+- **G2** axe (ADR-1) on every screen state. Negative control as ADR-1.
+- **G3** R2-DL on a member page (targets, meal split) and on Meals & schedule: every automatic value carries a visible `auto` tag at every level; at Detailed a tapped share becomes `yours`, siblings rebalance and the day still sums to 100 %; "Back to auto" restores the automatic value and removes the stored row; lowering to Basic with an override asks Keep/Reset: Keep leaves the stored rows and shows "Yours (hidden)", Reset clears them. Stored state is read back through `GET /schedules` and `GET /targets`, not from the page. Unit tests of the rebalance and "yours" inference run in the same gate. Negative controls: the tag check on a page state with one `auto` tag removed must fail; the inference on a split with two ambiguous overrides must return "all yours" (SPEC-Q-15).
+- **G4** Vitest `packages/core/test/onboarding/**`: F1's answers → ops → applied with the real registry to an in-memory `ChangeTx` seeded with the default household → diffed against F1 expanded as `loadFixture` expands it (SPEC-Q-2); sesame expands to every catalogue ingredient flagged `contains_sesame` (tahini, hummus, za'atar included), read from `data/ingredients.v1.json`; the free-text port is stubbed; every op parses with `ChangeOpSchema`. Negative controls: F1's answers with one child's age changed, and a catalogue with `contains_sesame` removed from tahini, must each fail the corresponding assertion.
+- **G5** `config.spec.ts --grep @G5`: the script records, from the Playwright trace JSON the spec writes, the number of required inputs before the plan exists (inputs the flow blocks on) and computes it itself (≤ 5; also a run with every question skipped reaches a plan with 0); after confirmation it follows every Adjust link and requires a 200 and the named section to be visible. Negative controls: the counter on a synthetic six-question trace fails; the link check on an explanation list with one broken href fails.
