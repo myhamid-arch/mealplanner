@@ -95,6 +95,8 @@ export function configFromFixture(input: FixtureInput): HouseholdConfig {
       satFatDefaultPct: 6, // the DB default (migration 0003, OQ-4)
       deletionRequestedAt: null,
       deletionRequestedByUserId: null,
+      deletionConfirmedAt: null,
+      deletionConfirmedByUserId: null,
       suspendedAt: null,
       createdAt: new Date(0),
     },

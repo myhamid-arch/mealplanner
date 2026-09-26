@@ -168,6 +168,8 @@ describe.each([
         "support.revoke",
         "plan.save_days",
         "portion_bias.set",
+        "recipe.generate",
+        "recipe.revise",
       ].sort(),
     );
     const generators = opGenerators(database.db, household);
