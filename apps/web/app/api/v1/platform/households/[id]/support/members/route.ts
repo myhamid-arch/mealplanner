@@ -1,0 +1,11 @@
+// GET /api/v1/platform/households/{id}/support/members: thin handlers over contract endpoints (lib/server/route.ts).
+import { supportMembers } from "@mealplanner/api-contract/contract";
+import { route } from "../../../../../../../../lib/server/route";
+import { supportMembersView, withSupport } from "../../../../../../../../lib/server/platform";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+export const GET = route(supportMembers, ({ rt, session, params, request }) =>
+  withSupport(rt, request, session, params.id, (c) => supportMembersView(rt, c)),
+);

@@ -76,3 +76,20 @@ export {
   type SurvivorInput,
 } from "./generation.js";
 export { PlanServiceError, type PlanServiceErrorCode } from "./errors.js";
+export {
+  JOB_EVENT_CHANNEL,
+  JOB_KINDS,
+  TERMINAL_EVENTS,
+  appendJobEvent,
+  claimJob,
+  createJob,
+  failedJobs,
+  finishJob,
+  jobEventsAfter,
+  jobOf,
+  queuedJobs,
+  type JobEventRow,
+  type JobKind,
+  type JobRow,
+} from "./jobs.js";
+export { followUpJobs, touchedEntityNames, type FollowUp } from "./followups.js";
