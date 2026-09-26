@@ -312,11 +312,15 @@ function readFdcCsv(dir: string, dataset: Dataset, inputs: Inputs): void {
 }
 
 /** FDC API (`POST /v1/foods`), for the FDC-sourced records of the manifest. */
-async function readFdcApi(ids: { dataset: Dataset; id: string }[], inputs: Inputs): Promise<void> {
+async function readFdcApi(
+  base: string,
+  ids: { dataset: Dataset; id: string }[],
+  inputs: Inputs,
+): Promise<void> {
   const apiKey = process.env["FDC_API_KEY"] ?? fail("--fdc-api needs FDC_API_KEY");
   for (let i = 0; i < ids.length; i += 20) {
     const batch = ids.slice(i, i + 20);
-    const res = await fetch(`https://api.nal.usda.gov/fdc/v1/foods?api_key=${apiKey}`, {
+    const res = await fetch(`${base}/foods?api_key=${encodeURIComponent(apiKey)}`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ fdcIds: batch.map((b) => Number(b.id)), format: "full" }),
@@ -944,6 +948,7 @@ async function main(): Promise<void> {
       "sr-legacy": { type: "string" },
       "fdc-extra": { type: "string", multiple: true },
       "fdc-api": { type: "boolean" },
+      "fdc-api-base": { type: "string", default: "https://api.nal.usda.gov/fdc/v1" },
       "cofid-proximates": { type: "string" },
       "cofid-inorganics": { type: "string" },
       afcd: { type: "string" },
@@ -970,7 +975,7 @@ async function main(): Promise<void> {
       if (["sr_legacy", "fdc_foundation", "fdc_branded"].includes(m.source.dataset))
         fdcIds.push({ dataset: m.source.dataset, id: m.source.record_id });
   }
-  if (values["fdc-api"] === true) await readFdcApi(fdcIds, inputs);
+  if (values["fdc-api"] === true) await readFdcApi(values["fdc-api-base"], fdcIds, inputs);
   if (values["sr-legacy"] !== undefined) readFdcCsv(values["sr-legacy"], "sr_legacy", inputs);
   for (const dir of values["fdc-extra"] ?? []) {
     const food = readCsvObjects(join(dir, "food.csv"));

@@ -2296,7 +2296,11 @@
         "record_id": "F003496"
       },
       "proxy_note": "AFCD Release 1 F003496 'Date, dried' (variety not stated) used for Gulf dates such as khalas and sukkari.",
-      "uae_specific_reason": "NUT-7 example (dates)"
+      "uae_specific_reason": "NUT-7 example (dates)",
+      "edible_portion": {
+        "value": 0.838,
+        "basis": "CoFID 2019 14-399 'Dates, dried, flesh and skin, weighed with stones' (197 kcal/100 g, calculated by CoFID from 14-394) / 14-394 'Dates, dried, flesh and skin' (235 kcal/100 g): the flesh share of dates bought with stones"
+      }
     },
     {
       "slug": "desiccated-coconut",

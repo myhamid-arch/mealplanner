@@ -65,7 +65,7 @@
         "sha256": "8142ae85516cc8b6c9a9ef607ed681bed65ef8956f48cb47f212c7b27ff476f6"
       },
       "manifest": {
-        "sha256": "c1ccecf17817943e9f002f6dacd2424c7d9288826b5fd2ac42e2e74d513e5196"
+        "sha256": "2f3e97a04fe20aef3822d6e4c915de492cdc4f381bc3bfc3da821935652d039e"
       },
       "off/products.csv": {
         "sha256": "e4e852c8114b73c4c9b1c3289a859768519ce85cf6f86fd1e8868b314cc6b658"
@@ -5891,7 +5891,7 @@
       "density_g_per_ml": null,
       "unit_weight_g": null,
       "unit_label": null,
-      "edible_portion": 1,
+      "edible_portion": 0.838,
       "dietary_flags": [
         "vegan",
         "vegetarian"
@@ -5917,7 +5917,7 @@
         "uae_specific_reason": "NUT-7 example (dates)",
         "availability_basis": "builder assessment of UAE retail availability (not measured)",
         "derivations": {
-          "edible_portion": "1: the source reports no refuse and the record describes the food as sold, edible as is",
+          "edible_portion": "CoFID 2019 14-399 'Dates, dried, flesh and skin, weighed with stones' (197 kcal/100 g, calculated by CoFID from 14-394) / 14-394 'Dates, dried, flesh and skin' (235 kcal/100 g): the flesh share of dates bought with stones",
           "kcal": "AFCD 'Energy, with dietary fibre' (kJ) / 4.184",
           "sat_fat_g": "AFCD reports saturated fatty acids as % of total fatty acids: 0 % x total fat 0.2 g. Fatty acids are a fraction of total lipid, so this is an upper bound."
         }

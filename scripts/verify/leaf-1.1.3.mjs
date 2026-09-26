@@ -6,9 +6,10 @@
 // Counts are measured from the files; the only constants are the spec's thresholds.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { Report } from "./lib/report.mjs";
 
-const ROOT = new URL("../../", import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const DATA = join(ROOT, "data");
 
 // --- Spec encodings (02-domain-model §3, 03-nutrition-engine, 13-revision-r2), written from the spec text.
