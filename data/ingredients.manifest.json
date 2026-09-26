@@ -1,0 +1,7111 @@
+{
+  "manifest_version": 1,
+  "carbs_basis": "available",
+  "ingredients": [
+    {
+      "slug": "akkawi",
+      "name": "Akkawi cheese",
+      "aliases": [
+        "akawi",
+        "akkawi"
+      ],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "fdc_branded",
+        "record_id": "2071721",
+        "retrieved_via": "codejetnet/food-data release data-20260925-3, foods-US.db",
+        "retrieved_on": "2026-09-26"
+      },
+      "uae_specific_reason": "NUT-7 example (akkawi)"
+    },
+    {
+      "slug": "allspice",
+      "name": "Allspice",
+      "aliases": [
+        "bhar helo"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171315",
+        "record_description": "Spices, allspice, ground"
+      },
+      "uae_specific_reason": "Base of Levantine seven-spice"
+    },
+    {
+      "slug": "almond-butter",
+      "name": "Almond butter",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168588",
+        "record_description": "Nuts, almond butter, plain, without salt added"
+      }
+    },
+    {
+      "slug": "almond-milk",
+      "name": "Almond drink, unsweetened",
+      "aliases": [],
+      "category": "beverage",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174832",
+        "record_description": "Beverages, almond milk, unsweetened, shelf stable"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "almonds",
+      "name": "Almonds",
+      "aliases": [
+        "lawz"
+      ],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170567",
+        "record_description": "Nuts, almonds"
+      },
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "anchovy",
+      "name": "Anchovy",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174182",
+        "record_description": "Fish, anchovy, european, raw"
+      }
+    },
+    {
+      "slug": "apple",
+      "name": "Apple",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171688",
+        "record_description": "Apples, raw, with skin (Includes foods for USDA's Food Distribution Program)"
+      },
+      "unit": {
+        "label": "apple",
+        "portion": "medium (3\" dia)"
+      }
+    },
+    {
+      "slug": "apple-cider-vinegar",
+      "name": "Apple cider vinegar",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173469",
+        "record_description": "Vinegar, cider"
+      },
+      "atwater_reason": "energy comes from acetic acid (about 3.6 kcal/g), which is not protein, carbohydrate or fat; SR28 gives no Atwater factors for this record",
+      "density_portion": "cup"
+    },
+    {
+      "slug": "apple-juice",
+      "name": "Apple juice",
+      "aliases": [],
+      "category": "beverage",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173933",
+        "record_description": "Apple juice, canned or bottled, unsweetened, without added ascorbic acid"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "apricot",
+      "name": "Apricot",
+      "aliases": [
+        "mishmish"
+      ],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171697",
+        "record_description": "Apricots, raw"
+      },
+      "unit": {
+        "label": "apricot",
+        "portion": "apricot"
+      }
+    },
+    {
+      "slug": "apricots-dried",
+      "name": "Dried apricots",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173941",
+        "record_description": "Apricots, dried, sulfured, uncooked"
+      }
+    },
+    {
+      "slug": "artichoke",
+      "name": "Artichoke",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169205",
+        "record_description": "Artichokes, (globe or french), raw"
+      }
+    },
+    {
+      "slug": "asparagus",
+      "name": "Asparagus",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168389",
+        "record_description": "Asparagus, raw"
+      }
+    },
+    {
+      "slug": "avocado",
+      "name": "Avocado",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171705",
+        "record_description": "Avocados, raw, all commercial varieties"
+      }
+    },
+    {
+      "slug": "avocado-oil",
+      "name": "Avocado oil",
+      "aliases": [],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173573",
+        "record_description": "Oil, avocado"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "bacon",
+      "name": "Bacon",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [
+        "contains_pork"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168277",
+        "record_description": "Pork, cured, bacon, unprepared"
+      }
+    },
+    {
+      "slug": "bagel",
+      "name": "Bagel",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174899",
+        "record_description": "Bagels, plain, enriched, with calcium propionate (includes onion, poppy, sesame)"
+      },
+      "unit": {
+        "label": "bagel",
+        "portion": "bagel"
+      }
+    },
+    {
+      "slug": "baking-powder",
+      "name": "Baking powder",
+      "aliases": [],
+      "category": "other",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172803",
+        "record_description": "Leavening agents, baking powder, double-acting, sodium aluminum sulfate"
+      }
+    },
+    {
+      "slug": "banana",
+      "name": "Banana",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173944",
+        "record_description": "Bananas, raw"
+      },
+      "unit": {
+        "label": "banana",
+        "portion": "medium (7\" to 7-7/8\" long)"
+      }
+    },
+    {
+      "slug": "barley-pearl",
+      "name": "Pearl barley",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170284",
+        "record_description": "Barley, pearled, raw"
+      }
+    },
+    {
+      "slug": "basil-fresh",
+      "name": "Basil, fresh",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172232",
+        "record_description": "Basil, fresh"
+      }
+    },
+    {
+      "slug": "basmati-rice",
+      "name": "Basmati rice, white",
+      "aliases": [
+        "rice",
+        "ruz"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "cofid_2019",
+        "record_id": "11-857"
+      },
+      "uae_specific_reason": "NUT-7 example (basmati rice)"
+    },
+    {
+      "slug": "basmati-rice-brown",
+      "name": "Basmati rice, brown",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "cofid_2019",
+        "record_id": "11-866"
+      },
+      "uae_specific_reason": "Basmati is the Gulf household rice"
+    },
+    {
+      "slug": "bay-leaf",
+      "name": "Bay leaf",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170917",
+        "record_description": "Spices, bay leaf"
+      }
+    },
+    {
+      "slug": "beef-chuck-stew",
+      "name": "Beef chuck, for stew",
+      "aliases": [
+        "stewing beef"
+      ],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171206",
+        "record_description": "Beef, chuck for stew, separable lean and fat, all grades, raw"
+      }
+    },
+    {
+      "slug": "beef-eye-round",
+      "name": "Beef eye of round",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173998",
+        "record_description": "Beef, round, eye of round roast, boneless, separable lean only, trimmed to 0\" fat, all grades, raw"
+      }
+    },
+    {
+      "slug": "beef-liver",
+      "name": "Beef liver",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169451",
+        "record_description": "Beef, variety meats and by-products, liver, raw"
+      }
+    },
+    {
+      "slug": "beef-mince",
+      "name": "Beef mince, 80% lean",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174036",
+        "record_description": "Beef, ground, 80% lean meat / 20% fat, raw"
+      }
+    },
+    {
+      "slug": "beef-mince-extra-lean",
+      "name": "Beef mince, 95% lean",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171790",
+        "record_description": "Beef, ground, 95% lean meat / 5% fat, raw"
+      }
+    },
+    {
+      "slug": "beef-mince-lean",
+      "name": "Beef mince, 90% lean",
+      "aliases": [
+        "ground beef"
+      ],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174030",
+        "record_description": "Beef, ground, 90% lean meat / 10% fat, raw"
+      }
+    },
+    {
+      "slug": "beef-sirloin",
+      "name": "Beef top sirloin steak",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168726",
+        "record_description": "Beef, top sirloin, steak, separable lean and fat, trimmed to 1/8\" fat, all grades, raw"
+      }
+    },
+    {
+      "slug": "beef-stock",
+      "name": "Beef stock",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172883",
+        "record_description": "Soup, stock, beef, home-prepared"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "beef-tenderloin",
+      "name": "Beef tenderloin",
+      "aliases": [
+        "fillet steak"
+      ],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169542",
+        "record_description": "Beef, tenderloin, steak, separable lean and fat, trimmed to 1/8\" fat, all grades, raw"
+      }
+    },
+    {
+      "slug": "beetroot",
+      "name": "Beetroot",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169145",
+        "record_description": "Beets, raw"
+      }
+    },
+    {
+      "slug": "bell-pepper-green",
+      "name": "Green bell pepper",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170427",
+        "record_description": "Peppers, sweet, green, raw"
+      },
+      "unit": {
+        "label": "pepper",
+        "portion": "medium (approx 2-3/4\" long, 2-1/2\" dia)"
+      }
+    },
+    {
+      "slug": "bell-pepper-red",
+      "name": "Red bell pepper",
+      "aliases": [
+        "capsicum"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170108",
+        "record_description": "Peppers, sweet, red, raw"
+      },
+      "unit": {
+        "label": "pepper",
+        "portion": "medium (approx 2-3/4\" long, 2-1/2 dia.)"
+      }
+    },
+    {
+      "slug": "black-beans",
+      "name": "Black beans, dried",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173734",
+        "record_description": "Beans, black, mature seeds, raw"
+      }
+    },
+    {
+      "slug": "black-eyed-peas",
+      "name": "Black-eyed peas",
+      "aliases": [
+        "lobia"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173758",
+        "record_description": "Cowpeas, common (blackeyes, crowder, southern), mature seeds, raw"
+      }
+    },
+    {
+      "slug": "black-pepper",
+      "name": "Black pepper",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170931",
+        "record_description": "Spices, pepper, black"
+      }
+    },
+    {
+      "slug": "blueberries",
+      "name": "Blueberries",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171711",
+        "record_description": "Blueberries, raw"
+      }
+    },
+    {
+      "slug": "brazil-nuts",
+      "name": "Brazil nuts",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170569",
+        "record_description": "Nuts, brazilnuts, dried, unblanched"
+      },
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "bread-multigrain",
+      "name": "Multigrain bread",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168013",
+        "record_description": "Bread, multi-grain (includes whole-grain)"
+      },
+      "unit": {
+        "label": "slice",
+        "portion": "slice regular"
+      }
+    },
+    {
+      "slug": "bread-white",
+      "name": "White bread",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174924",
+        "record_description": "Bread, white, commercially prepared (includes soft bread crumbs)"
+      },
+      "unit": {
+        "label": "slice",
+        "portion": "slice, large"
+      }
+    },
+    {
+      "slug": "bread-wholemeal",
+      "name": "Wholemeal bread",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172688",
+        "record_description": "Bread, whole-wheat, commercially prepared"
+      },
+      "unit": {
+        "label": "slice",
+        "portion": "slice"
+      }
+    },
+    {
+      "slug": "breadcrumbs",
+      "name": "Breadcrumbs, dry",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174928",
+        "record_description": "Bread, crumbs, dry, grated, plain"
+      }
+    },
+    {
+      "slug": "breakfast-cereal-corn-flakes",
+      "name": "Corn flakes",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174648",
+        "record_description": "Cereals ready-to-eat, RALSTON Corn Flakes"
+      }
+    },
+    {
+      "slug": "broccoli",
+      "name": "Broccoli",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170379",
+        "record_description": "Broccoli, raw"
+      }
+    },
+    {
+      "slug": "brussels-sprouts",
+      "name": "Brussels sprouts",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170383",
+        "record_description": "Brussels sprouts, raw"
+      }
+    },
+    {
+      "slug": "buckwheat",
+      "name": "Buckwheat",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170286",
+        "record_description": "Buckwheat"
+      }
+    },
+    {
+      "slug": "bulgur",
+      "name": "Bulgur",
+      "aliases": [
+        "burghul",
+        "bulghur"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170688",
+        "record_description": "Bulgur, dry"
+      },
+      "uae_specific_reason": "NUT-7 example (bulgur)"
+    },
+    {
+      "slug": "burger-bun",
+      "name": "Burger bun",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172796",
+        "record_description": "Rolls, hamburger or hotdog, plain"
+      },
+      "unit": {
+        "label": "bun",
+        "portion": "roll 1 serving"
+      }
+    },
+    {
+      "slug": "butter",
+      "name": "Butter, salted",
+      "aliases": [],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173410",
+        "record_description": "Butter, salted"
+      }
+    },
+    {
+      "slug": "butter-unsalted",
+      "name": "Butter, unsalted",
+      "aliases": [],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173430",
+        "record_description": "Butter, without salt"
+      }
+    },
+    {
+      "slug": "butternut-squash",
+      "name": "Butternut squash",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169295",
+        "record_description": "Squash, winter, butternut, raw"
+      }
+    },
+    {
+      "slug": "cabbage",
+      "name": "Cabbage",
+      "aliases": [
+        "malfouf"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169975",
+        "record_description": "Cabbage, raw"
+      }
+    },
+    {
+      "slug": "camel-meat",
+      "name": "Camel meat",
+      "aliases": [
+        "laham jamal"
+      ],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "afcd_r1",
+        "record_id": "F002206"
+      },
+      "uae_specific_reason": "NUT-7 example (camel meat)"
+    },
+    {
+      "slug": "camel-milk",
+      "name": "Camel milk",
+      "aliases": [
+        "haleeb naga"
+      ],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "off",
+        "record_id": "0862979000043",
+        "retrieved_via": "codejetnet/food-data release data-20260925-3, foods-US.db",
+        "retrieved_on": "2026-09-26"
+      },
+      "uae_specific_reason": "Emirati dairy staple (camel milk sold nationally)"
+    },
+    {
+      "slug": "canola-oil",
+      "name": "Canola oil",
+      "aliases": [
+        "rapeseed oil"
+      ],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172336",
+        "record_description": "Oil, canola"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "cardamom",
+      "name": "Cardamom",
+      "aliases": [
+        "hail",
+        "elaichi"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170919",
+        "record_description": "Spices, cardamom"
+      },
+      "uae_specific_reason": "Emirati coffee and rice spice"
+    },
+    {
+      "slug": "carrot",
+      "name": "Carrot",
+      "aliases": [
+        "jazar"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170393",
+        "record_description": "Carrots, raw"
+      },
+      "unit": {
+        "label": "carrot",
+        "portion": "medium"
+      }
+    },
+    {
+      "slug": "cashews",
+      "name": "Cashews",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170162",
+        "record_description": "Nuts, cashew nuts, raw"
+      },
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "cassava",
+      "name": "Cassava",
+      "aliases": [],
+      "category": "starch",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169985",
+        "record_description": "Cassava, raw"
+      }
+    },
+    {
+      "slug": "cauliflower",
+      "name": "Cauliflower",
+      "aliases": [
+        "zahra"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169986",
+        "record_description": "Cauliflower, raw"
+      }
+    },
+    {
+      "slug": "celery",
+      "name": "Celery",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169988",
+        "record_description": "Celery, raw"
+      }
+    },
+    {
+      "slug": "chana-dal",
+      "name": "Chana dal (split bengal gram)",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173756",
+        "record_description": "Chickpeas (garbanzo beans, bengal gram), mature seeds, raw"
+      },
+      "proxy_note": "SR Legacy 173756 whole chickpea record used for split bengal gram (chana dal): same seed, split."
+    },
+    {
+      "slug": "chard",
+      "name": "Swiss chard",
+      "aliases": [
+        "silq"
+      ],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169991",
+        "record_description": "Chard, swiss, raw"
+      },
+      "uae_specific_reason": "Silq for Levantine fatayer and stews"
+    },
+    {
+      "slug": "cheddar",
+      "name": "Cheddar",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173414",
+        "record_description": "Cheese, cheddar (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "cheddar-reduced-fat",
+      "name": "Cheddar, reduced fat",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171292",
+        "record_description": "Cheese, cheddar, reduced fat (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "cherries",
+      "name": "Cherries",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171719",
+        "record_description": "Cherries, sweet, raw"
+      }
+    },
+    {
+      "slug": "cherry-tomato",
+      "name": "Cherry tomatoes",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170457",
+        "record_description": "Tomatoes, red, ripe, raw, year round average"
+      },
+      "proxy_note": "SR Legacy 170457 'Tomatoes, red, ripe, raw, year round average' used for cherry tomatoes."
+    },
+    {
+      "slug": "chia-seeds",
+      "name": "Chia seeds",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170554",
+        "record_description": "Seeds, chia seeds, dried"
+      }
+    },
+    {
+      "slug": "chicken-breast",
+      "name": "Chicken breast, skinless",
+      "aliases": [
+        "chicken fillet"
+      ],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171077",
+        "record_description": "Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw"
+      }
+    },
+    {
+      "slug": "chicken-breast-skin-on",
+      "name": "Chicken breast, with skin",
+      "aliases": [],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171474",
+        "record_description": "Chicken, broilers or fryers, breast, meat and skin, raw"
+      }
+    },
+    {
+      "slug": "chicken-drumstick",
+      "name": "Chicken drumstick, skinless",
+      "aliases": [],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173614",
+        "record_description": "Chicken, broilers or fryers, dark meat, drumstick, meat only, raw"
+      },
+      "unit": {
+        "label": "drumstick",
+        "portion": "drumstick without skin"
+      }
+    },
+    {
+      "slug": "chicken-liver",
+      "name": "Chicken liver",
+      "aliases": [],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171060",
+        "record_description": "Chicken, liver, all classes, raw"
+      }
+    },
+    {
+      "slug": "chicken-mince",
+      "name": "Chicken mince",
+      "aliases": [
+        "ground chicken"
+      ],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171116",
+        "record_description": "Chicken, ground, raw"
+      }
+    },
+    {
+      "slug": "chicken-stock",
+      "name": "Chicken stock",
+      "aliases": [
+        "chicken broth"
+      ],
+      "category": "sauce_condiment",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172884",
+        "record_description": "Soup, stock, chicken, home-prepared"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "chicken-thigh",
+      "name": "Chicken thigh, skinless",
+      "aliases": [],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173627",
+        "record_description": "Chicken, broilers or fryers, dark meat, thigh, meat only, raw"
+      },
+      "unit": {
+        "label": "thigh",
+        "portion": "thigh without skin"
+      }
+    },
+    {
+      "slug": "chicken-thigh-skin-on",
+      "name": "Chicken thigh, with skin",
+      "aliases": [],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172385",
+        "record_description": "Chicken, broilers or fryers, thigh, meat and skin, raw"
+      }
+    },
+    {
+      "slug": "chicken-whole",
+      "name": "Whole chicken, meat and skin",
+      "aliases": [],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171447",
+        "record_description": "Chicken, broilers or fryers, meat and skin, raw"
+      }
+    },
+    {
+      "slug": "chicken-wing",
+      "name": "Chicken wing, with skin",
+      "aliases": [],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172390",
+        "record_description": "Chicken, broilers or fryers, wing, meat and skin, raw"
+      },
+      "unit": {
+        "label": "wing",
+        "portion": "piece"
+      }
+    },
+    {
+      "slug": "chickpeas-boiled",
+      "name": "Chickpeas, boiled",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173757",
+        "record_description": "Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, without salt"
+      },
+      "uae_specific_reason": "Cooked chickpeas for hummus and balila"
+    },
+    {
+      "slug": "chickpeas-canned",
+      "name": "Chickpeas, canned",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173800",
+        "record_description": "Chickpeas (garbanzo beans, bengal gram), mature seeds, canned, drained solids"
+      }
+    },
+    {
+      "slug": "chickpeas-dried",
+      "name": "Chickpeas, dried",
+      "aliases": [
+        "garbanzo",
+        "chana"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173756",
+        "record_description": "Chickpeas (garbanzo beans, bengal gram), mature seeds, raw"
+      },
+      "uae_specific_reason": "NUT-7 example (chickpeas)"
+    },
+    {
+      "slug": "chilli-green",
+      "name": "Green chilli",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170497",
+        "record_description": "Peppers, hot chili, green, raw"
+      }
+    },
+    {
+      "slug": "chilli-powder",
+      "name": "Chilli powder",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171319",
+        "record_description": "Spices, chili powder"
+      }
+    },
+    {
+      "slug": "cinnamon",
+      "name": "Cinnamon",
+      "aliases": [
+        "darseen"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171320",
+        "record_description": "Spices, cinnamon, ground"
+      }
+    },
+    {
+      "slug": "cloves",
+      "name": "Cloves",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171321",
+        "record_description": "Spices, cloves, ground"
+      }
+    },
+    {
+      "slug": "cocoa-powder",
+      "name": "Cocoa powder, unsweetened",
+      "aliases": [],
+      "category": "other",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169593",
+        "record_description": "Cocoa, dry powder, unsweetened"
+      }
+    },
+    {
+      "slug": "coconut-flesh",
+      "name": "Coconut flesh",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170169",
+        "record_description": "Nuts, coconut meat, raw"
+      }
+    },
+    {
+      "slug": "coconut-milk",
+      "name": "Coconut milk, canned",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "cofid_2019",
+        "record_id": "14-889"
+      }
+    },
+    {
+      "slug": "coconut-oil",
+      "name": "Coconut oil",
+      "aliases": [],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171412",
+        "record_description": "Oil, coconut"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "coconut-water",
+      "name": "Coconut water",
+      "aliases": [],
+      "category": "beverage",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170174",
+        "record_description": "Nuts, coconut water (liquid from coconuts)"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "cod",
+      "name": "Cod",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171955",
+        "record_description": "Fish, cod, Atlantic, raw"
+      }
+    },
+    {
+      "slug": "coffee-brewed",
+      "name": "Coffee, brewed",
+      "aliases": [
+        "gahwa"
+      ],
+      "category": "beverage",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171890",
+        "record_description": "Beverages, coffee, brewed, prepared with tap water"
+      },
+      "atwater_reason": "energy is 1 kcal/100 g; at this size the relative error is rounding of the whole-kcal value",
+      "density_portion": "fl oz"
+    },
+    {
+      "slug": "cooking-wine-red",
+      "name": "Red wine (for cooking)",
+      "aliases": [],
+      "category": "beverage",
+      "dietary_flags": [
+        "contains_alcohol",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173190",
+        "record_description": "Alcoholic beverage, wine, table, red"
+      },
+      "atwater_reason": "energy includes alcohol (10.6 g per 100 g, SR nutrient 1018, about 6.93 kcal/g), which is neither protein, carbohydrate nor fat, so NUT-4 does not count it",
+      "density_portion": "fl oz"
+    },
+    {
+      "slug": "cooking-wine-white",
+      "name": "White wine (for cooking)",
+      "aliases": [],
+      "category": "beverage",
+      "dietary_flags": [
+        "contains_alcohol",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174837",
+        "record_description": "Alcoholic beverage, wine, table, white"
+      },
+      "atwater_reason": "energy includes alcohol (10.3 g per 100 g, SR nutrient 1018, about 6.93 kcal/g), which is neither protein, carbohydrate nor fat, so NUT-4 does not count it",
+      "density_portion": "fl oz"
+    },
+    {
+      "slug": "coriander-fresh",
+      "name": "Coriander leaves, fresh",
+      "aliases": [
+        "cilantro",
+        "kuzbara"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169997",
+        "record_description": "Coriander (cilantro) leaves, raw"
+      }
+    },
+    {
+      "slug": "coriander-seed",
+      "name": "Coriander seed",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170922",
+        "record_description": "Spices, coriander seed"
+      }
+    },
+    {
+      "slug": "corn-oil",
+      "name": "Corn oil",
+      "aliases": [],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171029",
+        "record_description": "Oil, corn, industrial and retail, all purpose salad or cooking"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "corn-sweet",
+      "name": "Sweetcorn",
+      "aliases": [],
+      "category": "starch",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169998",
+        "record_description": "Corn, sweet, yellow, raw"
+      }
+    },
+    {
+      "slug": "cornflour",
+      "name": "Cornflour (corn starch)",
+      "aliases": [
+        "corn starch"
+      ],
+      "category": "other",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169698",
+        "record_description": "Cornstarch"
+      }
+    },
+    {
+      "slug": "cornmeal",
+      "name": "Cornmeal",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169697",
+        "record_description": "Cornmeal, whole-grain, yellow"
+      }
+    },
+    {
+      "slug": "cottage-cheese",
+      "name": "Cottage cheese, low fat",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172182",
+        "record_description": "Cheese, cottage, lowfat, 2% milkfat"
+      }
+    },
+    {
+      "slug": "couscous",
+      "name": "Couscous, dry",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169699",
+        "record_description": "Couscous, dry"
+      }
+    },
+    {
+      "slug": "crab",
+      "name": "Blue crab",
+      "aliases": [],
+      "category": "seafood",
+      "dietary_flags": [
+        "contains_shellfish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174204",
+        "record_description": "Crustaceans, crab, blue, raw"
+      }
+    },
+    {
+      "slug": "crackers",
+      "name": "Crackers, plain",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172746",
+        "record_description": "Crackers, saltines (includes oyster, soda, soup)"
+      }
+    },
+    {
+      "slug": "cream-cheese",
+      "name": "Cream cheese",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173418",
+        "record_description": "Cheese, cream"
+      }
+    },
+    {
+      "slug": "cream-cooking",
+      "name": "Cooking cream (heavy)",
+      "aliases": [
+        "heavy cream"
+      ],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170859",
+        "record_description": "Cream, fluid, heavy whipping"
+      },
+      "density_portion": "fl oz"
+    },
+    {
+      "slug": "cream-light",
+      "name": "Light cream",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170857",
+        "record_description": "Cream, fluid, light (coffee cream or table cream)"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "croissant",
+      "name": "Croissant",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_dairy",
+        "contains_egg",
+        "contains_gluten",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174987",
+        "record_description": "Croissants, butter"
+      },
+      "unit": {
+        "label": "croissant",
+        "portion": "croissant, medium"
+      }
+    },
+    {
+      "slug": "cucumber",
+      "name": "Cucumber",
+      "aliases": [
+        "khiyar"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168409",
+        "record_description": "Cucumber, with peel, raw"
+      },
+      "unit": {
+        "label": "cucumber",
+        "portion": "cucumber (8-1/4\")"
+      }
+    },
+    {
+      "slug": "cumin",
+      "name": "Cumin",
+      "aliases": [
+        "kammoun",
+        "jeera"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170923",
+        "record_description": "Spices, cumin seed"
+      },
+      "uae_specific_reason": "Core spice of Gulf baharat"
+    },
+    {
+      "slug": "curry-powder",
+      "name": "Curry powder",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170924",
+        "record_description": "Spices, curry powder"
+      }
+    },
+    {
+      "slug": "cuttlefish",
+      "name": "Cuttlefish",
+      "aliases": [],
+      "category": "seafood",
+      "dietary_flags": [
+        "contains_shellfish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174215",
+        "record_description": "Mollusks, cuttlefish, mixed species, raw"
+      }
+    },
+    {
+      "slug": "dark-chocolate",
+      "name": "Dark chocolate, 70–85%",
+      "aliases": [],
+      "category": "sweetener",
+      "dietary_flags": [
+        "contains_dairy",
+        "contains_soy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170273",
+        "record_description": "Chocolate, dark, 70-85% cacao solids"
+      }
+    },
+    {
+      "slug": "date-syrup",
+      "name": "Date syrup (dibs)",
+      "aliases": [
+        "dibs",
+        "silan"
+      ],
+      "category": "sweetener",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "off",
+        "record_id": "0052851050659",
+        "retrieved_via": "codejetnet/food-data release data-20260925-3, foods-US.db",
+        "retrieved_on": "2026-09-26"
+      },
+      "uae_specific_reason": "Emirati date syrup for luqaimat and khanfaroosh"
+    },
+    {
+      "slug": "dates-deglet-noor",
+      "name": "Dates, semi-dry (deglet noor)",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171726",
+        "record_description": "Dates, deglet noor"
+      },
+      "uae_specific_reason": "Dried dates, a Gulf staple",
+      "unit": {
+        "label": "date",
+        "portion": "date, pitted"
+      }
+    },
+    {
+      "slug": "dates-dried",
+      "name": "Dates, dried",
+      "aliases": [
+        "tamr",
+        "khalas",
+        "sukkari"
+      ],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "afcd_r1",
+        "record_id": "F003496"
+      },
+      "proxy_note": "AFCD Release 1 F003496 'Date, dried' (variety not stated) used for Gulf dates such as khalas and sukkari.",
+      "uae_specific_reason": "NUT-7 example (dates)",
+      "edible_portion": {
+        "value": 0.838,
+        "basis": "CoFID 2019 14-399 'Dates, dried, flesh and skin, weighed with stones' (197 kcal/100 g, calculated by CoFID from 14-394) / 14-394 'Dates, dried, flesh and skin' (235 kcal/100 g): the flesh share of dates bought with stones"
+      }
+    },
+    {
+      "slug": "desiccated-coconut",
+      "name": "Desiccated coconut",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170170",
+        "record_description": "Nuts, coconut meat, dried (desiccated), not sweetened"
+      }
+    },
+    {
+      "slug": "dill-fresh",
+      "name": "Dill, fresh",
+      "aliases": [
+        "shibt"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172233",
+        "record_description": "Dill weed, fresh"
+      }
+    },
+    {
+      "slug": "dried-thyme",
+      "name": "Thyme, dried",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170938",
+        "record_description": "Spices, thyme, dried"
+      },
+      "uae_specific_reason": "Thyme for za'atar and Levantine marinades"
+    },
+    {
+      "slug": "duck",
+      "name": "Duck, meat only",
+      "aliases": [],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172410",
+        "record_description": "Duck, domesticated, meat only, raw"
+      }
+    },
+    {
+      "slug": "edamame",
+      "name": "Edamame",
+      "aliases": [],
+      "category": "plant_protein",
+      "dietary_flags": [
+        "contains_soy",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169282",
+        "record_description": "Soybeans, green, raw"
+      }
+    },
+    {
+      "slug": "egg",
+      "name": "Egg, whole",
+      "aliases": [
+        "eggs"
+      ],
+      "category": "egg",
+      "dietary_flags": [
+        "contains_egg",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171287",
+        "record_description": "Egg, whole, raw, fresh"
+      },
+      "unit": {
+        "label": "egg",
+        "portion": "large"
+      }
+    },
+    {
+      "slug": "egg-noodles-dry",
+      "name": "Egg noodles, dry",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_egg",
+        "contains_gluten",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169755",
+        "record_description": "Noodles, egg, dry, unenriched"
+      }
+    },
+    {
+      "slug": "egg-white",
+      "name": "Egg white",
+      "aliases": [],
+      "category": "egg",
+      "dietary_flags": [
+        "contains_egg",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172183",
+        "record_description": "Egg, white, raw, fresh"
+      },
+      "unit": {
+        "label": "egg white",
+        "portion": "large"
+      }
+    },
+    {
+      "slug": "egg-yolk",
+      "name": "Egg yolk",
+      "aliases": [],
+      "category": "egg",
+      "dietary_flags": [
+        "contains_egg",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172184",
+        "record_description": "Egg, yolk, raw, fresh"
+      },
+      "unit": {
+        "label": "egg yolk",
+        "portion": "large"
+      }
+    },
+    {
+      "slug": "eggplant",
+      "name": "Eggplant",
+      "aliases": [
+        "aubergine",
+        "betinjan"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169228",
+        "record_description": "Eggplant, raw"
+      },
+      "uae_specific_reason": "Base of moutabal, maqluba and musakhan sides"
+    },
+    {
+      "slug": "english-muffin",
+      "name": "English muffin",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172828",
+        "record_description": "English muffins, plain, unenriched, with calcium propionate (includes sourdough)"
+      },
+      "unit": {
+        "label": "muffin",
+        "portion": "muffin"
+      }
+    },
+    {
+      "slug": "evaporated-milk",
+      "name": "Evaporated milk",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171276",
+        "record_description": "Milk, canned, evaporated, with added vitamin D and without added vitamin A"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "fava-beans-canned",
+      "name": "Foul medames, canned",
+      "aliases": [
+        "foul medames"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173754",
+        "record_description": "Broadbeans (fava beans), mature seeds, canned"
+      },
+      "uae_specific_reason": "Canned foul is the base of the Gulf breakfast foul"
+    },
+    {
+      "slug": "fava-beans-dried",
+      "name": "Fava beans, dried (foul)",
+      "aliases": [
+        "foul",
+        "ful"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175205",
+        "record_description": "Broadbeans (fava beans), mature seeds, raw"
+      },
+      "uae_specific_reason": "NUT-7 example (fava beans / foul)"
+    },
+    {
+      "slug": "fava-beans-green",
+      "name": "Fava beans, green",
+      "aliases": [
+        "broad beans"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170377",
+        "record_description": "Broadbeans, immature seeds, raw"
+      }
+    },
+    {
+      "slug": "fennel-seed",
+      "name": "Fennel seed",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171323",
+        "record_description": "Spices, fennel seed"
+      }
+    },
+    {
+      "slug": "fenugreek-seed",
+      "name": "Fenugreek seed",
+      "aliases": [
+        "hilba"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171324",
+        "record_description": "Spices, fenugreek seed"
+      },
+      "uae_specific_reason": "Hilba is used in Gulf breads and broths"
+    },
+    {
+      "slug": "feta",
+      "name": "Feta (white cheese)",
+      "aliases": [
+        "white cheese",
+        "jibneh baida"
+      ],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173420",
+        "record_description": "Cheese, feta"
+      },
+      "uae_specific_reason": "Gulf/Levantine breakfast white cheese"
+    },
+    {
+      "slug": "figs",
+      "name": "Figs, fresh",
+      "aliases": [
+        "teen"
+      ],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173021",
+        "record_description": "Figs, raw"
+      },
+      "unit": {
+        "label": "fig",
+        "portion": "medium (2-1/4\" dia)"
+      }
+    },
+    {
+      "slug": "figs-dried",
+      "name": "Dried figs",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174665",
+        "record_description": "Figs, dried, uncooked"
+      }
+    },
+    {
+      "slug": "filo-pastry",
+      "name": "Filo pastry",
+      "aliases": [
+        "phyllo"
+      ],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172791",
+        "record_description": "Phyllo dough"
+      },
+      "uae_specific_reason": "Filo for Levantine sweets and sambousek"
+    },
+    {
+      "slug": "fish-sauce",
+      "name": "Fish sauce",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174531",
+        "record_description": "Sauce, fish, ready-to-serve"
+      },
+      "density_portion": "tbsp"
+    },
+    {
+      "slug": "flaxseed",
+      "name": "Flaxseed",
+      "aliases": [
+        "linseed"
+      ],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169414",
+        "record_description": "Seeds, flaxseed"
+      }
+    },
+    {
+      "slug": "flour-wheat-white",
+      "name": "Wheat flour, white",
+      "aliases": [
+        "plain flour"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169761",
+        "record_description": "Wheat flour, white, all-purpose, unenriched"
+      }
+    },
+    {
+      "slug": "flour-wheat-wholemeal",
+      "name": "Wheat flour, wholemeal",
+      "aliases": [
+        "atta"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168893",
+        "record_description": "Wheat flour, whole-grain (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "freekeh",
+      "name": "Freekeh",
+      "aliases": [
+        "frikeh"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "fdc_branded",
+        "record_id": "1308499",
+        "retrieved_via": "codejetnet/food-data release data-20260925-3, foods-US.db",
+        "retrieved_on": "2026-09-26"
+      },
+      "uae_specific_reason": "NUT-7 example (freekeh)"
+    },
+    {
+      "slug": "frozen-fries",
+      "name": "French fries, frozen",
+      "aliases": [],
+      "category": "starch",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170523",
+        "record_description": "Potatoes, french fried, all types, salt not added in processing, frozen, as purchased"
+      }
+    },
+    {
+      "slug": "garlic",
+      "name": "Garlic",
+      "aliases": [
+        "thoom"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169230",
+        "record_description": "Garlic, raw"
+      },
+      "unit": {
+        "label": "clove",
+        "portion": "clove"
+      }
+    },
+    {
+      "slug": "garlic-powder",
+      "name": "Garlic powder",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171325",
+        "record_description": "Spices, garlic powder"
+      }
+    },
+    {
+      "slug": "gelatine",
+      "name": "Gelatine powder",
+      "aliases": [],
+      "category": "other",
+      "dietary_flags": [
+        "contains_pork"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169599",
+        "record_description": "Gelatins, dry powder, unsweetened"
+      }
+    },
+    {
+      "slug": "ghee",
+      "name": "Ghee",
+      "aliases": [
+        "samn",
+        "samna"
+      ],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171314",
+        "record_description": "Butter, Clarified butter (ghee)"
+      },
+      "uae_specific_reason": "NUT-7 example (ghee)"
+    },
+    {
+      "slug": "ginger",
+      "name": "Ginger, fresh",
+      "aliases": [
+        "zanjabeel"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169231",
+        "record_description": "Ginger root, raw"
+      }
+    },
+    {
+      "slug": "ginger-ground",
+      "name": "Ginger, ground",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170926",
+        "record_description": "Spices, ginger, ground"
+      }
+    },
+    {
+      "slug": "goat-cheese",
+      "name": "Goat cheese, soft",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173435",
+        "record_description": "Cheese, goat, soft type"
+      }
+    },
+    {
+      "slug": "goat-meat",
+      "name": "Goat meat",
+      "aliases": [
+        "mutton (South Asian usage)",
+        "laham ghanam"
+      ],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175303",
+        "record_description": "Game meat, goat, raw"
+      },
+      "uae_specific_reason": "Common Gulf red meat (harees, machboos)"
+    },
+    {
+      "slug": "goat-milk",
+      "name": "Goat milk",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171278",
+        "record_description": "Milk, goat, fluid, with added vitamin D"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "gouda",
+      "name": "Gouda",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171241",
+        "record_description": "Cheese, gouda"
+      }
+    },
+    {
+      "slug": "granola",
+      "name": "Granola",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171646",
+        "record_description": "Cereals ready-to-eat, granola, homemade"
+      }
+    },
+    {
+      "slug": "grapes",
+      "name": "Grapes",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174683",
+        "record_description": "Grapes, red or green (European type, such as Thompson seedless), raw"
+      }
+    },
+    {
+      "slug": "greek-yogurt-low-fat",
+      "name": "Greek yogurt, plain, low fat",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170903",
+        "record_description": "Yogurt, Greek, plain, lowfat"
+      }
+    },
+    {
+      "slug": "greek-yogurt-nonfat",
+      "name": "Greek yogurt, plain, fat free",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170894",
+        "record_description": "Yogurt, Greek, plain, nonfat (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "greek-yogurt-whole",
+      "name": "Greek yogurt, plain, full fat",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171304",
+        "record_description": "Yogurt, Greek, plain, whole milk"
+      }
+    },
+    {
+      "slug": "green-beans",
+      "name": "Green beans",
+      "aliases": [
+        "loubieh"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169961",
+        "record_description": "Beans, snap, green, raw"
+      }
+    },
+    {
+      "slug": "green-peas",
+      "name": "Green peas",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170419",
+        "record_description": "Peas, green, raw"
+      }
+    },
+    {
+      "slug": "green-peas-frozen",
+      "name": "Green peas, frozen",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170016",
+        "record_description": "Peas, green, frozen, unprepared (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "guava",
+      "name": "Guava",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173044",
+        "record_description": "Guavas, common, raw"
+      }
+    },
+    {
+      "slug": "halloumi",
+      "name": "Halloumi",
+      "aliases": [
+        "hallomi"
+      ],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "cofid_2019",
+        "record_id": "12-496"
+      },
+      "uae_specific_reason": "NUT-7 example (halloumi)"
+    },
+    {
+      "slug": "halva",
+      "name": "Tahini halva",
+      "aliases": [],
+      "category": "sweetener",
+      "dietary_flags": [
+        "contains_sesame",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167996",
+        "record_description": "Candies, halavah, plain"
+      }
+    },
+    {
+      "slug": "hammour",
+      "name": "Hammour (orange-spotted grouper)",
+      "aliases": [
+        "grouper",
+        "hamour"
+      ],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171962",
+        "record_description": "Fish, grouper, mixed species, raw"
+      },
+      "proxy_note": "SR Legacy 171962 'Fish, grouper, mixed species, raw' (Epinephelus and Mycteroperca spp.) used for hammour (Epinephelus coioides), a grouper of the same genus family (Serranidae).",
+      "uae_specific_reason": "NUT-7 example (hammour)"
+    },
+    {
+      "slug": "hazelnuts",
+      "name": "Hazelnuts",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170581",
+        "record_description": "Nuts, hazelnuts or filberts"
+      },
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "honey",
+      "name": "Honey",
+      "aliases": [
+        "asal"
+      ],
+      "category": "sweetener",
+      "dietary_flags": [
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169640",
+        "record_description": "Honey"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "hot-sauce",
+      "name": "Hot sauce",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174527",
+        "record_description": "Sauce, ready-to-serve, pepper or hot"
+      },
+      "density_portion": "tsp"
+    },
+    {
+      "slug": "hummus",
+      "name": "Hummus",
+      "aliases": [
+        "hommos",
+        "houmous"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "contains_sesame",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174289",
+        "record_description": "Hummus, commercial"
+      },
+      "uae_specific_reason": "Levantine staple; sesame allergen expansion (R2-ONB-3)"
+    },
+    {
+      "slug": "icing-sugar",
+      "name": "Icing sugar",
+      "aliases": [],
+      "category": "sweetener",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169656",
+        "record_description": "Sugars, powdered"
+      }
+    },
+    {
+      "slug": "jalapeno",
+      "name": "Jalapeño",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168576",
+        "record_description": "Peppers, jalapeno, raw"
+      }
+    },
+    {
+      "slug": "jam",
+      "name": "Jam",
+      "aliases": [],
+      "category": "sweetener",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169641",
+        "record_description": "Jams and preserves"
+      }
+    },
+    {
+      "slug": "kale",
+      "name": "Kale",
+      "aliases": [],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168421",
+        "record_description": "Kale, raw"
+      }
+    },
+    {
+      "slug": "ketchup",
+      "name": "Ketchup",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168556",
+        "record_description": "Catsup"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "khubz",
+      "name": "Khubz (Arabic bread), white",
+      "aliases": [
+        "Arabic bread",
+        "pita",
+        "khobz"
+      ],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174915",
+        "record_description": "Bread, pita, white, enriched"
+      },
+      "proxy_note": "SR Legacy 174915 'Bread, pita, white, enriched' used for khubz: both are white wheat-flour pocket flatbreads; UAE bakery khubz is not in any dataset.",
+      "uae_specific_reason": "NUT-7 example (Arabic bread, khubz)",
+      "unit": {
+        "label": "loaf",
+        "portion": "pita, large (6-1/2\" dia)"
+      }
+    },
+    {
+      "slug": "khubz-wholemeal",
+      "name": "Khubz (Arabic bread), wholemeal",
+      "aliases": [
+        "brown Arabic bread"
+      ],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174916",
+        "record_description": "Bread, pita, whole-wheat"
+      },
+      "proxy_note": "SR Legacy 174916 'Bread, pita, whole-wheat' used for wholemeal khubz.",
+      "uae_specific_reason": "Brown Arabic bread sold by every UAE bakery",
+      "unit": {
+        "label": "loaf",
+        "portion": "pita, large (6-1/2\" dia)"
+      }
+    },
+    {
+      "slug": "kidney-beans",
+      "name": "Kidney beans, dried",
+      "aliases": [
+        "rajma"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175193",
+        "record_description": "Beans, kidney, all types, mature seeds, raw"
+      }
+    },
+    {
+      "slug": "kidney-beans-canned",
+      "name": "Kidney beans, canned",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174285",
+        "record_description": "Beans, kidney, red, mature seeds, canned, drained solids"
+      }
+    },
+    {
+      "slug": "kingfish",
+      "name": "Kingfish (kanaad)",
+      "aliases": [
+        "kanaad",
+        "narrow-barred Spanish mackerel"
+      ],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173673",
+        "record_description": "Fish, mackerel, spanish, raw"
+      },
+      "proxy_note": "SR Legacy 173673 'Fish, mackerel, spanish, raw' (Scomberomorus maculatus) used for kanaad (Scomberomorus commerson), a congeneric species.",
+      "uae_specific_reason": "NUT-7 example (kingfish/kanaad)"
+    },
+    {
+      "slug": "kiwi",
+      "name": "Kiwi",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168153",
+        "record_description": "Kiwifruit, green, raw"
+      },
+      "unit": {
+        "label": "kiwi",
+        "portion": "fruit (2\" dia)"
+      }
+    },
+    {
+      "slug": "laban",
+      "name": "Laban (cultured buttermilk)",
+      "aliases": [
+        "laban",
+        "buttermilk"
+      ],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170874",
+        "record_description": "Milk, buttermilk, fluid, cultured, lowfat"
+      },
+      "proxy_note": "SR Legacy 170874 'Milk, buttermilk, fluid, cultured, lowfat' used for Gulf laban (cultured low-fat milk drink).",
+      "uae_specific_reason": "NUT-7 example (laban)",
+      "density_portion": "cup"
+    },
+    {
+      "slug": "labneh",
+      "name": "Labneh",
+      "aliases": [
+        "labne",
+        "labnah"
+      ],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "fdc_branded",
+        "record_id": "2651981",
+        "retrieved_via": "codejetnet/food-data release data-20260925-3, foods-US.db",
+        "retrieved_on": "2026-09-26"
+      },
+      "uae_specific_reason": "NUT-7 example (labneh)"
+    },
+    {
+      "slug": "labneh-balls",
+      "name": "Labneh balls in oil",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "fdc_branded",
+        "record_id": "2071718",
+        "retrieved_via": "codejetnet/food-data release data-20260925-3, foods-US.db",
+        "retrieved_on": "2026-09-26"
+      },
+      "uae_specific_reason": "Levantine preserved labneh, sold in UAE supermarkets"
+    },
+    {
+      "slug": "lamb-chop",
+      "name": "Lamb loin chop",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174319",
+        "record_description": "Lamb, loin, separable lean and fat, trimmed to 1/4\" fat, choice, raw"
+      }
+    },
+    {
+      "slug": "lamb-leg",
+      "name": "Lamb leg",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174311",
+        "record_description": "Lamb, leg, whole (shank and sirloin), separable lean and fat, trimmed to 1/4\" fat, choice, raw"
+      },
+      "uae_specific_reason": "Staple of Emirati and Levantine cooking (machboos, ouzi)"
+    },
+    {
+      "slug": "lamb-mince",
+      "name": "Lamb mince",
+      "aliases": [
+        "kofta mince",
+        "ground lamb"
+      ],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174370",
+        "record_description": "Lamb, ground, raw"
+      },
+      "uae_specific_reason": "Staple of Levantine kofta and kibbeh"
+    },
+    {
+      "slug": "lamb-shoulder",
+      "name": "Lamb shoulder",
+      "aliases": [
+        "lamb"
+      ],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172496",
+        "record_description": "Lamb, shoulder, whole (arm and blade), separable lean and fat, trimmed to 1/4\" fat, choice, raw"
+      },
+      "uae_specific_reason": "NUT-7 example (lamb)"
+    },
+    {
+      "slug": "leek",
+      "name": "Leek",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169246",
+        "record_description": "Leeks, (bulb and lower leaf-portion), raw"
+      }
+    },
+    {
+      "slug": "lemon",
+      "name": "Lemon",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167746",
+        "record_description": "Lemons, raw, without peel"
+      },
+      "unit": {
+        "label": "lemon",
+        "portion": "fruit (2-1/8\" dia)"
+      }
+    },
+    {
+      "slug": "lemon-juice",
+      "name": "Lemon juice",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167747",
+        "record_description": "Lemon juice, raw"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "lentils-boiled",
+      "name": "Lentils, boiled",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172421",
+        "record_description": "Lentils, mature seeds, cooked, boiled, without salt"
+      }
+    },
+    {
+      "slug": "lentils-brown",
+      "name": "Brown/green lentils",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172420",
+        "record_description": "Lentils, raw"
+      },
+      "uae_specific_reason": "Lentils for mujaddara"
+    },
+    {
+      "slug": "lentils-red",
+      "name": "Red lentils",
+      "aliases": [
+        "masoor",
+        "adas"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174284",
+        "record_description": "Lentils, pink or red, raw"
+      },
+      "uae_specific_reason": "Base of Gulf and Levantine lentil soup (shorbat adas)"
+    },
+    {
+      "slug": "lettuce-iceberg",
+      "name": "Iceberg lettuce",
+      "aliases": [],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169248",
+        "record_description": "Lettuce, iceberg (includes crisphead types), raw"
+      }
+    },
+    {
+      "slug": "lettuce-romaine",
+      "name": "Romaine lettuce",
+      "aliases": [
+        "khas"
+      ],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169247",
+        "record_description": "Lettuce, cos or romaine, raw"
+      }
+    },
+    {
+      "slug": "lime",
+      "name": "Lime",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168155",
+        "record_description": "Limes, raw"
+      },
+      "unit": {
+        "label": "lime",
+        "portion": "fruit (2\" dia)"
+      }
+    },
+    {
+      "slug": "lime-juice",
+      "name": "Lime juice",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168156",
+        "record_description": "Lime juice, raw"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "lobster",
+      "name": "Lobster",
+      "aliases": [],
+      "category": "seafood",
+      "dietary_flags": [
+        "contains_shellfish"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174208",
+        "record_description": "Crustaceans, lobster, northern, raw"
+      }
+    },
+    {
+      "slug": "macadamia",
+      "name": "Macadamia nuts",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170178",
+        "record_description": "Nuts, macadamia nuts, raw"
+      },
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "mackerel",
+      "name": "Mackerel, Atlantic",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175119",
+        "record_description": "Fish, mackerel, Atlantic, raw"
+      }
+    },
+    {
+      "slug": "mandarin",
+      "name": "Mandarin",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169105",
+        "record_description": "Tangerines, (mandarin oranges), raw"
+      },
+      "unit": {
+        "label": "mandarin",
+        "portion": "medium (2-1/2\" dia)"
+      }
+    },
+    {
+      "slug": "mango",
+      "name": "Mango",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169910",
+        "record_description": "Mangos, raw"
+      }
+    },
+    {
+      "slug": "maple-syrup",
+      "name": "Maple syrup",
+      "aliases": [],
+      "category": "sweetener",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169661",
+        "record_description": "Syrups, maple"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "margarine",
+      "name": "Margarine",
+      "aliases": [],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172346",
+        "record_description": "Margarine, regular, 80% fat, composite, stick, with salt"
+      }
+    },
+    {
+      "slug": "mayonnaise",
+      "name": "Mayonnaise",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "contains_egg",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171009",
+        "record_description": "Salad dressing, mayonnaise, regular"
+      }
+    },
+    {
+      "slug": "melon",
+      "name": "Cantaloupe melon",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169092",
+        "record_description": "Melons, cantaloupe, raw"
+      }
+    },
+    {
+      "slug": "milk-chocolate",
+      "name": "Milk chocolate",
+      "aliases": [],
+      "category": "sweetener",
+      "dietary_flags": [
+        "contains_dairy",
+        "contains_soy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167587",
+        "record_description": "Candies, milk chocolate"
+      }
+    },
+    {
+      "slug": "milk-low-fat",
+      "name": "Milk, low fat (1%)",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170872",
+        "record_description": "Milk, lowfat, fluid, 1% milkfat, with added vitamin A and vitamin D"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "milk-powder",
+      "name": "Milk powder, full fat",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170876",
+        "record_description": "Milk, dry, whole, with added vitamin D"
+      }
+    },
+    {
+      "slug": "milk-reduced-fat",
+      "name": "Milk, reduced fat (2%)",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171267",
+        "record_description": "Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "milk-skimmed",
+      "name": "Milk, skimmed",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171269",
+        "record_description": "Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "milk-whole",
+      "name": "Milk, full fat",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171265",
+        "record_description": "Milk, whole, 3.25% milkfat, with added vitamin D"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "millet",
+      "name": "Millet",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169702",
+        "record_description": "Millet, raw"
+      }
+    },
+    {
+      "slug": "mint-fresh",
+      "name": "Mint, fresh",
+      "aliases": [
+        "na'na'"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173475",
+        "record_description": "Spearmint, fresh"
+      },
+      "uae_specific_reason": "Fresh mint for tabbouleh, laban drinks and tea"
+    },
+    {
+      "slug": "mixed-salad-leaves",
+      "name": "Mixed salad leaves",
+      "aliases": [],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169249",
+        "record_description": "Lettuce, green leaf, raw"
+      },
+      "proxy_note": "SR Legacy 169249 'Lettuce, green leaf, raw' used for mixed salad leaves."
+    },
+    {
+      "slug": "mixed-vegetables-frozen",
+      "name": "Mixed vegetables, frozen",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170471",
+        "record_description": "Vegetables, mixed, frozen, unprepared"
+      }
+    },
+    {
+      "slug": "molokhia",
+      "name": "Molokhia (jute leaves)",
+      "aliases": [
+        "mulukhiyah",
+        "jute mallow"
+      ],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168420",
+        "record_description": "Jute, potherb, cooked, boiled, drained, without salt"
+      },
+      "proxy_note": "SR Legacy 168420 'Jute, potherb, cooked, boiled, drained, without salt': the raw record (168419) has no total fibre, so the boiled record is used; molokhia is always cooked.",
+      "uae_specific_reason": "Molokhia stew, common in Egyptian and Levantine homes in UAE"
+    },
+    {
+      "slug": "mozzarella",
+      "name": "Mozzarella, whole milk",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170845",
+        "record_description": "Cheese, mozzarella, whole milk"
+      }
+    },
+    {
+      "slug": "mozzarella-part-skim",
+      "name": "Mozzarella, part skim",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170847",
+        "record_description": "Cheese, mozzarella, part skim milk"
+      }
+    },
+    {
+      "slug": "muesli",
+      "name": "Muesli",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "cofid_2019",
+        "record_id": "11-780"
+      }
+    },
+    {
+      "slug": "mullet",
+      "name": "Mullet (biyah)",
+      "aliases": [
+        "biyah"
+      ],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175123",
+        "record_description": "Fish, mullet, striped, raw"
+      },
+      "uae_specific_reason": "Gulf-caught fish sold in UAE markets"
+    },
+    {
+      "slug": "mung-beans",
+      "name": "Mung beans",
+      "aliases": [
+        "moong"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174256",
+        "record_description": "Mung beans, mature seeds, raw"
+      }
+    },
+    {
+      "slug": "mushrooms",
+      "name": "Mushrooms, white",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169251",
+        "record_description": "Mushrooms, white, raw"
+      }
+    },
+    {
+      "slug": "mussels",
+      "name": "Mussels",
+      "aliases": [],
+      "category": "seafood",
+      "dietary_flags": [
+        "contains_shellfish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174216",
+        "record_description": "Mollusks, mussel, blue, raw"
+      }
+    },
+    {
+      "slug": "mustard",
+      "name": "Mustard",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172234",
+        "record_description": "Mustard, prepared, yellow"
+      }
+    },
+    {
+      "slug": "mustard-seed",
+      "name": "Mustard seed",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170929",
+        "record_description": "Spices, mustard seed, ground"
+      }
+    },
+    {
+      "slug": "naan",
+      "name": "Naan",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_dairy",
+        "contains_gluten",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171845",
+        "record_description": "Bread, naan, plain, commercially prepared, refrigerated"
+      },
+      "unit": {
+        "label": "naan",
+        "portion": "piece"
+      }
+    },
+    {
+      "slug": "nabulsi",
+      "name": "Nabulsi cheese",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "fdc_branded",
+        "record_id": "2058475",
+        "retrieved_via": "codejetnet/food-data release data-20260925-3, foods-US.db",
+        "retrieved_on": "2026-09-26"
+      },
+      "uae_specific_reason": "Levantine white brined cheese sold in UAE"
+    },
+    {
+      "slug": "nutmeg",
+      "name": "Nutmeg",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171326",
+        "record_description": "Spices, nutmeg, ground"
+      }
+    },
+    {
+      "slug": "oat-bran",
+      "name": "Oat bran",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168872",
+        "record_description": "Oat bran, raw"
+      }
+    },
+    {
+      "slug": "oats-rolled",
+      "name": "Rolled oats",
+      "aliases": [
+        "oatmeal"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173904",
+        "record_description": "Cereals, oats, regular and quick, not fortified, dry"
+      }
+    },
+    {
+      "slug": "octopus",
+      "name": "Octopus",
+      "aliases": [],
+      "category": "seafood",
+      "dietary_flags": [
+        "contains_shellfish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174218",
+        "record_description": "Mollusks, octopus, common, raw"
+      }
+    },
+    {
+      "slug": "okra",
+      "name": "Okra (bamia)",
+      "aliases": [
+        "bamia",
+        "bhindi"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169260",
+        "record_description": "Okra, raw"
+      },
+      "uae_specific_reason": "Bamia stew is a Gulf household staple"
+    },
+    {
+      "slug": "okra-frozen",
+      "name": "Okra, frozen",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169262",
+        "record_description": "Okra, frozen, unprepared"
+      }
+    },
+    {
+      "slug": "olive-oil",
+      "name": "Olive oil",
+      "aliases": [
+        "zeit zaitoun"
+      ],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171413",
+        "record_description": "Oil, olive, salad or cooking"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "olives-black",
+      "name": "Black olives",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169094",
+        "record_description": "Olives, ripe, canned (small-extra large)"
+      }
+    },
+    {
+      "slug": "olives-green",
+      "name": "Green olives",
+      "aliases": [
+        "zaitoun"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169096",
+        "record_description": "Olives, pickled, canned or bottled, green"
+      }
+    },
+    {
+      "slug": "onion",
+      "name": "Onion",
+      "aliases": [
+        "basal"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170000",
+        "record_description": "Onions, raw"
+      },
+      "unit": {
+        "label": "onion",
+        "portion": "medium (2-1/2\" dia)"
+      }
+    },
+    {
+      "slug": "onion-powder",
+      "name": "Onion powder",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171327",
+        "record_description": "Spices, onion powder"
+      }
+    },
+    {
+      "slug": "orange",
+      "name": "Orange",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169097",
+        "record_description": "Oranges, raw, all commercial varieties"
+      },
+      "unit": {
+        "label": "orange",
+        "portion": "fruit (2-5/8\" dia)"
+      }
+    },
+    {
+      "slug": "orange-juice",
+      "name": "Orange juice",
+      "aliases": [],
+      "category": "beverage",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169098",
+        "record_description": "Orange juice, raw (Includes foods for USDA's Food Distribution Program)"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "oregano-dried",
+      "name": "Oregano, dried",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171328",
+        "record_description": "Spices, oregano, dried"
+      }
+    },
+    {
+      "slug": "oyster-sauce",
+      "name": "Oyster sauce",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "contains_shellfish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174529",
+        "record_description": "Sauce, oyster, ready-to-serve"
+      },
+      "density_portion": "tbsp"
+    },
+    {
+      "slug": "papaya",
+      "name": "Papaya",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169926",
+        "record_description": "Papayas, raw"
+      }
+    },
+    {
+      "slug": "paprika",
+      "name": "Paprika",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171329",
+        "record_description": "Spices, paprika"
+      }
+    },
+    {
+      "slug": "parmesan",
+      "name": "Parmesan",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170848",
+        "record_description": "Cheese, parmesan, hard"
+      }
+    },
+    {
+      "slug": "parsley",
+      "name": "Parsley, fresh",
+      "aliases": [
+        "baqdounis"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170416",
+        "record_description": "Parsley, fresh"
+      },
+      "uae_specific_reason": "Tabbouleh parsley"
+    },
+    {
+      "slug": "pasta-dry",
+      "name": "Pasta, dry",
+      "aliases": [
+        "spaghetti",
+        "penne"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168927",
+        "record_description": "Pasta, dry, unenriched"
+      }
+    },
+    {
+      "slug": "pasta-wholewheat-dry",
+      "name": "Wholewheat pasta, dry",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169738",
+        "record_description": "Pasta, whole-wheat, dry (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "peach",
+      "name": "Peach",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169928",
+        "record_description": "Peaches, yellow, raw"
+      },
+      "unit": {
+        "label": "peach",
+        "portion": "medium (2-2/3\" dia)"
+      }
+    },
+    {
+      "slug": "peanut-butter",
+      "name": "Peanut butter, smooth",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172470",
+        "record_description": "Peanut butter, smooth style, without salt"
+      }
+    },
+    {
+      "slug": "peanuts",
+      "name": "Peanuts",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172430",
+        "record_description": "Peanuts, all types, raw"
+      },
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "pear",
+      "name": "Pear",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169118",
+        "record_description": "Pears, raw"
+      },
+      "unit": {
+        "label": "pear",
+        "portion": "medium"
+      }
+    },
+    {
+      "slug": "pecans",
+      "name": "Pecans",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170182",
+        "record_description": "Nuts, pecans"
+      },
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "pesto",
+      "name": "Pesto",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "contains_dairy",
+        "contains_nuts",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171579",
+        "record_description": "Sauce, pesto, ready-to-serve, refrigerated"
+      }
+    },
+    {
+      "slug": "pickled-cucumber",
+      "name": "Pickled cucumber",
+      "aliases": [
+        "kabees"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168558",
+        "record_description": "Pickles, cucumber, dill or kosher dill"
+      }
+    },
+    {
+      "slug": "pine-nuts",
+      "name": "Pine nuts",
+      "aliases": [
+        "snobar"
+      ],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170591",
+        "record_description": "Nuts, pine nuts, dried"
+      },
+      "uae_specific_reason": "Garnish for Levantine rice, fatteh and kibbeh",
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "pineapple",
+      "name": "Pineapple",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169124",
+        "record_description": "Pineapple, raw, all varieties"
+      }
+    },
+    {
+      "slug": "pistachios",
+      "name": "Pistachios",
+      "aliases": [
+        "fustuq halabi"
+      ],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170184",
+        "record_description": "Nuts, pistachio nuts, raw"
+      },
+      "uae_specific_reason": "Garnish for Gulf and Levantine rice and sweets",
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "plantain",
+      "name": "Plantain",
+      "aliases": [],
+      "category": "starch",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169130",
+        "record_description": "Plantains, yellow, raw"
+      }
+    },
+    {
+      "slug": "plums",
+      "name": "Plums",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169949",
+        "record_description": "Plums, raw"
+      },
+      "unit": {
+        "label": "plum",
+        "portion": "fruit (2-1/8\" dia)"
+      }
+    },
+    {
+      "slug": "pomegranate",
+      "name": "Pomegranate seeds",
+      "aliases": [
+        "rumman"
+      ],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169134",
+        "record_description": "Pomegranates, raw"
+      },
+      "uae_specific_reason": "Pomegranate is a Levantine/Persian garnish staple"
+    },
+    {
+      "slug": "pomegranate-molasses",
+      "name": "Pomegranate molasses",
+      "aliases": [
+        "dibs rumman"
+      ],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "off",
+        "record_id": "0015883154986",
+        "retrieved_via": "codejetnet/food-data release data-20260925-3, foods-US.db",
+        "retrieved_on": "2026-09-26"
+      },
+      "uae_specific_reason": "Levantine souring condiment (muhammara, fattoush)"
+    },
+    {
+      "slug": "popcorn-kernels",
+      "name": "Popcorn kernels",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167959",
+        "record_description": "Snacks, popcorn, air-popped"
+      }
+    },
+    {
+      "slug": "pork-loin",
+      "name": "Pork loin",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [
+        "contains_pork"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167818",
+        "record_description": "Pork, fresh, loin, whole, separable lean and fat, raw"
+      }
+    },
+    {
+      "slug": "potato",
+      "name": "Potato",
+      "aliases": [],
+      "category": "starch",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170028",
+        "record_description": "Potatoes, white, flesh and skin, raw"
+      },
+      "unit": {
+        "label": "potato",
+        "portion": "medium (2+-1/4\" to 3-1/4\" dia.)"
+      }
+    },
+    {
+      "slug": "potato-russet",
+      "name": "Potato, russet",
+      "aliases": [],
+      "category": "starch",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170027",
+        "record_description": "Potatoes, russet, flesh and skin, raw (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "processed-cheese",
+      "name": "Processed cheese slices",
+      "aliases": [
+        "cheese slices"
+      ],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170853",
+        "record_description": "Cheese, pasteurized process, American, fortified with vitamin D"
+      },
+      "unit": {
+        "label": "slice",
+        "portion": "slice (3/4 oz)"
+      }
+    },
+    {
+      "slug": "prunes",
+      "name": "Prunes",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168162",
+        "record_description": "Plums, dried (prunes), uncooked"
+      }
+    },
+    {
+      "slug": "puff-pastry",
+      "name": "Puff pastry",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172790",
+        "record_description": "Puff pastry, frozen, ready-to-bake"
+      }
+    },
+    {
+      "slug": "pumpkin",
+      "name": "Pumpkin",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168448",
+        "record_description": "Pumpkin, raw"
+      }
+    },
+    {
+      "slug": "pumpkin-seeds",
+      "name": "Pumpkin seeds",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170556",
+        "record_description": "Seeds, pumpkin and squash seed kernels, dried"
+      }
+    },
+    {
+      "slug": "quinoa",
+      "name": "Quinoa",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168874",
+        "record_description": "Quinoa, uncooked"
+      }
+    },
+    {
+      "slug": "radish",
+      "name": "Radish",
+      "aliases": [
+        "fijl"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169276",
+        "record_description": "Radishes, raw"
+      }
+    },
+    {
+      "slug": "raisins",
+      "name": "Raisins",
+      "aliases": [
+        "zabeeb"
+      ],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168165",
+        "record_description": "Raisins, dark, seedless (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "raspberries",
+      "name": "Raspberries",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167755",
+        "record_description": "Raspberries, raw"
+      }
+    },
+    {
+      "slug": "red-cabbage",
+      "name": "Red cabbage",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169977",
+        "record_description": "Cabbage, red, raw"
+      }
+    },
+    {
+      "slug": "red-onion",
+      "name": "Red onion",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170000",
+        "record_description": "Onions, raw"
+      },
+      "proxy_note": "SR Legacy 170000 'Onions, raw' used for red onion."
+    },
+    {
+      "slug": "rice-brown",
+      "name": "Brown rice, long-grain",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169703",
+        "record_description": "Rice, brown, long-grain, raw (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "rice-cakes",
+      "name": "Rice cakes",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170250",
+        "record_description": "Snacks, rice cakes, brown rice, plain, unsalted"
+      },
+      "unit": {
+        "label": "cake",
+        "portion": "cake"
+      }
+    },
+    {
+      "slug": "rice-glutinous",
+      "name": "Glutinous rice",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168883",
+        "record_description": "Rice, white, glutinous, unenriched, uncooked"
+      }
+    },
+    {
+      "slug": "rice-medium-grain",
+      "name": "Egyptian (medium-grain) rice",
+      "aliases": [
+        "Egyptian rice",
+        "calrose"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168879",
+        "record_description": "Rice, white, medium-grain, raw, enriched"
+      },
+      "uae_specific_reason": "Medium-grain rice used for mahshi and Levantine dishes"
+    },
+    {
+      "slug": "rice-noodles-dry",
+      "name": "Rice noodles, dry",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169742",
+        "record_description": "Rice noodles, dry"
+      }
+    },
+    {
+      "slug": "rice-white-long-grain",
+      "name": "Long-grain white rice",
+      "aliases": [],
+      "category": "grain",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169756",
+        "record_description": "Rice, white, long-grain, regular, raw, unenriched"
+      }
+    },
+    {
+      "slug": "ricotta",
+      "name": "Ricotta",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170851",
+        "record_description": "Cheese, ricotta, whole milk"
+      }
+    },
+    {
+      "slug": "rocket",
+      "name": "Rocket (arugula)",
+      "aliases": [
+        "jarjeer",
+        "arugula"
+      ],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169387",
+        "record_description": "Arugula, raw"
+      },
+      "uae_specific_reason": "Jarjeer is a staple Gulf salad leaf"
+    },
+    {
+      "slug": "saffron",
+      "name": "Saffron",
+      "aliases": [
+        "zafran"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170934",
+        "record_description": "Spices, saffron"
+      },
+      "uae_specific_reason": "Emirati machboos, luqaimat and coffee spice"
+    },
+    {
+      "slug": "salmon",
+      "name": "Salmon, Atlantic, farmed",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175167",
+        "record_description": "Fish, salmon, Atlantic, farmed, raw"
+      }
+    },
+    {
+      "slug": "salsa",
+      "name": "Salsa",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174524",
+        "record_description": "Sauce, salsa, ready-to-serve"
+      }
+    },
+    {
+      "slug": "salt",
+      "name": "Salt",
+      "aliases": [
+        "milh"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173468",
+        "record_description": "Salt, table"
+      }
+    },
+    {
+      "slug": "sardines-canned",
+      "name": "Sardines, canned in oil",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175139",
+        "record_description": "Fish, sardine, Atlantic, canned in oil, drained solids with bone"
+      }
+    },
+    {
+      "slug": "scallops",
+      "name": "Scallops",
+      "aliases": [],
+      "category": "seafood",
+      "dietary_flags": [
+        "contains_shellfish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174220",
+        "record_description": "Mollusks, scallop, mixed species, raw"
+      }
+    },
+    {
+      "slug": "sea-bass",
+      "name": "Sea bass",
+      "aliases": [
+        "hamra (local usage varies)"
+      ],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175142",
+        "record_description": "Fish, sea bass, mixed species, raw"
+      }
+    },
+    {
+      "slug": "sea-bream",
+      "name": "Sea bream",
+      "aliases": [
+        "snapper"
+      ],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "afcd_r1",
+        "record_id": "F001884"
+      }
+    },
+    {
+      "slug": "seitan",
+      "name": "Seitan (wheat gluten)",
+      "aliases": [],
+      "category": "plant_protein",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168147",
+        "record_description": "Vital wheat gluten"
+      },
+      "proxy_note": "SR Legacy 168147 'Vital wheat gluten' used for seitan (prepared seitan is gluten plus water)."
+    },
+    {
+      "slug": "semolina",
+      "name": "Semolina",
+      "aliases": [
+        "smeed"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168933",
+        "record_description": "Semolina, unenriched"
+      },
+      "uae_specific_reason": "Used for Gulf and Levantine sweets (basbousa, maamoul)"
+    },
+    {
+      "slug": "sesame-oil",
+      "name": "Sesame oil",
+      "aliases": [],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "contains_sesame",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171016",
+        "record_description": "Oil, sesame, salad or cooking"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "sesame-seeds",
+      "name": "Sesame seeds",
+      "aliases": [
+        "simsim"
+      ],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_sesame",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170150",
+        "record_description": "Seeds, sesame seeds, whole, dried"
+      },
+      "uae_specific_reason": "Sesame for ka'ak, za'atar and sweets; allergen expansion"
+    },
+    {
+      "slug": "sheri",
+      "name": "Sheri (spangled emperor)",
+      "aliases": [
+        "shaari",
+        "spangled emperor"
+      ],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "cofid_2019",
+        "record_id": "16-126"
+      },
+      "proxy_note": "CoFID 2019 16-126 'Red snapper, flesh only, raw' (Lutjanus spp., family Lutjanidae) used for sheri (Lethrinus nebulosus, family Lethrinidae); no emperor (Lethrinidae) record exists in SR Legacy, Foundation, CoFID 2019 or AFCD Release 1.",
+      "uae_specific_reason": "NUT-7 example (sheri fish)"
+    },
+    {
+      "slug": "shrimp",
+      "name": "Shrimp",
+      "aliases": [
+        "prawns",
+        "rubyan"
+      ],
+      "category": "seafood",
+      "dietary_flags": [
+        "contains_shellfish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174210",
+        "record_description": "Crustaceans, shrimp, mixed species, raw (may contain additives to retain moisture)"
+      },
+      "uae_specific_reason": "NUT-7 example (shrimp)"
+    },
+    {
+      "slug": "smoked-salmon",
+      "name": "Smoked salmon",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173687",
+        "record_description": "Fish, salmon, chinook, smoked"
+      }
+    },
+    {
+      "slug": "sour-cream",
+      "name": "Sour cream",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171257",
+        "record_description": "Cream, sour, cultured"
+      }
+    },
+    {
+      "slug": "soy-milk",
+      "name": "Soy drink, unsweetened",
+      "aliases": [],
+      "category": "plant_protein",
+      "dietary_flags": [
+        "contains_soy",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172446",
+        "record_description": "Soymilk, original and vanilla, unfortified"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "soy-sauce",
+      "name": "Soy sauce",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "contains_gluten",
+        "contains_soy",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174277",
+        "record_description": "Soy sauce made from soy and wheat (shoyu)"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "soybeans",
+      "name": "Soybeans, dried",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "contains_soy",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174270",
+        "record_description": "Soybeans, mature seeds, raw"
+      }
+    },
+    {
+      "slug": "spinach",
+      "name": "Spinach",
+      "aliases": [
+        "sabanekh"
+      ],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168462",
+        "record_description": "Spinach, raw"
+      }
+    },
+    {
+      "slug": "split-peas",
+      "name": "Split peas",
+      "aliases": [],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "afcd_r1",
+        "record_id": "F006543"
+      }
+    },
+    {
+      "slug": "spring-onion",
+      "name": "Spring onion",
+      "aliases": [
+        "scallion"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170005",
+        "record_description": "Onions, spring or scallions (includes tops and bulb), raw"
+      }
+    },
+    {
+      "slug": "squid",
+      "name": "Squid (calamari)",
+      "aliases": [
+        "calamari"
+      ],
+      "category": "seafood",
+      "dietary_flags": [
+        "contains_shellfish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "174223",
+        "record_description": "Mollusks, squid, mixed species, raw"
+      }
+    },
+    {
+      "slug": "strawberries",
+      "name": "Strawberries",
+      "aliases": [],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167762",
+        "record_description": "Strawberries, raw"
+      }
+    },
+    {
+      "slug": "sugar-brown",
+      "name": "Sugar, brown",
+      "aliases": [],
+      "category": "sweetener",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168833",
+        "record_description": "Sugars, brown"
+      }
+    },
+    {
+      "slug": "sugar-white",
+      "name": "Sugar, white",
+      "aliases": [],
+      "category": "sweetener",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169655",
+        "record_description": "Sugars, granulated"
+      }
+    },
+    {
+      "slug": "sunflower-oil",
+      "name": "Sunflower oil",
+      "aliases": [],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171025",
+        "record_description": "Oil, sunflower, linoleic, (approx. 65%)"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "sunflower-seeds",
+      "name": "Sunflower seeds",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170562",
+        "record_description": "Seeds, sunflower seed kernels, dried"
+      }
+    },
+    {
+      "slug": "sweet-potato",
+      "name": "Sweet potato",
+      "aliases": [],
+      "category": "starch",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168482",
+        "record_description": "Sweet potato, raw, unprepared (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "sweetened-condensed-milk",
+      "name": "Sweetened condensed milk",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171275",
+        "record_description": "Milk, canned, condensed, sweetened"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "tahini",
+      "name": "Tahini",
+      "aliases": [
+        "tahina",
+        "tehina"
+      ],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_sesame",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170189",
+        "record_description": "Seeds, sesame butter, tahini, from roasted and toasted kernels (most common type)"
+      },
+      "uae_specific_reason": "NUT-7 example (tahini)"
+    },
+    {
+      "slug": "tamarind",
+      "name": "Tamarind pulp",
+      "aliases": [
+        "tamr hindi"
+      ],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167763",
+        "record_description": "Tamarinds, raw"
+      },
+      "uae_specific_reason": "Souring agent in Gulf and Indian-Gulf cooking"
+    },
+    {
+      "slug": "taro",
+      "name": "Taro (colocasia)",
+      "aliases": [
+        "colocasia",
+        "qolqas"
+      ],
+      "category": "starch",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169308",
+        "record_description": "Taro, raw"
+      }
+    },
+    {
+      "slug": "tea-brewed",
+      "name": "Tea, brewed",
+      "aliases": [
+        "chai",
+        "shai"
+      ],
+      "category": "beverage",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173227",
+        "record_description": "Beverages, tea, black, brewed, prepared with tap water"
+      },
+      "density_portion": "fl oz"
+    },
+    {
+      "slug": "teriyaki-sauce",
+      "name": "Teriyaki sauce",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "contains_gluten",
+        "contains_soy",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171167",
+        "record_description": "Sauce, teriyaki, ready-to-serve"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "tilapia",
+      "name": "Tilapia",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175176",
+        "record_description": "Fish, tilapia, raw"
+      }
+    },
+    {
+      "slug": "tofu-firm",
+      "name": "Tofu, firm",
+      "aliases": [],
+      "category": "plant_protein",
+      "dietary_flags": [
+        "contains_soy",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172475",
+        "record_description": "Tofu, raw, firm, prepared with calcium sulfate"
+      }
+    },
+    {
+      "slug": "tomato",
+      "name": "Tomato",
+      "aliases": [
+        "tamatim"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170457",
+        "record_description": "Tomatoes, red, ripe, raw, year round average"
+      },
+      "unit": {
+        "label": "tomato",
+        "portion": "medium whole (2-3/5\" dia)"
+      }
+    },
+    {
+      "slug": "tomato-canned",
+      "name": "Tomatoes, canned",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170051",
+        "record_description": "Tomatoes, red, ripe, canned, packed in tomato juice"
+      }
+    },
+    {
+      "slug": "tomato-passata",
+      "name": "Tomato passata",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170460",
+        "record_description": "Tomato products, canned, puree, without salt added"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "tomato-paste",
+      "name": "Tomato paste",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170459",
+        "record_description": "Tomato products, canned, paste, without salt added (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "tortilla-corn",
+      "name": "Corn tortilla",
+      "aliases": [],
+      "category": "bakery",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175036",
+        "record_description": "Tortillas, ready-to-bake or -fry, corn"
+      },
+      "unit": {
+        "label": "tortilla",
+        "portion": "tortilla"
+      }
+    },
+    {
+      "slug": "tortilla-flour",
+      "name": "Flour tortilla",
+      "aliases": [
+        "wrap"
+      ],
+      "category": "bakery",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175037",
+        "record_description": "Tortillas, ready-to-bake or -fry, flour, refrigerated"
+      },
+      "unit": {
+        "label": "tortilla",
+        "portion": "tortilla (approx 10\" dia)"
+      }
+    },
+    {
+      "slug": "trout",
+      "name": "Rainbow trout",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173717",
+        "record_description": "Fish, trout, rainbow, farmed, raw"
+      }
+    },
+    {
+      "slug": "tuna-canned-oil",
+      "name": "Tuna, canned in oil",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173708",
+        "record_description": "Fish, tuna, light, canned in oil, drained solids"
+      }
+    },
+    {
+      "slug": "tuna-canned-water",
+      "name": "Tuna, canned in water",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173709",
+        "record_description": "Fish, tuna, light, canned in water, drained solids (Includes foods for USDA's Food Distribution Program)"
+      }
+    },
+    {
+      "slug": "tuna-fresh",
+      "name": "Tuna, yellowfin",
+      "aliases": [],
+      "category": "fish",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175159",
+        "record_description": "Fish, tuna, fresh, yellowfin, raw"
+      }
+    },
+    {
+      "slug": "turkey-breast",
+      "name": "Turkey breast",
+      "aliases": [],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171098",
+        "record_description": "Turkey, whole, breast, meat only, raw"
+      }
+    },
+    {
+      "slug": "turkey-mince",
+      "name": "Turkey mince",
+      "aliases": [
+        "ground turkey"
+      ],
+      "category": "poultry",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172850",
+        "record_description": "Turkey, ground, 93% lean, 7% fat, raw"
+      }
+    },
+    {
+      "slug": "turmeric",
+      "name": "Turmeric",
+      "aliases": [
+        "kurkum",
+        "haldi"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172231",
+        "record_description": "Spices, turmeric, ground"
+      }
+    },
+    {
+      "slug": "turnip",
+      "name": "Turnip",
+      "aliases": [],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170465",
+        "record_description": "Turnips, raw"
+      }
+    },
+    {
+      "slug": "vanilla-extract",
+      "name": "Vanilla extract",
+      "aliases": [],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "contains_alcohol",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173471",
+        "record_description": "Vanilla extract"
+      },
+      "atwater_reason": "energy includes alcohol (34.4 g per 100 g, SR nutrient 1018, about 6.93 kcal/g), which is neither protein, carbohydrate nor fat, so NUT-4 does not count it",
+      "density_portion": "cup"
+    },
+    {
+      "slug": "veal",
+      "name": "Veal, leg",
+      "aliases": [],
+      "category": "red_meat",
+      "dietary_flags": [],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175268",
+        "record_description": "Veal, leg (top round), separable lean and fat, raw"
+      }
+    },
+    {
+      "slug": "vegetable-ghee",
+      "name": "Vegetable ghee",
+      "aliases": [
+        "vanaspati",
+        "samn nabati"
+      ],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "cofid_2019",
+        "record_id": "12-502"
+      },
+      "proxy_note": "CoFID 2019 12-502 'Ghee made from vegetable oil' used for Gulf vegetable ghee (samn nabati).",
+      "uae_specific_reason": "Vegetable ghee widely used in Gulf home cooking"
+    },
+    {
+      "slug": "vegetable-oil",
+      "name": "Vegetable oil (soybean)",
+      "aliases": [],
+      "category": "oil_fat",
+      "dietary_flags": [
+        "contains_soy",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171411",
+        "record_description": "Oil, soybean, salad or cooking"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "vegetable-stock",
+      "name": "Vegetable stock",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171583",
+        "record_description": "Soup, vegetable broth, ready to serve"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "vermicelli",
+      "name": "Vermicelli (sha'eriya)",
+      "aliases": [
+        "sha'eriya",
+        "balaleet noodles"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168927",
+        "record_description": "Pasta, dry, unenriched"
+      },
+      "proxy_note": "SR Legacy 168927 'Pasta, dry, unenriched' used for wheat vermicelli (sha'eriya): same product, different shape.",
+      "uae_specific_reason": "Wheat vermicelli for Emirati balaleet and Levantine rice"
+    },
+    {
+      "slug": "vine-leaves",
+      "name": "Vine leaves",
+      "aliases": [
+        "warak enab",
+        "grape leaves"
+      ],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168575",
+        "record_description": "Grape leaves, raw"
+      },
+      "uae_specific_reason": "Warak enab, a Levantine staple sold fresh and brined in UAE"
+    },
+    {
+      "slug": "vine-leaves-brined",
+      "name": "Vine leaves, brined",
+      "aliases": [],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169393",
+        "record_description": "Grape leaves, canned"
+      },
+      "uae_specific_reason": "Brined warak enab for stuffing"
+    },
+    {
+      "slug": "vinegar",
+      "name": "Vinegar",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "172237",
+        "record_description": "Vinegar, distilled"
+      },
+      "atwater_reason": "energy comes from acetic acid (about 3.6 kcal/g), which is not protein, carbohydrate or fat; SR28 gives no Atwater factors for this record",
+      "density_portion": "cup"
+    },
+    {
+      "slug": "walnuts",
+      "name": "Walnuts",
+      "aliases": [],
+      "category": "nut_seed",
+      "dietary_flags": [
+        "contains_nuts",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170187",
+        "record_description": "Nuts, walnuts, english"
+      },
+      "edible_portion": {
+        "value": 1,
+        "basis": "1: sold shelled in UAE retail; the SR refuse for this record is the shell of in-shell nuts"
+      }
+    },
+    {
+      "slug": "water",
+      "name": "Water",
+      "aliases": [],
+      "category": "beverage",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173647",
+        "record_description": "Beverages, water, tap, drinking"
+      },
+      "density_portion": "fl oz"
+    },
+    {
+      "slug": "watercress",
+      "name": "Watercress",
+      "aliases": [],
+      "category": "leafy_green",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170068",
+        "record_description": "Watercress, raw"
+      }
+    },
+    {
+      "slug": "watermelon",
+      "name": "Watermelon",
+      "aliases": [
+        "batikh"
+      ],
+      "category": "fruit",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "167765",
+        "record_description": "Watermelon, raw"
+      }
+    },
+    {
+      "slug": "wheat-berries",
+      "name": "Whole wheat berries (harees wheat)",
+      "aliases": [
+        "harees wheat",
+        "jareesh (cracked)"
+      ],
+      "category": "grain",
+      "dietary_flags": [
+        "contains_gluten",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "168890",
+        "record_description": "Wheat, hard red winter"
+      },
+      "proxy_note": "SR Legacy 168890 'Wheat, hard red winter' used for whole wheat berries sold for harees and jareesh.",
+      "uae_specific_reason": "Grain for Emirati harees and jareesh"
+    },
+    {
+      "slug": "whey-protein",
+      "name": "Whey protein powder",
+      "aliases": [],
+      "category": "supplement",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "173177",
+        "record_description": "Beverages, Whey protein powder isolate"
+      }
+    },
+    {
+      "slug": "white-beans",
+      "name": "White beans (cannellini), dried",
+      "aliases": [
+        "fasolia"
+      ],
+      "category": "legume",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175202",
+        "record_description": "Beans, white, mature seeds, raw"
+      }
+    },
+    {
+      "slug": "worcestershire-sauce",
+      "name": "Worcestershire sauce",
+      "aliases": [],
+      "category": "sauce_condiment",
+      "dietary_flags": [
+        "contains_fish"
+      ],
+      "locale_availability": {
+        "AE": "available"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171610",
+        "record_description": "Sauce, worcestershire"
+      },
+      "density_portion": "cup"
+    },
+    {
+      "slug": "yam",
+      "name": "Yam",
+      "aliases": [],
+      "category": "starch",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "rare"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170071",
+        "record_description": "Yam, raw"
+      }
+    },
+    {
+      "slug": "yeast-dry",
+      "name": "Dried yeast",
+      "aliases": [],
+      "category": "other",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "175043",
+        "record_description": "Leavening agents, yeast, baker's, active dry"
+      }
+    },
+    {
+      "slug": "yogurt-plain-low-fat",
+      "name": "Yogurt, plain, low fat",
+      "aliases": [],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "170886",
+        "record_description": "Yogurt, plain, low fat"
+      }
+    },
+    {
+      "slug": "yogurt-plain-whole",
+      "name": "Yogurt, plain, full fat",
+      "aliases": [
+        "zabadi",
+        "curd"
+      ],
+      "category": "dairy",
+      "dietary_flags": [
+        "contains_dairy",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "171284",
+        "record_description": "Yogurt, plain, whole milk"
+      }
+    },
+    {
+      "slug": "zaatar",
+      "name": "Za'atar blend",
+      "aliases": [
+        "zaatar",
+        "za'atar mix"
+      ],
+      "category": "herb_spice",
+      "dietary_flags": [
+        "contains_sesame",
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "off",
+        "record_id": "0822514284307",
+        "retrieved_via": "codejetnet/food-data release data-20260925-3, foods-US.db",
+        "retrieved_on": "2026-09-26"
+      },
+      "uae_specific_reason": "NUT-7 example (za'atar); sesame allergen expansion"
+    },
+    {
+      "slug": "zucchini",
+      "name": "Zucchini (kousa)",
+      "aliases": [
+        "kousa",
+        "courgette"
+      ],
+      "category": "vegetable",
+      "dietary_flags": [
+        "vegan",
+        "vegetarian"
+      ],
+      "locale_availability": {
+        "AE": "common"
+      },
+      "source": {
+        "dataset": "sr_legacy",
+        "record_id": "169291",
+        "record_description": "Squash, summer, zucchini, includes skin, raw"
+      },
+      "uae_specific_reason": "Kousa for mahshi, a Levantine/Gulf home staple",
+      "unit": {
+        "label": "zucchini",
+        "portion": "medium"
+      }
+    }
+  ],
+  "omitted": [
+    {
+      "name": "Sumac",
+      "nut7_example": true,
+      "reason": "No record with per-100 g composition in SR Legacy, FDC Foundation, CoFID 2019, AFCD Release 1 or Fineli 18; the only FDC Branded record (2630657, GROUND SUMAC) declares 0 for every nutrient from a 0.7 g serving, which is rounding, not composition."
+    }
+  ]
+}
