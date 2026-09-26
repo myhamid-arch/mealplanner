@@ -4,8 +4,8 @@
 // - members and preferences: `kg.sync` (KG-3);
 // - targets, tolerances, slots, schedules, splits, per-slot targets, portion biases, exclusions:
 //   `plates.resolve` of future meals (PLN-13);
-// Plan writes and the adjuster rows a plan save materialises trigger nothing (no follow-up loops).
 // - queued `job` rows (the `recipe.*` ops, R-40): sent to the queue by the caller.
+// Plan writes and the adjuster rows a plan save materialises trigger nothing (no follow-up loops).
 // The API and the worker both call this after applying a change set.
 import type { Json } from "@mealplanner/core/types";
 import { touchedEntities } from "../changes/index.js";

@@ -152,3 +152,15 @@ Reading: `DELETE /api/v1/account` (password confirmed) is refused for a househol
 - SPEC-Q-19: assigned by R-40 and built. Pino logs carry request id, household and user (web) and job id, kind and duration (worker); the plan job logs `PlanResult.stats`. `GET /api/v1/diagnostics` (admin) returns the last 50 `ai_generation` rows and the failed jobs. `POST /api/v1/cook-sheets/{date}/flags` (admin, kitchen) stores the flag as a kitchen-tag review, and an `unavailable` flag enqueues `plates.substitute`. The job uses the graph's `substitutes` under the household's exclusions, creates household copies of the affected dishes with the substitute, and re-solves the affected future meals through the plan service in one change set that admins see in the change log.
 - R-41: the `HouseholdRow` test literal (1.2.2), the registry list in `changes.int.test.ts` (1.1.2, title unchanged) and the 1.3.3 required test name were edited as granted.
 - Found by the gate tests and fixed: the TOTP-verify session replacement (ADR-1), and the plan job's `done` progress event, which closed the SSE stream before the job finished (ADR-2).
+
+## SPEC-Q-24: writes with a dedicated endpoint are refused on `/change-sets`
+
+SPEC-Q-1 sends configuration writes through `POST /change-sets`. Some ops have endpoints that add checks around the op: people and access (`access.*`, `role.set`) look up the login and delete its sessions, and support grants (`support.*`) look up the operator and cap the grant at 168 h. Reading: `/change-sets` and its preview refuse those kinds with `422 dedicated_endpoint`, naming the endpoint. In addition, after any change set (an undo, an accepted proposal) the API revokes the sessions of every login the change set left blocked or removed. A `household.update` with a time zone that is not a valid IANA name is refused with 400.
+
+## SPEC-Q-25: the kitchen's view of reviews
+
+SPEC-Q-17 limits kitchen writes to kitchen tags. Reading, for reads: `GET /reviews` gives a kitchen login only reviews that carry a kitchen tag, with rating and comment removed and only the kitchen tags kept. Author names are blanked (except its own) when `kitchen_sees_names` is off. The cook sheet is built with the names the caller may see. Tolerance notes, which show deviations against targets, are admin-only. A member sees only the plating rows of plates they may see (`members_see_plates`).
+
+## SPEC-Q-26: an existing account without a usable login joins with its credentials
+
+A removed or everywhere-blocked login cannot sign in (SPEC-Q-5), and sign-up refuses its email, so a new invite could not be used. Reading: `POST /invites/accept` also takes `credentials: { email, password }`. They are checked against the library's password hash; a platform-blocked account is refused.
