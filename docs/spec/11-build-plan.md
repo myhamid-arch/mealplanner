@@ -86,7 +86,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 | 1.4.2 | `packages/ui-tokens/**`, `apps/web/app/layout.tsx`, `apps/web/app/globals.css`, `apps/web/app/(shell)/**`, `apps/web/app/(app)/layout.tsx`, `apps/web/components/ui/**`, `apps/web/public/**`, `apps/web/next.config.*`, `apps/web/playwright.config.ts`, `apps/web/postcss.config.mjs`, `apps/web/e2e/shell.spec.ts`, `scripts/verify/leaf-1.4.2.mjs` | 1.1.1 | judgment | 2 |
 | 1.2.2 | `packages/core/src/planner/targets/**`, `packages/core/src/planner/solver/**`, `packages/core/test/planner/solver/**`, `packages/core/test/planner/targets/**`, `scripts/verify/leaf-1.2.2.mjs` | 1.1.2, 1.2.1 | judgment | 3 |
 | 1.2.4 | `data/seed-dishes/**`, `data/adjusters.json`, `scripts/verify/leaf-1.2.4.mjs` | 1.1.3, 1.2.2 | judgment | 4 |
-| 1.3.2 | `packages/core/src/learning/preferences/**`, `packages/core/src/learning/portions/**`, `packages/core/test/learning/prefs/**`, `packages/db/src/services/reviews/**`, `scripts/verify/leaf-1.3.2.mjs` | 1.1.2 | judgment | 3 |
+| 1.3.2 | `packages/core/src/learning/preferences/**`, `packages/core/src/learning/portions/**`, `packages/core/test/learning/prefs/**`, `packages/db/src/services/reviews/**`, `packages/db/test/reviews/**`, `packages/db/src/schema/review-revision.ts`, `packages/db/src/migrations/0002_*`, `packages/db/src/migrations/meta/**`, `scripts/verify/leaf-1.3.2.mjs` (plus the single-entry edits granted in R-26) | 1.1.2 | judgment | 3 |
 | 1.2.3 | `packages/core/src/planner/select/**`, `packages/core/src/planner/cooksheet/**`, `packages/core/src/planner/index.ts`, `packages/core/test/planner/select/**`, `scripts/verify/leaf-1.2.3.mjs` | 1.2.2, 1.2.4 | judgment | 5 |
 | 1.3.1 | `packages/ai/src/client/**`, `packages/ai/src/recipes/**`, `packages/ai/test/recipes/**`, `scripts/verify/leaf-1.3.1.mjs` | 1.1.2, 1.2.2 | judgment | 4 |
 | 1.3.4 | `packages/graph/**`, `scripts/kg-rebuild.ts`, `scripts/verify/leaf-1.3.4.mjs` | 1.1.2, 1.2.4 | judgment | 5 |
@@ -316,3 +316,12 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - Q-12 (roles enforced in the API layer, 1.4.1) and Q-13 (`plan.save_days` refuses a date whose meal has reviews unless it is locked): accepted.
   - Q-14: default slot times accepted; icons per R-23.
   - D-1: `drizzle.config.ts` lives under `packages/db/src/migrations/`. Accepted.
+
+### Rulings from wave 3 CP1 (leaves 1.2.2, 1.3.2)
+
+- **R-25 (1.2.2 SPEC-Q-1 … 16).** Accepted as proposed: the interface additions (`SlotTarget.slotTypeId`, `SlotTarget.carbBasis`, `loadPortionSolver()`, status `untargeted`, `DishForSolve` / `MemberCtx`), constants in `planner/solver/config.ts`, the sat-fat default from `household.sat_fat_default_pct` (OQ-4), largest-remainder rounding, the G4 ratio-deviation definition, and the strict-infeasible and untargeted rules. `planner/index.ts` (1.2.3) re-exports `planner/targets` and `planner/solver`.
+- **R-26 (1.3.2).**
+  - SPEC-Q-1: SC-3 requires a *measurable* drop. G1 asserts the member's dish preference score falls by ≥ 0.3 and the member's plate appeal falls by a measured amount > 0, with every other member unchanged.
+  - SPEC-Q-2: 1.3.2 owns `packages/db/test/reviews/**`.
+  - SPEC-Q-11 (architect gap): FBK-2 "edits are kept" had no table. 02 now has `review_revision`. Under R-9, 1.3.2 owns `packages/db/src/schema/review-revision.ts`, migration `0002_*` and `packages/db/src/migrations/meta/**`, and may make **single-entry** additions to `packages/db/src/schema/index.ts` (export), `packages/db/src/repos/tables.ts` (the repository entry, household-scoped) and `packages/db/test/spec-columns.ts` (the new table's columns). Migration `0001` stays untouched. 1.1.2's gates G1 and G2 must still pass on the 1.3.2 branch, and the CP2 PR shows that output.
+  - SPEC-Q-3 … 10, 12, 13: accepted as proposed.
