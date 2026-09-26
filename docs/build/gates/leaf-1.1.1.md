@@ -14,5 +14,5 @@ Scope: Monorepo, tooling, CI, as specified in docs/spec (see 11-build-plan.md §
   EXPECT: VERIFY leaf-1.1.1 G2 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=938345fc1b02a68e973a716cb3c22a935ae19cba17cf859b7655d2f93882c4da; exit=0; EXPECT=matched; output-sha256=ce46185b58f3d21a87427657efe7ae36ead45c41efa31686eb69096bd90c4894; output-bytes=4211; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G3: CI workflow runs lint, typecheck, unit and integration tests against a postgres:16 service
-  EVIDENCE: pending
+- [x] G3: CI workflow runs lint, typecheck, unit and integration tests against a postgres:16 service
+  EVIDENCE: architect review 2026-09-26: ci.yml runs frozen install, format, lint, typecheck, build, unit and integration against a postgres:16 service with a server_version=16 assertion; actions SHA-pinned; green on 0a1d160 https://github.com/myhamid-arch/mealplanner/actions/runs/36229437748

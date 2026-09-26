@@ -8,3 +8,10 @@ node_modules/
 .env
 .env.*
 !.env.example
+
+# build output
+dist/
+.turbo/
+.next/
+next-env.d.ts
+*.tsbuildinfo
