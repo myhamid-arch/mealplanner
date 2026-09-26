@@ -95,8 +95,8 @@ export class Run {
     return w;
   }
 
-  /** The resolver's target for a targeted member at a slot on a date (PLN-4); null if untargeted. */
-  target(date: string, memberId: string, slotTypeId: string): SlotTarget | null {
+  /** The resolver's targets of a date (PLN-4), by `memberId|slotTypeId`, computed once. */
+  private targetsOn(date: string): Map<string, SlotTarget> {
     let byKey = this.targets.get(date);
     if (byKey === undefined) {
       byKey = new Map(
@@ -104,13 +104,17 @@ export class Run {
       );
       this.targets.set(date, byKey);
     }
-    return byKey.get(`${memberId}|${slotTypeId}`) ?? null;
+    return byKey;
+  }
+
+  /** The resolver's target for a targeted member at a slot on a date; null if untargeted. */
+  target(date: string, memberId: string, slotTypeId: string): SlotTarget | null {
+    return this.targetsOn(date).get(`${memberId}|${slotTypeId}`) ?? null;
   }
 
   /** Every resolver target of a member on a date (PLN-4). */
   targetsOf(date: string, memberId: string): SlotTarget[] {
-    this.target(date, memberId, "");
-    return [...(this.targets.get(date)?.values() ?? [])].filter((t) => t.memberId === memberId);
+    return [...this.targetsOn(date).values()].filter((t) => t.memberId === memberId);
   }
 
   /** Adjusters offered at a slot (PLN-6, SPEC-Q-7). */

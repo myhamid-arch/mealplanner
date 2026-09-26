@@ -61,9 +61,9 @@ A `weight_preset` whose `applies_to_weekdays` contains the date's weekday overri
 
 G3 means 50 F1 week plans with seeds 1…50 and the C3 sesame allergy loaded from the F1 fixture. `f1Config()` in `test/planner/targets/config.ts` leaves exclusions empty. G3 checks every C3 plate, adjusters included, for any ingredient flagged `contains_sesame`. The negative control plans the same 50 seeds with the exclusion removed, and must find sesame on a C3 plate at least once.
 
-## SPEC-Q-15: when frequency leaves no dish (PLN-9 §6.3, PLN-12) — raised at build
+## SPEC-Q-15: when frequency leaves no dish (PLN-9 §6.3, PLN-12) — raised at build; accepted as R-37
 
-On the F1 week, the per-attendee 6-day gap (SPEC-Q-5) blocks every suitable snack or pre-workout dish for some members by Saturday. The cause is that each member needs 7 snacks plus up to 3 pre- and 3 post-workout dishes from overlapping pools. Without a fallback, those targeted member-meals would get no plate at all. Reading: PLN-12 "off: plan with the best available dish" applies. Only the frequency filter relaxes: the dishes are ordered by how long ago an attendee was last served them (longest first), then solved and scored as usual. The meal is flagged `frequency_relaxed`, and its `explain` says so. Exclusions, `hard = never` preferences and slot suitability never relax. If they leave nothing, the meal is flagged `no_candidate` and no dish is invented.
+On the F1 week, the per-attendee 6-day gap (SPEC-Q-5) blocks every suitable snack or pre-workout dish for some members by Saturday. The cause is that each member needs 7 snacks plus up to 3 pre- and 3 post-workout dishes from overlapping pools. Without a fallback, those targeted member-meals would get no plate at all. Reading: PLN-12 "off: plan with the best available dish" applies. Only the frequency filter relaxes: the eligible dish served longest ago is used. Dishes are tried in order of how long ago an attendee was last served them, longest first; ties go in pre-score order. R-37 wording. The meal is flagged `frequency_relaxed`, and its `explain` says so. Exclusions, `hard = never` preferences and slot suitability never relax. If they leave nothing, the meal is flagged `no_candidate` and no dish is invented.
 
 ## SPEC-Q-16: what G4's time budget measures
 
