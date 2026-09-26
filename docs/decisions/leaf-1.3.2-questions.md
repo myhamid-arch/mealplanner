@@ -1,6 +1,6 @@
 # leaf-1.3.2 spec questions
 
-Each question states the reading this leaf builds on. SPEC-Q-1 and SPEC-Q-2 affect a gate and need a ruling at CP1; the others do not block a gate.
+Each question states the reading this leaf builds on. Rulings: BLD-8 R-26 (CP1 APPROVED). SPEC-Q-1 and SPEC-Q-2 were accepted, SPEC-Q-11 was answered with the `review_revision` table, and SPEC-Q-3 to SPEC-Q-10, SPEC-Q-12 and SPEC-Q-13 were accepted as proposed. SPEC-Q-14 was found during the build.
 
 ## SPEC-Q-1: G1's "dish appeal ≥ 0.3" cannot be reached through the FBK-4 appeal formula alone (blocks G1)
 SC-3 says two 1★ reviews "measurably lower that dish's appeal score for that member". G1 turns this into "lower that member's dish appeal by at least 0.3". FBK-4 gives two readings of "dish appeal":
@@ -54,6 +54,7 @@ Reading:
 - A **component** review adjusts that component's role.
 - A **dish**, **plan_meal** or **plate** review adjusts every role on the member's plate for that meal with cooked grams > 0. Without a plate context, it adjusts every role of the dish's required components.
 - A **plan_day** review adjusts every role on the member's plates that day.
+- A **variant** review adjusts its component's role. Ingredient, cuisine and method reviews adjust no role. (Clarification made during the build: the CP1 text did not list these targets.)
 - Each role is adjusted at most once per review. `too_much` and `too_little`/`still_hungry` on the same review cancel to no change. `just_right` makes no change.
 - The bias is rounded to 3 decimals (the column is `numeric(10,3)`) and clamped to [0.6, 1.6].
 - The `ReviewComposePhone` mockup copy says the rice portion adjusts "after two 'too much' ratings". FBK-5 says each signal multiplies by 0.9. This leaf follows FBK-5. The copy belongs to 1.4.5.
@@ -79,3 +80,7 @@ Reading:
 - Automatic learning runs **synchronously when a review is created** (and when it is edited, SPEC-Q-11). It uses one transaction: the review insert and one `learning` change set (actor `system`), applied through `applyChangeSet`. A review can therefore never be learned from twice, and it needs no marker.
 - `processed_at` is left to the insights run (1.3.3), which counts unprocessed reviews.
 - A service function `relearnReview` is not provided. Undoing the learning change set from the change log is the way to reverse it (R2-ADM-7).
+
+## SPEC-Q-14: editing a review whose learning change set was undone (found during the build; non-blocking)
+An edit retracts the review's earlier contribution and applies the new one (SPEC-Q-11). If an admin has already undone that review's `learning` change set from the change log, the retraction removes evidence that is no longer there. The floor at 0 bounds the effect, but the learned state of that key is then slightly off. The data model has no link from a change set to the review that caused it, so the service cannot tell whether the earlier learning is still applied.
+Reading taken: retract unconditionally. The case needs two admin actions, an undo and then an author edit within 24 h. An exact fix needs `change_set` → `review` provenance, which is a schema change for the architect to decide.
