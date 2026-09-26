@@ -3,11 +3,11 @@
 // (REC-5), with their model-proposed ingredients as unverified household ingredients (NUT-7). The
 // generator itself (`@mealplanner/ai/recipes`) is composed with these in `apps/worker`; the types
 // here are structural so `db` does not import `ai` (ARC-3). Also the ARC-6 daily dish limit.
-import { and, count, eq, gte } from "drizzle-orm";
+import { and, eq, gte, sql } from "drizzle-orm";
 import type { ChangeOp } from "@mealplanner/core/changes";
 import type { HouseholdContext, Json } from "@mealplanner/core/types";
 import { createWriteRepos, type Executor } from "../../repos/index.js";
-import { dish } from "../../schema/index.js";
+import { aiGeneration, dish } from "../../schema/index.js";
 import { newId } from "../../schema/ids.js";
 import { applyChangeSet } from "../changes/index.js";
 import type { DbCatalog } from "./catalog.js";
@@ -132,7 +132,7 @@ function ingredientSlugOf(slug: string): string {
 /**
  * REC-5 "survivors are saved via a change set": `ingredient.create` for each new ingredient
  * (`ai_estimate`, low confidence, NUT-7) and `dish.create` with `source: ai`, in one change set.
- * Returns the new dish ids in input order.
+ * Returns the new dish ids in input order and the change set (for its follow-up jobs).
  */
 export async function saveGeneratedDishes(
   db: Executor,
@@ -143,20 +143,28 @@ export async function saveGeneratedDishes(
     catalog: DbCatalog;
     by: ChangeActorInput;
   },
-): Promise<string[]> {
-  if (args.survivors.length === 0) return [];
+): Promise<{ dishIds: string[]; changeSetId: string | null }> {
+  if (args.survivors.length === 0) return { dishIds: [], changeSetId: null };
   const ingredientIds = new Map(args.catalog.idBySlug);
   const ops: ChangeOp[] = [];
   for (const s of args.survivors)
     for (const n of s.newIngredients) {
-      if (ingredientIds.has(n.slug)) continue;
+      // Stored slugs use the op's grammar (underscores); look both forms up so a proposal that
+      // differs only in separators reuses the ingredient instead of colliding on the unique slug.
+      const slug = ingredientSlugOf(n.slug);
+      const existing = ingredientIds.get(n.slug) ?? ingredientIds.get(slug);
+      if (existing !== undefined) {
+        ingredientIds.set(n.slug, existing);
+        continue;
+      }
       const id = newId();
       ingredientIds.set(n.slug, id);
+      ingredientIds.set(slug, id);
       ops.push({
         kind: "ingredient.create",
         payload: {
           id,
-          slug: ingredientSlugOf(n.slug),
+          slug,
           name: n.name,
           category: n.category,
           kcal: n.per100g.kcal,
@@ -244,19 +252,19 @@ export async function saveGeneratedDishes(
       },
     });
   }
-  await applyChangeSet(db, ctx, {
+  const applied = await applyChangeSet(db, ctx, {
     actor: args.by.actor,
     source: args.by.source,
     summary: `Add ${String(dishIds.length)} AI recipe${dishIds.length === 1 ? "" : "s"}`,
     ops,
   });
-  return dishIds;
+  return { dishIds, changeSetId: applied.changeSetId };
 }
 
-/** Start of the household's local day, as an instant (`timezone` is an IANA name). */
-export function localMidnight(timezone: string, now: Date): Date {
+/** Offset of `timeZone` from UTC at `at`, in ms (wall clock minus UTC). */
+function offsetMs(timeZone: string, at: number): number {
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: timezone,
+    timeZone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -264,13 +272,36 @@ export function localMidnight(timezone: string, now: Date): Date {
     minute: "2-digit",
     second: "2-digit",
     hourCycle: "h23",
-  }).formatToParts(now);
+  }).formatToParts(new Date(at));
   const get = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? "0");
-  const sinceMidnightMs = ((get("hour") * 60 + get("minute")) * 60 + get("second")) * 1000;
-  return new Date(Math.floor(now.getTime() / 1000) * 1000 - sinceMidnightMs);
+  const wall = Date.UTC(
+    get("year"),
+    get("month") - 1,
+    get("day"),
+    get("hour"),
+    get("minute"),
+    get("second"),
+  );
+  return wall - Math.floor(at / 1000) * 1000;
 }
 
-/** ARC-6 / SPEC-Q-15: AI dishes created since the household's local midnight. */
+/**
+ * Start of the household's local day, as an instant (`timezone` is an IANA name). Computed from
+ * the offset in force at midnight, so days that change daylight-saving time are exact.
+ */
+export function localMidnight(timezone: string, now: Date): Date {
+  const local = new Date(now.getTime() + offsetMs(timezone, now.getTime()));
+  const wallMidnight = Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate());
+  let instant = wallMidnight - offsetMs(timezone, wallMidnight);
+  instant = wallMidnight - offsetMs(timezone, instant);
+  return new Date(instant);
+}
+
+/**
+ * ARC-6 / SPEC-Q-15: AI dishes requested since the household's local midnight, from the
+ * `ai_generation` audit rows (each generation's first call records the dish count asked for).
+ * Counting requests, not stored dishes, covers revisions and survives an undo of the saved dishes.
+ */
 export async function aiDishesToday(
   db: Executor,
   ctx: HouseholdContext,
@@ -278,13 +309,16 @@ export async function aiDishesToday(
   now: Date = new Date(),
 ): Promise<number> {
   const [row] = await db
-    .select({ n: count() })
-    .from(dish)
+    .select({
+      n: sql<number>`coalesce(sum(coalesce((${aiGeneration.requestSummary} -> 'context' ->> 'count')::int, 0)), 0)::int`,
+    })
+    .from(aiGeneration)
     .where(
       and(
-        eq(dish.householdId, ctx.householdId),
-        eq(dish.source, "ai"),
-        gte(dish.createdAt, localMidnight(timezone, now)),
+        eq(aiGeneration.householdId, ctx.householdId),
+        eq(aiGeneration.purpose, "recipe"),
+        sql`(${aiGeneration.requestSummary} ->> 'call')::int = 1`,
+        gte(aiGeneration.createdAt, localMidnight(timezone, now)),
       ),
     );
   return row?.n ?? 0;

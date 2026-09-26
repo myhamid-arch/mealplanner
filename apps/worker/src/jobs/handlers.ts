@@ -20,6 +20,7 @@ import {
 } from "@mealplanner/db/services/plans";
 import { requestDishesFor, synthesizeFor, generateDishes } from "../ai.js";
 import { toJson, type JobContext, type JobHandler } from "../runner.js";
+import type { WorkerRuntime } from "../runtime.js";
 import { reviseRecipe } from "./revise.js";
 import { purgeDueHouseholds } from "./purge.js";
 
@@ -39,16 +40,30 @@ export async function followUps(
   householdId: string,
   changeSetId: string | null,
 ): Promise<string[]> {
+  return followUpsOf(ctx.rt, householdId, changeSetId);
+}
+
+export async function followUpsOf(
+  rt: WorkerRuntime,
+  householdId: string,
+  changeSetId: string | null,
+): Promise<string[]> {
   if (changeSetId === null) return [];
-  const [row] = await ctx.rt.db.select().from(changeSet).where(eq(changeSet.id, changeSetId));
-  const [h] = await ctx.rt.db
+  const [row] = await rt.db.select().from(changeSet).where(eq(changeSet.id, changeSetId));
+  const [h] = await rt.db
     .select({ tz: household.timezone })
     .from(household)
     .where(eq(household.id, householdId));
   if (row === undefined || h === undefined) return [];
+  let today: string;
+  try {
+    today = localDate(new Date(), h.tz);
+  } catch {
+    today = new Date().toISOString().slice(0, 10);
+  }
   const ids: string[] = [];
-  for (const f of followUpJobs(row, localDate(new Date(), h.tz)))
-    ids.push(await ctx.rt.enqueue(f.kind, householdId, f.payload, null));
+  for (const f of followUpJobs(row, today))
+    ids.push(await rt.enqueue(f.kind, householdId, f.payload, null));
   return ids;
 }
 
@@ -69,9 +84,16 @@ export const planGenerate: JobHandler = async (ctx) => {
       // The planner's own `done` is not the job's terminal event (the runner appends that).
       ctx.emit(e.type === "done" ? "planned" : e.type, progressPayload(e));
     },
-    requestDishes: requestDishesFor(ctx.rt, hh, config, by, (type, data) => {
-      ctx.emit(type, data);
-    }),
+    requestDishes: requestDishesFor(
+      ctx.rt,
+      hh,
+      config,
+      by,
+      (type, data) => {
+        ctx.emit(type, data);
+      },
+      (changeSetId) => followUps(ctx, hh.householdId, changeSetId),
+    ),
   });
   const { stats } = result.plan;
   // ARC-12 planner metrics.
@@ -259,7 +281,9 @@ export const recipeGenerate: JobHandler = async (ctx) => {
     save: true,
   });
   if (outcome.status === "unavailable") throw new Error(outcome.reason);
+  const queued = await followUps(ctx, hh.householdId, outcome.changeSetId);
   return toJson({
+    followUps: queued,
     dishIds: outcome.dishIds,
     candidates: outcome.candidateIds,
     rejected: outcome.run.rejected.map((r) => ({ dishName: r.dishName, reasons: r.reasons })),

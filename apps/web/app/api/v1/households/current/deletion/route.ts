@@ -14,12 +14,17 @@ import {
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export const GET = route(householdDeletion, ({ caller }) =>
-  Promise.resolve(deletionDto(caller.household)),
+// A suspended household's admins can still see and cancel a deletion (SPEC-Q-16).
+export const GET = route(
+  householdDeletion,
+  ({ caller }) => Promise.resolve(deletionDto(caller.household)),
+  { allowSuspended: true },
 );
 export const POST = route(householdDeletionRequest, ({ rt, caller }) =>
   requestDeletion(rt, caller),
 );
-export const DELETE = route(householdDeletionCancel, ({ rt, caller }) =>
-  cancelDeletion(rt, caller),
+export const DELETE = route(
+  householdDeletionCancel,
+  ({ rt, caller }) => cancelDeletion(rt, caller),
+  { allowSuspended: true },
 );

@@ -51,8 +51,12 @@ const GATES = {
       "G1 ARC-6: a member reads only their own member and targets; a kitchen login cannot read targets or plates",
       "G1 ARC-6: kitchen writes kitchen tags only; members change only their own taste preferences",
       "G1 ARC-6: the cook sheet shows the kitchen the plating table of the day",
+      "G1 ARC-6: with members_see_plates off a member's cook sheet has only their own plating rows, and with kitchen_sees_names off the kitchen's sheet carries no member name",
+      "G1 ARC-6: the kitchen's review list has kitchen-tag reviews only, without ratings, comments or hidden author names",
+      "G1 people, access and support ops are refused on /change-sets (their endpoints add checks), and an invalid time zone is refused",
     ],
     negative: [
+      "G1 negative control: a cook sheet built without the caller's view carries the names the kitchen must not see",
       "G1 negative control: an unregistered route file and a missing route are both reported",
       "G1 negative control: a route that skips the household and role check fails the matrix",
       "G1 negative control: a response that violates its schema fails the contract check",
@@ -60,9 +64,23 @@ const GATES = {
   },
   G2: {
     title: "a plan job runs in the worker and streams progress over SSE to a test client (ARC-7)",
-    files: ["test/api/g2-worker-sse.int.test.ts"],
+    files: ["test/api/g2-worker-sse.int.test.ts", "test/api/jobs.int.test.ts"],
     worker: true,
     required: [
+      "jobs: the catalogue loader is idempotent and marks NUT-4 failures and their variants for review",
+      "jobs: recipe.generate saves the surviving dishes as household ai dishes through a change set, with ai_generation rows",
+      "jobs: recipe.revise rewrites a household dish's variant from a recorded revision, as a new dish version",
+      "jobs: recipe.revise of a seed dish creates the household's copy and leaves the seed dish unchanged (REC-7)",
+      "jobs: without a credential or over the daily limit no model call is made and the reason is reported (REC-2, ARC-6)",
+      "jobs: kg.sync after a household dish change set puts the dish into the graph; kg.nightly recomputes the library",
+      "jobs: insights.run stores the digest as the job result and reports synthesis as unavailable without a model",
+      "jobs: plates.substitute replaces an unavailable ingredient in future meals with a graph substitute outside the household's exclusions",
+      "jobs: household.purge deletes a household whose grace has passed, and nothing of another household",
+      "jobs: an idempotent job kind that fails once is retried in the run and succeeds; other kinds fail at once",
+      "jobs: a job left running by a lost worker is failed by the scheduler tick with a terminal event",
+      "jobs: the scheduler queues each daily job once per window, and one household's invalid time zone does not stop the others",
+      "jobs: the daily AI dish limit counts every generation requested today, revisions included, and an undo does not reset it",
+      "jobs: a job row is sent to its queue once while outstanding, and again after its pg-boss job finished (a redo)",
       "G2 a plan job runs in the worker process and streams progress over SSE to a test client (ARC-7)",
       "G2 Last-Event-ID resumes the stream after the given event",
       "G2 another household can neither open the job's stream nor read the job (404)",
@@ -99,6 +117,9 @@ const GATES = {
       "G4 twenty concurrent accepts of one invite admit exactly one login",
       "G4 the TOTP helper matches the RFC 6238 test vector",
       "G4 TOTP enforced when required: 403 for an admin without it, 200 after enabling it with an RFC 6238 code, and sign-in then needs the second step",
+      "G4 undoing an unblock blocks the login again and revokes its sessions",
+      "G4 a removed login rejoins with a new invite and its own credentials",
+      "G4 a suspended household's admin still sees and cancels an operator's deletion, and nothing else",
     ],
     negative: [
       "G4 negative control: an access.block applied without the session revocation leaves the sessions alive",
@@ -425,6 +446,21 @@ async function checkG1(report, measured, results) {
     "negative control: the same acceptance rejects an endpoint with one failed call, or without cross-household denial",
   );
   const neg = (check) => measured.find((m) => m.check === check);
+  const proj = neg("projection-cook-sheet");
+  const projOk = (m) =>
+    m !== undefined &&
+    m.foreignRows === 0 &&
+    m.kitchenNamesShown.length === 0 &&
+    m.toleranceNotes === 0;
+  report.check(
+    projOk(proj) && neg("projection-reviews")?.kitchenSees < neg("projection-reviews")?.adminSees,
+    "ARC-6 projections: a member's cook sheet has only their plates; the kitchen sees no hidden names, tolerance notes, ratings or comments",
+  );
+  report.check(
+    neg("negative-unprojected-sheet")?.namesShown > 0 &&
+      !projOk({ ...proj, kitchenNamesShown: ["x"] }),
+    "negative control: the unprojected sheet shows names, which the same check rejects",
+  );
   report.check(
     neg("negative-completeness")?.unregistered === 1 &&
       neg("negative-completeness")?.missingRoutes === 1,
@@ -498,6 +534,47 @@ function checkG2(report, measured) {
   report.check(
     one("negative-unguarded-undo")?.exactlyOne === false,
     "negative control: an undo bypassing the queued-only guard let both win",
+  );
+  const loader = one("loader");
+  report.check(
+    loader?.changedRows === 0 && loader.needsReview > 0 && loader.unflaggedVariants === 0,
+    `catalogue loader re-run changed 0 rows (${String(loader?.ingredients)} ingredients, ${String(loader?.dishes)} dishes, ${String(loader?.needsReview)} need review; SPEC-Q-20 variants flagged)`,
+  );
+  const gen = one("recipe-generate");
+  report.check(
+    gen?.status === "succeeded" && gen.calls === 1 && gen.saved > 0 && gen.changeSets > 0,
+    `recipe.generate from one recorded response saved ${String(gen?.saved)} dishes through a change set`,
+  );
+  report.check(
+    one("recipe-revise")?.versionAfter === one("recipe-revise")?.versionBefore + 1 &&
+      one("recipe-revise-seed")?.copied === true &&
+      one("recipe-revise-seed")?.seedUnchanged === true,
+    "recipe.revise: a household dish gets a new version; a seed dish gets a household copy and stays unchanged",
+  );
+  report.check(
+    one("ai-limit")?.calls === 0 &&
+      one("ai-limit-counting")?.calls === 0 &&
+      one("ai-limit-counting")?.afterUndo === one("ai-limit-counting")?.used,
+    "the daily AI limit refuses before any model call, counts revisions and survives an undo",
+  );
+  const sub = one("substitute");
+  report.check(
+    sub?.status === "succeeded" && sub.remaining === 0 && sub.changeSet !== null,
+    `plates.substitute left ${String(sub?.remaining)} plate items with the unavailable ${String(sub?.ingredient)}`,
+  );
+  report.check(
+    one("purge")?.householdGone === true && one("purge")?.otherMembers === true,
+    "household.purge removed the due household only",
+  );
+  report.check(
+    JSON.stringify(one("retry")?.retriedEvents) ===
+      JSON.stringify(["started", "retrying", "done"]) &&
+      one("reaper")?.status === "failed" &&
+      one("scheduler")?.secondEnqueued === 0 &&
+      one("scheduler")?.errors > 0 &&
+      one("send-semantics")?.duplicate === false &&
+      one("send-semantics")?.redo === true,
+    "runner retries, stale-job reaping, once-a-day scheduling despite a bad time zone, and singleton sends",
   );
   const noWorker = one("negative-no-worker");
   report.check(
@@ -610,6 +687,15 @@ function checkG4(report, measured) {
   report.check(
     totpOk(t) && t.member === 200 && t.wrongCode === 422 && t.disableWhileRequired === 409,
     "TOTP required: 403 totp_required without it, 200 after enabling it; sign-in needs the second step",
+  );
+  report.check(
+    one("undo-unblock")?.sessionsAfter === 0 &&
+      one("undo-unblock")?.next === 401 &&
+      one("rejoin")?.rejoin === 200 &&
+      one("rejoin")?.wrongPassword === 401 &&
+      one("suspended-cancel")?.cancel === 200 &&
+      one("suspended-cancel")?.other === 403,
+    "undoing an unblock revokes sessions; a removed login rejoins with its credentials; a suspended household can cancel its deletion",
   );
   const noReq = one("negative-no-requirement");
   report.check(

@@ -13,7 +13,7 @@ import type { Json } from "@mealplanner/core/types";
 import { PostgresGraphStore } from "@mealplanner/graph/store";
 import { PostgresKgSource } from "@mealplanner/graph/sync";
 import { atwaterFactorsBySlug, readCatalogueFiles } from "@mealplanner/db/seed";
-import { createJob, type JobKind } from "@mealplanner/db/services/plans";
+import { createJob, sendOptions, type JobKind } from "@mealplanner/db/services/plans";
 import { join } from "node:path";
 import type { WorkerEnv } from "./env.js";
 import { logger, type Logger } from "./log.js";
@@ -72,7 +72,7 @@ export async function createWorkerRuntime(
     log: logger,
     async enqueue(kind, householdId, payload, createdByUserId = null) {
       const row = await createJob(db, { kind, householdId, payload, createdByUserId });
-      await boss.send(kind, { jobId: row.id }, { id: row.id });
+      await boss.send(kind, { jobId: row.id }, sendOptions(row.id));
       return row.id;
     },
     async close() {

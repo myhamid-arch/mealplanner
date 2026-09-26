@@ -2,7 +2,9 @@
 // a date. For every stored meal from that date through the next SUBSTITUTE_DAYS − 1 days whose
 // plates use a variant containing the ingredient, the household gets a copy of the dish with the
 // ingredient replaced by the knowledge graph's best substitute (same raw grams; exclusions already
-// applied by the graph, R-34/R-36), and the meal is re-solved with the copy (PLN-13). The copies
+// applied by the graph, R-34/R-36), and the meal is re-solved with the copy (PLN-13). Adjuster
+// sides with the ingredient are left out of every re-solve, so meals that carried one are re-solved
+// with their own dish. The copies
 // and the swaps are one change set, so an admin sees and can undo the whole result. The graph is
 // injected (`db` does not import `graph`, ARC-3).
 import { variantNutritionPer100gCooked } from "@mealplanner/core/nutrition";
@@ -75,6 +77,23 @@ function replaced(
   };
 }
 
+/**
+ * The adjusters `keep` rejects, marked retired: the planner no longer offers them, but still knows
+ * them (a locked meal of the day that carries one keeps its cook sheet).
+ */
+export function withoutAdjusters(
+  adjusters: readonly PlanDish[],
+  keep: (a: PlanDish) => boolean,
+): PlanDish[] {
+  return adjusters.map((a) => (keep(a) ? a : { ...a, status: "retired" as const }));
+}
+
+function contains(dish: PlanDish, ingredientId: string): boolean {
+  return dish.components.some((c) =>
+    c.variants.some((v) => v.input.ingredients.some((l) => l.ingredientId === ingredientId)),
+  );
+}
+
 function uses(dish: PlanDish, ingredientId: string, variantIds: ReadonlySet<string>): boolean {
   return dish.components.some((c) =>
     c.variants.some(
@@ -106,14 +125,27 @@ export async function substituteUnavailable(
   };
   if (dates.length === 0) return report;
   const { input, pool, stored } = await loadPlanInput(db, ctx, { dates });
-  const state: MealState = { config: input.config, pool, stored };
-  const affected = stored.filter((m) => {
-    if (m.date < args.date || m.date > to) return false;
+  // Adjuster sides with the ingredient cannot be served either: the re-solve leaves them out.
+  const adjusterFilter = (a: PlanDish) => !contains(a, args.ingredientId);
+  const state: MealState = {
+    config: input.config,
+    pool: { ...pool, adjusters: withoutAdjusters(pool.adjusters, adjusterFilter) },
+    stored,
+  };
+  const inWindow = stored.filter((m) => m.date >= args.date && m.date <= to);
+  const servedOf = (m: (typeof stored)[number]) =>
+    new Set(m.plates.flatMap((p) => p.solution.items.map((i) => i.variantId)));
+  const affected = inWindow.filter((m) => {
     const dish = pool.byId.get(m.dishId);
-    const served = new Set(m.plates.flatMap((p) => p.solution.items.map((i) => i.variantId)));
-    return dish !== undefined && uses(dish, args.ingredientId, served);
+    return dish !== undefined && uses(dish, args.ingredientId, servedOf(m));
   });
-  if (affected.length === 0) return report;
+  // Meals whose own dish is fine but whose plates carry an adjuster side with the ingredient.
+  const sideOnly = inWindow.filter(
+    (m) =>
+      !affected.includes(m) &&
+      pool.adjusters.some((a) => !adjusterFilter(a) && uses(a, args.ingredientId, servedOf(m))),
+  );
+  if (affected.length === 0 && sideOnly.length === 0) return report;
 
   const candidates = (await args.substitutes(args.ingredientId)).filter((c) =>
     pool.catalog.ingredients.has(c.ingredientId),
@@ -138,7 +170,12 @@ export async function substituteUnavailable(
       report.substituteId ??= candidate.ingredientId;
     }
   }
-  report.unresolved = affected.filter((m) => !chosen.has(m.id)).map((m) => m.id);
+  for (const meal of sideOnly) {
+    const own = pool.byId.get(meal.dishId);
+    if (own !== undefined && (await solveMealWith(state, meal, own)) !== null)
+      chosen.set(meal.id, own.id);
+  }
+  report.unresolved = [...affected, ...sideOnly].filter((m) => !chosen.has(m.id)).map((m) => m.id);
   if (chosen.size === 0) return report;
 
   const used = [...copies.values()].filter((c) => [...chosen.values()].includes(c.id));
@@ -164,6 +201,7 @@ export async function substituteUnavailable(
     extraDishes: used,
     dishFor: (m) => chosen.get(m.id) ?? m.dishId,
     leadingOps: createOps,
+    adjusterFilter,
   });
   return { ...report, ...resolved, copies: report.copies, unresolved: report.unresolved };
 }

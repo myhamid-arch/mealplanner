@@ -10,6 +10,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import * as c from "@mealplanner/api-contract/contract";
 import { ENDPOINTS } from "@mealplanner/api-contract/contract";
 import { household } from "@mealplanner/db/schema";
+import { cookSheetFor } from "@mealplanner/db/services/plans";
 import { route } from "../../lib/server/route";
 import { listMembers } from "../../lib/server/reads";
 import type { CallerContext } from "../../lib/auth/context";
@@ -170,6 +171,132 @@ describe("G1 ARC-6 row details", () => {
   });
 });
 
+describe("G1 ARC-6 projections that depend on household settings", () => {
+  const setSettings = (payload: Record<string, boolean>) =>
+    callJson(
+      c.changeSetsApply,
+      { body: { summary: "settings", ops: [{ kind: "household.update", payload }] } },
+      w.a.admin,
+    );
+
+  it("G1 ARC-6: with members_see_plates off a member's cook sheet has only their own plating rows, and with kitchen_sees_names off the kitchen's sheet carries no member name", async () => {
+    ok(await setSettings({ membersSeePlates: false, kitchenSeesNames: false }), "settings off");
+    try {
+      const memberSheet = ok<{
+        meals: Array<{ plating: { rows: Array<{ memberId: string }> }; notes: string[] }>;
+      }>(
+        await callJson(c.cookSheetsGet, { params: { date: PLAN_DATE } }, w.a.member),
+        "member sheet",
+      );
+      const rows = memberSheet.meals.flatMap((m) => m.plating.rows.map((r) => r.memberId));
+      const kitchen = await callJson(c.cookSheetsGet, { params: { date: PLAN_DATE } }, w.a.kitchen);
+      const kitchenSheet = kitchen.json as { meals: Array<{ notes: string[] }> };
+      measure("G1", "projection-cook-sheet", {
+        memberRows: rows.length,
+        foreignRows: rows.filter((id) => id !== w.a.adultId).length,
+        kitchenNamesShown: ["Sara", "Zayd"].filter((n) => kitchen.text.includes(n)),
+        toleranceNotes: kitchenSheet.meals
+          .flatMap((m) => m.notes)
+          .filter((n) => n.includes("tolerance")).length,
+      });
+      expect(rows.length).toBeGreaterThan(0);
+      expect(rows.every((id) => id === w.a.adultId)).toBe(true);
+      expect(kitchen.status).toBe(200);
+      expect(kitchen.text).not.toContain("Sara");
+      expect(kitchen.text).not.toContain("Zayd");
+      expect(kitchenSheet.meals.flatMap((m) => m.notes).some((n) => n.includes("tolerance"))).toBe(
+        false,
+      );
+    } finally {
+      ok(await setSettings({ membersSeePlates: true, kitchenSeesNames: true }), "settings on");
+    }
+  });
+
+  it("G1 ARC-6: the kitchen's review list has kitchen-tag reviews only, without ratings, comments or hidden author names", async () => {
+    ok(await setSettings({ kitchenSeesNames: false }), "names off");
+    try {
+      const list = ok<{
+        reviews: Array<{
+          rating: number | null;
+          comment: string | null;
+          tags: string[];
+          authorName: string;
+          authorUserId: string;
+        }>;
+      }>(await callJson(c.reviewsList, { query: { limit: 200 } }, w.a.kitchen), "kitchen reviews");
+      const all = ok<{ reviews: unknown[] }>(
+        await callJson(c.reviewsList, { query: { limit: 200 } }, w.a.admin),
+        "all reviews",
+      );
+      measure("G1", "projection-reviews", {
+        kitchenSees: list.reviews.length,
+        adminSees: all.reviews.length,
+      });
+      expect(list.reviews.length).toBeLessThan(all.reviews.length);
+      for (const r of list.reviews) {
+        expect(r.rating).toBeNull();
+        expect(r.comment).toBeNull();
+        expect(r.tags.length).toBeGreaterThan(0);
+        expect(
+          r.tags.every((t) =>
+            ["ingredient_unavailable", "recipe_unclear", "quantity_wrong"].includes(t),
+          ),
+        ).toBe(true);
+        if (r.authorUserId !== w.a.kitchen.userId) expect(r.authorName).toBe("");
+      }
+    } finally {
+      ok(await setSettings({ kitchenSeesNames: true }), "names on");
+    }
+  });
+
+  it("G1 people, access and support ops are refused on /change-sets (their endpoints add checks), and an invalid time zone is refused", async () => {
+    const block = await callJson(
+      c.changeSetsApply,
+      {
+        body: {
+          summary: "x",
+          ops: [{ kind: "access.block", payload: { userId: w.a.member.userId } }],
+        },
+      },
+      w.a.admin,
+    );
+    const grant = await callJson(
+      c.changeSetsPreview,
+      {
+        body: {
+          ops: [
+            {
+              kind: "support.grant",
+              payload: { operatorUserId: w.operator.userId, expiresAt: "2099-01-01T00:00:00Z" },
+            },
+          ],
+        },
+      },
+      w.a.admin,
+    );
+    const tz = await callJson(
+      c.changeSetsApply,
+      {
+        body: {
+          summary: "x",
+          ops: [{ kind: "household.update", payload: { timezone: "Foo/Bar" } }],
+        },
+      },
+      w.a.admin,
+    );
+    measure("G1", "dedicated-ops", {
+      block: block.status,
+      grant: grant.status,
+      timezone: tz.status,
+    });
+    expect(block.status).toBe(422);
+    expect((block.json as { code: string }).code).toBe("dedicated_endpoint");
+    expect(grant.status).toBe(422);
+    expect(tz.status).toBe(400);
+    expect((await callJson(c.membersList, {}, w.a.member)).status).toBe(200);
+  });
+});
+
 // Negative controls: the same checks on faulty routes and a faulty route inventory must fail.
 describe("G1 negative controls", () => {
   it("G1 negative control: an unregistered route file and a missing route are both reported", () => {
@@ -212,6 +339,18 @@ describe("G1 negative controls", () => {
     expect(failed).toContain("operator without household");
     expect(failed).toContain("other household's admin, naming this household");
     expect(failed).toContain("other household's admin, own household (no data of this household)");
+  });
+
+  it("G1 negative control: a cook sheet built without the caller's view carries the names the kitchen must not see", async () => {
+    const raw = await cookSheetFor(
+      app.rt.db,
+      { householdId: w.a.id, userId: w.a.kitchen.userId, role: "kitchen" },
+      PLAN_DATE,
+    );
+    const text = JSON.stringify(raw.sheet);
+    const shown = ["Sara", "Zayd"].filter((n) => text.includes(n));
+    measure("G1", "negative-unprojected-sheet", { namesShown: shown.length });
+    expect(shown.length).toBeGreaterThan(0);
   });
 
   it("G1 negative control: a response that violates its schema fails the contract check", async () => {

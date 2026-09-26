@@ -19,11 +19,19 @@ export interface StoredDay {
   mealIds: Record<string, string>;
 }
 
+export interface CookSheetView {
+  /** Names as the reader may see them (ARC-6: kitchen without `kitchen_sees_names`). */
+  names?: ReadonlyMap<string, string>;
+  /** Leave out the plates' tolerance notes (they carry target deviations: admin only). */
+  hideFlags?: boolean;
+}
+
 /** The stored meals of one date as a PlanResult, and its cook sheet. */
 export async function cookSheetFor(
   db: Executor,
   ctx: HouseholdContext,
   date: string,
+  view: CookSheetView = {},
 ): Promise<StoredDay> {
   const config = await loadHouseholdConfig(db, ctx);
   const dishIds = new Set<string>();
@@ -32,12 +40,16 @@ export async function cookSheetFor(
     for (const m of await createRepos(db, ctx).plan_meal.list({ planDayId: day.id }))
       dishIds.add(m.dishId);
   const pool = await loadPlanPool(db, ctx, { includeDishIds: [...dishIds] });
-  const meals = await loadPlannedMeals(db, ctx, config, { from: date, to: date }, pool.byId);
+  const stored = await loadPlannedMeals(db, ctx, config, { from: date, to: date }, pool.byId);
+  const meals =
+    view.hideFlags === true
+      ? stored.map((m) => ({ ...m, plates: m.plates.map((p) => ({ ...p, flag: null })) }))
+      : stored;
   const members: PlanMember[] = config.members
     .filter((m) => m.archivedAt === null)
     .map((m) => ({
       id: m.id,
-      displayName: m.displayName,
+      displayName: view.names?.get(m.id) ?? m.displayName,
       targeted: m.isTargeted,
       allergies: config.exclusions
         .filter((e) => e.reason === "allergy" && (e.memberId === null || e.memberId === m.id))

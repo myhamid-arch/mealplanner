@@ -430,21 +430,22 @@ async function upsertSeedDish(
     }
   }
 
-  // Rows the files no longer contain: ingredient lines always go; variants and components go when
-  // nothing references them (a plate or batch of a past meal keeps its row).
+  // Rows the files no longer contain: stale lines of the file's variants go; a variant or component
+  // the files dropped goes, with its lines, when nothing references it (a plate or batch of a past
+  // meal keeps the whole variant, lines included, so the dish stays readable and plannable).
   const oldVariants = await db
     .select({ id: variant.id })
     .from(variant)
     .innerJoin(component, eq(component.id, variant.componentId))
     .where(eq(component.dishId, dishId));
   const allVariantIds = oldVariants.map((v) => v.id);
-  if (allVariantIds.length > 0)
+  if (variantIds.length > 0)
     count(
       await db
         .delete(variantIngredient)
         .where(
           and(
-            inArray(variantIngredient.variantId, allVariantIds),
+            inArray(variantIngredient.variantId, variantIds),
             notInArray(variantIngredient.id, lineIds),
           ),
         ),

@@ -375,7 +375,9 @@ export async function overridePlate(
     deviation.carbs = carbs - target.carbs;
     deviation.fat = actual.fat - target.fat;
     const keys = ["kcal", "protein", "carbs", "fat"] as const;
-    const within = keys.every((k) => Math.abs(deviation[k]) <= target.tol[k] + 1e-6);
+    // Macros within tolerance and saturated fat under its hard cap (OQ-4), as the solver requires.
+    const satFatOk = target.satFatMax === undefined || actual.satFat <= target.satFatMax + 1e-6;
+    const within = satFatOk && keys.every((k) => Math.abs(deviation[k]) <= target.tol[k] + 1e-6);
     const meanRel =
       keys.reduce((s, k) => s + Math.abs(deviation[k]) / Math.max(target.tol[k], 1e-6), 0) /
       keys.length;
@@ -385,7 +387,11 @@ export async function overridePlate(
       : target.mode === "flexible"
         ? "flexible_miss"
         : "infeasible";
-    deviation.flag = within ? null : "Grams set by an admin are outside the tolerance";
+    deviation.flag = within
+      ? null
+      : satFatOk
+        ? "Grams set by an admin are outside the tolerance"
+        : "Grams set by an admin exceed the saturated-fat limit";
   }
   const applied = await applyChangeSet(rt.db, caller.ctx, {
     actor: "user",
@@ -408,9 +414,17 @@ export async function overridePlate(
 }
 
 export async function cookSheet(rt: Runtime, caller: CallerContext, date: string) {
-  const { sheet, mealIds } = await cookSheetFor(rt.db, caller.ctx, date);
+  // ARC-6 (SPEC-Q-17): the sheet is built with the names the caller may see, so side labels,
+  // notes and banners never carry a hidden name; tolerance notes (target deviations) are for
+  // admins; a member sees only the plating rows of plates they may see.
   const names = await memberNames(rt, caller);
+  const { sheet, mealIds } = await cookSheetFor(rt.db, caller.ctx, date, {
+    names,
+    hideFlags: caller.ctx.role !== "admin",
+  });
   const nameOf = (id: string, fallback: string) => names.get(id) ?? fallback;
+  const visible = (memberId: string) =>
+    caller.ctx.role !== "member" || plateAccess(caller, memberId).see;
   const day = sheet.days[0];
   return {
     date,
@@ -427,18 +441,20 @@ export async function cookSheet(rt: Runtime, caller: CallerContext, date: string
       batches: m.batches,
       plating: {
         columns: m.plating.columns,
-        rows: m.plating.rows.map((r) => ({
-          memberId: r.memberId,
-          memberName: nameOf(r.memberId, r.memberName),
-          cells: r.cells,
-          sides: r.sides,
-        })),
+        rows: m.plating.rows
+          .filter((r) => visible(r.memberId))
+          .map((r) => ({
+            memberId: r.memberId,
+            memberName: nameOf(r.memberId, r.memberName),
+            cells: r.cells,
+            sides: r.sides,
+          })),
       },
       notes: m.notes,
       allergyBanners: m.allergyBanners.map((b) => ({
         memberName: nameOf(b.memberId, b.memberName),
         allergen: b.allergen,
-        text: b.text.replaceAll(b.memberName, nameOf(b.memberId, b.memberName)),
+        text: b.text,
       })),
     })),
   };

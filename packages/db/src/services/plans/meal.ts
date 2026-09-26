@@ -213,6 +213,8 @@ export async function resolvePlates(
     extraDishes?: readonly PlanDish[];
     dishFor?: (meal: StoredMeal) => string;
     leadingOps?: readonly ChangeOp[];
+    /** Keeps only the adjusters this returns true for (e.g. none with an unavailable ingredient). */
+    adjusterFilter?: (adjuster: PlanDish) => boolean;
   },
 ): Promise<ResolveReport> {
   const to = args.toDate ?? addDays(args.fromDate, 60);
@@ -224,7 +226,21 @@ export async function resolvePlates(
   for (const date of planDates) {
     const { input, pool, stored } = await loadPlanInput(db, ctx, { dates: [date] });
     for (const d of args.extraDishes ?? []) pool.byId.set(d.id, d);
-    const state: MealState = { config: input.config, pool, stored };
+    const filter = args.adjusterFilter;
+    const state: MealState = {
+      config: input.config,
+      pool:
+        filter === undefined
+          ? pool
+          : {
+              ...pool,
+              // Rejected adjusters stay known (locked meals carry them) but are not offered.
+              adjusters: pool.adjusters.map((a) =>
+                filter(a) ? a : { ...a, status: "retired" as const },
+              ),
+            },
+      stored,
+    };
     for (const meal of stored.filter((m) => m.date === date)) {
       if (args.onlyMealIds !== undefined && !args.onlyMealIds.has(meal.id)) continue;
       const dish = pool.byId.get(args.dishFor?.(meal) ?? meal.dishId);
@@ -243,6 +259,10 @@ export async function resolvePlates(
       }
       ops.push(swap.op);
       solvedMeals.push(swap.solved);
+      // The day's later meals are solved against this meal's new plates (retargeting, R-34).
+      state.stored = state.stored.map((m) =>
+        m.id === meal.id ? { ...swap.solved, id: meal.id, locked: meal.locked } : m,
+      );
       report.meals += 1;
       const off = swap.solved.plates.filter((p) => p.targeted && p.fitStatus !== "in_tolerance");
       if (off.length > 0)

@@ -79,6 +79,8 @@ export { PlanServiceError, type PlanServiceErrorCode } from "./errors.js";
 export {
   JOB_EVENT_CHANNEL,
   JOB_KINDS,
+  QUEUE_OPTIONS,
+  RUNNING_TIMEOUT_MS,
   TERMINAL_EVENTS,
   appendJobEvent,
   claimJob,
@@ -88,6 +90,8 @@ export {
   jobEventsAfter,
   jobOf,
   queuedJobs,
+  reapStaleJobs,
+  sendOptions,
   type JobEventRow,
   type JobKind,
   type JobRow,

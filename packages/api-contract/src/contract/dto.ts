@@ -164,8 +164,20 @@ export const InviteAcceptBody = z
       .object({ email: z.email(), password: Password, name: z.string().trim().min(1).max(100) })
       .strict()
       .optional(),
+    /**
+     * An existing account that cannot sign in because it has no usable login (removed or blocked
+     * everywhere) joins with its credentials, checked server-side.
+     */
+    credentials: z
+      .object({ email: z.email(), password: z.string().min(1).max(128) })
+      .strict()
+      .optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (b) => b.signup === undefined || b.credentials === undefined,
+    "give signup or credentials, not both",
+  );
 
 export const InviteAcceptDto = z.object({
   householdId: Id,

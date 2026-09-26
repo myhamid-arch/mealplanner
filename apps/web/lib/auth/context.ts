@@ -62,7 +62,7 @@ export async function requireHousehold(
   rt: Runtime,
   request: Request,
   roles: readonly HouseholdRole[],
-  opts: { allowWithoutTotp?: boolean } = {},
+  opts: { allowWithoutTotp?: boolean; allowSuspended?: boolean } = {},
 ): Promise<CallerContext> {
   const s = await requireSession(rt, request);
   const rows = await rt.db
@@ -87,7 +87,7 @@ export async function requireHousehold(
   }
   if (row === undefined) throw forbidden("no_household", "this login has no household");
   if (row.login.status === "blocked") throw unauthorized("this login is blocked");
-  if (row.household.suspendedAt !== null)
+  if (row.household.suspendedAt !== null && opts.allowSuspended !== true)
     throw forbidden("household_suspended", "this household is suspended");
   const role = row.login.role;
   if (!roles.includes(role)) throw forbidden("forbidden_role", `not allowed for role ${role}`);

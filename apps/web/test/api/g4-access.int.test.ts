@@ -400,3 +400,71 @@ describe("G4 TOTP", () => {
     expect(r.status).toBe(200);
   });
 });
+
+describe("G4 sign-in paths and recovery", () => {
+  it("G4 undoing an unblock blocks the login again and revokes its sessions", async () => {
+    const l = await acceptWithSignup(await invite(a, "member", null), "Undoable");
+    ok(await callJson(c.accessBlock, { params: { userId: l.userId }, body: {} }, a), "block");
+    const unblock = ok<{ changeSetId: string }>(
+      await callJson(c.accessUnblock, { params: { userId: l.userId } }, a),
+      "unblock",
+    );
+    const back = await signIn(l.email, l.password);
+    expect((await callJson(c.me, {}, { token: back.token })).status).toBe(200);
+    const undone = await callJson(c.changeSetsUndo, { params: { id: unblock.changeSetId } }, a);
+    const after = await sessionsOf(l.userId);
+    const next = await callJson(c.me, {}, { token: back.token });
+    measure("G4", "undo-unblock", { undo: undone.status, sessionsAfter: after, next: next.status });
+    expect(undone.status).toBe(200);
+    expect(after).toBe(0);
+    expect(next.status).toBe(401);
+  });
+
+  it("G4 a removed login rejoins with a new invite and its own credentials", async () => {
+    const l = await acceptWithSignup(await invite(a, "member", null), "Returning");
+    ok(await callJson(c.accessRemove, { params: { userId: l.userId }, body: {} }, a), "remove");
+    const refused = await signIn(l.email, l.password);
+    const code = await invite(a, "kitchen", null);
+    const wrong = await callJson(
+      c.invitesAccept,
+      { body: { code, credentials: { email: l.email, password: "not the password" } } },
+      ANON,
+    );
+    const back = await callJson(
+      c.invitesAccept,
+      { body: { code, credentials: { email: l.email, password: l.password } } },
+      ANON,
+    );
+    const token = (back.json as { token: string | null }).token;
+    const me = await callJson(c.me, {}, { token });
+    measure("G4", "rejoin", {
+      signInWhileRemoved: refused.status,
+      wrongPassword: wrong.status,
+      rejoin: back.status,
+      me: me.status,
+    });
+    expect(refused.status).toBe(403);
+    expect(wrong.status).toBe(401);
+    expect(back.status).toBe(200);
+    expect(me.status).toBe(200);
+  });
+
+  it("G4 a suspended household's admin still sees and cancels an operator's deletion, and nothing else", async () => {
+    const operator = await operatorLogin(app);
+    const h = await signupAdmin("Suspended");
+    ok(await callJson(c.platformSuspend, { params: { id: h.householdId } }, operator), "suspend");
+    ok(await callJson(c.platformDelete, { params: { id: h.householdId } }, operator), "delete");
+    const view = await callJson(c.householdDeletion, {}, h);
+    const cancel = await callJson(c.householdDeletionCancel, {}, h);
+    const other = await callJson(c.weightsGet, {}, h);
+    measure("G4", "suspended-cancel", {
+      view: view.status,
+      cancel: cancel.status,
+      other: other.status,
+    });
+    expect(view.status).toBe(200);
+    expect(cancel.status).toBe(200);
+    expect(other.status).toBe(403);
+    expect((other.json as { code: string }).code).toBe("household_suspended");
+  });
+});

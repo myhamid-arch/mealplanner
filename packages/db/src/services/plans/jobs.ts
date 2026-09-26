@@ -3,7 +3,7 @@
 // `succeeded`, `failed` or `cancelled`. Status updates are operational writes outside DM-6 (R-40).
 // Each event is one `job_event` row plus `pg_notify('job_event', '<job id>:<seq>')` in the same
 // statement, so an SSE reader either replays it or is notified of it.
-import { and, asc, desc, eq, gt, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, inArray, lt, sql } from "drizzle-orm";
 import type { HouseholdContext, Json } from "@mealplanner/core/types";
 import type { Executor } from "../../repos/index.js";
 import { job, jobEvent } from "../../schema/index.js";
@@ -25,6 +25,26 @@ export const JOB_KINDS = [
 export type JobKind = (typeof JOB_KINDS)[number];
 
 export const JOB_EVENT_CHANNEL = "job_event";
+
+/**
+ * pg-boss options of every job queue (ADR-2), shared by the web (sender) and the worker. A pg-boss
+ * job carries the `job` row id as its `singletonKey` under the `exclusive` policy: at most one
+ * pg-boss job per row is queued or active, so re-sends are dropped while one is outstanding, and a
+ * row sent again after its pg-boss job finished (a redo) is accepted. pg-boss does not retry: the
+ * runner retries idempotent kinds itself, and a failure is recorded on the row.
+ */
+export const QUEUE_OPTIONS = {
+  policy: "exclusive",
+  retryLimit: 0,
+  expireInSeconds: 2 * 3600,
+} as const;
+
+/** A job still `running` this long after it started lost its worker (stop, crash): it is failed. */
+export const RUNNING_TIMEOUT_MS = 2 * 3600_000 + 10 * 60_000;
+
+export function sendOptions(jobId: string): { singletonKey: string } {
+  return { singletonKey: jobId };
+}
 
 /** Terminal event types: an SSE stream closes after one of them. */
 export const TERMINAL_EVENTS: ReadonlySet<string> = new Set(["done", "failed", "cancelled"]);
@@ -174,4 +194,27 @@ export async function queuedJobs(
     .from(job)
     .where(and(eq(job.status, "queued"), inArray(job.kind, [...kinds])))
     .orderBy(asc(job.createdAt));
+}
+
+/**
+ * Fails jobs left `running` past RUNNING_TIMEOUT_MS (their worker stopped mid-run), appending the
+ * terminal `failed` event so their streams close. Returns the ids.
+ */
+export async function reapStaleJobs(db: Executor, now = new Date()): Promise<string[]> {
+  const error = {
+    name: "WorkerLost",
+    message: "the worker stopped while running this job; start it again",
+  };
+  const rows = await db
+    .update(job)
+    .set({ status: "failed", error, finishedAt: now })
+    .where(
+      and(
+        eq(job.status, "running"),
+        lt(job.startedAt, new Date(now.getTime() - RUNNING_TIMEOUT_MS)),
+      ),
+    )
+    .returning({ id: job.id });
+  for (const r of rows) await appendJobEvent(db, r.id, "failed", error);
+  return rows.map((r) => r.id);
 }

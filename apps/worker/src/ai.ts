@@ -52,12 +52,19 @@ export function recipeCatalogue(rt: WorkerRuntime, catalog: DbCatalog): RecipeCa
   };
 }
 
-/** REC-5 step 6: existing dishes by name and core ingredients (the generator's own rule). */
-function existingDishes(pool: readonly PlanDish[], catalog: DbCatalog) {
+/**
+ * REC-5 step 6: existing dishes by name and core ingredients (the generator's own rule), without
+ * `ignore` (a revision is compared with the rest of the library, not with the dish it revises).
+ */
+function existingDishes(
+  pool: readonly PlanDish[],
+  catalog: DbCatalog,
+  ignore: ReadonlySet<string>,
+) {
   const categoryOf = (slug: string) =>
     catalog.ingredients.get(catalog.idBySlug.get(slug) ?? "")?.category;
   return pool
-    .filter((d) => d.status === "active")
+    .filter((d) => d.status === "active" && !ignore.has(d.id))
     .map((d) => {
       const components = d.components.map((c) => ({
         variants: c.variants.map((v) => ({
@@ -74,7 +81,14 @@ function existingDishes(pool: readonly PlanDish[], catalog: DbCatalog) {
 }
 
 export type GenerationOutcome =
-  | { status: "generated"; run: GenerationRun; dishIds: string[]; candidateIds: string[] }
+  | {
+      status: "generated";
+      run: GenerationRun;
+      dishIds: string[];
+      candidateIds: string[];
+      /** The change set that saved the dishes (its follow-ups sync the graph), or null. */
+      changeSetId: string | null;
+    }
   | { status: "unavailable"; reason: string };
 
 export interface GenerateArgs {
@@ -90,9 +104,15 @@ export interface GenerateArgs {
   by: ChangeActorInput;
   /** Save the survivors (plans, `recipe.generate`); false returns them only (`recipe.revise`). */
   save: boolean;
+  /** Dishes left out of the duplicate check (the dish a revision replaces). */
+  ignoreDishIds?: readonly string[];
 }
 
-/** Runs the recipe generator for one slot (REC-2 … REC-6) through the database ports. */
+/**
+ * Runs the recipe generator for one slot (REC-2 … REC-6) through the database ports. The daily
+ * limit check and the generation hold the household's advisory lock, so concurrent jobs cannot
+ * both pass the check.
+ */
 export async function generateDishes(
   rt: WorkerRuntime,
   ctx: HouseholdContext,
@@ -104,8 +124,34 @@ export async function generateDishes(
       reason: rt.modelDisabledReason ?? "AI recipe generation is disabled",
       survivors: [],
     };
+  const client = await rt.pool.connect();
+  try {
+    await client.query("SELECT pg_advisory_lock(hashtext($1))", [`ai-recipes:${ctx.householdId}`]);
+    try {
+      return await generateLocked(rt, ctx, args);
+    } finally {
+      await client.query("SELECT pg_advisory_unlock(hashtext($1))", [
+        `ai-recipes:${ctx.householdId}`,
+      ]);
+    }
+  } finally {
+    client.release();
+  }
+}
+
+async function generateLocked(
+  rt: WorkerRuntime,
+  ctx: HouseholdContext,
+  args: GenerateArgs,
+): Promise<GenerationOutcome & { survivors: SurvivingDish[] }> {
+  if (rt.model === null)
+    return {
+      status: "unavailable",
+      reason: rt.modelDisabledReason ?? "AI recipe generation is disabled",
+      survivors: [],
+    };
   const used = await aiDishesToday(rt.db, ctx, args.config.household.timezone);
-  if (args.save && used + args.count > rt.env.aiRecipeDailyLimit)
+  if (used + args.count > rt.env.aiRecipeDailyLimit)
     return {
       status: "unavailable",
       reason: `the household's daily AI recipe limit (${String(rt.env.aiRecipeDailyLimit)}) is reached`,
@@ -126,13 +172,14 @@ export async function generateDishes(
   });
   const disabled = new Set(args.config.adjusters.filter((a) => !a.enabled).map((a) => a.dishId));
   let saved: string[] = [];
+  let changeSetId: string | null = null;
   let survivors: SurvivingDish[] = [];
   const run = await generateRecipes(
     {
       model: rt.model,
       catalogue: recipeCatalogue(rt, catalog),
       slotKeys: args.config.slotTypes.filter((s) => s.active).map((s) => s.key),
-      existingDishes: existingDishes(args.pool.dishes, catalog),
+      existingDishes: existingDishes(args.pool.dishes, catalog, new Set(args.ignoreDishIds ?? [])),
       adjusters: args.config.planningWeights.adjustersEnabled
         ? args.pool.adjusters.filter((a) => !disabled.has(a.id))
         : [],
@@ -140,7 +187,7 @@ export async function generateDishes(
       saveSurvivors: async (dishes, generationIds) => {
         survivors = [...dishes];
         if (!args.save) return;
-        saved = await saveGeneratedDishes(rt.db, ctx, {
+        const stored = await saveGeneratedDishes(rt.db, ctx, {
           survivors: dishes.map((s) => ({
             dish: s.dish,
             newIngredients: s.newIngredients,
@@ -150,6 +197,8 @@ export async function generateDishes(
           catalog,
           by: args.by,
         });
+        saved = stored.dishIds;
+        changeSetId = stored.changeSetId;
       },
     },
     { context, solveTargets, scrub },
@@ -162,7 +211,7 @@ export async function generateDishes(
   const candidateIds = survivors.flatMap((s, i) =>
     s.candidate && saved[i] !== undefined ? [saved[i]] : [],
   );
-  return { status: "generated", run, dishIds: saved, candidateIds, survivors };
+  return { status: "generated", run, dishIds: saved, candidateIds, changeSetId, survivors };
 }
 
 /** PLN-12 `auto`: the planner's `requestDishes` port; progress and outcome become job events. */
@@ -172,6 +221,8 @@ export function requestDishesFor(
   config: HouseholdConfig,
   by: ChangeActorInput,
   emit: (type: string, payload: Json) => void,
+  /** Queues the follow-ups of the change set that saved generated dishes. */
+  afterSave: (changeSetId: string) => Promise<unknown>,
 ) {
   return async (
     request: {
@@ -205,6 +256,7 @@ export function requestDishesFor(
       });
       return [];
     }
+    if (outcome.changeSetId !== null) await afterSave(outcome.changeSetId);
     emit("ai_generated", {
       date: request.date,
       slotKey: request.slotKey,

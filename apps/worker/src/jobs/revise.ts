@@ -75,6 +75,8 @@ export async function reviseRecipe(
     adminRequest,
     by: { actor: "system", source: "learning" },
     save: false,
+    // The revision keeps the dish's name and core ingredients: it is not a duplicate of itself.
+    ignoreDishIds: [p.dishId],
   });
   if (outcome.status === "unavailable") throw new Error(outcome.reason);
   const survivor = outcome.survivors[0];

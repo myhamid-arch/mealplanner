@@ -91,6 +91,18 @@ export async function purgeDueHouseholds(rt: WorkerRuntime, now = new Date()): P
         lt(household.deletionConfirmedAt, new Date(now.getTime() - GRACE_MS)),
       ),
     );
-  for (const { id } of due) await purgeHousehold(rt, id);
-  return due.map((d) => d.id);
+  // Each household on its own: one that fails does not keep the others past their grace.
+  const purged: string[] = [];
+  const failed: string[] = [];
+  for (const { id } of due)
+    try {
+      await purgeHousehold(rt, id);
+      purged.push(id);
+    } catch (error) {
+      rt.log.error({ err: error, householdId: id }, "household purge failed");
+      failed.push(`${id}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  if (failed.length > 0)
+    throw new Error(`purged ${String(purged.length)} household(s); failed: ${failed.join("; ")}`);
+  return purged;
 }

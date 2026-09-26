@@ -3,14 +3,23 @@
 import { PgBoss } from "pg-boss";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { Json } from "@mealplanner/core/types";
-import { JOB_KINDS, createJob, type JobKind } from "@mealplanner/db/services/plans";
+import {
+  JOB_KINDS,
+  QUEUE_OPTIONS,
+  createJob,
+  sendOptions,
+  type JobKind,
+} from "@mealplanner/db/services/plans";
 
 export interface JobQueue {
   send(kind: JobKind, jobId: string): Promise<void>;
   close(): Promise<void>;
 }
 
-/** pg-boss as a sender: queues are created idempotently; no supervision or schedules here. */
+/**
+ * pg-boss as a sender: queues are created idempotently with the worker's options; no supervision
+ * or schedules here.
+ */
 export class PgBossQueue implements JobQueue {
   private boss: PgBoss | null = null;
   private starting: Promise<PgBoss> | null = null;
@@ -19,6 +28,7 @@ export class PgBossQueue implements JobQueue {
 
   private async ready(): Promise<PgBoss> {
     if (this.boss !== null) return this.boss;
+    // A failed start is not cached: the next send tries again.
     this.starting ??= (async () => {
       const boss = new PgBoss({
         connectionString: this.databaseUrl,
@@ -28,16 +38,19 @@ export class PgBossQueue implements JobQueue {
       });
       boss.on("error", () => undefined);
       await boss.start();
-      for (const kind of JOB_KINDS) await boss.createQueue(kind);
+      for (const kind of JOB_KINDS) await boss.createQueue(kind, QUEUE_OPTIONS);
       this.boss = boss;
       return boss;
-    })();
+    })().catch((error: unknown) => {
+      this.starting = null;
+      throw error;
+    });
     return this.starting;
   }
 
   async send(kind: JobKind, jobId: string): Promise<void> {
     const boss = await this.ready();
-    await boss.send(kind, { jobId }, { id: jobId });
+    await boss.send(kind, { jobId }, sendOptions(jobId));
   }
 
   async close(): Promise<void> {

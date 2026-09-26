@@ -92,9 +92,23 @@ export async function listReviews(
         (q.memberId === undefined || r.onBehalfOfMemberId === q.memberId) &&
         (q.parentId === undefined ? true : r.parentReviewId === q.parentId),
     )
+    .filter((r) => caller.ctx.role !== "kitchen" || r.tags.some((t) => KITCHEN_TAGS.has(t)))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime() || b.id.localeCompare(a.id))
     .slice(0, q.limit);
-  return { reviews: await reviewDtos(rt, picked) };
+  const dtos = await reviewDtos(rt, picked);
+  if (caller.ctx.role !== "kitchen") return { reviews: dtos };
+  // SPEC-Q-17: the kitchen works with kitchen tags only; no ratings or comments, and no author
+  // names unless the household shows names to the kitchen (ARC-6).
+  const hideNames = !caller.household.kitchenSeesNames;
+  return {
+    reviews: dtos.map((d) => ({
+      ...d,
+      rating: null,
+      comment: null,
+      tags: d.tags.filter((t) => KITCHEN_TAGS.has(t)),
+      authorName: hideNames && d.authorUserId !== caller.ctx.userId ? "" : d.authorName,
+    })),
+  };
 }
 
 async function one(rt: Runtime, row: ReviewRow) {

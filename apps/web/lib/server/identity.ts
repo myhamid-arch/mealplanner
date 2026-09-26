@@ -2,7 +2,7 @@
 // SPEC-Q-3 … 6, SPEC-Q-22). Membership rows created by sign-up and invite acceptance are the auth
 // flow (DM-6 exception, R-24); every other change to a login goes through a change set.
 import { randomInt } from "node:crypto";
-import { and, eq, gt, isNull, ne } from "drizzle-orm";
+import { and, eq, gt, isNull, ne, sql } from "drizzle-orm";
 import type { z } from "zod";
 import type { InviteCreateBody, InviteDto } from "@mealplanner/api-contract/contract";
 import type { HouseholdRole } from "@mealplanner/core/types";
@@ -281,19 +281,55 @@ export async function lookupInvite(rt: Runtime, code: string) {
  * Accepts an invite (SPEC-Q-4): one transaction claims it (`used_at` set only while it is unused,
  * unrevoked and unexpired, so concurrent accepts cannot both succeed) and adds the login.
  */
+/** The user whose email and password these are, or null (library password hashing, ARC-10). */
+async function checkCredentials(
+  rt: Runtime,
+  credentials: { email: string; password: string },
+): Promise<string | null> {
+  const [row] = await rt.db
+    .select({ userId: user.id, hash: account.password })
+    .from(user)
+    .innerJoin(account, and(eq(account.userId, user.id), eq(account.providerId, "credential")))
+    .where(eq(user.email, credentials.email.toLowerCase()));
+  if (row?.hash === null || row?.hash === undefined) return null;
+  const ctx = await rt.auth.$context;
+  return (await ctx.password.verify({ hash: row.hash, password: credentials.password }))
+    ? row.userId
+    : null;
+}
+
 export async function acceptInvite(
   rt: Runtime,
-  body: { code: string; signup?: { email: string; password: string; name: string } | undefined },
+  body: {
+    code: string;
+    signup?: { email: string; password: string; name: string } | undefined;
+    credentials?: { email: string; password: string } | undefined;
+  },
   session: SessionInfo | null,
 ) {
   const code = body.code.toUpperCase();
   let userId: string;
   let created = false;
+  let signInWith: { email: string; password: string } | null = null;
   if (body.signup !== undefined) {
     // Refuse early for a code that cannot be claimed, so no user is created for nothing.
     await lookupInvite(rt, code);
     userId = await createUser(rt, body.signup);
     created = true;
+    signInWith = body.signup;
+  } else if (body.credentials !== undefined) {
+    await lookupInvite(rt, code);
+    const found = await checkCredentials(rt, body.credentials);
+    if (found === null)
+      throw new ProblemError(401, "invalid_credentials", "the email or password is wrong");
+    const [blocked] = await rt.db
+      .select({ at: user.platformBlockedAt })
+      .from(user)
+      .where(eq(user.id, found));
+    if (blocked?.at !== null && blocked?.at !== undefined)
+      throw new ProblemError(403, "account_blocked", "this account is blocked");
+    userId = found;
+    signInWith = body.credentials;
   } else if (session !== null) {
     userId = session.user.id;
   } else {
@@ -325,6 +361,8 @@ export async function acceptInvite(
       if (existing !== undefined)
         throw conflict("already_member", "you already belong to this household");
       if (claimed.memberId !== null) {
+        // Serialise concurrent accepts of invites bound to the same member (one login each).
+        await trx.execute(sql`SELECT 1 FROM member WHERE id = ${claimed.memberId} FOR UPDATE`);
         const [linked] = await trx
           .select({ userId: householdUser.userId })
           .from(householdUser)
@@ -353,8 +391,8 @@ export async function acceptInvite(
     if (created) await deleteUserCompletely(rt, userId);
     throw error;
   }
-  if (body.signup === undefined) return { ...accepted, userId, token: null };
-  const signedIn = await signIn(rt, body.signup.email, body.signup.password);
+  if (signInWith === null) return { ...accepted, userId, token: null };
+  const signedIn = await signIn(rt, signInWith.email, signInWith.password);
   return new Reply({ ...accepted, userId, token: signedIn.token }, { headers: signedIn.headers });
 }
 

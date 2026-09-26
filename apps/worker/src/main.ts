@@ -1,7 +1,9 @@
 // The worker process (ARC-7; leaf-1.4.1 ADR-2): pg-boss queues for every job kind, each handled by
 // the claim/run/events runner, plus the per-minute scheduler tick. SIGTERM/SIGINT stop gracefully.
 import { fileURLToPath } from "node:url";
-import { JOB_KINDS } from "@mealplanner/db/services/plans";
+import { isNull } from "drizzle-orm";
+import { dish } from "@mealplanner/db/schema";
+import { JOB_KINDS, QUEUE_OPTIONS } from "@mealplanner/db/services/plans";
 import { workerEnv } from "./env.js";
 import { HANDLERS } from "./jobs/handlers.js";
 import { logger } from "./log.js";
@@ -9,17 +11,9 @@ import { runJob } from "./runner.js";
 import { createWorkerRuntime, type WorkerRuntime } from "./runtime.js";
 import { TICK_QUEUE, tick } from "./schedule.js";
 
-/** Retries for jobs safe to repeat; a plan or AI job is re-run only when asked (ADR-2). */
-const RETRIES: Partial<Record<(typeof JOB_KINDS)[number], number>> = {
-  "nutrition.recompute": 2,
-  "plates.resolve": 2,
-  "kg.sync": 2,
-  "kg.nightly": 2,
-};
-
 export async function startWorker(rt: WorkerRuntime): Promise<void> {
   for (const kind of JOB_KINDS) {
-    await rt.boss.createQueue(kind, { retryLimit: RETRIES[kind] ?? 0, retryBackoff: true });
+    await rt.boss.createQueue(kind, QUEUE_OPTIONS);
     const handler = HANDLERS[kind];
     if (handler === undefined) throw new Error(`no handler for ${kind}`);
     await rt.boss.work<{ jobId: string }>(
@@ -33,13 +27,34 @@ export async function startWorker(rt: WorkerRuntime): Promise<void> {
   await rt.boss.createQueue(TICK_QUEUE, { retryLimit: 0 });
   await rt.boss.work(TICK_QUEUE, async () => {
     const r = await tick(rt);
-    if (r.resent > 0 || r.enqueued.length > 0) rt.log.info(r, "scheduler tick");
+    if (r.errors.length > 0)
+      rt.log.error({ errors: r.errors }, "scheduler tick: households skipped");
+    if (r.resent > 0 || r.enqueued.length > 0 || r.reaped.length > 0)
+      rt.log.info(r, "scheduler tick");
   });
   await rt.boss.schedule(TICK_QUEUE, "* * * * *");
+  await syncCatalogueGraph(rt);
   rt.log.info(
     { queues: JOB_KINDS.length, model: rt.model === null ? null : rt.modelName },
     "worker started",
   );
+}
+
+/**
+ * KG-3: the global catalogue and the seed library in the graph. The catalogue loader runs before
+ * the worker starts (deploy step) and may have changed them; the sync is idempotent (1.3.4 G1), so
+ * it is queued on every start.
+ */
+export async function syncCatalogueGraph(rt: WorkerRuntime): Promise<string[]> {
+  const seed = await rt.db.select({ id: dish.id }).from(dish).where(isNull(dish.householdId));
+  const ids = [await rt.enqueue("kg.sync", null, { request: { kind: "catalogue" } })];
+  if (seed.length > 0)
+    ids.push(
+      await rt.enqueue("kg.sync", null, {
+        request: { kind: "dish", householdId: null, dishIds: seed.map((d) => d.id).sort() },
+      }),
+    );
+  return ids;
 }
 
 async function main(): Promise<void> {

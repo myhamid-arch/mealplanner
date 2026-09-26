@@ -25,7 +25,7 @@ import type { HouseholdContext } from "@mealplanner/core/types";
 import type { CallerContext } from "../auth/context";
 import { afterChangeSet } from "./followups";
 import { enqueueJob } from "./jobs";
-import { notFound } from "./problem";
+import { ProblemError, notFound } from "./problem";
 import type { Runtime } from "./runtime";
 import { iso, plain } from "./serialize";
 
@@ -103,11 +103,48 @@ export async function changeSetOne(rt: Runtime, caller: CallerContext, id: strin
   return plain(row);
 }
 
+/**
+ * Ops with a dedicated endpoint that adds checks around them (people and access: session
+ * revocation and login lookup; support grants: operator lookup and the 168 h limit) are refused
+ * here; a time zone must be a valid IANA name (the scheduler and follow-ups compute local dates).
+ */
+const DEDICATED_OPS: ReadonlyMap<string, string> = new Map([
+  ["access.block", "POST /api/v1/access/{userId}/block"],
+  ["access.unblock", "POST /api/v1/access/{userId}/unblock"],
+  ["access.remove", "POST /api/v1/access/{userId}/remove"],
+  ["access.link_member", "POST /api/v1/access/{userId}/link-member"],
+  ["role.set", "POST /api/v1/access/{userId}/role"],
+  ["support.grant", "POST /api/v1/households/current/support-grants"],
+  ["support.revoke", "POST /api/v1/households/current/support-grants/{id}/revoke"],
+]);
+
+function checkOps(ops: readonly unknown[]): void {
+  ops.forEach((op, index) => {
+    const o = op as { kind?: unknown; payload?: { timezone?: unknown } } | null;
+    const kind = typeof o?.kind === "string" ? o.kind : "";
+    const endpoint = DEDICATED_OPS.get(kind);
+    if (endpoint !== undefined)
+      throw new ProblemError(422, "dedicated_endpoint", `${kind} is applied with ${endpoint}`, [
+        { path: ["ops", index, "kind"], message: `use ${endpoint}` },
+      ]);
+    const tz = o?.payload?.timezone;
+    if (kind === "household.update" && typeof tz === "string")
+      try {
+        new Intl.DateTimeFormat("en-GB", { timeZone: tz });
+      } catch {
+        throw new ProblemError(400, "invalid_request", "the request is invalid", [
+          { path: ["ops", index, "payload", "timezone"], message: "not an IANA time zone" },
+        ]);
+      }
+  });
+}
+
 export async function applyOps(
   rt: Runtime,
   caller: CallerContext,
   body: { summary: string; ops: unknown[] },
 ) {
+  checkOps(body.ops);
   const applied = await applyChangeSet(rt.db, caller.ctx, {
     actor: "user",
     source: "ui",
@@ -119,6 +156,7 @@ export async function applyOps(
 }
 
 export async function previewOps(rt: Runtime, caller: CallerContext, ops: unknown[]) {
+  checkOps(ops);
   return { descriptions: await previewChangeSet(rt.db, caller.ctx, ops) };
 }
 

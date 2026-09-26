@@ -84,6 +84,11 @@ type RouteContext = { params: Promise<Record<string, string | string[] | undefin
 export interface RouteOptions {
   /** Admin endpoints that must stay usable to set up TOTP (none today; account routes are session). */
   allowWithoutTotp?: boolean;
+  /**
+   * Usable while the household is suspended: an operator's deletion requires suspension first,
+   * and the household's admins must still be able to see and cancel it (SPEC-Q-16).
+   */
+  allowSuspended?: boolean;
 }
 
 function issuesOf(error: ZodError) {
@@ -192,6 +197,7 @@ export function route<S extends EndpointSpec>(
       if (endpoint.auth === "household") {
         caller = await requireHousehold(rt, request, endpoint.roles ?? [], {
           allowWithoutTotp: options.allowWithoutTotp === true,
+          allowSuspended: options.allowSuspended === true,
         });
         session = caller;
         log = log.child({ householdId: caller.ctx.householdId, userId: caller.ctx.userId });

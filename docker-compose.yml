@@ -38,6 +38,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    # Longer than the worker's graceful stop (running jobs finish or are reaped later).
+    stop_grace_period: 30s
     healthcheck:
       test: ["CMD-SHELL", "test -f /tmp/migrated"]
       interval: 5s

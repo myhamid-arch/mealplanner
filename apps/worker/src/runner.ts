@@ -25,6 +25,19 @@ export interface JobContext {
 
 export type JobHandler = (ctx: JobContext) => Promise<Json>;
 
+/**
+ * Kinds that are safe to run again (ADR-2): a failed attempt is retried in the same run after
+ * each delay, with a `retrying` event; other kinds (plans, AI, purge) fail at once and are re-run
+ * only when asked.
+ */
+const RETRYABLE: ReadonlySet<string> = new Set([
+  "kg.sync",
+  "kg.nightly",
+  "nutrition.recompute",
+  "plates.resolve",
+]);
+export const RETRY_DELAYS_MS: readonly number[] = [2_000, 8_000];
+
 export function toJson(value: unknown): Json {
   return JSON.parse(JSON.stringify(value ?? null)) as Json;
 }
@@ -66,17 +79,42 @@ export async function runJob(rt: WorkerRuntime, jobId: string, handler: JobHandl
     },
   };
   emit("started", { kind: job.kind });
-  try {
-    const result = await handler(ctx);
-    await chain;
-    await appendJobEvent(rt.db, jobId, "done", result);
-    await finishJob(rt.db, jobId, { status: "succeeded" });
-    log.info({ ms: Math.round(performance.now() - started) }, "job succeeded");
-  } catch (error) {
-    await chain.catch(() => undefined);
-    const err = errorJson(error);
-    log.error({ err: error, ms: Math.round(performance.now() - started) }, "job failed");
-    await appendJobEvent(rt.db, jobId, "failed", err).catch(() => undefined);
-    await finishJob(rt.db, jobId, { status: "failed", error: err });
+  let outcome: { ok: true; result: Json } | { ok: false; error: unknown };
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      const result = await handler(ctx);
+      await chain;
+      outcome = { ok: true, result };
+      break;
+    } catch (error) {
+      await chain.catch(() => undefined);
+      chain = Promise.resolve();
+      const delay = RETRYABLE.has(job.kind) ? RETRY_DELAYS_MS[attempt] : undefined;
+      if (delay === undefined) {
+        outcome = { ok: false, error };
+        break;
+      }
+      log.warn({ err: error, attempt: attempt + 1 }, "job attempt failed; retrying");
+      emit("retrying", { attempt: attempt + 1, error: errorJson(error) });
+      await new Promise((r) => setTimeout(r, delay));
+    }
   }
+  const ms = Math.round(performance.now() - started);
+  if (outcome.ok) {
+    try {
+      await appendJobEvent(rt.db, jobId, "done", outcome.result);
+      await finishJob(rt.db, jobId, { status: "succeeded" });
+      log.info({ ms }, "job succeeded");
+    } catch (error) {
+      // The work is done; only its record failed. No `failed` after a `done`.
+      log.error({ err: error, ms }, "job succeeded but its completion could not be stored");
+    }
+    return;
+  }
+  const err = errorJson(outcome.error);
+  log.error({ err: outcome.error, ms }, "job failed");
+  await appendJobEvent(rt.db, jobId, "failed", err).catch(() => undefined);
+  await finishJob(rt.db, jobId, { status: "failed", error: err }).catch((error: unknown) => {
+    log.error({ err: error }, "job failed and its status could not be stored");
+  });
 }

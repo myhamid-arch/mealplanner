@@ -36,13 +36,21 @@ export interface AuthOptions {
 export async function maySignIn(
   db: NodePgDatabase,
   userId: string,
+  via: string | null = null,
 ): Promise<{ ok: boolean; reason: string }> {
   const [u] = await db
-    .select({ blocked: user.platformBlockedAt })
+    .select({ blocked: user.platformBlockedAt, twoFactor: user.twoFactorEnabled })
     .from(user)
     .where(eq(user.id, userId));
   if (u === undefined) return { ok: false, reason: "unknown user" };
   if (u.blocked !== null) return { ok: false, reason: "this account is blocked" };
+  // SPEC-Q-6: with two-step sign-in on, no session without the TOTP step. The two-factor plugin
+  // guards password sign-in only, so an emailed link cannot sign such a user in.
+  if (u.twoFactor && via !== null && via.startsWith("/magic-link"))
+    return {
+      ok: false,
+      reason: "two-step sign-in is on: sign in with your password and authenticator code",
+    };
   const [operator] = await db
     .select({ userId: platformOperator.userId })
     .from(platformOperator)
@@ -96,8 +104,8 @@ export function createAuth(options: AuthOptions) {
     databaseHooks: {
       session: {
         create: {
-          before: async (s) => {
-            const verdict = await maySignIn(db, s.userId);
+          before: async (s, context) => {
+            const verdict = await maySignIn(db, s.userId, context?.path ?? null);
             if (!verdict.ok) throw new APIError("FORBIDDEN", { message: verdict.reason });
           },
         },
