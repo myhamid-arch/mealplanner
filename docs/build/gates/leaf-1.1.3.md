@@ -7,12 +7,12 @@ Scope: Catalogue data, as specified in docs/spec (see 11-build-plan.md §5 and 1
 - [x] G1: at least 250 ingredients with required fields, source and AE availability; at least 40 UAE-specific items (NUT-7)
   CHECK: node scripts/verify/leaf-1.1.3.mjs --gate G1
   EXPECT: VERIFY leaf-1.1.3 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=1a628d6c0e7377e0b7831da8ed2f7e6d2606e415daa9ccad54c601fb334a7b52; exit=0; EXPECT=matched; output-sha256=113790fe2d2820686217e4deb4e051bdae35cdde4c7d11f704eaa294b391be78; output-bytes=1080; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=1a628d6c0e7377e0b7831da8ed2f7e6d2606e415daa9ccad54c601fb334a7b52; exit=0; EXPECT=matched; output-sha256=7e72226db4bdbe4f08874e2c5680b132121184b78b59ea853e120f89603c0134; output-bytes=1080; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: every ingredient passes the Atwater check or is marked confidence low with a reason (NUT-4)
   CHECK: node scripts/verify/leaf-1.1.3.mjs --gate G2
   EXPECT: VERIFY leaf-1.1.3 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=c46c9499802d0e41571539a6711d70c298ebfc65741a024cb31b67d1e22d1dc2; exit=0; EXPECT=matched; output-sha256=fdfe775f1b889add2b75a60414c6056f41c7c3a306b2e0198af9426c01b95bda; output-bytes=1280; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=c46c9499802d0e41571539a6711d70c298ebfc65741a024cb31b67d1e22d1dc2; exit=0; EXPECT=matched; output-sha256=8f0e85b8d6673b523a5f6e0d0c08d9853e359a2a8c65326365ca328914fd4a38; output-bytes=1518; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: method-yield rows exist with a source for every (method, category) used by the seed library (NUT-5)
   CHECK: node scripts/verify/leaf-1.1.3.mjs --gate G3
