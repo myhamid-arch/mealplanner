@@ -286,7 +286,7 @@ Ingredients:
 Method:
 1. Bring the water and salt to a rolling boil in a large pot.
 2. Add the pasta and cook for 1 minute less than the packet time (about 9–10 minutes), stirring in the first minute.
-3. Drain, keeping 100 ml of the cooking water to loosen the sauce if needed. Weigh the cooked pasta for portions.
+3. Drain and rinse under cold water until cool, then drain well. Weigh the cooked pasta for portions.
 
 ### Yogurt-mayo dressing (sauce; 10–80 g cooked per plate, default 30 g, optional)
 
@@ -323,7 +323,7 @@ Cuisine: chinese. Slots: lunch, dinner, packed_work_lunch. Packable: yes. Served
 
 ### Beef and broccoli (protein; 100–380 g cooked per plate, default 200 g)
 
-**Wok-fried** (stir_fried, default; batch ≈ 1305 g cooked; 25 min)
+**Wok-fried** (stir_fried, default; batch ≈ 1365 g cooked; 25 min)
 Ingredients:
 - 1000 g Beef eye of round
 - 500 g Broccoli
@@ -333,6 +333,7 @@ Ingredients:
 - 60 g Soy sauce
 - 60 g Oyster sauce
 - 20 g Cornflour (corn starch)
+- 60 g Water (cooking liquid, retained)
 - 50 g Sunflower oil
 Method:
 1. Slice the beef thinly across the grain and toss with half the soy sauce and the cornflour. Leave for 15 minutes.
@@ -340,7 +341,7 @@ Method:
 3. Heat half the oil in a wok until smoking and sear the beef in two batches for 1–2 minutes; set aside.
 4. Stir-fry the sliced onion, garlic and ginger in the rest of the oil for 1 minute, add the broccoli, then the beef, oyster sauce and remaining soy sauce with 60 ml of water. Toss for 1 minute until glossy.
 
-**Pan-sautéed** (sauteed; batch ≈ 1305 g cooked; 25 min)
+**Pan-sautéed** (sauteed; batch ≈ 1365 g cooked; 25 min)
 Ingredients:
 - 1000 g Beef eye of round
 - 500 g Broccoli
@@ -350,6 +351,7 @@ Ingredients:
 - 60 g Soy sauce
 - 60 g Oyster sauce
 - 20 g Cornflour (corn starch)
+- 60 g Water (cooking liquid, retained)
 - 50 g Sunflower oil
 Method:
 1. Slice the beef thinly across the grain and toss with half the soy sauce and the cornflour. Leave for 15 minutes.
@@ -630,7 +632,7 @@ Ingredients:
 Method:
 1. Cut the skinless chicken thighs in half. Mix the baharat spices.
 2. In a deep pot, cook the sliced onion in the olive oil over medium heat for 8 minutes. Add the garlic and half the spices for 1 minute.
-3. Add the chicken, chopped tomato, lime juice and salt, cover and simmer on low heat for 35 minutes, turning once, until tender. Lift out the chicken; keep the pan juices for the rice.
+3. Add the chicken, chopped tomato, lime juice and salt, cover and simmer on low heat for 35 minutes, turning once, until tender. Lift out the chicken and spoon the pan juices over it.
 
 **Simmered then oven-crisped** (roasted; batch ≈ 996 g cooked; 60 min)
 Ingredients:
@@ -652,7 +654,7 @@ Method:
 1. Cut the skinless chicken thighs in half. Mix the baharat spices.
 2. In a deep pot, cook the sliced onion in the olive oil over medium heat for 8 minutes. Add the garlic and half the spices for 1 minute.
 3. Add the chicken, chopped tomato, lime juice and salt, cover and simmer on low heat for 25 minutes.
-4. Lift the chicken onto a tray and roast at 230 °C (fan 210 °C) for 12 minutes until the edges crisp. Keep the pan juices for the rice.
+4. Lift the chicken onto a tray and roast at 230 °C (fan 210 °C) for 12 minutes until the edges crisp. Spoon the pan juices over the chicken.
 
 ### Machboos rice (carb; 60–350 g cooked per plate, default 180 g)
 
@@ -671,7 +673,7 @@ Ingredients:
 - 5 g Salt
 Method:
 1. Rinse and soak the rice for 20 minutes, then drain.
-2. Bring the stock (topped up with the chicken's pan juices) to a boil with the remaining spices, the chopped tomato and salt.
+2. Bring the stock to a boil with the remaining spices, the chopped tomato and salt.
 3. Add the rice, cover and cook on the lowest heat for 14 minutes. Rest for 5 minutes and fluff.
 
 **Baharat rice with onion and raisin hashu** (boiled; batch ≈ 1757 g cooked; 45 min)
@@ -692,7 +694,7 @@ Ingredients:
 - 5 g Salt
 Method:
 1. Rinse and soak the rice for 20 minutes, then drain.
-2. Bring the stock (topped up with the chicken's pan juices) to a boil with the remaining spices, the chopped tomato and salt.
+2. Bring the stock to a boil with the remaining spices, the chopped tomato and salt.
 3. Add the rice, cover and cook on the lowest heat for 14 minutes. Rest for 5 minutes and fluff.
 4. Meanwhile cook the sliced onion in the olive oil over medium-low heat for 15 minutes until soft and golden, add the raisins for 2 minutes, and fold through the rice.
 
@@ -788,7 +790,7 @@ Ingredients:
 - 350 g Egg, whole
 - 650 g Egg white
 Method:
-1. Boil the eggs for 8 minutes, cool and peel. Serve 1 whole egg and whites only for the rest of the portion (keep the yolks for another use).
+1. For this batch boil 27 eggs (about 50 g each) for 8 minutes, cool and peel. Keep 7 whole (350 g) and the whites only of the other 20 (650 g); keep those 20 yolks for another use. Serve each portion as 1 whole egg plus whites.
 
 ### Olive oil to finish (fat; 5–20 g cooked per plate, default 10 g, optional)
 
@@ -858,9 +860,9 @@ Method:
 
 ### Toasted bun (carb; 40–100 g cooked per plate, default 70 g)
 
-**Toasted** (grilled, default; batch ≈ 410 g cooked; 2 min)
+**Toasted** (grilled, default; batch ≈ 500 g cooked; 2 min)
 Ingredients:
-- 500 g Burger bun
+- 500 g Burger bun (cut side warmed briefly, keeps its mass)
 Method:
 1. Split the buns and toast cut side down on the grill for 1 minute.
 

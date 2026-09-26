@@ -202,7 +202,7 @@
           "method": "grilled",
           "label": "Toasted",
           "is_default": false,
-          "reference_batch_cooked_g": 410,
+          "reference_batch_cooked_g": 500,
           "cook_time_min": 3,
           "notes": null,
           "steps": [
@@ -212,10 +212,10 @@
             {
               "ingredient_slug": "tortilla-flour",
               "raw_g_per_batch": 500,
-              "role_note": null,
+              "role_note": "warmed briefly, keeps its mass",
               "is_absorbed_oil": false,
               "cooking_liquid": null,
-              "yield_override": null
+              "yield_override": 1
             }
           ]
         }

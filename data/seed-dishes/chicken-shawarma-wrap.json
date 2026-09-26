@@ -316,7 +316,7 @@
           "method": "grilled",
           "label": "Grill-pressed",
           "is_default": false,
-          "reference_batch_cooked_g": 410,
+          "reference_batch_cooked_g": 500,
           "cook_time_min": 4,
           "notes": null,
           "steps": [
@@ -326,10 +326,10 @@
             {
               "ingredient_slug": "khubz",
               "raw_g_per_batch": 500,
-              "role_note": null,
+              "role_note": "pressed briefly, keeps its mass",
               "is_absorbed_oil": false,
               "cooking_liquid": null,
-              "yield_override": null
+              "yield_override": 1
             }
           ]
         }

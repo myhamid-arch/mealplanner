@@ -38,7 +38,7 @@
           "method": "stir_fried",
           "label": "Wok-fried",
           "is_default": true,
-          "reference_batch_cooked_g": 1305,
+          "reference_batch_cooked_g": 1365,
           "cook_time_min": 25,
           "notes": null,
           "steps": [
@@ -113,6 +113,14 @@
               "yield_override": null
             },
             {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "retained",
+              "yield_override": null
+            },
+            {
               "ingredient_slug": "sunflower-oil",
               "raw_g_per_batch": 50,
               "role_note": null,
@@ -127,7 +135,7 @@
           "method": "sauteed",
           "label": "Pan-sautéed",
           "is_default": false,
-          "reference_batch_cooked_g": 1305,
+          "reference_batch_cooked_g": 1365,
           "cook_time_min": 25,
           "notes": null,
           "steps": [
@@ -199,6 +207,14 @@
               "role_note": null,
               "is_absorbed_oil": false,
               "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "retained",
               "yield_override": null
             },
             {

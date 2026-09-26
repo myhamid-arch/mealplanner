@@ -61,7 +61,7 @@
           "method": "grilled",
           "label": "Grill-pressed",
           "is_default": false,
-          "reference_batch_cooked_g": 410,
+          "reference_batch_cooked_g": 500,
           "cook_time_min": 3,
           "notes": null,
           "steps": [
@@ -71,10 +71,10 @@
             {
               "ingredient_slug": "khubz-wholemeal",
               "raw_g_per_batch": 500,
-              "role_note": null,
+              "role_note": "pressed briefly, keeps its mass",
               "is_absorbed_oil": false,
               "cooking_liquid": null,
-              "yield_override": null
+              "yield_override": 1
             }
           ]
         }
@@ -177,7 +177,7 @@
           "cook_time_min": 12,
           "notes": null,
           "steps": [
-            "Boil the eggs for 8 minutes, cool and peel. Serve 1 whole egg and whites only for the rest of the portion."
+            "For this batch boil 27 eggs (about 50 g each) for 8 minutes, cool and peel. Keep 7 whole (350 g) and the whites only of the other 20 (650 g); keep those 20 yolks for another use. Serve each portion as 1 whole egg plus whites."
           ],
           "ingredients": [
             {
