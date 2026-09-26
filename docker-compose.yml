@@ -28,7 +28,7 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/mealplanner
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-5}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
       AI_RECIPE_DAILY_LIMIT: ${AI_RECIPE_DAILY_LIMIT:-60}
       LOG_LEVEL: ${LOG_LEVEL:-info}
     command:
