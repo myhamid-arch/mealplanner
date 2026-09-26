@@ -369,6 +369,9 @@ async function gateG2() {
   try {
     const install = installCopy(copy.dir);
     report.check(install.code === 0, "workspace copy installs from the lockfile", tail(install));
+    // Type-aware lint resolves cross-package imports through built output, so build first, as CI does.
+    const copyBuild = run("pnpm", ["-r", "build"], { cwd: copy.dir, env: BUILD_ENV });
+    report.check(copyBuild.code === 0, "workspace copy builds (pnpm -r build)", tail(copyBuild));
 
     const probes = [
       ...ILLEGAL_PROBES.map((probe) => ({ ...probe, legal: false })),
