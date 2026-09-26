@@ -306,3 +306,13 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - Where the source publishes food-specific factors, the catalogue records them in `meta.atwater_factors` (`protein`, `fat`, `carbohydrate`, numeric, with the source record). An ingredient **passes NUT-4** when either the generic check or the check with its own factors is within 12 %. Its confidence is not lowered for that reason.
   - Only failures that remain after that are data errors: `low` with a reason, and marked `needs_review` by the loader (R-17).
   - Computed variants inherit the same gap (a steamed-mushroom component would fail the generic check). The variant check therefore compares the variant's kcal with the sum of its ingredients' predicted energy, each ingredient using its own factors where recorded and 4/4/9/2 otherwise. This amends 1.2.1's `atwaterCheck` for variants; the architect assigns that change when 1.2.4 is dispatched, and 1.2.4 G3 uses it.
+
+### Rulings from wave 2 CP3 (leaf 1.1.2)
+
+- **R-23. No emoji in data (R2-UX-5) — architect error in 02.** 02 still carried r1 emoji fields. Before 1.1.2 merges: `member.emoji_avatar` and `cuisine.flag_emoji` are removed; `slot_type.emoji` becomes `slot_type.icon` (text, not null), an icon key the UI maps to an inline SVG. 1.1.3 drops `flag_emoji` from `data/cuisines.json`.
+- **R-24 (1.1.2 SPEC-Q-10 … 14, D-1).**
+  - Q-10: weekday `0 = Monday … 6 = Sunday`, through `weekdayOf()`. Accepted.
+  - Q-11: 1.1.2 adds `portion_bias.set` now (FBK-5 logs it as a `learning` change set; not protected). `detail_level` is a per-member UI preference written directly through its repository, outside DM-6. Invite acceptance is part of the auth flow (1.4.1). Accepted.
+  - Q-12 (roles enforced in the API layer, 1.4.1) and Q-13 (`plan.save_days` refuses a date whose meal has reviews unless it is locked): accepted.
+  - Q-14: default slot times accepted; icons per R-23.
+  - D-1: `drizzle.config.ts` lives under `packages/db/src/migrations/`. Accepted.
