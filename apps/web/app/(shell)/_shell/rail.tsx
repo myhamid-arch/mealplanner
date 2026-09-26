@@ -85,7 +85,7 @@ export function Rail({
           aria-current={pathname.startsWith(ROUTES.account) ? "page" : undefined}
           className="flex items-center gap-2.5 rounded-md bg-rail-raised p-2.5 text-rail-ink no-underline hover:text-rail-ink"
         >
-          <Avatar name={viewer.name} colorKey={viewer.memberKey} />
+          <Avatar name={viewer.name} color={viewer.memberColor} colorKey={viewer.memberKey} />
           <span className="flex min-w-0 flex-col">
             <span className="truncate text-sm font-extrabold text-rail-ink-strong">
               {viewer.name}

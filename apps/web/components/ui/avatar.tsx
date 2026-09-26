@@ -1,8 +1,15 @@
-import { avatarColor, avatarInk } from "@mealplanner/ui-tokens/tokens";
+import {
+  avatarInk,
+  avatarPalette,
+  resolveAvatarColor,
+  type AvatarColor,
+} from "@mealplanner/ui-tokens/tokens";
 
 export interface AvatarProps {
   readonly name: string;
-  /** Stable key (member id) that picks the colour; defaults to the name. */
+  /** The member's stored colour (`member.color`). When given, it wins. */
+  readonly color?: AvatarColor | null;
+  /** Stable key (member id) for the fallback colour when none is stored; defaults to the name. */
   readonly colorKey?: string;
   readonly size?: 30 | 36 | 44 | 56;
   /**
@@ -26,6 +33,7 @@ const FONT: Record<NonNullable<AvatarProps["size"]>, number> = { 30: 13, 36: 15,
 /** Coloured-initial avatar (R2-UX-5: no emoji avatars). */
 export function Avatar({
   name,
+  color,
   colorKey,
   size = 36,
   labelled = false,
@@ -38,9 +46,10 @@ export function Avatar({
         width: size,
         height: size,
         fontSize: FONT[size],
-        background: avatarColor(colorKey ?? name),
+        background: avatarPalette[resolveAvatarColor(color, colorKey ?? name)],
         color: avatarInk,
       }}
+      data-avatar-color={resolveAvatarColor(color, colorKey ?? name)}
       {...(labelled ? { role: "img", "aria-label": name } : { "aria-hidden": true })}
     >
       {initialOf(name)}

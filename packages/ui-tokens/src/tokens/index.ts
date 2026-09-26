@@ -271,27 +271,52 @@ export const toneColor: Readonly<Record<Tone, { bg: ColorToken; fg: ColorToken }
 };
 
 /**
- * Coloured-initial avatars (R2-UX-5). A white initial on each; the same fills in both themes.
- * #9A6508 replaces the mockups' #B7790A, which is 3.65:1 against white.
+ * Coloured-initial avatars (R2-UX-5). The names are the values stored in `member.color`
+ * (02-domain-model: "color (token name)"), which people choose in onboarding and family
+ * settings; the family leaf offers `AVATAR_COLORS` as the choices. Each fill carries a white
+ * initial and is the same in both themes. `saffron` is #9A6508 because the mockups' #B7790A is
+ * 3.65:1 against white.
  */
-export const avatarPalette = [
-  "#17706F",
-  "#5B2A86",
-  "#B3263E",
-  "#9A6508",
-  "#2F7A2B",
-  "#C4411E",
+export const AVATAR_COLORS = [
+  "sea",
+  "aubergine",
+  "pomegranate",
+  "saffron",
+  "basil",
+  "tomato",
 ] as const;
+export type AvatarColor = (typeof AVATAR_COLORS)[number];
+
+export const avatarPalette: Readonly<Record<AvatarColor, string>> = {
+  sea: "#17706F",
+  aubergine: "#5B2A86",
+  pomegranate: "#B3263E",
+  saffron: "#9A6508",
+  basil: "#2F7A2B",
+  tomato: "#C4411E",
+};
 export const avatarInk = "#FFFFFF";
 
-/** Deterministic avatar colour for a member key (id or name): FNV-1a over UTF-16 units. */
-export function avatarColor(key: string): (typeof avatarPalette)[number] {
+export function isAvatarColor(value: unknown): value is AvatarColor {
+  return typeof value === "string" && (AVATAR_COLORS as readonly string[]).includes(value);
+}
+
+/**
+ * Fallback colour for a member with no stored colour yet: FNV-1a over the key's UTF-16 units
+ * (member id), so it is stable across renders. A stored `member.color` always wins.
+ */
+export function fallbackAvatarColor(key: string): AvatarColor {
   let hash = 0x811c9dc5;
   for (let i = 0; i < key.length; i += 1) {
     hash ^= key.charCodeAt(i);
     hash = Math.imul(hash, 0x01000193) >>> 0;
   }
-  return avatarPalette[hash % avatarPalette.length] ?? avatarPalette[0];
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length] ?? "sea";
+}
+
+/** The avatar fill: the stored colour when it is a known name, else the id-hash fallback. */
+export function resolveAvatarColor(stored: string | null | undefined, key: string): AvatarColor {
+  return isAvatarColor(stored) ? stored : fallbackAvatarColor(key);
 }
 
 // ---------------------------------------------------------------------------------------------

@@ -99,10 +99,12 @@ export const TEXT_PAIRS: readonly ColorPair[] = unique([
 ]);
 
 /** Avatar fills carry a white initial; checked as normal text. */
-export const AVATAR_PAIRS: readonly { fg: string; bg: string }[] = avatarPalette.map((bg) => ({
-  fg: avatarInk,
-  bg,
-}));
+export const AVATAR_PAIRS: readonly { fg: string; bg: string }[] = Object.values(avatarPalette).map(
+  (bg) => ({
+    fg: avatarInk,
+    bg,
+  }),
+);
 
 /** Parses `#RRGGBB` into 0–255 channels. Throws on anything else. */
 export function parseHex(hex: string): [number, number, number] {

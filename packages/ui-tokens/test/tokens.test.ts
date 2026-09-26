@@ -11,8 +11,10 @@ import {
 } from "../src/contrast/index.js";
 import { tokensToCss } from "../src/css/index.js";
 import {
-  avatarColor,
+  AVATAR_COLORS,
   avatarPalette,
+  fallbackAvatarColor,
+  resolveAvatarColor,
   COLOR_TOKENS,
   colors,
   cssVarName,
@@ -110,10 +112,21 @@ describe("css", () => {
 
 describe("avatars", () => {
   it("picks a stable colour from the palette", () => {
-    expect(avatarColor("member-1")).toBe(avatarColor("member-1"));
-    expect(avatarPalette).toContain(avatarColor("Omar"));
-    const spread = new Set(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map(avatarColor));
+    expect(fallbackAvatarColor("member-1")).toBe(fallbackAvatarColor("member-1"));
+    expect(AVATAR_COLORS).toContain(fallbackAvatarColor("Omar"));
+    expect(Object.keys(avatarPalette)).toEqual([...AVATAR_COLORS]);
+    const spread = new Set(
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map(fallbackAvatarColor),
+    );
     expect(spread.size).toBeGreaterThan(2);
+  });
+
+  it("a stored colour wins over the id hash; an unknown name falls back", () => {
+    const key = "member-1";
+    const other = AVATAR_COLORS.find((c) => c !== fallbackAvatarColor(key)) ?? "sea";
+    expect(resolveAvatarColor(other, key)).toBe(other);
+    expect(resolveAvatarColor(null, key)).toBe(fallbackAvatarColor(key));
+    expect(resolveAvatarColor("teal", key)).toBe(fallbackAvatarColor(key));
   });
 });
 

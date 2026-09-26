@@ -460,6 +460,7 @@ async function gateG2() {
       "@G2 navigation per role (UX-3, R-21)",
       "@G2 rating input is a keyboard-operable radio group",
       "@G2 primitives render their data without JavaScript (rings, bars, stars)",
+      "@G2 avatar: the stored member colour overrides the id hash",
       "@G2 installable: no installability errors, worker controls the page, icons match",
       "@G2 offline: Today is kept for offline reading, other pages fall back, sign-out clears",
       "@G2 negative control: a forced 1600 px element is caught as horizontal scroll",

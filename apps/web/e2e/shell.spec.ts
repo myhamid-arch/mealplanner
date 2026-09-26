@@ -9,7 +9,10 @@
 // server-rendered here with react-dom/server and shown under the app's real built CSS.
 import { AA_THRESHOLD, AVATAR_PAIRS, TEXT_PAIRS, parseHex } from "@mealplanner/ui-tokens/contrast";
 import {
+  AVATAR_COLORS,
   COLOR_TOKENS,
+  avatarPalette,
+  fallbackAvatarColor,
   FIT_STATUSES,
   TONES,
   colors,
@@ -130,6 +133,7 @@ const VIEWERS: Record<Role, ShellViewer> = {
     role: "admin",
     householdName: "Khalifa City home",
     memberKey: "omar",
+    memberColor: "sea",
     pendingProposals: 3,
   },
   member: {
@@ -137,6 +141,7 @@ const VIEWERS: Record<Role, ShellViewer> = {
     role: "member",
     householdName: "Khalifa City home",
     memberKey: "sara",
+    memberColor: "aubergine",
     pendingProposals: 0,
   },
   kitchen: {
@@ -144,6 +149,7 @@ const VIEWERS: Record<Role, ShellViewer> = {
     role: "kitchen",
     householdName: "Khalifa City home",
     memberKey: "priya",
+    memberColor: null,
     pendingProposals: 0,
   },
 };
@@ -243,10 +249,16 @@ function PrimitivesGallery(): ReactElement {
     section(
       "Avatars and macro rings",
       row(
-        h(Avatar, { name: "Omar", colorKey: "omar", labelled: true }),
-        h(Avatar, { name: "Sara", colorKey: "sara", size: 44, labelled: true }),
-        h(Avatar, { name: "Layla", colorKey: "layla", size: 30, labelled: true }),
-        h(Avatar, { name: "Zayd", colorKey: "zayd", size: 56, labelled: true }),
+        h(Avatar, { name: "Omar", color: "sea", colorKey: "omar", labelled: true }),
+        h(Avatar, { name: "Sara", color: "aubergine", colorKey: "sara", size: 44, labelled: true }),
+        h(Avatar, {
+          name: "Layla",
+          color: "pomegranate",
+          colorKey: "layla",
+          size: 30,
+          labelled: true,
+        }),
+        h(Avatar, { name: "Zayd", color: "basil", colorKey: "zayd", size: 56, labelled: true }),
       ),
       row(
         ...FIT_STATUSES.map((fit) =>
@@ -261,7 +273,7 @@ function PrimitivesGallery(): ReactElement {
                 ? {}
                 : { macros: { protein: 43, carbs: 47, fat: 17 }, targetKcal: 523 }),
             },
-            h(Avatar, { name: "Sara", colorKey: "sara", size: 30 }),
+            h(Avatar, { name: "Sara", color: "aubergine", colorKey: "sara", size: 30 }),
           ),
         ),
         h(
@@ -878,6 +890,47 @@ test.describe("@G2 shell layout", () => {
     await expect(page.getByRole("img", { name: "Rated 4.5 out of 5 from 12 reviews" })).toHaveCount(
       1,
     );
+  });
+
+  test("@G2 avatar: the stored member colour overrides the id hash", async ({ page, request }) => {
+    const key = "member-7";
+    const fallback = fallbackAvatarColor(key);
+    const stored = AVATAR_COLORS.find((c) => c !== fallback) ?? "sea";
+    await setup(page, 390, 844, "light");
+    await showMarkup(
+      page,
+      request,
+      renderToStaticMarkup(
+        h(
+          "div",
+          null,
+          h(Avatar, { name: "Stored", color: stored, colorKey: key, labelled: true }),
+          h(Avatar, { name: "Fallback", colorKey: key, labelled: true }),
+          h(Avatar, { name: "Omar", color: "sea", colorKey: "omar", labelled: true }),
+        ),
+      ),
+    );
+    const fill = async (name: string) =>
+      page.getByRole("img", { name }).evaluate((el) => getComputedStyle(el).backgroundColor);
+    const rgbOf = (hex: string) => `rgb(${parseHex(hex).join(", ")})`;
+    // Negative control: without a stored colour the hash decides, and it differs from `stored`.
+    expect(await fill("Fallback")).toBe(rgbOf(avatarPalette[fallback]));
+    expect(await fill("Stored")).toBe(rgbOf(avatarPalette[stored]));
+    expect(await fill("Stored")).not.toBe(await fill("Fallback"));
+    // The mockups' Omar is teal (#17706F, "sea").
+    expect(await fill("Omar")).toBe(rgbOf("#17706F"));
+    // The shell's account card uses the viewer's stored colour.
+    await setup(page, 1280, 800, "light");
+    await showMarkup(
+      page,
+      request,
+      shellMarkup(
+        { id: "admin", viewer: VIEWERS.admin, pathname: ROUTES.today },
+        h("p", null, "x"),
+      ),
+    );
+    const account = page.locator("nav[aria-label='Main'] a[href='/account'] [data-avatar-color]");
+    await expect(account).toHaveAttribute("data-avatar-color", "sea");
   });
 
   test("@G2 negative control: a forced 1600 px element is caught as horizontal scroll", async ({
