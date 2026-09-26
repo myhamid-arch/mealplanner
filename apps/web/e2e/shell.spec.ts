@@ -259,6 +259,8 @@ function PrimitivesGallery(): ReactElement {
           labelled: true,
         }),
         h(Avatar, { name: "Zayd", color: "basil", colorKey: "zayd", size: 56, labelled: true }),
+        h(Avatar, { name: "Nour", color: "olive", colorKey: "nour", labelled: true }),
+        h(Avatar, { name: "Kareem", color: "flour", colorKey: "kareem", labelled: true }),
       ),
       row(
         ...FIT_STATUSES.map((fit) =>
@@ -914,8 +916,8 @@ test.describe("@G2 shell layout", () => {
       page.getByRole("img", { name }).evaluate((el) => getComputedStyle(el).backgroundColor);
     const rgbOf = (hex: string) => `rgb(${parseHex(hex).join(", ")})`;
     // Negative control: without a stored colour the hash decides, and it differs from `stored`.
-    expect(await fill("Fallback")).toBe(rgbOf(avatarPalette[fallback]));
-    expect(await fill("Stored")).toBe(rgbOf(avatarPalette[stored]));
+    expect(await fill("Fallback")).toBe(rgbOf(avatarPalette[fallback].fill));
+    expect(await fill("Stored")).toBe(rgbOf(avatarPalette[stored].fill));
     expect(await fill("Stored")).not.toBe(await fill("Fallback"));
     // The mockups' Omar is teal (#17706F, "sea").
     expect(await fill("Omar")).toBe(rgbOf("#17706F"));

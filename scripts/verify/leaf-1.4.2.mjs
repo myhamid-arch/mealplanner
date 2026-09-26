@@ -13,7 +13,7 @@
 //
 // Browser: PLAYWRIGHT_CHROMIUM_EXECUTABLE, else /opt/pw-browsers/chromium when it exists, else
 // Playwright's own Chromium.
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
@@ -118,6 +118,15 @@ const kebab = (token) => token.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 /** Tokens not mapped into Tailwind as `--color-x: var(--x);` in globals.css. */
 function unmappedTokens(tokens, css) {
   return tokens.filter((t) => !css.includes(`--color-${kebab(t)}: var(--${kebab(t)});`));
+}
+
+/** `color: "<name>"` values in the core fixtures (member rows). */
+function storedMemberColours(dir) {
+  const out = [];
+  for (const file of walk(dir, (p) => /f\d\.ts$/.test(p))) {
+    for (const m of readFileSync(file, "utf8").matchAll(/\bcolor:\s*"([a-z]+)"/g)) out.push(m[1]);
+  }
+  return out;
 }
 
 function walk(dir, predicate) {
@@ -290,9 +299,33 @@ async function gateG1() {
   const avatarFailures = AVATAR_PAIRS.filter((p) => contrast(p.fg, p.bg) < THRESHOLD.normal);
   report.check(
     avatarFailures.length === 0,
-    `all ${String(AVATAR_PAIRS.length)} avatar colours carry a white initial at AA`,
+    `all ${String(AVATAR_PAIRS.length)} avatar colours carry their initial at AA`,
     JSON.stringify(avatarFailures),
   );
+
+  // Every member.color the F1–F3 fixtures store (leaf 1.1.2) is an avatar colour.
+  const fixtureDir = join(ROOT, "packages/core/test/fixtures");
+  const fixtureColours = existsSync(fixtureDir) ? storedMemberColours(fixtureDir) : [];
+  const unknownColours = fixtureColours.filter((c) => !tokens.AVATAR_COLORS.includes(c));
+  report.check(
+    fixtureColours.length > 0 && unknownColours.length === 0,
+    `every member colour in the F1–F3 fixtures (${[...new Set(fixtureColours)].join(", ")}) is an avatar colour`,
+    unknownColours.join(", "),
+  );
+  const badFixtures = mkdtempSync(join(tmpdir(), "leaf-1.4.2-fixtures-"));
+  try {
+    writeFileSync(
+      join(badFixtures, "f9.ts"),
+      'export const m = [{ color: "sea" }, { color: "teal" }];\n',
+    );
+    const scanned = storedMemberColours(badFixtures);
+    report.check(
+      scanned.includes("teal") && scanned.some((c) => !tokens.AVATAR_COLORS.includes(c)),
+      "negative control: a fixture member colour outside the palette is detected",
+    );
+  } finally {
+    rmSync(badFixtures, { recursive: true, force: true });
+  }
 
   // Tokens reach the web app, and components colour only through tokens.
   const css = readFileSync(join(WEB, "app/globals.css"), "utf8");

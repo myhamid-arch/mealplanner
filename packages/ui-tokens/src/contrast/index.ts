@@ -2,7 +2,6 @@
 // both themes). Components colour text only with pairs listed here; G1 checks every pair in
 // both themes and maps each rendered pair back to this list.
 import {
-  avatarInk,
   avatarPalette,
   colors,
   fitColor,
@@ -98,12 +97,9 @@ export const TEXT_PAIRS: readonly ColorPair[] = unique([
   pair("action", "tomatoTint", "selected rating tile border", "nonText"),
 ]);
 
-/** Avatar fills carry a white initial; checked as normal text. */
+/** Each avatar colour's initial on its fill; checked as normal text. */
 export const AVATAR_PAIRS: readonly { fg: string; bg: string }[] = Object.values(avatarPalette).map(
-  (bg) => ({
-    fg: avatarInk,
-    bg,
-  }),
+  ({ fill, ink }) => ({ fg: ink, bg: fill }),
 );
 
 /** Parses `#RRGGBB` into 0–255 channels. Throws on anything else. */

@@ -1,9 +1,4 @@
-import {
-  avatarInk,
-  avatarPalette,
-  resolveAvatarColor,
-  type AvatarColor,
-} from "@mealplanner/ui-tokens/tokens";
+import { avatarPalette, resolveAvatarColor, type AvatarColor } from "@mealplanner/ui-tokens/tokens";
 
 export interface AvatarProps {
   readonly name: string;
@@ -39,6 +34,8 @@ export function Avatar({
   labelled = false,
   className = "",
 }: AvatarProps) {
+  const resolved = resolveAvatarColor(color, colorKey ?? name);
+  const { fill, ink } = avatarPalette[resolved];
   return (
     <span
       className={`inline-flex shrink-0 items-center justify-center rounded-full font-extrabold select-none ${className}`}
@@ -46,10 +43,10 @@ export function Avatar({
         width: size,
         height: size,
         fontSize: FONT[size],
-        background: avatarPalette[resolveAvatarColor(color, colorKey ?? name)],
-        color: avatarInk,
+        background: fill,
+        color: ink,
       }}
-      data-avatar-color={resolveAvatarColor(color, colorKey ?? name)}
+      data-avatar-color={resolved}
       {...(labelled ? { role: "img", "aria-label": name } : { "aria-hidden": true })}
     >
       {initialOf(name)}

@@ -272,10 +272,12 @@ export const toneColor: Readonly<Record<Tone, { bg: ColorToken; fg: ColorToken }
 
 /**
  * Coloured-initial avatars (R2-UX-5). The names are the values stored in `member.color`
- * (02-domain-model: "color (token name)"), which people choose in onboarding and family
- * settings; the family leaf offers `AVATAR_COLORS` as the choices. Each fill carries a white
- * initial and is the same in both themes. `saffron` is #9A6508 because the mockups' #B7790A is
- * 3.65:1 against white.
+ * (02-domain-model: "color (token name)"; the fixtures of leaf 1.1.2 use all eight), which people
+ * choose in onboarding and family settings; the family leaf offers `AVATAR_COLORS` as the
+ * choices. Each name has a fill and the initial's colour, AA as text and the same in both
+ * themes. Fills are the mockups' avatar colours; `saffron` is #9A6508 because the mockups'
+ * #B7790A is 3.65:1 against white, `olive` is the mockups' dark olive #6E6E1F (the olive accent
+ * #8A8A3A is 3.64:1), and `flour` is light, so its initial is ink.
  */
 export const AVATAR_COLORS = [
   "sea",
@@ -284,18 +286,21 @@ export const AVATAR_COLORS = [
   "saffron",
   "basil",
   "tomato",
+  "olive",
+  "flour",
 ] as const;
 export type AvatarColor = (typeof AVATAR_COLORS)[number];
 
-export const avatarPalette: Readonly<Record<AvatarColor, string>> = {
-  sea: "#17706F",
-  aubergine: "#5B2A86",
-  pomegranate: "#B3263E",
-  saffron: "#9A6508",
-  basil: "#2F7A2B",
-  tomato: "#C4411E",
+export const avatarPalette: Readonly<Record<AvatarColor, { fill: string; ink: string }>> = {
+  sea: { fill: "#17706F", ink: "#FFFFFF" },
+  aubergine: { fill: "#5B2A86", ink: "#FFFFFF" },
+  pomegranate: { fill: "#B3263E", ink: "#FFFFFF" },
+  saffron: { fill: "#9A6508", ink: "#FFFFFF" },
+  basil: { fill: "#2F7A2B", ink: "#FFFFFF" },
+  tomato: { fill: "#C4411E", ink: "#FFFFFF" },
+  olive: { fill: "#6E6E1F", ink: "#FFFFFF" },
+  flour: { fill: "#F1E7D6", ink: "#2B2118" },
 };
-export const avatarInk = "#FFFFFF";
 
 export function isAvatarColor(value: unknown): value is AvatarColor {
   return typeof value === "string" && (AVATAR_COLORS as readonly string[]).includes(value);

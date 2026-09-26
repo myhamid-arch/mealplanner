@@ -86,7 +86,7 @@ describe("contrast", () => {
     expect(failing.some((r) => r.fg === "inkMuted")).toBe(true);
   });
 
-  it("every avatar colour carries a white initial at AA", () => {
+  it("every avatar colour carries its initial at AA", () => {
     for (const { fg, bg } of AVATAR_PAIRS)
       expect(contrastRatio(fg, bg)).toBeGreaterThanOrEqual(4.5);
   });
