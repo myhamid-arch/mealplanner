@@ -7,7 +7,7 @@ Scope: Catalogue data, as specified in docs/spec (see 11-build-plan.md §5 and 1
 - [x] G1: at least 250 ingredients with required fields, source and AE availability; at least 40 UAE-specific items (NUT-7)
   CHECK: node scripts/verify/leaf-1.1.3.mjs --gate G1
   EXPECT: VERIFY leaf-1.1.3 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=1a628d6c0e7377e0b7831da8ed2f7e6d2606e415daa9ccad54c601fb334a7b52; exit=0; EXPECT=matched; output-sha256=7e72226db4bdbe4f08874e2c5680b132121184b78b59ea853e120f89603c0134; output-bytes=1080; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=1a628d6c0e7377e0b7831da8ed2f7e6d2606e415daa9ccad54c601fb334a7b52; exit=0; EXPECT=matched; output-sha256=dddd8ada0cfe11f1332ad25f62686f7d0b88f977913916e91c7d11940ff2388a; output-bytes=1205; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: every ingredient passes the Atwater check or is marked confidence low with a reason (NUT-4)
   CHECK: node scripts/verify/leaf-1.1.3.mjs --gate G2
