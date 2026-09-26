@@ -209,7 +209,18 @@
   }
 }
 
+/* Macro-ring arcs draw from zero to their own stroke-dasharray (no `to` frame). */
+@keyframes mise-ring-draw {
+  from {
+    stroke-dasharray: 0 1000;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  .ring-arc {
+    animation: mise-ring-draw 600ms ease-out both;
+  }
+
   .rise {
     animation: mise-rise 320ms ease-out both;
   }

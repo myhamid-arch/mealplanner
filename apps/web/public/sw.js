@@ -6,7 +6,7 @@
 //   good response is kept so they can be read offline.
 // - Any other page: network, falling back to /offline.
 // - Never cached: non-GET requests, /api/**, other origins.
-// - The message { type: "mise:clear-offline-cache" } deletes every cache (sign-out).
+// - The message { type: "mise:clear-offline-cache" } deletes the kept pages (sign-out).
 
 const VERSION = "v1";
 const SHELL_CACHE = `mise-shell-${VERSION}`;
@@ -55,14 +55,18 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Only the pages cache holds household data (the kept Today plan and cook sheet). The shell and
+// static caches stay, so the offline page still works when sign-out happens without a network.
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === CLEAR_MESSAGE) {
     event.waitUntil(
       caches
         .keys()
-        .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
-        .then(() => caches.open(SHELL_CACHE))
-        .then((cache) => cache.addAll(PRECACHE)),
+        .then((keys) =>
+          Promise.all(
+            keys.filter((key) => key.startsWith("mise-pages-")).map((key) => caches.delete(key)),
+          ),
+        ),
     );
   }
 });

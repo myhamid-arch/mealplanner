@@ -263,10 +263,15 @@ async function gateG1() {
   );
   for (const theme of ["light", "dark"]) {
     const failures = pairFailures(TEXT_PAIRS, colors[theme], theme);
-    const ratios = TEXT_PAIRS.map((p) => contrast(colors[theme][p.fg], colors[theme][p.bg]));
+    const lowest = (kinds) =>
+      Math.min(
+        ...TEXT_PAIRS.filter((p) => kinds.includes(p.kind)).map((p) =>
+          contrast(colors[theme][p.fg], colors[theme][p.bg]),
+        ),
+      ).toFixed(2);
     report.check(
       failures.length === 0,
-      `${theme}: all ${String(TEXT_PAIRS.length)} declared pairs meet AA (lowest ${Math.min(...ratios).toFixed(2)}:1)`,
+      `${theme}: all ${String(TEXT_PAIRS.length)} declared pairs meet AA (lowest text ${lowest(["normal", "large"])}:1, lowest non-text ${lowest(["nonText"])}:1)`,
       failures.join("\n"),
     );
     const disagreements = TEXT_PAIRS.filter(
@@ -361,6 +366,7 @@ async function gateG1() {
       ...COMBOS.map((c) => `@G1 shells and primitives ${c}: every text pair is AA and declared`),
       "@G1 negative control: an injected low-contrast element fails the audit",
       "@G1 negative control: an AA-passing but undeclared pair fails the audit",
+      "@G1 negative control: text over a gradient is reported",
       "@G1 negative control: emoji in the UI is detected",
     ]);
   }
@@ -453,8 +459,9 @@ async function gateG2() {
       ...COMBOS.map((c) => `@G2 role shells ${c}: no horizontal scroll, targets ≥ 44 px`),
       "@G2 navigation per role (UX-3, R-21)",
       "@G2 rating input is a keyboard-operable radio group",
+      "@G2 primitives render their data without JavaScript (rings, bars, stars)",
       "@G2 installable: no installability errors, worker controls the page, icons match",
-      "@G2 offline: navigations fall back to the offline page",
+      "@G2 offline: Today is kept for offline reading, other pages fall back, sign-out clears",
       "@G2 negative control: a forced 1600 px element is caught as horizontal scroll",
       "@G2 negative control: a 30 px link is caught as a small target",
       "@G2 negative control: a manifest without icons is not installable",

@@ -40,6 +40,7 @@ import {
 import { renderToStaticMarkup } from "react-dom/server";
 import { Dialog as RadixDialog } from "radix-ui";
 import { ROUTES, homePathFor, railFor, tabsFor, type Role } from "../app/(shell)/_shell/nav";
+import { clearOfflineCache } from "../app/(shell)/_shell/offline-cache";
 import type { ShellViewer } from "../app/(shell)/_shell/viewer";
 import type { IconName } from "../components/ui/icon";
 
@@ -458,7 +459,9 @@ async function renderedPairs(page: Page): Promise<RenderedPair[]> {
       let gradient = false;
       for (let node: Element | null = el; node !== null; node = node.parentElement) {
         const style = getComputedStyle(node);
-        if (style.backgroundImage !== "none") gradient = true;
+        // The ruled-paper lines are 1 px decoration under text; any other image or gradient
+        // behind text cannot be checked from colours alone and is reported.
+        if (style.backgroundImage !== "none" && !node.classList.contains("ruled")) gradient = true;
         const c = parse(style.backgroundColor);
         if (c !== null && c[3] > 0) {
           layers.push(c);
@@ -544,6 +547,10 @@ export function auditPairs(pairs: readonly RenderedPair[], theme: Theme): AuditP
   for (const p of pairs) {
     const large = p.fontSize >= 24 || (p.fontSize >= 18.66 && p.fontWeight >= 700);
     const need = large ? AA_THRESHOLD.large : AA_THRESHOLD.normal;
+    if (p.gradient) {
+      problems.push({ text: p.text, problem: "text over an image or gradient background" });
+      continue;
+    }
     const r = ratio(p.fg, p.bg);
     if (r < need) {
       problems.push({
@@ -634,6 +641,19 @@ test.describe("@G1 rendered contrast", () => {
     });
     const problems = auditPairs(await renderedPairs(page), "light");
     expect(problems.find((p) => p.text === "Off-palette text")?.problem).toMatch(/undeclared/);
+  });
+
+  test("@G1 negative control: text over a gradient is reported", async ({ page }) => {
+    await setup(page, 1280, 800, "light");
+    await page.goto(ROUTES.offline);
+    await page.evaluate(() => {
+      const bad = document.createElement("p");
+      bad.textContent = "Text on a gradient";
+      bad.style.cssText = "color:#2B2118;background:linear-gradient(#FFF8EE,#E4572E);margin:0";
+      document.querySelector("main")?.append(bad);
+    });
+    const problems = auditPairs(await renderedPairs(page), "light");
+    expect(problems.find((p) => p.text === "Text on a gradient")?.problem).toMatch(/gradient/);
   });
 
   test("@G1 negative control: emoji in the UI is detected", () => {
@@ -782,6 +802,9 @@ test.describe("@G2 shell layout", () => {
           ? page.locator("nav[aria-label='Main'] a[href='/chat']")
           : page.getByRole("link", { name: /Open assistant/ });
         await expect(assistant).toHaveCount(admin ? 1 : 0);
+        if (admin) {
+          await expect(assistant).toHaveAccessibleName(/assistant.*3 pending proposals/i);
+        }
         if (desktop) {
           await expect(page.locator("nav[aria-label='Main'] a[href='/account']")).toHaveCount(
             variant.viewer === null ? 0 : 1,
@@ -813,6 +836,48 @@ test.describe("@G2 shell layout", () => {
     await expect(group.getByRole("radio", { name: "4 of 5" })).toBeChecked();
     await expect(group.getByRole("radio", { name: "4 of 5" })).toBeFocused();
     expect(await smallTargets(page)).toEqual([]);
+  });
+
+  test("@G2 primitives render their data without JavaScript (rings, bars, stars)", async ({
+    page,
+    request,
+  }) => {
+    await setup(page, 390, 844, "light");
+    await showMarkup(
+      page,
+      request,
+      renderToStaticMarkup(
+        h(
+          "div",
+          null,
+          h(MacroRing, {
+            fit: "flexible_miss",
+            label: "Sara, 1600 of 1655 kcal",
+            macros: { protein: 130, carbs: 150, fat: 55 },
+            targetKcal: 1655,
+          }),
+          h(MacroBar, { macro: "fat", actual: 21, target: 17, tolerance: 2 }),
+          h(StarRatingDisplay, { value: 4.3, count: 12 }),
+        ),
+      ),
+    );
+    const arcs = await page
+      .locator("circle.ring-arc")
+      .evaluateAll((els) =>
+        els.map((el) => Number.parseFloat(el.getAttribute("stroke-dasharray") ?? "0")),
+      );
+    expect(arcs).toHaveLength(3);
+    expect(arcs.every((dash) => dash > 0)).toBe(true);
+    await expect(
+      page.getByRole("img", { name: "Sara, 1600 of 1655 kcal, close to target" }),
+    ).toHaveCount(1);
+    await expect(page.getByRole("meter", { name: "Fat" })).toHaveAttribute(
+      "aria-valuetext",
+      "21 g, target 17 g plus or minus 2, 2 g above the target range",
+    );
+    await expect(page.getByRole("img", { name: "Rated 4.5 out of 5 from 12 reviews" })).toHaveCount(
+      1,
+    );
   });
 
   test("@G2 negative control: a forced 1600 px element is caught as horizontal scroll", async ({
@@ -927,17 +992,49 @@ test.describe("@G2 PWA", () => {
     });
   });
 
-  test("@G2 offline: navigations fall back to the offline page", async ({ baseURL }) => {
+  // Offline is simulated by aborting every request at the context: Playwright applies context
+  // routes to service-worker fetches in Chromium, whereas setOffline() is not reliably applied
+  // to a restarted service-worker target (measured: the second offline navigation reached the
+  // server).
+  test("@G2 offline: Today is kept for offline reading, other pages fall back, sign-out clears", async ({
+    baseURL,
+  }) => {
     if (baseURL === undefined) throw new Error("baseURL");
     await withProfile(baseURL, async (context) => {
       const page = await context.newPage();
       await page.goto(ROUTES.offline);
       await page.evaluate(async () => navigator.serviceWorker.ready);
       await page.reload();
-      await context.setOffline(true);
+
+      // Online: a Today page (1.4.4 does not exist yet, so the test serves one).
+      const todayHtml =
+        '<!doctype html><html lang="en"><body><h1>Today: shakshuka, shawarma bowl, hammour</h1></body></html>';
+      await context.route("**/today", (route) =>
+        route.fulfill({ status: 200, contentType: "text/html", body: todayHtml }),
+      );
+      await page.goto(ROUTES.today);
+      await context.unrouteAll();
+
+      // Offline.
+      await context.route("**/*", (route) => route.abort("internetdisconnected"));
+      await page.goto(ROUTES.today);
+      await expect(
+        page.getByRole("heading", { level: 1, name: /^Today: shakshuka/ }),
+      ).toBeVisible();
       await page.goto(ROUTES.plan);
       await expect(page.getByRole("heading", { level: 1, name: "You're offline" })).toBeVisible();
-      await context.setOffline(false);
+
+      // Sign-out (1.4.6) posts the clear message; the kept Today plan is gone afterwards.
+      await page.evaluate(clearOfflineCache);
+      const kept = await page.evaluate(async () => {
+        const pages = (await caches.keys()).filter((k) => k.startsWith("mise-pages-"));
+        return pages.length;
+      });
+      expect(kept).toBe(0);
+      await page.goto(ROUTES.today);
+      await expect(page.getByRole("heading", { level: 1, name: "You're offline" })).toBeVisible();
+      await expect(page.getByText("Today: shakshuka")).toHaveCount(0);
+      await context.unrouteAll();
     });
   });
 

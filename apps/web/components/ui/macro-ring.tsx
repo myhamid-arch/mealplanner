@@ -1,7 +1,4 @@
-"use client";
-
 import { cssVarName, fitColor, macroColor, type FitStatus } from "@mealplanner/ui-tokens/tokens";
-import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 import { Icon } from "./icon";
 
@@ -56,10 +53,11 @@ export function ringSegments(
 
 /**
  * Macro ring (UX-4, UX-5): stacked P/C/F arcs (sea, saffron, olive) inside a thin ring in the
- * fit colour, with a fit badge. Arcs animate to their value unless reduced motion is set.
+ * fit colour, with a fit badge. The markup carries the final arcs, so server-rendered and
+ * no-JS pages show the real values; a CSS keyframe draws them in on load unless reduced motion
+ * is set (globals.css `.ring-arc`).
  */
 export function MacroRing({ fit, macros, targetKcal, size = 64, label, children }: MacroRingProps) {
-  const reduce = useReducedMotion() === true;
   const fitStyle = fitColor[fit];
   const stroke = Math.max(4, Math.round(size * 0.11));
   const outer = 2.5;
@@ -103,16 +101,12 @@ export function MacroRing({ fit, macros, targetKcal, size = 64, label, children 
             strokeDashoffset: -segment.start * circumference,
             transform: `rotate(-90 ${String(size / 2)} ${String(size / 2)})`,
           };
-          const final = `${String(dash)} ${String(circumference - dash)}`;
-          return reduce ? (
-            <circle key={segment.key} {...common} strokeDasharray={final} />
-          ) : (
-            <motion.circle
+          return (
+            <circle
               key={segment.key}
               {...common}
-              initial={{ strokeDasharray: `0 ${String(circumference)}` }}
-              animate={{ strokeDasharray: final }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="ring-arc"
+              strokeDasharray={`${String(dash)} ${String(circumference - dash)}`}
             />
           );
         })}

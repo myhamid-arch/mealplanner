@@ -64,12 +64,15 @@ export function Rail({
           <Icon name="assistant" />
           <span className="grow">Assistant</span>
           {viewer.pendingProposals > 0 && (
-            <span
-              className="flex h-[22px] min-w-[22px] items-center justify-center rounded-full bg-badge px-1.5 text-xs text-on-badge"
-              aria-label={`${String(viewer.pendingProposals)} pending proposals`}
-            >
-              {viewer.pendingProposals}
-            </span>
+            <>
+              <span
+                aria-hidden
+                className="flex h-[22px] min-w-[22px] items-center justify-center rounded-full bg-badge px-1.5 text-xs text-on-badge"
+              >
+                {viewer.pendingProposals}
+              </span>
+              <span className="sr-only">, {viewer.pendingProposals} pending proposals</span>
+            </>
           )}
         </Link>
       )}
