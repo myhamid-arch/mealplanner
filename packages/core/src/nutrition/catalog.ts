@@ -49,6 +49,12 @@ export function assertValidRow(row: VariantIngredientInput): void {
   const where = `variant ingredient "${row.ingredientId}"`;
   assertNonNegative(row.rawG, `${where}: rawG`);
   if (row.yieldOverride !== undefined) assertPositive(row.yieldOverride, `${where}: yieldOverride`);
+  if (row.yieldOverride !== undefined && (row.isAbsorbedOil || row.cookingLiquid === "absorbed")) {
+    throw new NutritionError(
+      "invalid_input",
+      `${where}: a yield override applies only to an ingredient that keeps its own cooked mass`,
+    );
+  }
   if (row.isAbsorbedOil && row.cookingLiquid !== undefined) {
     throw new NutritionError(
       "invalid_input",

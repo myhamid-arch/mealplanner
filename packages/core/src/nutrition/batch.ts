@@ -25,9 +25,10 @@ function retainFat(n: Nutrients, fatRetention: number): Nutrients {
 }
 
 export function computeBatch(v: VariantInput, ctx: CatalogContext): Batch {
-  const ingredients = v.ingredients.map((row) => {
+  const rows = v.ingredients.map((row) => {
     assertValidRow(row);
-    return lookupIngredient(ctx, row.ingredientId);
+    const ingredient = lookupIngredient(ctx, row.ingredientId);
+    return { row, ingredient, per100g: applyKnownBounds(ingredient.per100gRaw) };
   });
 
   let nutrients = zeroNutrients();
@@ -35,37 +36,36 @@ export function computeBatch(v: VariantInput, ctx: CatalogContext): Batch {
   let absorptionCapacityG = 0;
   let listedFatG = 0;
 
-  v.ingredients.forEach((row, i) => {
-    const per100g = applyKnownBounds((ingredients[i] as CatalogIngredient).per100gRaw);
+  // Step 1: every ingredient except the absorbed cooking fat.
+  for (const { row, ingredient, per100g } of rows) {
     if (row.isAbsorbedOil) {
       listedFatG += row.rawG;
     } else if (row.cookingLiquid === "absorbed") {
       // Its mass is already inside the absorbing ingredient's yield.
       nutrients = addScaled(nutrients, per100g, row.rawG / 100);
     } else {
-      const y = lookupYield(ctx, v.method, (ingredients[i] as CatalogIngredient).category);
+      const y = lookupYield(ctx, v.method, ingredient.category);
       nutrients = addScaled(nutrients, retainFat(per100g, y.fatRetention), row.rawG / 100);
       cookedG += row.rawG * (row.yieldOverride ?? y.yieldFactor);
       if (row.cookingLiquid === undefined) {
         absorptionCapacityG += (row.rawG * y.oilAbsorptionGPer100gRaw) / 100;
       }
     }
-  });
+  }
 
   // Step 2: absorbed cooking fat, capped by the fat listed; the rest is discarded.
   const absorbedG = Math.min(absorptionCapacityG, listedFatG);
   if (absorbedG > 0) {
-    v.ingredients.forEach((row, i) => {
-      if (!row.isAbsorbedOil) return;
+    for (const { row, per100g } of rows) {
+      if (!row.isAbsorbedOil) continue;
       const grams = (absorbedG * row.rawG) / listedFatG;
-      const per100g = applyKnownBounds((ingredients[i] as CatalogIngredient).per100gRaw);
       nutrients = addScaled(nutrients, per100g, grams / 100);
       cookedG += grams;
-    });
+    }
   }
 
   if (!(cookedG > 0)) {
     throw new NutritionError("zero_cooked_mass", "the variant has no cooked mass");
   }
-  return { nutrients, cookedG, ingredients };
+  return { nutrients, cookedG, ingredients: rows.map((r) => r.ingredient) };
 }

@@ -1,6 +1,6 @@
 # leaf-1.2.1 ADR-2: how each NUT-3 step is computed
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, BLD-8 R-12 to R-14; built for CP2)
 Requirement: NUT-2, NUT-3, NUT-4, NUT-8; 03 §7
 
 Notation: raw grams `rᵢ`, nutrients per gram raw `nᵢ` (= `per100gRaw / 100`), method `m`, row `Y(m, cᵢ)`.
@@ -11,7 +11,9 @@ For every ingredient with `isAbsorbedOil = false` and `cookingLiquid ≠ "absorb
 - fat and satFat are multiplied by `fatRetention`; kcal = `rᵢ · kcalᵢ − 9 · fatLost`; all other nutrients `rᵢ · nᵢ` unchanged;
 - cooked mass = `rᵢ · (yieldOverride ?? yieldFactor)`.
 
-A `cookingLiquid: "retained"` item is treated exactly like this (its own category's row, e.g. stewed × beverage, sets evaporation).
+A `cookingLiquid: "retained"` item is treated exactly like this (its own category's row, e.g. stewed × beverage, sets evaporation), except that a liquid never adds oil-absorption capacity (§3).
+
+A `yieldOverride` applies only to a row that keeps its own cooked mass; on an absorbed-fat or absorbed-liquid row it is rejected as `invalid_input`.
 
 ## 2. Absorbed cooking liquid
 `cookingLiquid: "absorbed"`: cooked mass 0 (the absorbing ingredient's yield already includes it). Nutrients are `rᵢ · nᵢ` without fat retention; for water they are all zero, which is the spec's "0 mass and 0 nutrients". For stock this counts its nutrients (SPEC-Q-2).
@@ -26,10 +28,10 @@ A `cookingLiquid: "retained"` item is treated exactly like this (its own categor
 ## 4. Totals (step 3)
 `N = Σ nutrients`, `W = Σ cooked mass`; per 100 g cooked = `N / W · 100`. `W = 0` throws. No rounding anywhere in the engine.
 
-Nullable nutrients (solubleFibre, sugar, sodiumMg): if any ingredient that contributes nutrients (`rᵢ > 0`, or `A > 0` for fats) has `null`, the variant value is `null` (SPEC-Q-4). `plateNutrients` applies the same rule to items with `cookedG > 0`.
+Nullable nutrients (solubleFibre, sugar, sodiumMg), R-13: first, an ingredient's `solubleFibre: null` counts as 0 when its `fibre` is 0, and `sugar: null` counts as 0 when its `carbs` is 0. After that, if any ingredient that contributes nutrients (`rᵢ > 0`, or absorbed grams > 0 for fats) still has `null`, the variant value is `null`. `plateNutrients` applies the same bound and the same rule to items with `cookedG > 0`.
 
 ## 5. Coating
-A coating (breadcrumbs, egg wash) is an ordinary variant ingredient with its own category's row. The method_yield `coating_*` columns are not read by the engine (SPEC-Q-3).
+A coating (breadcrumbs, egg wash) is an ordinary variant ingredient with its own category's row (R-12; the `coating_*` columns are removed from the spec).
 
 ## 6. Raw-from-cooked (step 4)
 `rawForCooked(v, x)` returns one entry per listed variant ingredient, in order: `rawG = rᵢ · x / W`. Absorbed-oil items return their listed quantity scaled the same way (what goes in the pan) with `discardedFat: true` (SPEC-Q-7). Absorbed cooking liquid is returned too (the kitchen needs the water). `x = 0` returns zeros; `x < 0` throws.

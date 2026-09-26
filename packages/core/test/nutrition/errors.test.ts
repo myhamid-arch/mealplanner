@@ -95,6 +95,13 @@ describe("invalid input (SPEC-Q-6)", () => {
     },
   );
 
+  it.each([
+    [{ isAbsorbedOil: true, yieldOverride: 1.2 }],
+    [{ cookingLiquid: "absorbed" as const, yieldOverride: 1.2 }],
+  ])("rejects a yield override on a row without its own cooked mass: %o", (change) => {
+    expectCode(() => variantNutritionPer100gCooked(grilledChicken(change), ctx), "invalid_input");
+  });
+
   it("rejects a row that is both frying fat and cooking liquid", () => {
     expectCode(
       () =>
