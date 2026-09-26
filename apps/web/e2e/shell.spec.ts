@@ -1178,7 +1178,7 @@ test.describe("@G3 screenshots", () => {
       path: join(out, "compare-tabbar-mockup-vs-build.png"),
       fullPage: true,
     });
-    await setup(page, 900, 700, "light");
+    await setup(page, 1100, 700, "light");
     await showMarkup(page, request, deviationMarkup());
     await page.screenshot({ path: join(out, "aa-deviations.png"), fullPage: true });
   });
