@@ -38,7 +38,8 @@ export type StructuredResult<T> = {
   usage: ClaudeUsage;
   /** The assistant content exactly as returned, for appending to a follow-up (REC-5). */
   content: BetaContentBlock[];
-  requestId: string | undefined;
+  /** The response's message id (the SDK's parse drops the request id on success). */
+  messageId: string;
 };
 
 /** The one operation generators need. Tests drive the real client through a recorded fetch. */
@@ -103,13 +104,11 @@ class AnthropicStructuredModel implements StructuredModel {
     };
 
     let message: BetaMessage & { parsed_output: z.output<S> | null };
-    let requestId: string | undefined;
     try {
-      const { data, request_id } = await this.#client.beta.messages
-        .parse(structuredParams(this.model, request, format))
-        .withResponse();
-      message = data as BetaMessage & { parsed_output: z.output<S> | null };
-      requestId = request_id ?? undefined;
+      // The SDK types parsed_output as unknown for a generic schema; the format above fixes it.
+      message = (await this.#client.beta.messages.parse(
+        structuredParams(this.model, request, format),
+      )) as BetaMessage & { parsed_output: z.output<S> | null };
     } catch (error) {
       throw fromSdkError(error);
     }
@@ -119,7 +118,6 @@ class AnthropicStructuredModel implements StructuredModel {
       usage: usageOf(message),
       servedModel: message.model,
       responseContent: message.content,
-      ...(requestId === undefined ? {} : { requestId }),
     };
     if (message.stop_reason === "refusal") {
       const stop = message.stop_details;
@@ -162,7 +160,7 @@ class AnthropicStructuredModel implements StructuredModel {
       stopReason: message.stop_reason,
       usage: details.usage,
       content: message.content,
-      requestId,
+      messageId: message.id,
     };
   }
 }

@@ -18,7 +18,8 @@ const NUTRIENT_KEYS = ["kcal", "protein", "carbs", "fat", "satFat", "fibre"] as 
 /** Problems of one proposed ingredient, independent of any dish. */
 export function newIngredientProblems(n: NewIngredient, catalogue: RecipeCatalogue): string[] {
   const problems: string[] = [];
-  if (!/^[a-z0-9_]+$/.test(n.slug)) problems.push(`slug "${n.slug}" is not a lower-case key`);
+  if (!/^[a-z0-9][a-z0-9_-]*$/.test(n.slug))
+    problems.push(`slug "${n.slug}" is not a lower-case slug`);
   if (catalogue.ingredients.some((i) => i.slug === n.slug))
     problems.push(`"${n.slug}" is already in the catalogue`);
   if (!isIngredientCategory(n.category)) problems.push(`unknown category "${n.category}"`);

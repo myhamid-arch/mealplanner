@@ -1,0 +1,1534 @@
+{
+  "dishes": [
+    {
+      "name": "Tandoori chicken with cumin rice and raita",
+      "description": "Hammour fillets in a ginger-garlic yoghurt marinade, with cumin-scented basmati, a cooling cucumber raita and turmeric green beans.",
+      "cuisine": "indian",
+      "slotKeys": [
+        "dinner"
+      ],
+      "flavourTags": [
+        "spiced",
+        "smoky",
+        "cooling"
+      ],
+      "isPackable": false,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Tandoori hammour",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 250,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "grilled",
+              "label": "Grilled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "chicken-breast-boneless",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "greek-yogurt-low-fat",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "ginger",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "chilli-powder",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "turmeric",
+                  "rawGramsPerBatch": 3,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Mix the yoghurt, grated ginger and garlic, chilli powder, turmeric, lemon juice and 8 g salt.",
+                "2. Coat the fillets and marinate for 30 minutes in the fridge.",
+                "3. Grill under a hot grill 10 cm from the element for 4 minutes per side, until the flesh flakes and reaches 63 °C."
+              ],
+              "cookTimeMin": 45
+            },
+            {
+              "method": "baked",
+              "label": "Oven-baked",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "chicken-breast-boneless",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "greek-yogurt-low-fat",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "ginger",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "chilli-powder",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "turmeric",
+                  "rawGramsPerBatch": 3,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Marinate as for the grilled version.",
+                "2. Bake on a lined tray at 200 °C for 12 to 14 minutes, until the fish flakes and reaches 63 °C."
+              ],
+              "cookTimeMin": 45
+            }
+          ]
+        },
+        {
+          "name": "Cumin rice",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 300,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Boiled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "basmati-rice",
+                  "rawGramsPerBatch": 380,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cumin",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "vegetable-oil",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 5,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Rinse and soak the rice for 20 minutes.",
+                "2. Warm 8 g oil in a pan, fry the cumin seeds for 30 seconds until fragrant.",
+                "3. Add the drained rice, 5 g salt and plenty of boiling water; boil 9 minutes, drain, cover and rest 5 minutes."
+              ],
+              "cookTimeMin": 35
+            }
+          ]
+        },
+        {
+          "name": "Cucumber raita",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 120,
+          "defaultServingG": 60,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Fresh",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "yogurt-plain-whole",
+                  "rawGramsPerBatch": 700,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cucumber",
+                  "rawGramsPerBatch": 250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "mint-fresh",
+                  "rawGramsPerBatch": 10,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cumin",
+                  "rawGramsPerBatch": 3,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "vegetable-oil",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Grate the cucumber and squeeze out the liquid.",
+                "2. Stir into the yoghurt with the chopped mint, toasted ground cumin and 4 g salt.",
+                "3. Warm 40 g oil until it shimmers and pour it over as a tempering just before serving."
+              ],
+              "cookTimeMin": 10
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Plate the rice and fish, add the beans, and serve the raita in a small bowl, weighing each component."
+      ]
+    },
+    {
+      "name": "Grilled chicken with freekeh and tahini sauce",
+      "description": "Grilled chicken breast over freekeh with a lemon tahini sauce.",
+      "cuisine": "levantine",
+      "slotKeys": [
+        "dinner"
+      ],
+      "flavourTags": [
+        "nutty",
+        "smoky"
+      ],
+      "isPackable": false,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Lemon-garlic chicken",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 250,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "grilled",
+              "label": "Grilled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "chicken-breast",
+                  "rawGramsPerBatch": 1350,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "paprika",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false,
+                  "note": "about 1 teaspoon"
+                }
+              ],
+              "steps": [
+                "1. Cut the chicken breasts into 3 cm thick steaks.",
+                "2. Mix the lemon juice, crushed garlic, olive oil, paprika and 6 g salt; coat the chicken and marinate for 30 minutes in the fridge.",
+                "3. Heat a griddle pan over high heat for 5 minutes.",
+                "4. Grill the chicken 5 to 6 minutes per side, until the centre reaches 74 °C and the juices run clear.",
+                "5. Rest for 5 minutes, then slice."
+              ],
+              "cookTimeMin": 25
+            },
+            {
+              "method": "pan_seared",
+              "label": "Pan-seared",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "chicken-breast",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "paprika",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": true,
+                  "note": "for the pan"
+                }
+              ],
+              "steps": [
+                "1. Marinate the chicken as for the grilled version, without oil, for 30 minutes.",
+                "2. Heat 30 g olive oil in a heavy frying pan over medium-high heat until it shimmers.",
+                "3. Sear the chicken 6 minutes per side until golden and 74 °C in the centre.",
+                "4. Rest for 5 minutes, then slice."
+              ],
+              "cookTimeMin": 25
+            }
+          ]
+        },
+        {
+          "name": "Freekeh",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 300,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Boiled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "freekeh",
+                  "rawGramsPerBatch": 380,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 5,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Rinse the freekeh.",
+                "2. Simmer in salted water for 25 minutes until tender, then drain."
+              ],
+              "cookTimeMin": 30
+            }
+          ]
+        },
+        {
+          "name": "Tahini sauce",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 60,
+          "defaultServingG": 30,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Whisked",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "tahini",
+                  "rawGramsPerBatch": 400,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 10,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Whisk the tahini with the lemon juice, crushed garlic and 4 g salt.",
+                "2. Loosen with cold water to a pourable sauce."
+              ],
+              "cookTimeMin": 5
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Plate the freekeh and chicken and serve the sauce on the side."
+      ]
+    },
+    {
+      "name": "Chicken or lamb with rice and yoghurt sauce",
+      "description": "Marinated chicken breast with fluffy basmati rice, oven-roasted peppers, courgette and onion, and a cool garlic-mint yoghurt on the side.",
+      "cuisine": "levantine",
+      "slotKeys": [
+        "dinner",
+        "lunch"
+      ],
+      "flavourTags": [
+        "lemony",
+        "garlicky",
+        "fresh"
+      ],
+      "isPackable": true,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Grilled meat",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 250,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "grilled",
+              "label": "Grilled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "chicken-breast",
+                  "rawGramsPerBatch": 1350,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "paprika",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false,
+                  "note": "about 1 teaspoon"
+                }
+              ],
+              "steps": [
+                "1. Cut the chicken breasts into 3 cm thick steaks.",
+                "2. Mix the lemon juice, crushed garlic, olive oil, paprika and 6 g salt; coat the chicken and marinate for 30 minutes in the fridge.",
+                "3. Heat a griddle pan over high heat for 5 minutes.",
+                "4. Grill the chicken 5 to 6 minutes per side, until the centre reaches 74 °C and the juices run clear.",
+                "5. Rest for 5 minutes, then slice."
+              ],
+              "cookTimeMin": 25
+            },
+            {
+              "method": "grilled",
+              "label": "Lamb instead",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "lamb-leg",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "paprika",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Marinate the lamb as for the chicken.",
+                "2. Grill 4 minutes per side to 63 °C for medium."
+              ],
+              "cookTimeMin": 25
+            }
+          ]
+        },
+        {
+          "name": "Basmati rice",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 300,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Steamed basmati",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "basmati-rice",
+                  "rawGramsPerBatch": 380,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 5,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Rinse the rice until the water runs clear, then soak for 20 minutes and drain.",
+                "2. Boil in plenty of salted water for 9 minutes, until just tender.",
+                "3. Drain, cover and leave to steam off the heat for 5 minutes."
+              ],
+              "cookTimeMin": 35
+            }
+          ]
+        },
+        {
+          "name": "Roasted vegetables",
+          "role": "vegetable",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 250,
+          "defaultServingG": 120,
+          "required": false,
+          "variants": [
+            {
+              "method": "roasted",
+              "label": "Roasted",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "zucchini",
+                  "rawGramsPerBatch": 550,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "bell-pepper-red",
+                  "rawGramsPerBatch": 450,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "red-onion",
+                  "rawGramsPerBatch": 250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 25,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Heat the oven to 220 °C.",
+                "2. Cut the courgette, pepper and onion into 3 cm pieces and toss with 25 g olive oil and 4 g salt.",
+                "3. Roast on a lined tray for 25 minutes, turning once, until the edges char."
+              ],
+              "cookTimeMin": 30
+            },
+            {
+              "method": "grilled",
+              "label": "Grilled",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "zucchini",
+                  "rawGramsPerBatch": 550,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "bell-pepper-red",
+                  "rawGramsPerBatch": 450,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "red-onion",
+                  "rawGramsPerBatch": 250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Cut the vegetables into 1.5 cm slices and brush with 15 g olive oil.",
+                "2. Grill on a very hot griddle pan for 3 minutes per side until marked and just tender.",
+                "3. Season with 4 g salt."
+              ],
+              "cookTimeMin": 20
+            }
+          ]
+        },
+        {
+          "name": "Yoghurt-mint sauce",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 100,
+          "defaultServingG": 40,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Fresh",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "greek-yogurt-low-fat",
+                  "rawGramsPerBatch": 900,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "mint-fresh",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Crush the garlic with 4 g salt to a paste.",
+                "2. Stir it into the yoghurt with the lemon juice, 30 g olive oil and 20 g finely chopped mint.",
+                "3. Chill for at least 15 minutes."
+              ],
+              "cookTimeMin": 10
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Plate the rice, chicken slices and vegetables separately and add the sauce in a small bowl, weighing each component to the plating table."
+      ]
+    },
+    {
+      "name": "Red wine braised beef with mash",
+      "description": "Beef braised slowly in red wine, with creamy mashed potato.",
+      "cuisine": "french",
+      "slotKeys": [
+        "dinner"
+      ],
+      "flavourTags": [
+        "rich",
+        "winey"
+      ],
+      "isPackable": false,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Red wine beef",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 250,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "braised",
+              "label": "Braised",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "beef-eye-round",
+                  "rawGramsPerBatch": 700,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cooking-wine-red",
+                  "rawGramsPerBatch": 900,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "onion",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "carrot",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Brown the beef pieces in a heavy casserole.",
+                "2. Add the onion, carrot and wine, cover and braise at 160 °C for 2 hours 30 minutes until tender."
+              ],
+              "cookTimeMin": 160
+            }
+          ]
+        },
+        {
+          "name": "Mashed potato",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 400,
+          "defaultServingG": 200,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Mashed",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "potato",
+                  "rawGramsPerBatch": 1100,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "milk-skimmed",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Boil the potatoes for 20 minutes until soft.",
+                "2. Mash with the warm milk and 6 g salt."
+              ],
+              "cookTimeMin": 25
+            }
+          ]
+        },
+        {
+          "name": "Gravy",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 60,
+          "defaultServingG": 30,
+          "required": false,
+          "variants": [
+            {
+              "method": "stewed",
+              "label": "Reduced",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "beef-stock",
+                  "rawGramsPerBatch": 900,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cornflour",
+                  "rawGramsPerBatch": 25,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Bring the stock to the boil.",
+                "2. Whisk in the cornflour slaked in cold water and simmer 3 minutes until glossy.",
+                "3. Whisk in 20 g olive oil."
+              ],
+              "cookTimeMin": 10
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Plate the mash, spoon the beef beside it and add the gravy."
+      ]
+    },
+    {
+      "name": "Lemon garlic chicken with rice, roasted vegetables and yogurt mint sauce",
+      "description": "Marinated chicken breast with fluffy basmati rice, oven-roasted peppers, courgette and onion, and a cool garlic-mint yoghurt on the side.",
+      "cuisine": "levantine",
+      "slotKeys": [
+        "dinner",
+        "lunch"
+      ],
+      "flavourTags": [
+        "lemony",
+        "garlicky",
+        "fresh"
+      ],
+      "isPackable": true,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Lemon-garlic chicken",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 250,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "grilled",
+              "label": "Grilled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "chicken-breast",
+                  "rawGramsPerBatch": 1350,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "paprika",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false,
+                  "note": "about 1 teaspoon"
+                }
+              ],
+              "steps": [
+                "1. Cut the chicken breasts into 3 cm thick steaks.",
+                "2. Mix the lemon juice, crushed garlic, olive oil, paprika and 6 g salt; coat the chicken and marinate for 30 minutes in the fridge.",
+                "3. Heat a griddle pan over high heat for 5 minutes.",
+                "4. Grill the chicken 5 to 6 minutes per side, until the centre reaches 74 °C and the juices run clear.",
+                "5. Rest for 5 minutes, then slice."
+              ],
+              "cookTimeMin": 25
+            },
+            {
+              "method": "pan_seared",
+              "label": "Pan-seared",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "chicken-breast",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "paprika",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": true,
+                  "note": "for the pan"
+                }
+              ],
+              "steps": [
+                "1. Marinate the chicken as for the grilled version, without oil, for 30 minutes.",
+                "2. Heat 30 g olive oil in a heavy frying pan over medium-high heat until it shimmers.",
+                "3. Sear the chicken 6 minutes per side until golden and 74 °C in the centre.",
+                "4. Rest for 5 minutes, then slice."
+              ],
+              "cookTimeMin": 25
+            }
+          ]
+        },
+        {
+          "name": "Basmati rice",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 300,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Steamed basmati",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "basmati-rice",
+                  "rawGramsPerBatch": 380,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 5,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Rinse the rice until the water runs clear, then soak for 20 minutes and drain.",
+                "2. Boil in plenty of salted water for 9 minutes, until just tender.",
+                "3. Drain, cover and leave to steam off the heat for 5 minutes."
+              ],
+              "cookTimeMin": 35
+            }
+          ]
+        },
+        {
+          "name": "Roasted vegetables",
+          "role": "vegetable",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 250,
+          "defaultServingG": 120,
+          "required": false,
+          "variants": [
+            {
+              "method": "roasted",
+              "label": "Roasted",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "zucchini",
+                  "rawGramsPerBatch": 550,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "bell-pepper-red",
+                  "rawGramsPerBatch": 450,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "red-onion",
+                  "rawGramsPerBatch": 250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 25,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Heat the oven to 220 °C.",
+                "2. Cut the courgette, pepper and onion into 3 cm pieces and toss with 25 g olive oil and 4 g salt.",
+                "3. Roast on a lined tray for 25 minutes, turning once, until the edges char."
+              ],
+              "cookTimeMin": 30
+            },
+            {
+              "method": "grilled",
+              "label": "Grilled",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "zucchini",
+                  "rawGramsPerBatch": 550,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "bell-pepper-red",
+                  "rawGramsPerBatch": 450,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "red-onion",
+                  "rawGramsPerBatch": 250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Cut the vegetables into 1.5 cm slices and brush with 15 g olive oil.",
+                "2. Grill on a very hot griddle pan for 3 minutes per side until marked and just tender.",
+                "3. Season with 4 g salt."
+              ],
+              "cookTimeMin": 20
+            }
+          ]
+        },
+        {
+          "name": "Yoghurt-mint sauce",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 100,
+          "defaultServingG": 40,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Fresh",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "greek-yogurt-low-fat",
+                  "rawGramsPerBatch": 900,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "mint-fresh",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Crush the garlic with 4 g salt to a paste.",
+                "2. Stir it into the yoghurt with the lemon juice, 30 g olive oil and 20 g finely chopped mint.",
+                "3. Chill for at least 15 minutes."
+              ],
+              "cookTimeMin": 10
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Plate the rice, chicken slices and vegetables separately and add the sauce in a small bowl, weighing each component to the plating table."
+      ]
+    },
+    {
+      "name": "Garden salad with lemon dressing",
+      "description": "Crisp leaves, cucumber and tomato with a sharp lemon dressing.",
+      "cuisine": "mediterranean",
+      "slotKeys": [
+        "dinner",
+        "lunch"
+      ],
+      "flavourTags": [
+        "fresh",
+        "crisp"
+      ],
+      "isPackable": true,
+      "servedColdOk": true,
+      "components": [
+        {
+          "name": "Salad",
+          "role": "vegetable",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 300,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Fresh",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "lettuce-romaine",
+                  "rawGramsPerBatch": 400,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cucumber",
+                  "rawGramsPerBatch": 300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "tomato",
+                  "rawGramsPerBatch": 300,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Wash and dry the leaves.",
+                "2. Chop the cucumber and tomato into 2 cm pieces and toss with the leaves."
+              ],
+              "cookTimeMin": 10
+            }
+          ]
+        },
+        {
+          "name": "Lemon dressing",
+          "role": "fat",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 30,
+          "defaultServingG": 10,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Whisked",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 650,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 330,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Whisk the lemon juice with 8 g salt.",
+                "2. Whisk in the olive oil until emulsified."
+              ],
+              "cookTimeMin": 5
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Plate the salad and serve the dressing on the side."
+      ]
+    },
+    {
+      "name": "Herb-crusted cod with crushed potatoes, peas and lemon-dill yoghurt",
+      "description": "Baked cod under a lemon and parsley crust, with crushed boiled potatoes, garden peas and a lemon-dill yoghurt sauce.",
+      "cuisine": "british",
+      "slotKeys": [
+        "dinner"
+      ],
+      "flavourTags": [
+        "herby",
+        "lemony",
+        "comforting"
+      ],
+      "isPackable": false,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Cod",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 250,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "baked",
+              "label": "Baked",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "cod",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "parsley",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Heat the oven to 200 °C.",
+                "2. Season the cod with 6 g salt, lemon juice and chopped parsley.",
+                "3. Bake on a lined tray for 12 minutes until the flesh flakes and reaches 63 °C."
+              ],
+              "cookTimeMin": 20
+            },
+            {
+              "method": "breaded_baked",
+              "label": "Crumbed and baked",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "cod",
+                  "rawGramsPerBatch": 1200,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "parsley",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "breadcrumbs",
+                  "rawGramsPerBatch": 120,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "egg-white",
+                  "rawGramsPerBatch": 60,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": true,
+                  "note": "sprayed on the crumbs"
+                }
+              ],
+              "steps": [
+                "1. Heat the oven to 210 °C.",
+                "2. Dip the seasoned fillets in beaten egg white, then press into the breadcrumbs mixed with parsley.",
+                "3. Spray with 20 g oil and bake for 15 minutes until golden and 63 °C in the centre."
+              ],
+              "cookTimeMin": 25
+            }
+          ]
+        },
+        {
+          "name": "Crushed potatoes",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 400,
+          "defaultServingG": 200,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Boiled and crushed",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "potato",
+                  "rawGramsPerBatch": 1100,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 50,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "spring-onion",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Boil the potatoes in salted water for 18 minutes until a knife slides in.",
+                "2. Drain and crush lightly with a fork, 50 g olive oil and the sliced spring onion."
+              ],
+              "cookTimeMin": 25
+            },
+            {
+              "method": "roasted",
+              "label": "Roasted",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "potato",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "spring-onion",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Heat the oven to 220 °C.",
+                "2. Toss 3 cm potato pieces with 30 g olive oil and 6 g salt and roast 35 minutes, turning once.",
+                "3. Scatter over the spring onion."
+              ],
+              "cookTimeMin": 40
+            }
+          ]
+        },
+        {
+          "name": "Peas",
+          "role": "vegetable",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 150,
+          "defaultServingG": 80,
+          "required": false,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Boiled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "green-peas-frozen",
+                  "rawGramsPerBatch": 1000,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "mint-fresh",
+                  "rawGramsPerBatch": 5,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Boil the peas for 3 minutes with the mint sprig.",
+                "2. Drain and remove the mint."
+              ],
+              "cookTimeMin": 5
+            }
+          ]
+        },
+        {
+          "name": "Lemon-dill yoghurt",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 80,
+          "defaultServingG": 40,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Fresh",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "greek-yogurt-low-fat",
+                  "rawGramsPerBatch": 850,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "dill-fresh",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 90,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Stir the chopped dill, lemon juice, 90 g olive oil and 4 g salt into the yoghurt.",
+                "2. Chill until serving."
+              ],
+              "cookTimeMin": 5
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Plate the potatoes, fish and peas separately and serve the sauce in a small bowl, weighing each component."
+      ]
+    }
+  ],
+  "newIngredients": []
+}

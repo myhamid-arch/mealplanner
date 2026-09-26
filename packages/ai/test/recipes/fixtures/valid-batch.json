@@ -1,0 +1,890 @@
+{
+  "dishes": [
+    {
+      "name": "Lemon-garlic chicken with rice, roasted vegetables and yoghurt-mint sauce",
+      "description": "Marinated chicken breast with fluffy basmati rice, oven-roasted peppers, courgette and onion, and a cool garlic-mint yoghurt on the side.",
+      "cuisine": "levantine",
+      "slotKeys": [
+        "dinner",
+        "lunch"
+      ],
+      "flavourTags": [
+        "lemony",
+        "garlicky",
+        "fresh"
+      ],
+      "isPackable": true,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Lemon-garlic chicken",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 250,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "grilled",
+              "label": "Grilled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "chicken-breast",
+                  "rawGramsPerBatch": 1350,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "paprika",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false,
+                  "note": "about 1 teaspoon"
+                }
+              ],
+              "steps": [
+                "1. Cut the chicken breasts into 3 cm thick steaks.",
+                "2. Mix the lemon juice, crushed garlic, olive oil, paprika and 6 g salt; coat the chicken and marinate for 30 minutes in the fridge.",
+                "3. Heat a griddle pan over high heat for 5 minutes.",
+                "4. Grill the chicken 5 to 6 minutes per side, until the centre reaches 74 °C and the juices run clear.",
+                "5. Rest for 5 minutes, then slice."
+              ],
+              "cookTimeMin": 25
+            },
+            {
+              "method": "pan_seared",
+              "label": "Pan-seared",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "chicken-breast",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "paprika",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": true,
+                  "note": "for the pan"
+                }
+              ],
+              "steps": [
+                "1. Marinate the chicken as for the grilled version, without oil, for 30 minutes.",
+                "2. Heat 30 g olive oil in a heavy frying pan over medium-high heat until it shimmers.",
+                "3. Sear the chicken 6 minutes per side until golden and 74 °C in the centre.",
+                "4. Rest for 5 minutes, then slice."
+              ],
+              "cookTimeMin": 25
+            }
+          ]
+        },
+        {
+          "name": "Basmati rice",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 300,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Steamed basmati",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "basmati-rice",
+                  "rawGramsPerBatch": 380,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 5,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Rinse the rice until the water runs clear, then soak for 20 minutes and drain.",
+                "2. Boil in plenty of salted water for 9 minutes, until just tender.",
+                "3. Drain, cover and leave to steam off the heat for 5 minutes."
+              ],
+              "cookTimeMin": 35
+            }
+          ]
+        },
+        {
+          "name": "Roasted vegetables",
+          "role": "vegetable",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 250,
+          "defaultServingG": 120,
+          "required": false,
+          "variants": [
+            {
+              "method": "roasted",
+              "label": "Roasted",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "zucchini",
+                  "rawGramsPerBatch": 550,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "bell-pepper-red",
+                  "rawGramsPerBatch": 450,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "red-onion",
+                  "rawGramsPerBatch": 250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 25,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Heat the oven to 220 °C.",
+                "2. Cut the courgette, pepper and onion into 3 cm pieces and toss with 25 g olive oil and 4 g salt.",
+                "3. Roast on a lined tray for 25 minutes, turning once, until the edges char."
+              ],
+              "cookTimeMin": 30
+            },
+            {
+              "method": "grilled",
+              "label": "Grilled",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "zucchini",
+                  "rawGramsPerBatch": 550,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "bell-pepper-red",
+                  "rawGramsPerBatch": 450,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "red-onion",
+                  "rawGramsPerBatch": 250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Cut the vegetables into 1.5 cm slices and brush with 15 g olive oil.",
+                "2. Grill on a very hot griddle pan for 3 minutes per side until marked and just tender.",
+                "3. Season with 4 g salt."
+              ],
+              "cookTimeMin": 20
+            }
+          ]
+        },
+        {
+          "name": "Yoghurt-mint sauce",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 100,
+          "defaultServingG": 40,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Fresh",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "greek-yogurt-low-fat",
+                  "rawGramsPerBatch": 900,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "mint-fresh",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Crush the garlic with 4 g salt to a paste.",
+                "2. Stir it into the yoghurt with the lemon juice, 30 g olive oil and 20 g finely chopped mint.",
+                "3. Chill for at least 15 minutes."
+              ],
+              "cookTimeMin": 10
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Plate the rice, chicken slices and vegetables separately and add the sauce in a small bowl, weighing each component to the plating table."
+      ]
+    },
+    {
+      "name": "Garlic prawns with tomato-basil spaghetti and rocket salad",
+      "description": "Spaghetti with a slow-simmered tomato and basil sauce, garlicky prawns, and a peppery rocket and cherry-tomato salad with a lemon dressing on the side.",
+      "cuisine": "italian",
+      "slotKeys": [
+        "dinner",
+        "lunch"
+      ],
+      "flavourTags": [
+        "garlicky",
+        "bright",
+        "tomato"
+      ],
+      "isPackable": false,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Garlic prawns",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 60,
+          "maxServingG": 250,
+          "defaultServingG": 120,
+          "required": true,
+          "variants": [
+            {
+              "method": "pan_seared",
+              "label": "Pan-seared",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "shrimp",
+                  "rawGramsPerBatch": 1250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 25,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "chilli-green",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": true,
+                  "note": "for the pan"
+                }
+              ],
+              "steps": [
+                "1. Pat the peeled prawns dry.",
+                "2. Heat 30 g olive oil in a wide frying pan over high heat.",
+                "3. Sear the prawns for 90 seconds per side with the sliced garlic and chilli until pink and just opaque.",
+                "4. Take off the heat at once."
+              ],
+              "cookTimeMin": 10
+            },
+            {
+              "method": "grilled",
+              "label": "Grilled skewers",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "shrimp",
+                  "rawGramsPerBatch": 1250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 25,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "chilli-green",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": true,
+                  "note": "brushed on"
+                }
+              ],
+              "steps": [
+                "1. Thread the prawns on skewers, 6 per skewer.",
+                "2. Brush with 15 g olive oil mixed with the garlic and chilli.",
+                "3. Grill on a very hot griddle for 2 minutes per side until pink."
+              ],
+              "cookTimeMin": 12
+            }
+          ]
+        },
+        {
+          "name": "Spaghetti",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 300,
+          "defaultServingG": 160,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Boiled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "pasta-dry",
+                  "rawGramsPerBatch": 420,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 10,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Bring 5 litres of water to the boil with 10 g salt.",
+                "2. Cook the spaghetti for 9 minutes, until al dente.",
+                "3. Drain, keeping a cup of the water for loosening."
+              ],
+              "cookTimeMin": 15
+            }
+          ]
+        },
+        {
+          "name": "Tomato-basil sauce",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 30,
+          "maxServingG": 200,
+          "defaultServingG": 100,
+          "required": true,
+          "variants": [
+            {
+              "method": "stewed",
+              "label": "Simmered",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "tomato-canned",
+                  "rawGramsPerBatch": 900,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "onion",
+                  "rawGramsPerBatch": 120,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "basil-fresh",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Soften the finely chopped onion in 20 g olive oil over medium heat for 8 minutes.",
+                "2. Add the sliced garlic and cook 1 minute without browning.",
+                "3. Add the tomatoes and 6 g salt and simmer uncovered for 25 minutes, stirring now and then, until thick.",
+                "4. Stir in the torn basil off the heat."
+              ],
+              "cookTimeMin": 40
+            }
+          ]
+        },
+        {
+          "name": "Rocket salad",
+          "role": "vegetable",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 150,
+          "defaultServingG": 60,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Fresh",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "rocket",
+                  "rawGramsPerBatch": 500,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cherry-tomato",
+                  "rawGramsPerBatch": 500,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Wash and spin the rocket dry.",
+                "2. Halve the cherry tomatoes and toss with the rocket just before serving."
+              ],
+              "cookTimeMin": 10
+            }
+          ]
+        },
+        {
+          "name": "Lemon dressing",
+          "role": "fat",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 30,
+          "defaultServingG": 10,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Whisked",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 650,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 330,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "black-pepper",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Whisk the lemon juice with 8 g salt and 4 g black pepper.",
+                "2. Whisk in the olive oil in a thin stream until emulsified."
+              ],
+              "cookTimeMin": 5
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Twirl the spaghetti onto the plate, spoon over the weighed sauce, top with the prawns, and serve the salad with its dressing on the side."
+      ]
+    },
+    {
+      "name": "Tandoori-spiced hammour with cumin rice, cucumber raita and spiced green beans",
+      "description": "Hammour fillets in a ginger-garlic yoghurt marinade, with cumin-scented basmati, a cooling cucumber raita and turmeric green beans.",
+      "cuisine": "indian",
+      "slotKeys": [
+        "dinner"
+      ],
+      "flavourTags": [
+        "spiced",
+        "smoky",
+        "cooling"
+      ],
+      "isPackable": false,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Tandoori hammour",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 80,
+          "maxServingG": 250,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "grilled",
+              "label": "Grilled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "hammour",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "greek-yogurt-low-fat",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "ginger",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "chilli-powder",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "turmeric",
+                  "rawGramsPerBatch": 3,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Mix the yoghurt, grated ginger and garlic, chilli powder, turmeric, lemon juice and 8 g salt.",
+                "2. Coat the fillets and marinate for 30 minutes in the fridge.",
+                "3. Grill under a hot grill 10 cm from the element for 4 minutes per side, until the flesh flakes and reaches 63 °C."
+              ],
+              "cookTimeMin": 45
+            },
+            {
+              "method": "baked",
+              "label": "Oven-baked",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "hammour",
+                  "rawGramsPerBatch": 1300,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "greek-yogurt-low-fat",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "ginger",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "chilli-powder",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "turmeric",
+                  "rawGramsPerBatch": 3,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Marinate as for the grilled version.",
+                "2. Bake on a lined tray at 200 °C for 12 to 14 minutes, until the fish flakes and reaches 63 °C."
+              ],
+              "cookTimeMin": 45
+            }
+          ]
+        },
+        {
+          "name": "Cumin rice",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 300,
+          "defaultServingG": 150,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Boiled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "basmati-rice",
+                  "rawGramsPerBatch": 380,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cumin",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "vegetable-oil",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 5,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Rinse and soak the rice for 20 minutes.",
+                "2. Warm 8 g oil in a pan, fry the cumin seeds for 30 seconds until fragrant.",
+                "3. Add the drained rice, 5 g salt and plenty of boiling water; boil 9 minutes, drain, cover and rest 5 minutes."
+              ],
+              "cookTimeMin": 35
+            }
+          ]
+        },
+        {
+          "name": "Cucumber raita",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 120,
+          "defaultServingG": 60,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Fresh",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "yogurt-plain-whole",
+                  "rawGramsPerBatch": 700,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cucumber",
+                  "rawGramsPerBatch": 250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "mint-fresh",
+                  "rawGramsPerBatch": 10,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cumin",
+                  "rawGramsPerBatch": 3,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "vegetable-oil",
+                  "rawGramsPerBatch": 40,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Grate the cucumber and squeeze out the liquid.",
+                "2. Stir into the yoghurt with the chopped mint, toasted ground cumin and 4 g salt.",
+                "3. Warm 40 g oil until it shimmers and pour it over as a tempering just before serving."
+              ],
+              "cookTimeMin": 10
+            }
+          ]
+        },
+        {
+          "name": "Spiced green beans",
+          "role": "vegetable",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 200,
+          "defaultServingG": 100,
+          "required": false,
+          "variants": [
+            {
+              "method": "sauteed",
+              "label": "Sauteed",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "green-beans",
+                  "rawGramsPerBatch": 900,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "onion",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "vegetable-oil",
+                  "rawGramsPerBatch": 70,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "turmeric",
+                  "rawGramsPerBatch": 3,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 5,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Heat 70 g oil in a wide pan over medium heat.",
+                "2. Cook the sliced onion for 5 minutes, add the turmeric and the beans cut in 3 cm lengths.",
+                "3. Cover and cook 8 minutes, stirring twice, until tender but still green; season with 5 g salt."
+              ],
+              "cookTimeMin": 20
+            },
+            {
+              "method": "steamed",
+              "label": "Steamed",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "green-beans",
+                  "rawGramsPerBatch": 900,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "onion",
+                  "rawGramsPerBatch": 150,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "vegetable-oil",
+                  "rawGramsPerBatch": 60,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "turmeric",
+                  "rawGramsPerBatch": 3,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 5,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Steam the beans for 6 minutes.",
+                "2. Meanwhile soften the sliced onion with the turmeric in 60 g oil for 5 minutes.",
+                "3. Toss the beans with the onion and 5 g salt."
+              ],
+              "cookTimeMin": 15
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Plate the rice and fish, add the beans, and serve the raita in a small bowl, weighing each component."
+      ]
+    }
+  ],
+  "newIngredients": []
+}

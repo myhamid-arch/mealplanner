@@ -1,0 +1,30 @@
+{
+  "status": 200,
+  "body": {
+    "id": "msg_wire_2",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-fable-5-1",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "sig_wire"
+      },
+      {
+        "type": "text",
+        "text": "{\"dishes\": [{\"name\": \"Lemon-garlic chicken with rice\", \"description\": \"Marinated chicken breast with basmati\", \"cuisine\": \"levantine\", \"slotKeys\": [\"dinner\"], \"flavourTags\": [\"lemony\"], \"isPackable\": true, \"servedColdOk\": false, \"components\": [{\"name\": \"Chicken\", \"role\": \"protein\", \"portioning\": \"continuous\", \"minServingG\": 80, \"maxServingG\": 250, \"defaultServingG\": 150, \"required\": true, \"variants\": [{\"method\": \"grilled\", \"label\": \"Grilled\", \"isDefault\": true, \"ingredients\": [{\"slug\": \"chicken-breast\", \"rawGramsPerBatch\": 1350, \"isAbs",
+        "citations": null
+      }
+    ],
+    "stop_reason": "max_tokens",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 2100,
+      "output_tokens": 20000,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14000
+    }
+  }
+}
