@@ -1,6 +1,6 @@
 # leaf-1.4.2 ADR-4: how G1 and G2 are verified
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, BLD-8 R-21); built for CP2
 Requirement: BLD-5 1.4.2 G1, G2; UX-5; UX-6; ARC-8
 
 `scripts/verify/leaf-1.4.2.mjs --gate G1|G2` imports only `scripts/verify/lib/*` (unchanged) and prints `VERIFY leaf-1.4.2 <gate> PASSED` only after every assertion, negative controls included, holds.
@@ -23,7 +23,14 @@ Requirement: BLD-5 1.4.2 G1, G2; UX-5; UX-6; ARC-8
    - a page with a forced 1600 px-wide element must fail step 2;
    - the same server with the manifest replaced (via request interception) by one with no icons must return installability errors in step 3.
 
-The Playwright specs in `apps/web/e2e/shell.spec.ts` hold the browser-side assertions; the verify script runs them with `pnpm --filter @mealplanner/web exec playwright test e2e/shell.spec.ts`, then runs the negative controls through the same helper functions with the bad inputs.
+The browser-side assertions and their negative controls are Playwright tests in `apps/web/e2e/shell.spec.ts`, tagged `@G1` / `@G2`. The verify script builds `ui-tokens` and the web app, runs `playwright test e2e/shell.spec.ts --grep @G<n> --reporter=json` against `next start` on a free port, and requires every expected test title, negative controls included, to be present and `passed` (none skipped). The static checks and their negative controls run in the script itself.
+
+## As built
+- G1 static: 52 tokens, UX-5 values, 54 declared pairs per theme with an independent WCAG implementation that must agree with the package's to 0.01, avatar pairs, every token mapped in `globals.css`, no raw hex colour in component/shell/CSS source, no React/DOM import in `ui-tokens`, the package's unit tests. Negative controls: a weak `ink-muted`, a dark palette missing a key, a changed UX-5 value, an unmapped token, a file with raw hex colours.
+- G1 rendered: `/offline`, and four shell variants (admin on Today, member on Me, kitchen on Kitchen, signed out) each wrapping a page of every primitive, plus an open sheet, at 390 and 1280 px in light and dark. Every visible text node's colour and composited background must meet AA for its rendered size and map to a declared pair; text over an image or gradient is reported; no emoji in the page text. Negative controls: an injected low-contrast element, an AA-passing but undeclared colour pair, text on a gradient, an emoji string.
+- G2: no horizontal scroll and 44 px targets for `/offline` and every shell variant at both widths and themes; rail at 1280, tab bar at 390; landmarks; self-hosted fonts loaded with no cross-origin request; navigation items per role, one current item, assistant and account only for the right roles; the rating input's radio group with arrow keys; rings/bars/stars carry their data in static markup; installability (`Page.getInstallabilityErrors` empty, no manifest errors, a worker controls the page, icon pixels match declared sizes); offline reading of Today, the offline fallback, and clearing on sign-out. Negative controls: a 1600 px element, a 30 px link, a manifest without icons.
+- Server-rendering the components inside Playwright: Playwright loads the spec as native ESM and compiles JSX in imported `.tsx` against its component-testing runtime. The spec registers an in-thread resolve hook (Node 22 `module.registerHooks`) that sends that runtime back to `react/jsx-runtime` and replaces `next/link`, which Node's ESM loader cannot import by bare name, with a module rendering what Link renders as static markup (`<a href>`, checked with react-dom/server). Only the spec's own process is affected.
+- Offline is simulated with `context.route(... abort)`: Playwright applies context routes to service-worker fetches in Chromium, whereas `setOffline()` was not applied to a restarted service-worker target (the second offline navigation reached the server in this session).
 
 ## Browser
 `playwright.config.ts` uses `PLAYWRIGHT_CHROMIUM_EXECUTABLE` when set (this container's Chromium is `/opt/pw-browsers/chromium`, a different build from the one @playwright/test 1.63.0 downloads), otherwise Playwright's own Chromium.
