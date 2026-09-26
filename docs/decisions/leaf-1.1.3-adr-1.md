@@ -43,7 +43,7 @@ The non-FDC prefixes (`cofid:`, `afcd:`, `off:`) extend DM §3's `nutrition_sour
   - FDC 1005 − 1079 and US label total carbohydrate − fibre, each recorded in `meta.derivations.carbs_g`;
   - CoFID `CHO` and AFCD "available carbohydrate, without sugar alcohols" as reported.
 
-  The manifest's `carbs_basis` switches this to `by_difference`.
+  The manifest's `carbs_basis` switches this to `by_difference`. This was ruled in R-20. An entry where fibre exceeds carbohydrate by difference is clamped to 0, says so in `meta`, and is `low`.
 
 Every entry records `provenance`: dataset, release, record id, the record's own description, retrieval route and, for proxies, the proxy note. With that, the architect can check any value against the cited record (G6).
 

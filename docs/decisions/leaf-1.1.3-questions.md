@@ -69,4 +69,9 @@ NUT-4's formula `4·P + 4·C + 9·F + 2·fibre` balances only if `C` excludes fi
 - with 1005 as-is, 143 fail NUT-4 (most vegetables, fruit and spices). R-17 would then mark them `needs_review` and exclude them from planning.
 - with available carbohydrate (1005 − 1079), 32 fail.
 
-Built with available carbohydrate. The manifest's `carbs_basis` switches it back, which is a one-line regeneration. Whether coach targets mean total or net carbohydrate is an owner question outside this leaf.
+Built with available carbohydrate. The manifest's `carbs_basis` switches it back, which is a one-line regeneration.
+
+**Ruling R-20: accepted.**
+- An entry where the clamp fires (fibre above carbohydrate by difference) says so in `meta` and is `low`. No entry in v1 triggers it; G2 asserts the rule and has a negative control for it.
+- G2 asserts that the snapshot is `available`. Its negative control regenerates in memory by difference, which raises NUT-4 failures from 31 to 144.
+- Total versus net carbohydrate for targets is OQ-7, handled downstream.

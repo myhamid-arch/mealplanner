@@ -592,7 +592,10 @@ function buildIngredient(
   const satFat = need(rec.satFat, "saturated fat");
   const fibre = need(rec.fibre, "total dietary fibre");
   let carbs = need(rec.carbs, "carbohydrate");
+  // R-20: fibre above carbohydrate-by-difference is clamped; such an entry is low confidence.
+  let clamped = false;
   if (carbsBasis === "available" && rec.carbsBasis === "by_difference") {
+    clamped = carbs - fibre < 0;
     const available = Math.max(0, carbs - fibre);
     derivations["carbs_g"] =
       `available carbohydrate = carbohydrate by difference ${String(round3(carbs))} - total ` +
@@ -670,6 +673,16 @@ function buildIngredient(
   if (m.proxy_note !== undefined && confidence === "high") {
     confidence = "medium";
     confidenceReason = "proxy record; see meta.provenance.proxy_note";
+  }
+  if (clamped) {
+    confidence = "low";
+    confidenceReason = [
+      confidenceReason,
+      "total dietary fibre exceeds carbohydrate by difference in the source, so available " +
+        "carbohydrate was clamped to 0 (R-20)",
+    ]
+      .filter((x) => x !== null)
+      .join("; ");
   }
 
   const values = {
