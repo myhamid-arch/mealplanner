@@ -358,8 +358,12 @@ async function gateG1() {
         `info - flagged ${x.key}: ${x.status}; ${x.reason ?? "no plate"}${x.devs ? `; smallest deviation found: P ${x.devs.protein.toFixed(1)} g, C ${x.devs.carbs.toFixed(1)} g, F ${x.devs.fat.toFixed(1)} g, kcal ${x.devs.kcal.toFixed(1)}` : ""}`,
       );
     const relaxed = plan.flags.filter((f) => f.kind === "frequency_relaxed");
-    console.log(
-      `info - frequency relaxed (SPEC-Q-15): ${relaxed.map((f) => `${f.date} ${f.slotKey} ${f.memberId ?? "shared"}`).join("; ") || "none"}`,
+    const relaxedMeals = plan.days.flatMap((d) =>
+      d.meals.filter((mm) => mm.frequencyRelaxed !== null),
+    );
+    report.check(
+      relaxed.length === relaxedMeals.length,
+      `R-37: ${relaxedMeals.length} meal(s) frequency-relaxed, each flagged, counted apart from the ${flaggedRows.length} plate(s) out of tolerance: ${relaxedMeals.map((mm) => `${mm.date} ${mm.slotKey} ${mm.memberScope} (${mm.dishId})`).join("; ") || "none"}`,
     );
     const unflaggedDays = r.memberDays.filter((x) => !x.dayFlagged);
     report.check(
@@ -442,89 +446,151 @@ async function gateG1() {
 // G2: SC-2 distinct ingredients, economy 0.4 against 0
 // ---------------------------------------------------------------------------------------------
 
-function distinctIngredients(plan, idx) {
+const PER_MEMBER_SLOTS = new Set(["snack", "pre_workout", "post_workout"]);
+
+/** What G2 measures of a plan: per meal, the slot, the dish and each plate's served variants. */
+function summarise(plan) {
+  return {
+    economy: plan.weights[plan.dates[0]].ingredientEconomy,
+    meals: plan.days.flatMap((d) =>
+      d.meals.map((meal) => ({
+        date: d.date,
+        slotKey: meal.slotKey,
+        dishId: meal.dishId,
+        plates: meal.plates.map((p) => ({ memberId: p.memberId, variants: servedVariantIds(p) })),
+      })),
+    ),
+  };
+}
+
+/**
+ * SPEC-Q-4 / R-37 figures from the seed files: distinct core and all ingredients served; core split
+ * into shared meals and per-member slots; ingredients on exactly one plate (singletons).
+ */
+function distinctIngredients(summary, idx) {
   const core = new Set();
   const all = new Set();
-  for (const d of plan.days)
-    for (const meal of d.meals)
-      for (const p of meal.plates)
-        for (const v of servedVariantIds(p)) {
-          const rec = idx.variants.get(v);
-          if (rec === undefined) throw new Error(`variant ${v} not in the seed files`);
-          for (const s of rec.slugs) {
-            all.add(s);
-            if (idx.isCore(s)) core.add(s);
-          }
+  const shared = new Set();
+  const perMember = new Set();
+  const plateCount = new Map();
+  for (const meal of summary.meals)
+    for (const p of meal.plates) {
+      const onPlate = new Set();
+      for (const v of p.variants) {
+        const rec = idx.variants.get(v);
+        if (rec === undefined) throw new Error(`variant ${v} not in the seed files`);
+        for (const slug of rec.slugs) {
+          all.add(slug);
+          if (!idx.isCore(slug)) continue;
+          core.add(slug);
+          onPlate.add(slug);
+          (PER_MEMBER_SLOTS.has(meal.slotKey) ? perMember : shared).add(slug);
         }
-  const dishes = new Set(plan.days.flatMap((d) => d.meals.map((mm) => mm.dishId)));
-  const meals = plan.days.reduce((s, d) => s + d.meals.length, 0);
-  return { core: core.size, all: all.size, dishes: dishes.size, meals };
+      }
+      for (const slug of onPlate) plateCount.set(slug, (plateCount.get(slug) ?? 0) + 1);
+    }
+  return {
+    core: core.size,
+    all: all.size,
+    shared: shared.size,
+    perMember: perMember.size,
+    both: [...shared].filter((x) => perMember.has(x)).length,
+    singletons: [...plateCount.values()].filter((n) => n === 1).length,
+    dishes: new Set(summary.meals.map((mm) => mm.dishId)).size,
+    meals: summary.meals.length,
+  };
 }
+
+const G2_SEEDS = 10;
 
 async function gateG2() {
   const report = new Report("leaf-1.2.3 G2");
   vitest(report, ["test/planner/select/score.test.ts"]);
-  await withCore(report, "G2", async (m) => {
+  const out = compileCore(report, "G2");
+  if (out === null) return report.finish();
+  try {
     const idx = seedIndex();
-    const lib = seedLibrary(m);
-    const plan = (economy) =>
-      m.planner.planDays(
-        f1Input(m, lib, [...m.f1.F1_WEEK], { weights: { ingredientEconomy: economy } }),
-        { seed: 1 },
-      );
-    const withEconomy = await plan(0.4);
-    const baseline = await plan(0);
-    report.check(
-      withEconomy.weights[m.f1.F1_WEEK[0]].ingredientEconomy === 0.4 &&
-        baseline.weights[m.f1.F1_WEEK[0]].ingredientEconomy === 0,
-      "the two plans differ only in ingredient_economy (0.4 against 0), same seed and configuration otherwise",
+    const seeds = Array.from({ length: G2_SEEDS }, (_, i) => i + 1);
+    const chunks = Array.from({ length: WIDTH }, (_, w) =>
+      seeds.filter((_, i) => i % WIDTH === w),
+    ).filter((c) => c.length > 0);
+    const runs = await pool(
+      chunks.map((c) => ["g2", out, c.join(",")]),
+      WIDTH,
     );
-    const a = distinctIngredients(withEconomy, idx);
-    const b = distinctIngredients(baseline, idx);
+    const lines = runs.flatMap((r) => r.lines);
+    report.check(
+      runs.every((r) => r.code === 0) && lines.length === 2 * G2_SEEDS,
+      `${lines.length} F1 week plans: seeds 1–${G2_SEEDS}, each at economy 0.4 and 0 (${chunks.length} worker processes)`,
+      runs
+        .map((r) => r.stderr)
+        .join("\n")
+        .slice(-3000),
+    );
+    const of = (seed, economy) =>
+      lines.find((l) => l.seed === seed && l.summary.economy === economy);
+    const a1 = of(1, 0.4);
+    const b1 = of(1, 0);
+    if (a1 === undefined || b1 === undefined) return;
+    const a = distinctIngredients(a1.summary, idx);
+    const b = distinctIngredients(b1.summary, idx);
     const reduction = 1 - a.core / b.core;
     const reductionAll = 1 - a.all / b.all;
-    console.log(
-      `info - economy 0.4: ${a.core} core / ${a.all} all ingredients, ${a.dishes} dishes over ${a.meals} meals`,
-    );
-    console.log(
-      `info - economy 0:   ${b.core} core / ${b.all} all ingredients, ${b.dishes} dishes over ${b.meals} meals`,
-    );
-    console.log(
-      `info - all ingredients (spices and water included): ${(reductionAll * 100).toFixed(1)} % fewer`,
-    );
     report.check(
       reduction >= SC2_REDUCTION,
-      `SC-2: distinct core ingredients over the F1 week, economy 0.4 against 0: ${a.core} against ${b.core} = ${(reduction * 100).toFixed(1)} % fewer (>= ${SC2_REDUCTION * 100} %)`,
+      `SC-2: distinct core ingredients over the F1 week (seed 1), economy 0.4 against 0: ${a.core} against ${b.core} = ${(reduction * 100).toFixed(1)} % fewer (>= ${SC2_REDUCTION * 100} %)`,
+    );
+    console.log(
+      `info - seed 1, all ingredients (spices and water included): ${a.all} against ${b.all} = ${(reductionAll * 100).toFixed(1)} % fewer`,
+    );
+    // R-37: information for the owner decision (OQ-8); the assertion above is unchanged.
+    console.log(
+      "info - seed | economy 0.4: core (shared / per-member / both) singletons dishes/meals | economy 0: same | core reduction",
+    );
+    const reductions = [];
+    for (const seed of seeds) {
+      const x = of(seed, 0.4);
+      const y = of(seed, 0);
+      if (x === undefined || y === undefined) continue;
+      const p = distinctIngredients(x.summary, idx);
+      const q = distinctIngredients(y.summary, idx);
+      const r = 1 - p.core / q.core;
+      reductions.push(r);
+      const fmt = (z) =>
+        `${z.core} (${z.shared} / ${z.perMember} / ${z.both}) ${z.singletons} ${z.dishes}/${z.meals}`;
+      console.log(
+        `info - ${String(seed).padStart(2)} | ${fmt(p)} | ${fmt(q)} | ${(r * 100).toFixed(1)} %`,
+      );
+    }
+    const sorted = [...reductions].sort((u, v) => u - v);
+    const mid = Math.floor(sorted.length / 2);
+    const median = sorted.length % 2 === 1 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    console.log(
+      `info - reduction over seeds 1–${G2_SEEDS}: min ${(sorted[0] * 100).toFixed(1)} %, median ${(median * 100).toFixed(1)} %, max ${(sorted.at(-1) * 100).toFixed(1)} %`,
     );
     // Negative controls.
-    const self = distinctIngredients(withEconomy, idx);
     report.check(
-      1 - self.core / a.core < SC2_REDUCTION,
+      1 - distinctIngredients(a1.summary, idx).core / a.core < SC2_REDUCTION,
       "negative control: a plan measured against itself shows 0 % and fails the threshold",
     );
-    const extra = clonePlan(withEconomy);
-    const meal = extra.days[0].meals[0];
-    const seen = servedSlugs(withEconomy, idx);
-    const other = [...idx.variants.keys()].find((v) =>
-      idx.variants.get(v).slugs.some((s) => idx.isCore(s) && !seen.has(s)),
+    const extra = structuredClone(a1.summary);
+    const seen = new Set(
+      extra.meals.flatMap((mm) =>
+        mm.plates.flatMap((p) => p.variants.flatMap((v) => idx.variants.get(v).slugs)),
+      ),
     );
-    meal.plates[0].solution.adjusters.push({ dishId: "control", variantId: other, cookedG: 10 });
+    const other = [...idx.variants.keys()].find((v) =>
+      idx.variants.get(v).slugs.some((x) => idx.isCore(x) && !seen.has(x)),
+    );
+    extra.meals[0].plates[0].variants.push(other);
     report.check(
       distinctIngredients(extra, idx).core > a.core,
       "negative control: serving one more variant with an unseen core ingredient raises the measured count",
     );
-  });
+  } finally {
+    rmSync(out, { recursive: true, force: true });
+  }
   return report.finish();
-}
-
-function servedSlugs(plan, idx) {
-  const out = new Set();
-  for (const d of plan.days)
-    for (const meal of d.meals)
-      for (const p of meal.plates)
-        for (const v of servedVariantIds(p))
-          for (const s of idx.variants.get(v)?.slugs ?? []) out.add(s);
-  return out;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -565,6 +631,16 @@ async function worker(args) {
               });
       console.log(JSON.stringify({ seed, c3 }));
     }
+  } else if (kind === "g2") {
+    const [seeds] = rest;
+    for (const seed of seeds.split(",").map(Number))
+      for (const economy of [0.4, 0]) {
+        const input = f1Input(m, lib, [...m.f1.F1_WEEK], {
+          weights: { ingredientEconomy: economy },
+        });
+        const plan = await m.planner.planDays(input, { seed });
+        console.log(JSON.stringify({ seed, summary: summarise(plan) }));
+      }
   } else if (kind === "g4") {
     const [seed, dates] = rest;
     const input = f1Input(m, lib, dates.split(","));

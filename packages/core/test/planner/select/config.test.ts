@@ -1,5 +1,5 @@
 // Planning settings: weight presets (SPEC-Q-13), the household adjuster list (PLN-6, SPEC-Q-7) and
-// the frequency fallback when no dish is left (SPEC-Q-15).
+// the frequency fallback when no dish is left (R-37, SPEC-Q-15).
 import { describe, expect, it } from "vitest";
 import { planDays } from "../../../src/planner/index.js";
 import { weightsFor } from "../../../src/planner/select/weights.js";
@@ -77,7 +77,7 @@ describe("household adjuster list (PLN-6, SPEC-Q-7)", () => {
   }, 120_000);
 });
 
-describe("frequency fallback (SPEC-Q-15)", () => {
+describe("frequency fallback (R-37, SPEC-Q-15)", () => {
   it("relaxes only frequency when it blocks every suitable dish, and flags the meal", async () => {
     const lib = seedLibrary();
     const snack = lib.dishes.filter((d) => d.slotKeys.includes("snack")).slice(0, 1);
@@ -97,6 +97,25 @@ describe("frequency fallback (SPEC-Q-15)", () => {
     expect(plan.flags.filter((f) => f.kind === "frequency_relaxed").map((f) => f.date)).toEqual([
       TUESDAY,
     ]);
+  }, 60_000);
+
+  it("uses the eligible dish served longest ago", async () => {
+    const lib = seedLibrary();
+    const snacks = lib.dishes.filter((d) => d.slotKeys.includes("snack")).slice(0, 2);
+    const plan = await planDays(
+      {
+        config: narrow(["snack"], ["c1"]),
+        dates: [MONDAY, TUESDAY, "2026-09-30"],
+        dishes: snacks,
+        adjusters: lib.adjusters,
+      },
+      { seed: 1 },
+    );
+    const [mon, tue, wed] = plan.days.map((d) => d.meals[0]);
+    expect(mon?.dishId).not.toBe(tue?.dishId);
+    expect(tue?.frequencyRelaxed).toBeNull();
+    expect(wed?.dishId).toBe(mon?.dishId);
+    expect(wed?.frequencyRelaxed).not.toBeNull();
   }, 60_000);
 
   it("never relaxes an exclusion: an excluded-only pool leaves the meal empty and flagged", async () => {

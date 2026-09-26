@@ -107,9 +107,9 @@ function nearestServing(dish: PlanDish, spec: MealSpec, history: readonly Served
  * Solved candidates for one state: blocks of K from the ranked pool (frequency checked against the
  * state), until a block yields an eligible candidate or the pool is used up (ADR-1 §4).
  *
- * SPEC-Q-15: when frequency blocks every dish that passes the other hard filters, the dishes served
- * longest ago are used instead ("plan with the best available dish", PLN-12), and the meal is
- * flagged. Exclusions, `never` and slot suitability are never relaxed.
+ * R-37 (SPEC-Q-15): when frequency blocks every dish that passes the other hard filters, the
+ * eligible dish served longest ago is used ("plan with the best available dish", PLN-12), and the
+ * meal is flagged. Exclusions, `never` and slot suitability are never relaxed.
  */
 function candidatesFor(
   run: Run,
@@ -117,24 +117,30 @@ function candidatesFor(
   ranked: readonly PlanDish[],
   history: readonly Served[],
 ): { eligible: Candidate[]; evaluated: Candidate[]; relaxed: string | null } {
-  let open = ranked.filter((d) => !run.frequencyBlocked(d, spec, history));
-  let relaxed: string | null = null;
+  const open = ranked.filter((d) => !run.frequencyBlocked(d, spec, history));
+  const evaluated: Candidate[] = [];
   if (open.length === 0 && ranked.length > 0) {
+    // R-37: the eligible dish served longest ago (ties in pre-score order); least-bad if none is.
     const gaps = new Map(ranked.map((d) => [d.id, nearestServing(d, spec, history)]));
-    open = ranked
+    const byAge = ranked
       .map((d, i) => ({ d, i }))
       .sort((a, b) => (gaps.get(b.d.id) ?? 0) - (gaps.get(a.d.id) ?? 0) || a.i - b.i)
       .map((x) => x.d);
-    relaxed = `Frequency relaxed: all ${String(ranked.length)} suitable dishes were served to an attendee within their minimum gap (SPEC-Q-15)`;
+    const relaxed = `Frequency relaxed: all ${String(ranked.length)} suitable dishes were served to an attendee within their minimum gap (R-37)`;
+    for (const dish of byAge) {
+      const c = run.evaluate(spec, dish);
+      evaluated.push(c);
+      if (c.eligible) return { eligible: [c], evaluated, relaxed };
+    }
+    return { eligible: [], evaluated, relaxed };
   }
-  const evaluated: Candidate[] = [];
   for (let start = 0; start < open.length; start += PRE_SCORE_TOP_K) {
     for (const dish of open.slice(start, start + PRE_SCORE_TOP_K))
       evaluated.push(run.evaluate(spec, dish));
     const eligible = evaluated.filter((c) => c.eligible);
-    if (eligible.length > 0) return { eligible, evaluated, relaxed };
+    if (eligible.length > 0) return { eligible, evaluated, relaxed: null };
   }
-  return { eligible: [], evaluated, relaxed };
+  return { eligible: [], evaluated, relaxed: null };
 }
 
 /** PLN-8: the least-bad candidate (smallest Σ|dev|/tol), earlier pre-score first on ties. */
