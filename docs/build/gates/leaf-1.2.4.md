@@ -17,12 +17,12 @@ Scope: Seed dish library, as specified in docs/spec (see 11-build-plan.md §5 an
 - [x] G3: every variant passes nutrition validation; at least 15 adjuster dishes
   CHECK: node scripts/verify/leaf-1.2.4.mjs --gate G3
   EXPECT: VERIFY leaf-1.2.4 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=26e507966df6c48f11bbda2e82af5255194d491e106012c753b335ffd9d59a58; exit=0; EXPECT=matched; output-sha256=bb41b2291fb73cdb3cd0cd2a2c43df83d257f3b73ea5b401f6ca7759e3b9037f; output-bytes=1196; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=26e507966df6c48f11bbda2e82af5255194d491e106012c753b335ffd9d59a58; exit=0; EXPECT=matched; output-sha256=33c417ec7a3dc6a199eebccdb8b006f79e6ee9e9cbb8c9b6fb003e6c405b0d81; output-bytes=1403; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: at least 80% of dishes feasible for both F1 targeted adults at dinner
   CHECK: node scripts/verify/leaf-1.2.4.mjs --gate G4
   EXPECT: VERIFY leaf-1.2.4 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=0fc4d98fa1157078616ca11eb321ca4c097904c9e454321c0461ad69e47bcf01; exit=0; EXPECT=matched; output-sha256=657b57f467e37fb04ac7644f20cc724f3ef29f77f7846596f8178b2499672f81; output-bytes=1095; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=0fc4d98fa1157078616ca11eb321ca4c097904c9e454321c0461ad69e47bcf01; exit=0; EXPECT=matched; output-sha256=b74273598ad5959f5ab23fd33fe99b582c691e53f6de24ba95809292ac71b23b; output-bytes=1094; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G5: architect review of 10 random recipes for plausibility, UAE availability and step clarity
   EVIDENCE: pending
@@ -30,4 +30,4 @@ Scope: Seed dish library, as specified in docs/spec (see 11-build-plan.md §5 an
 - [x] G6: plate naturalness on the seed library: no solved F1 plate has a component outside its [min,max], and the median ratio deviation is at most 25% (PLN-5)
   CHECK: node scripts/verify/leaf-1.2.4.mjs --gate G6
   EXPECT: VERIFY leaf-1.2.4 G6 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=ff41a695df1a94f3b3137022676881164795383c6eb0fb6e40ecd7ba3ab19489; exit=0; EXPECT=matched; output-sha256=0c6e02ddccffc36b83c5f813e91552c28f7f10079d9a78cbf3d1d41a7b437b4a; output-bytes=778; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=ff41a695df1a94f3b3137022676881164795383c6eb0fb6e40ecd7ba3ab19489; exit=0; EXPECT=matched; output-sha256=6eb430d6c3dc1ae58c7e2fc9d6ebf3d3582dacca6a05a9a19b8855edf8330e42; output-bytes=777; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
