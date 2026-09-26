@@ -1,6 +1,6 @@
 # leaf-1.3.1 ADR-1: Claude API surface for the recipe generator
 
-Status: proposed (CP1)
+Status: accepted (CP1, BLD-8 R-32); default model amended per R-32
 
 ## Context
 REC-2 fixes the call: `@anthropic-ai/sdk` (declared by 1.1.1 in `packages/ai`, exact version 0.128.0), model from `ANTHROPIC_MODEL` (default `claude-opus-5`), `messages.parse()` with `output_config.format = zodOutputFormat(DishBatchSchema)`, adaptive thinking at effort `high`, beta `server-side-fallback-2026-07-01` with `fallbacks: "default"`, `stop_reason` checked before content, prompt caching on the system prompt and catalogue block, typed SDK errors, SDK default retries.
@@ -10,7 +10,7 @@ Read from the installed package (`node_modules/@anthropic-ai/sdk`, 0.128.0) and 
 1. `fallbacks` exists only on the **beta** params (`BetaFallbacksParam = Array<BetaFallbackParam> | 'default'`, `resources/beta/messages/messages.d.ts`). `'server-side-fallback-2026-07-01'` is in the `AnthropicBeta` union. The non-beta `client.messages.parse` has no `fallbacks` field.
 2. The beta counterpart of `messages.parse` is `client.beta.messages.parse(params)`, which returns `ParsedBetaMessage<T>` with `parsed_output: T | null`; its format helper is `betaZodOutputFormat` from `@anthropic-ai/sdk/helpers/beta/zod` (same shape as `zodOutputFormat`: `{ type: "json_schema", schema, parse(text) }`). `parse` adds the `structured-outputs-2025-12-15` beta itself.
 3. `parseBetaMessage` calls the format's `parse` on each text block and **throws** `AnthropicError("Failed to parse structured output …")` when the text is not valid JSON or fails the Zod schema. A `refusal` or `max_tokens` response can carry partial JSON, so with the helper as shipped the SDK would throw before the caller sees `stop_reason`.
-4. `claude-opus-5` is a current model ID per the `claude-api` skill's model table (cached 2026-06-24). The spec default needs no SPEC-Q.
+4. Default model (BLD-8 R-32: the most capable current model in the `claude-api` skill's model table at build time). The skill's "Current Models (cached: 2026-06-24)" table lists, first, the row `| Claude Fable 5.1 | claude-fable-5-1 | 1M | $10.00 | $50.00 |`, and its section heading reads "Claude Fable 5.1 (`claude-fable-5-1`) - most capable widely released model". The rows ranked with it are not more capable generally available models: Claude Mythos 5.1 is "Project Glasswing only", and Claude Opus 5.5 is "launching - use only when the user names it" and is the successor of Opus 5 in the Opus tier, below Fable. `claude-opus-5` (the spec's default) is current, but not the most capable. Fable 5.1 API facts from the same skill that this client respects: thinking is adaptive (`{ type: "adaptive" }` accepted, explicit disabled/budget rejected), effort `high` supported, `fallbacks: "default"` with `server-side-fallback-2026-07-01` recommended by default, no assistant prefill (none is used), forced `tool_choice` rejected (no tools are used), and thinking blocks are bound to the conversation (the follow-up appends the previous response unchanged; ADR-2).
 5. Non-streaming requests: the SDK refuses `max_tokens` above 21 333 when no explicit timeout is set (`calculateNonstreamingTimeout`: 60 min × max_tokens / 128 000 must not exceed 10 min).
 
 ## Decision
@@ -25,7 +25,7 @@ Read from the installed package (`node_modules/@anthropic-ai/sdk`, 0.128.0) and 
 - Errors: SDK errors are mapped most-specific first, by class (`Anthropic.AuthenticationError`, `PermissionDeniedError`, `RateLimitError`, `BadRequestError`, `APIConnectionError`, `InternalServerError`, `APIError`, `AnthropicError`) to `ClaudeCallError` codes (`authentication`, `rate_limited`, `bad_request`, `connection`, `server`, `api`, `sdk`), keeping `status` and `request_id`. Retries stay at the SDK default (2; 408/409/429/5xx and connection errors).
 - Prompt caching: `system` is two text blocks, the system prompt and the catalogue block, each with `cache_control: { type: "ephemeral" }`. Both are rendered from sorted data only (no dates, ids or household data). Everything volatile goes in the user message.
 - The client is behind an interface (`StructuredModel`) so tests use recorded responses through the real SDK: tests construct `new Anthropic({ apiKey: "test", fetch })` with a `fetch` that returns recorded JSON bodies, so the real `beta.messages.parse`, header building, error classes and `parseBetaMessage` run. No production path is mocked.
-- Model: `process.env.ANTHROPIC_MODEL`, trimmed; empty or unset → `claude-opus-5`.
+- Model: `process.env.ANTHROPIC_MODEL`, trimmed; empty or unset → `DEFAULT_MODEL = "claude-fable-5-1"` (R-32, item 4 above).
 - Credentials: generation is enabled when the environment provides a credential the SDK resolves from env (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, a selected `ANTHROPIC_PROFILE`, or the complete Workload Identity Federation set). Otherwise `createClaudeClient` returns a disabled status with a reason, and the generator throws `RecipeGenerationError("disabled")` (REC-2: no silent failure). The key is never read into our own variables, logged or stored.
 
 ## Alternatives

@@ -1,6 +1,6 @@
 # leaf-1.3.1 spec questions
 
-Each question states the conservative reading this leaf builds on. None blocks a runnable gate.
+Each question states the conservative reading this leaf builds on. None blocks a runnable gate. SPEC-Q-1 … 13 were accepted as proposed at CP1 (BLD-8 R-32); SPEC-Q-14 was raised during the build.
 
 ## SPEC-Q-1: `messages.parse` on the beta namespace
 REC-2 names `client.messages.parse()` + `zodOutputFormat` and also `fallbacks: "default"` with beta `server-side-fallback-2026-07-01`. In `@anthropic-ai/sdk` 0.128.0 `fallbacks` exists only on the beta params, so both cannot hold on the non-beta method. Reading taken: `client.beta.messages.parse()` + `betaZodOutputFormat` (the beta twins of the named calls), with the format's `parse` wrapped to return `null` on unparseable text so `stop_reason` is checked before content (ADR-1).
@@ -40,3 +40,6 @@ A model-proposed ingredient has no verified `dietary_flags`, so a dietary-flag e
 
 ## SPEC-Q-13: the generation context's slot and attendees
 `buildGenerationContext` derives attendees from the 1.2.2 resolver (`attendedSlots`, `resolveSlotTargets`) for one date and slot, and `plateTarget` from the attendee's `SlotTarget` (carbs on the target's basis, stated in the prompt). Palette, recent cuisines, similar dishes and the admin request are inputs from the caller (planner 1.2.3 / agent 1.3.5).
+
+## SPEC-Q-14: cooking liquids in generated recipes
+R-12 gave `variant_ingredient` a `cooking_liquid` role (`absorbed` adds no mass), but REC-4's output schema has no such field, so every listed liquid is an ordinary ingredient to the engine: water listed for boiling rice would be counted twice (once in the rice's boiled yield, once as its own mass) and dilute the per-100 g figures. Reading taken: the system prompt tells the model not to list water or stock that a grain, pasta or pulse absorbs (the yield accounts for it) and to list only liquid that stays in the dish (soups, stews, sauces). Generated lines are stored with `cooking_liquid` null. A schema field would be a spec change (REC-4).
