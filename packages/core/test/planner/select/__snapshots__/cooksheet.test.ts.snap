@@ -80,14 +80,14 @@ exports[`buildCookSheet > matches the snapshot of the F1 Monday sheet 1`] = `
       {
         "allergy": [],
         "batches": [
-          "component warak-enab-yogurt.vine-leaves.stewed 115 g cooked x1: vine-leaves-brined 15.08, basmati-rice 21.12, tomato 18.1, parsley 4.83, mint-fresh 0.9, onion 6.03, olive-oil 2.41, allspice 0.12, lemon-juice 4.83, water 36.2, salt 0.3",
-          "component warak-enab-yogurt.chicken.poached 40 g cooked x1: chicken-breast 49.33, lemon-juice 0.99, bay-leaf 0.05, black-pepper 0.1, salt 0.39",
+          "component warak-enab-yogurt.vine-leaves.stewed 110 g cooked x1: vine-leaves-brined 14.43, basmati-rice 20.2, tomato 17.31, parsley 4.62, mint-fresh 0.87, onion 5.77, olive-oil 2.31, allspice 0.12, lemon-juice 4.62, water 34.63, salt 0.29",
+          "component warak-enab-yogurt.chicken.poached 45 g cooked x1: chicken-breast 55.5, lemon-juice 1.11, bay-leaf 0.06, black-pepper 0.11, salt 0.44",
           "component warak-enab-yogurt.garlic-sauce.classic 15 g cooked x1: greek-yogurt-nonfat 11.83, garlic 0.59, lemon-juice 0.59, olive-oil 1.78, mint-fresh 0.09, salt 0.12",
         ],
         "meal": "16:00:00 snack/adult_a: Warak enab with yogurt and chicken",
         "notes": [],
         "plating": [
-          "Adult A: Simmered 115 | Poached 40 | Garlic yogurt 15",
+          "Adult A: Simmered 110 | Poached 45 | Garlic yogurt 15",
         ],
       },
       {
@@ -95,13 +95,13 @@ exports[`buildCookSheet > matches the snapshot of the F1 Monday sheet 1`] = `
         "batches": [
           "component tuna-rice-cakes.tuna.classic 70 g cooked x1: tuna-canned-water 54.12, greek-yogurt-nonfat 13.53, lemon-juice 1.8, dill-fresh 0.45, black-pepper 0.09",
           "component tuna-rice-cakes.rice-cakes.plain 15 g cooked x1: rice-cakes 15",
-          "component tuna-rice-cakes.cucumber.sliced 30 g cooked x1: cucumber 30",
+          "component tuna-rice-cakes.cucumber.sliced 40 g cooked x1: cucumber 40",
           "component tuna-rice-cakes.avocado.sliced 35 g cooked x1: avocado 33.87, lemon-juice 1.13",
         ],
         "meal": "16:00:00 snack/adult_b: Tuna and cucumber rice cakes",
         "notes": [],
         "plating": [
-          "Adult B: Tuna and yogurt 70 | Plain 15 | Sliced 30 | Sliced 35",
+          "Adult B: Tuna and yogurt 70 | Plain 15 | Sliced 40 | Sliced 35",
         ],
       },
       {
@@ -150,13 +150,13 @@ exports[`buildCookSheet > matches the snapshot of the F1 Monday sheet 1`] = `
         "batches": [
           "component tuna-rice-cakes.tuna.classic 75 g cooked x1: tuna-canned-water 57.99, greek-yogurt-nonfat 14.5, lemon-juice 1.93, dill-fresh 0.48, black-pepper 0.1",
           "component tuna-rice-cakes.rice-cakes.plain 20 g cooked x1: rice-cakes 20",
-          "component tuna-rice-cakes.cucumber.sliced 40 g cooked x1: cucumber 40",
+          "component tuna-rice-cakes.cucumber.sliced 50 g cooked x1: cucumber 50",
           "component tuna-rice-cakes.avocado.sliced 35 g cooked x1: avocado 33.87, lemon-juice 1.13",
         ],
         "meal": "17:00:00 pre_workout/adult_a: Tuna and cucumber rice cakes",
         "notes": [],
         "plating": [
-          "Adult A: Tuna and yogurt 75 | Plain 20 | Sliced 40 | Sliced 35",
+          "Adult A: Tuna and yogurt 75 | Plain 20 | Sliced 50 | Sliced 35",
         ],
       },
       {
@@ -165,12 +165,12 @@ exports[`buildCookSheet > matches the snapshot of the F1 Monday sheet 1`] = `
           "component chicken-avocado-sandwich.chicken.poached 45 g cooked x1: chicken-breast 55.5, lemon-juice 1.11, bay-leaf 0.06, black-pepper 0.11, salt 0.44",
           "component chicken-avocado-sandwich.bread.fresh 65 g cooked x1: bread-wholemeal 65",
           "component chicken-avocado-sandwich.avocado.smashed 40 g cooked x1: avocado 37.85, lemon-juice 1.89, salt 0.25",
-          "component chicken-avocado-sandwich.veg.fresh 30 g cooked x1: tomato 20, lettuce-romaine 10",
+          "component chicken-avocado-sandwich.veg.fresh 45 g cooked x1: tomato 30, lettuce-romaine 15",
         ],
         "meal": "18:30:00 post_workout/adult_a: Chicken and avocado wholemeal sandwich",
         "notes": [],
         "plating": [
-          "Adult A: Poached 45 | Fresh 65 | Smashed 40 | Fresh 30",
+          "Adult A: Poached 45 | Fresh 65 | Smashed 40 | Fresh 45",
         ],
       },
       {

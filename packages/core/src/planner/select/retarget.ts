@@ -1,13 +1,14 @@
 // R-28 / OQ-2 member-day kcal re-targeting (ADR-1 §2, SPEC-Q-2, SPEC-Q-3).
 //
-// For each targeted member, the day's plates are re-solved in time order. At the member's i-th
+// For each targeted member, the day's plates are re-targeted in time order. At the member's i-th
 // slot, with D = the kcal deviation of the plates before it and Bᵢ = the resolver's kcal bands of
 // slots 1…i summed:
 //   kcal target = resolver kcal − D,   kcal tolerance = Bᵢ   (P/C/F unchanged, per meal).
 // An in-tolerance plate keeps the running deviation within ±Bᵢ, so a member-day whose plates are
-// all in tolerance ends within ±Bₙ = ±tolerance.kcal. Locked plates are kept and carry their
-// deviation forward. Re-solves keep the variants the meal already serves, so the PLN-9 §6.4 limit
-// still holds.
+// all in tolerance ends within ±Bₙ = ±tolerance.kcal. A day-search plate that already fits the
+// re-targeted window is kept (measured against it); otherwise the plate is re-solved for the
+// window. Locked plates are kept and carry their deviation forward. Re-solves keep the variants the
+// meal already serves, so the PLN-9 §6.4 limit still holds.
 import type { PlateSolution } from "../solver/index.js";
 import type { SlotTarget } from "../targets/index.js";
 import { MACRO_EPSILON } from "./config.js";
@@ -84,10 +85,12 @@ export function retargetDay(run: Run, meals: readonly PlannedMeal[]): PlannedMea
         continue;
       }
       const target = retargeted(base, d, band);
-      if (d === 0 && band === base.tol.kcal) {
-        // Same target as the day search solved against: the plate is already optimal for it.
+      if (plate.fitStatus === "in_tolerance" && withinTarget(plate.solution, target)) {
+        // The day search's plate already fits the re-targeted window: kept, measured against it.
+        const kept =
+          d === 0 && band === base.tol.kcal ? plate.solution : rebase(plate.solution, target);
         const mealOut = out[mi];
-        if (mealOut !== undefined) mealOut.plates[pi] = { ...plate, target };
+        if (mealOut !== undefined) mealOut.plates[pi] = { ...plate, target, solution: kept };
         d += plate.solution.actual.kcal - base.kcal;
         continue;
       }

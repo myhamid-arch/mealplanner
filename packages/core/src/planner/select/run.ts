@@ -17,6 +17,7 @@ import {
 import { mealKey, type MealSpec } from "./meals.js";
 import { Household } from "./members.js";
 import { Pool, servedVariantIds } from "./pool.js";
+import { appealUpperBound } from "./bound.js";
 import { scoreDish, type ScoreInput } from "./score.js";
 import type { PlanDish, PlannedPlate, PlanWeights, ScoreBreakdown } from "./types.js";
 import { weightsFor } from "./weights.js";
@@ -70,6 +71,8 @@ export class Run {
   readonly pool: Pool;
   readonly household: Household;
   readonly stats = { solves: 0, cacheHits: 0 };
+  /** Bound pruning in the day beam (day.ts `expandBeam`); off only to test that it is exact. */
+  prune = true;
   private readonly candidateCache = new Map<string, Candidate>();
   /** Candidates evaluated per meal (key without the dish), in evaluation order. */
   private readonly evaluatedByMeal = new Map<string, Candidate[]>();
@@ -259,6 +262,25 @@ export class Run {
     list.push(candidate);
     this.evaluatedByMeal.set(mealId, list);
     return candidate;
+  }
+
+  private readonly appealBounds = new Map<string, number>();
+
+  /** True when PLN-9 §6.4 merging could re-solve the dish's plates at this meal. */
+  mayMergeVariants(spec: MealSpec, dish: PlanDish): boolean {
+    const max = this.weightsOn(spec.date).maxVariantsPerComponent;
+    return dish.components.some((c) => c.variants.length > Math.max(1, max));
+  }
+
+  /** Upper bound of the member's appeal for the dish (bound.ts), memoised. */
+  appealBound(memberId: string, spec: MealSpec, dish: PlanDish): number {
+    const key = `${memberId}|${dish.id}`;
+    let b = this.appealBounds.get(key);
+    if (b === undefined) {
+      b = appealUpperBound(this, memberId, spec, dish);
+      this.appealBounds.set(key, b);
+    }
+    return b;
   }
 
   /** Every candidate solved for the meal so far (the day search's top-K blocks). */

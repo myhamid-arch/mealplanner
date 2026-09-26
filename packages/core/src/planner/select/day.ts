@@ -13,6 +13,7 @@ import {
 import { dayNumber, type Served } from "./filters.js";
 import { mealKey, mealsOfDate, type MealSpec } from "./meals.js";
 import type { Candidate, Run } from "./run.js";
+import { scoreUpperBound } from "./bound.js";
 import { economyOf, appealOf } from "./score.js";
 import type {
   PlanDish,
@@ -215,6 +216,187 @@ function plannedMeal(run: Run, choice: Choice & { locked: null }): PlannedMeal {
   };
 }
 
+type Meta = { date: string; attendees: readonly string[]; timeKey: string; mealKey: string };
+
+function compareChildren(seed: number): (a: State, b: State) => number {
+  return (a, b) =>
+    b.total - a.total ||
+    seededUnit(seed, a.path) - seededUnit(seed, b.path) ||
+    (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+}
+
+function childOf(
+  run: Run,
+  spec: MealSpec,
+  meta: Meta,
+  state: State,
+  context: readonly Served[],
+  candidate: Candidate,
+  relaxed: string | null,
+): State {
+  const score = run.score(meta, candidate.dish, candidate.plates, context);
+  const served = run.served(
+    spec.date,
+    spec.slot.id,
+    spec.memberScope,
+    candidate.dish.id,
+    candidate.plates,
+  );
+  const choice: Choice = { spec, locked: null, candidate, score, relaxed };
+  return {
+    choices: [...state.choices, choice],
+    served: [...state.served, served],
+    total: state.total + score.total,
+    path: `${state.path}/${candidate.dish.id}`,
+  };
+}
+
+/** A state's children as the full search defines them: its whole candidate block (ADR-1 §4). */
+function exactChildren(
+  run: Run,
+  spec: MealSpec,
+  meta: Meta,
+  state: State,
+  ranked: readonly PlanDish[],
+  context: readonly Served[],
+): State[] {
+  const { eligible, evaluated, relaxed } = candidatesFor(run, spec, ranked, context);
+  const picks =
+    eligible.length > 0 ? eligible : [leastBad(evaluated)].filter((c) => c !== undefined);
+  return picks.map((c) => childOf(run, spec, meta, state, context, c, relaxed));
+}
+
+/**
+ * The children of every beam state for one meal (PLN-11), solving only what can matter (CP3
+ * finding 1). Every (state, candidate) pair of each state's top-K block gets an upper bound on its
+ * child's total (bound.ts). Pairs are solved in descending bound order until the next bound falls
+ * below the B-th best exact child found so far: no pair left can enter the beam, so the kept states
+ * are exactly those of solving every pair. A state left with no eligible child is expanded in full
+ * (further blocks, least-bad) if its best bound over its whole pool can still reach the beam.
+ * Within a pair, targeted plates are solved one at a time, and each fit found replaces its 1 in the
+ * MacroFit bound. A plate that is infeasible makes the candidate ineligible, so it is not a child.
+ */
+function expandBeam(
+  run: Run,
+  spec: MealSpec,
+  meta: Meta,
+  states: readonly State[],
+  ranked: readonly PlanDish[],
+  history: readonly Served[],
+): State[] {
+  const children: State[] = [];
+  const totals: number[] = [];
+  const add = (c: State) => {
+    children.push(c);
+    const at = totals.findIndex((t) => t < c.total);
+    totals.splice(at < 0 ? totals.length : at, 0, c.total);
+  };
+  const threshold = () =>
+    totals.length < BEAM_WIDTH ? -Infinity : (totals[BEAM_WIDTH - 1] ?? -Infinity);
+  const pairs: Array<{ i: number; dish: PlanDish; order: number; ub: number }> = [];
+  const bestBound: number[] = [];
+  const contexts = states.map((s) => [...history, ...s.served]);
+  // PLN-11: the meal's top K, by pre-score in the day's entry context (ADR-1 §4). A state only
+  // drops the candidates its own meals block for frequency.
+  const block = new Set(
+    ranked
+      .filter((d) => !run.frequencyBlocked(d, spec, history))
+      .slice(0, PRE_SCORE_TOP_K)
+      .map((d) => d.id),
+  );
+  states.forEach((state, i) => {
+    const context = contexts[i] ?? [];
+    const open = ranked.filter((d) => !run.frequencyBlocked(d, spec, context));
+    if (open.length === 0) {
+      // R-37 (relaxed) or nothing suitable: the full definition decides.
+      for (const c of exactChildren(run, spec, meta, state, ranked, context)) add(c);
+      bestBound[i] = -Infinity;
+      return;
+    }
+    const bound = (d: PlanDish) =>
+      state.total +
+      scoreUpperBound(run, spec, d, run.context(meta, d.cuisineKey, context), (m) =>
+        run.appealBound(m, spec, d),
+      );
+    let best = -Infinity;
+    open.forEach((d, order) => {
+      const ub = bound(d);
+      best = Math.max(best, ub);
+      if (block.has(d.id)) pairs.push({ i, dish: d, order, ub });
+    });
+    bestBound[i] = best;
+  });
+  pairs.sort((a, b) => b.ub - a.ub || a.i - b.i || a.order - b.order);
+  const w = run.weightsOn(spec.date);
+  const sumW = w.macroPrecision + w.appeal + w.ingredientEconomy + w.variety;
+  const targeted = spec.attendees.filter((m) => run.target(spec.date, m, spec.slot.id) !== null);
+  const withEligible = new Set<number>();
+  for (const p of pairs) {
+    const cut = run.prune ? threshold() - SCORE_EPSILON : -Infinity;
+    if (p.ub < cut) break;
+    const state = states[p.i];
+    if (state === undefined) continue;
+    // Solve the targeted attendees one at a time: each fit found tightens the MacroFit bound
+    // (unsolved plates count as fit 1), and the pair stops as soon as it cannot reach the beam.
+    if (run.prune && sumW > 0 && targeted.length > 0 && !run.mayMergeVariants(spec, p.dish)) {
+      let dropped = false;
+      let fits = 0;
+      for (const m of targeted) {
+        const sol = run.solve(p.dish, m, spec.slot, run.target(spec.date, m, spec.slot.id), {});
+        if (sol.status === "infeasible") {
+          dropped = true;
+          break;
+        }
+        fits += 1 - sol.fit;
+        if (p.ub - (w.macroPrecision * fits) / targeted.length / sumW < cut) {
+          dropped = true;
+          break;
+        }
+      }
+      if (dropped) continue;
+    }
+    const c = run.evaluate(spec, p.dish);
+    if (!c.eligible) continue;
+    withEligible.add(p.i);
+    add(childOf(run, spec, meta, state, contexts[p.i] ?? [], c, null));
+  }
+  states.forEach((state, i) => {
+    const b = bestBound[i] ?? -Infinity;
+    if (withEligible.has(i) || b === -Infinity || (run.prune && b < threshold() - SCORE_EPSILON))
+      return;
+    for (const c of exactChildren(run, spec, meta, state, ranked, contexts[i] ?? [])) add(c);
+  });
+  return children;
+}
+
+/** PLN-12 figures for one state: eligible candidates and the best score, solved lazily. */
+function triggerFigures(
+  run: Run,
+  spec: MealSpec,
+  ranked: readonly PlanDish[],
+  context: readonly Served[],
+  meta: Meta,
+): { count: number; best: number } {
+  const open = ranked.filter((d) => !run.frequencyBlocked(d, spec, context));
+  let count = 0;
+  let best = 0;
+  if (open.length > 0)
+    for (const d of open.slice(0, PRE_SCORE_TOP_K)) {
+      const c = run.evaluate(spec, d);
+      if (!c.eligible) continue;
+      count++;
+      best = Math.max(best, run.score(meta, c.dish, c.plates, context).total);
+      if (count >= AI_MIN_CANDIDATES && best >= AI_MIN_BEST_SCORE) return { count, best };
+    }
+  if (count > 0) return { count, best };
+  // No eligible dish in the first block: the full definition (further blocks, R-37, least-bad).
+  const { eligible, evaluated } = candidatesFor(run, spec, ranked, context);
+  const picks =
+    eligible.length > 0 ? eligible : [leastBad(evaluated)].filter((c) => c !== undefined);
+  for (const c of picks) best = Math.max(best, run.score(meta, c.dish, c.plates, context).total);
+  return { count: eligible.length, best };
+}
+
 /**
  * Plans one date (PLN-11): meals in planning order, each expanded from every beam state with its
  * solved candidates, keeping the best `BEAM_WIDTH` states by summed score. `history` holds every
@@ -268,59 +450,37 @@ export async function planDay(
     }
 
     let ranked = rankedPool(run, spec, history);
-    const expand = (state: State) => {
-      const context = [...history, ...state.served];
-      const { eligible, evaluated, relaxed } = candidatesFor(run, spec, ranked, context);
-      const picks =
-        eligible.length > 0 ? eligible : [leastBad(evaluated)].filter((c) => c !== undefined);
-      const meta = { date, attendees: spec.attendees, timeKey, mealKey: key };
-      return {
-        eligibleCount: eligible.length,
-        children: picks.map((candidate) => {
-          const score = run.score(meta, candidate.dish, candidate.plates, context);
-          const served = run.served(
-            date,
-            spec.slot.id,
-            spec.memberScope,
-            candidate.dish.id,
-            candidate.plates,
-          );
-          const choice: Choice = { spec, locked: null, candidate, score, relaxed };
-          return {
-            choices: [...state.choices, choice],
-            served: [...state.served, served],
-            total: state.total + score.total,
-            path: `${state.path}/${candidate.dish.id}`,
-          } satisfies State;
-        }),
-      };
-    };
+    const meta = { date, attendees: spec.attendees, timeKey, mealKey: key };
 
-    let expansions = states.map(expand);
-    const first = expansions[0];
-    const best =
-      first === undefined
-        ? 0
-        : Math.max(0, ...first.children.map((c) => c.total - (states[0]?.total ?? 0)));
-    const count = first?.eligibleCount ?? 0;
-    if (count < AI_MIN_CANDIDATES || best < AI_MIN_BEST_SCORE) {
-      const reason =
-        count < AI_MIN_CANDIDATES
-          ? `only ${String(count)} candidate(s) pass the filters and the solver (< ${String(AI_MIN_CANDIDATES)})`
-          : `best score ${best.toFixed(2)} is below ${String(AI_MIN_BEST_SCORE)}`;
-      const mode = run.weightsOn(date).aiGeneration;
-      const request = generationRequest(run, spec, history, reason);
-      if (mode === "ask") out.generationRequests.push(request);
-      else if (mode === "auto" && opts.requestDishes !== undefined) {
-        opts.onProgress?.({ type: "ai_generating", date, slotKey: spec.slot.key, reason });
-        const dishes = await opts.requestDishes(request);
-        for (const d of dishes) run.pool.add(d, false);
-        ranked = rankedPool(run, spec, history);
-        expansions = states.map(expand);
+    // PLN-12 trigger, from the best state's solved candidates (solved lazily: it stops as soon as
+    // the outcome is decided, so it never solves more than the full block would).
+    const mode = run.weightsOn(date).aiGeneration;
+    const first = states[0];
+    if (mode !== "off" && first !== undefined) {
+      const { count, best } = triggerFigures(
+        run,
+        spec,
+        ranked,
+        [...history, ...first.served],
+        meta,
+      );
+      if (count < AI_MIN_CANDIDATES || best < AI_MIN_BEST_SCORE) {
+        const reason =
+          count < AI_MIN_CANDIDATES
+            ? `only ${String(count)} candidate(s) pass the filters and the solver (< ${String(AI_MIN_CANDIDATES)})`
+            : `best score ${best.toFixed(2)} is below ${String(AI_MIN_BEST_SCORE)}`;
+        const request = generationRequest(run, spec, history, reason);
+        if (mode === "ask") out.generationRequests.push(request);
+        else if (opts.requestDishes !== undefined) {
+          opts.onProgress?.({ type: "ai_generating", date, slotKey: spec.slot.key, reason });
+          const dishes = await opts.requestDishes(request);
+          for (const d of dishes) run.pool.add(d, false);
+          ranked = rankedPool(run, spec, history);
+        }
       }
     }
 
-    const children = expansions.flatMap((e) => e.children);
+    const children = expandBeam(run, spec, meta, states, ranked, history);
     if (children.length === 0) {
       out.flags.push({
         kind: "no_candidate",
@@ -331,12 +491,7 @@ export async function planDay(
       });
       continue;
     }
-    children.sort(
-      (a, b) =>
-        b.total - a.total ||
-        seededUnit(run.seed, a.path) - seededUnit(run.seed, b.path) ||
-        (a.path < b.path ? -1 : a.path > b.path ? 1 : 0),
-    );
+    children.sort(compareChildren(run.seed));
     states = children.slice(0, BEAM_WIDTH);
     const chosen = states[0]?.choices.at(-1);
     if (chosen !== undefined && chosen.locked === null)
