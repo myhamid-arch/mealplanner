@@ -1,0 +1,286 @@
+{
+  "slug": "balaleet",
+  "name": "Balaleet with omelette",
+  "description": "Emirati breakfast of sweet saffron and cardamom vermicelli topped with a thin omelette.",
+  "cuisine": "emirati_gulf",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "breakfast"
+  ],
+  "flavour_tags": [
+    "sweet-savoury",
+    "saffron",
+    "traditional"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "vermicelli",
+      "name": "Saffron vermicelli",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 250,
+      "default_serving_g": 130,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled and glazed",
+          "is_default": true,
+          "reference_batch_cooked_g": 1183,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Soak the saffron in 2 tablespoons of hot water. Boil the vermicelli in plenty of water for 3 minutes and drain.",
+            "Melt the ghee in the pot, add the vermicelli, sugar, ground cardamom and saffron water and stir over low heat for 3 minutes until glossy."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "vermicelli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 2.2
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 3000,
+              "role_note": "boiling water, drained",
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sugar-white",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "saffron",
+              "raw_g_per_batch": 0.3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "ghee",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "light",
+          "method": "boiled",
+          "label": "Boiled, less sugar",
+          "is_default": false,
+          "reference_batch_cooked_g": 1133,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Soak the saffron in 2 tablespoons of hot water. Boil the vermicelli in plenty of water for 3 minutes and drain.",
+            "Return to the pot with the sugar, ground cardamom and saffron water and stir over low heat for 2 minutes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "vermicelli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 2.2
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 3000,
+              "role_note": "boiling water, drained",
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sugar-white",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "saffron",
+              "raw_g_per_batch": 0.3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "omelette",
+      "name": "Thin omelette",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 300,
+      "default_serving_g": 120,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "pan",
+          "method": "pan_seared",
+          "label": "Pan omelette",
+          "is_default": true,
+          "reference_batch_cooked_g": 926,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Beat the eggs and whites with the salt. Cook in a non-stick pan brushed with oil over medium heat as a thin omelette, 2 minutes per side. Cut into wedges."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 350,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg-white",
+              "raw_g_per_batch": 650,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "baked",
+          "method": "baked",
+          "label": "Oven sheet omelette",
+          "is_default": false,
+          "reference_batch_cooked_g": 1003,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Beat the eggs and whites with the salt, pour into a lined tray and bake at 180 °C (fan 160 °C) for 10–12 minutes until set. Cut into squares."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 350,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg-white",
+              "raw_g_per_batch": 650,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "nuts",
+      "name": "Chopped pistachios",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 25,
+      "default_serving_g": 10,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "chopped",
+          "method": "raw",
+          "label": "Chopped",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Roughly chop the shelled pistachios."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "pistachios",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Weigh the vermicelli into a bowl, lay the omelette over it and scatter over the pistachios."
+  ]
+}

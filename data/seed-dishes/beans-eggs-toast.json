@@ -1,0 +1,386 @@
+{
+  "slug": "beans-eggs-toast",
+  "name": "Homemade beans, eggs and toast",
+  "description": "British breakfast of home-cooked beans in tomato sauce with poached eggs, grilled mushrooms and wholemeal toast.",
+  "cuisine": "british",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "breakfast"
+  ],
+  "flavour_tags": [
+    "homestyle",
+    "savoury",
+    "comforting"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "beans",
+      "name": "Beans in tomato sauce",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 300,
+      "default_serving_g": 140,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "stewed",
+          "method": "stewed",
+          "label": "Simmered",
+          "is_default": true,
+          "reference_batch_cooked_g": 1692,
+          "cook_time_min": 100,
+          "notes": null,
+          "steps": [
+            "Soak the dried white beans overnight, drain, cover with fresh water and simmer for 60 minutes until tender; drain.",
+            "Cook the grated onion for 3 minutes in a dry non-stick pan, add the passata, paprika, sugar, Worcestershire sauce and salt.",
+            "Add the beans and simmer for 15 minutes until the sauce coats them."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "white-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1500,
+              "role_note": "soaking and cooking water, drained",
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato-passata",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 0.8
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sugar-brown",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "worcestershire-sauce",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "pressure",
+          "method": "pressure_cooked",
+          "label": "Pressure-cooked",
+          "is_default": false,
+          "reference_batch_cooked_g": 1708,
+          "cook_time_min": 50,
+          "notes": null,
+          "steps": [
+            "Pressure-cook the soaked white beans in fresh water for 12 minutes; release and drain.",
+            "Add the grated onion, passata, paprika, sugar, Worcestershire sauce and salt and simmer for 10 minutes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "white-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1500,
+              "role_note": "soaking and cooking water, drained",
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato-passata",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 0.8
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sugar-brown",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "worcestershire-sauce",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "eggs",
+      "name": "Eggs",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 280,
+      "default_serving_g": 110,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "poached",
+          "method": "poached",
+          "label": "Poached",
+          "is_default": true,
+          "reference_batch_cooked_g": 1004,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Crack each egg into a cup and slide into barely simmering water with a swirl. Poach for 3 minutes; lift out with a slotted spoon."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "scrambled",
+          "method": "pan_seared",
+          "label": "Scrambled with extra whites",
+          "is_default": false,
+          "reference_batch_cooked_g": 923,
+          "cook_time_min": 6,
+          "notes": null,
+          "steps": [
+            "Beat the eggs and whites and scramble slowly in a non-stick pan over low heat for 3–4 minutes until just set."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 350,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg-white",
+              "raw_g_per_batch": 650,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "toast",
+      "name": "Wholemeal toast",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 120,
+      "default_serving_g": 60,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": true,
+      "variants": [
+        {
+          "key": "toasted",
+          "method": "baked",
+          "label": "Toasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 410,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Toast the wholemeal slices until golden (about 2 minutes)."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "bread-wholemeal",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": false,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Serve the wholemeal slices fresh."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "bread-wholemeal",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mushrooms",
+      "name": "Grilled mushrooms and tomato",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 150,
+      "default_serving_g": 70,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": true,
+          "reference_batch_cooked_g": 662,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Halve the tomatoes and slice the mushrooms; brush with the oil, season and grill for 6 minutes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "mushrooms",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Plate the eggs on the toast with the beans, mushrooms and tomato alongside."
+  ]
+}

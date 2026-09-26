@@ -1,0 +1,375 @@
+{
+  "slug": "jacket-potato-tuna",
+  "name": "Jacket potato with tuna and sweetcorn",
+  "description": "Crisp-skinned baked potato filled with tuna, sweetcorn and light mayonnaise, with a green salad.",
+  "cuisine": "british",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "packed_work_lunch",
+    "dinner"
+  ],
+  "flavour_tags": [
+    "homestyle",
+    "simple",
+    "creamy"
+  ],
+  "is_packable": true,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "potato",
+      "name": "Jacket potato",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 100,
+      "max_serving_g": 450,
+      "default_serving_g": 250,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "baked",
+          "method": "baked",
+          "label": "Oven-baked",
+          "is_default": true,
+          "reference_batch_cooked_g": 948,
+          "cook_time_min": 70,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 200 °C (fan 180 °C). Prick the potatoes, rub with the oil and salt.",
+            "Bake directly on the shelf for 60–70 minutes until the skin is crisp and a knife slides in easily. Split open."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato-russet",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "air-fried",
+          "method": "air_fried",
+          "label": "Air-fried",
+          "is_default": false,
+          "reference_batch_cooked_g": 751,
+          "cook_time_min": 45,
+          "notes": null,
+          "steps": [
+            "Prick the potatoes, rub with the oil and salt.",
+            "Air-fry at 190 °C for 40–45 minutes, turning once, until the skin is crisp. Split open."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato-russet",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "filling",
+      "name": "Tuna and sweetcorn",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 330,
+      "default_serving_g": 150,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Tuna mayo",
+          "is_default": true,
+          "reference_batch_cooked_g": 976,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Drain the tuna well. Mix with the sweetcorn, Greek yogurt, mayonnaise, chopped spring onion, lemon juice and pepper."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "tuna-canned-water",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "corn-sweet",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 120,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mayonnaise",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "spring-onion",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "salad",
+      "name": "Green salad",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 250,
+      "default_serving_g": 100,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "lemon",
+          "method": "raw",
+          "label": "Lemon",
+          "is_default": true,
+          "reference_batch_cooked_g": 732,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Wash and dry the lettuce and tear into bite-size pieces. Slice the cucumber and halve the cherry tomatoes.",
+            "Toss with the lemon juice and salt just before serving."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "lettuce-romaine",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cherry-tomato",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "olive-oil",
+          "method": "raw",
+          "label": "Olive oil and lemon",
+          "is_default": false,
+          "reference_batch_cooked_g": 757,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Wash and dry the lettuce and tear into bite-size pieces. Slice the cucumber and halve the cherry tomatoes.",
+            "Whisk the lemon juice, olive oil and salt, and toss with the salad just before serving."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "lettuce-romaine",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cherry-tomato",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 25,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "butter",
+      "name": "Butter",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 15,
+      "default_serving_g": 5,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "pat",
+          "method": "raw",
+          "label": "Butter",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Serve a weighed pat of butter in the split potato."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "butter",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Fill the split potato with the tuna mix; serve the salad beside it."
+  ]
+}

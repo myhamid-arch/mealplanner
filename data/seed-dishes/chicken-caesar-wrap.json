@@ -1,0 +1,350 @@
+{
+  "slug": "chicken-caesar-wrap",
+  "name": "Chicken Caesar wrap",
+  "description": "Grilled chicken, crisp romaine and parmesan in a light yogurt Caesar dressing, rolled in a flour tortilla.",
+  "cuisine": "american",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "packed_school_lunch",
+    "packed_work_lunch",
+    "post_workout"
+  ],
+  "flavour_tags": [
+    "creamy",
+    "crunchy",
+    "family-favourite"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "Grilled chicken",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 220,
+      "default_serving_g": 110,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": true,
+          "reference_batch_cooked_g": 781,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Butterfly the chicken breasts to 2 cm and season with the lemon juice, crushed garlic, olive oil, salt and pepper.",
+            "Grill for 5–6 minutes per side until 74 °C inside. Cool and slice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "poached",
+          "method": "poached",
+          "label": "Poached",
+          "is_default": false,
+          "reference_batch_cooked_g": 832,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Put the chicken breasts in a pan with the lemon juice, garlic, salt and pepper, cover with cold water, bring to a bare simmer and poach for 12 minutes until 74 °C inside.",
+            "Cool in the liquid, then slice. (The olive oil goes into the dressing.)"
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tortilla",
+      "name": "Flour tortilla",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 130,
+      "default_serving_g": 70,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Soft",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Use 25 cm flour tortillas at room temperature."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "tortilla-flour",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "toasted",
+          "method": "grilled",
+          "label": "Toasted",
+          "is_default": false,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Toast the rolled wrap on a dry griddle for 1 minute per side."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "tortilla-flour",
+              "raw_g_per_batch": 500,
+              "role_note": "warmed briefly, keeps its mass",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lettuce",
+      "name": "Romaine",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 20,
+      "max_serving_g": 100,
+      "default_serving_g": 50,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Shredded romaine",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Wash, dry and shred the romaine."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "lettuce-romaine",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "dressing",
+      "name": "Light Caesar dressing",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 10,
+      "max_serving_g": 60,
+      "default_serving_g": 30,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Yogurt Caesar",
+          "is_default": true,
+          "reference_batch_cooked_g": 321,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Whisk the yogurt, grated parmesan, mayonnaise, lemon juice, crushed garlic, Worcestershire sauce and pepper."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parmesan",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mayonnaise",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "worcestershire-sauce",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Spread the dressing on the tortilla, add the lettuce and chicken, roll tightly and cut in half on the diagonal."
+  ]
+}

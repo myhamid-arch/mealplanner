@@ -1,0 +1,1288 @@
+{
+  "adjusters": [
+    {
+      "slug": "adjuster-greek-yogurt",
+      "name": "Fat-free Greek yogurt",
+      "description": "A pot of fat-free Greek yogurt: mostly protein.",
+      "cuisine": "greek",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Fat-free Greek yogurt",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 50,
+          "max_serving_g": 250,
+          "default_serving_g": 100,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "plain",
+              "method": "raw",
+              "label": "Plain",
+              "is_default": true,
+              "reference_batch_cooked_g": 500,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Weigh the yogurt into a small bowl or lidded pot."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "greek-yogurt-nonfat",
+                  "raw_g_per_batch": 500,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-egg-whites",
+      "name": "Egg whites",
+      "description": "Cooked egg whites: almost pure protein.",
+      "cuisine": "american",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": false,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Egg whites",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 50,
+          "max_serving_g": 250,
+          "default_serving_g": 100,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "scrambled",
+              "method": "pan_seared",
+              "label": "Scrambled",
+              "is_default": true,
+              "reference_batch_cooked_g": 926,
+              "cook_time_min": 5,
+              "notes": null,
+              "steps": [
+                "Whisk the egg whites with the salt and scramble in a non-stick pan over medium-low heat for 2–3 minutes until just set."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "egg-white",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "salt",
+                  "raw_g_per_batch": 3,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            },
+            {
+              "key": "poached",
+              "method": "poached",
+              "label": "Poached",
+              "is_default": false,
+              "reference_batch_cooked_g": 1007,
+              "cook_time_min": 5,
+              "notes": null,
+              "steps": [
+                "Pour the salted egg whites into a small heatproof dish and steam or poach over simmering water for 5 minutes until set."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "egg-white",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "salt",
+                  "raw_g_per_batch": 3,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-cottage-cheese",
+      "name": "Low-fat cottage cheese",
+      "description": "A pot of low-fat cottage cheese.",
+      "cuisine": "british",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Cottage cheese",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 50,
+          "max_serving_g": 200,
+          "default_serving_g": 100,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "plain",
+              "method": "raw",
+              "label": "Plain",
+              "is_default": true,
+              "reference_batch_cooked_g": 500,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Weigh the cottage cheese into a small pot."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "cottage-cheese",
+                  "raw_g_per_batch": 500,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-olive-oil",
+      "name": "Olive oil drizzle",
+      "description": "Extra-virgin olive oil to drizzle over the plate: pure fat.",
+      "cuisine": "mediterranean",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Olive oil",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 5,
+          "max_serving_g": 15,
+          "default_serving_g": 5,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "drizzle",
+              "method": "raw",
+              "label": "Drizzle",
+              "is_default": true,
+              "reference_batch_cooked_g": 100,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Weigh the olive oil and drizzle over the vegetables or salad."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "olive-oil",
+                  "raw_g_per_batch": 100,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-apple",
+      "name": "Apple",
+      "description": "A fresh apple, sliced.",
+      "cuisine": "british",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Apple",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 50,
+          "max_serving_g": 200,
+          "default_serving_g": 120,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "sliced",
+              "method": "raw",
+              "label": "Sliced",
+              "is_default": true,
+              "reference_batch_cooked_g": 1000,
+              "cook_time_min": 2,
+              "notes": null,
+              "steps": [
+                "Core and slice the apple; squeeze over lemon juice if packing."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "apple",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-banana",
+      "name": "Banana",
+      "description": "A fresh banana.",
+      "cuisine": "american",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Banana",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 50,
+          "max_serving_g": 180,
+          "default_serving_g": 100,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "fresh",
+              "method": "raw",
+              "label": "Fresh",
+              "is_default": true,
+              "reference_batch_cooked_g": 1000,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Peel and weigh the banana (or weigh with peel and subtract 35 %)."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "banana",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-dates",
+      "name": "Dates",
+      "description": "Dried dates, pits removed.",
+      "cuisine": "emirati_gulf",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Dates",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 10,
+          "max_serving_g": 60,
+          "default_serving_g": 25,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "plain",
+              "method": "raw",
+              "label": "Dates",
+              "is_default": true,
+              "reference_batch_cooked_g": 1000,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Weigh the dates with the pits removed."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "dates-dried",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-rice-cakes",
+      "name": "Rice cakes",
+      "description": "Plain rice cakes.",
+      "cuisine": "japanese",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Rice cakes",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 9,
+          "max_serving_g": 45,
+          "default_serving_g": 18,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "plain",
+              "method": "raw",
+              "label": "Plain",
+              "is_default": true,
+              "reference_batch_cooked_g": 500,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Serve plain rice cakes (about 9 g each)."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "rice-cakes",
+                  "raw_g_per_batch": 500,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-cucumber-tomato-salad",
+      "name": "Cucumber and tomato salad",
+      "description": "Undressed cucumber and tomato salad with lemon.",
+      "cuisine": "levantine",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Cucumber and tomato salad",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 50,
+          "max_serving_g": 250,
+          "default_serving_g": 100,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "lemon",
+              "method": "raw",
+              "label": "Lemon",
+              "is_default": true,
+              "reference_batch_cooked_g": 1043,
+              "cook_time_min": 8,
+              "notes": null,
+              "steps": [
+                "Dice the cucumber and tomato and toss with the lemon juice and salt."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "cucumber",
+                  "raw_g_per_batch": 500,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "tomato",
+                  "raw_g_per_batch": 500,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "lemon-juice",
+                  "raw_g_per_batch": 40,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "salt",
+                  "raw_g_per_batch": 3,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-labneh-light",
+      "name": "Light labneh",
+      "description": "Labneh loosened with fat-free Greek yogurt.",
+      "cuisine": "levantine",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Light labneh",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 20,
+          "max_serving_g": 120,
+          "default_serving_g": 50,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "plain",
+              "method": "raw",
+              "label": "Light labneh",
+              "is_default": true,
+              "reference_batch_cooked_g": 600,
+              "cook_time_min": 2,
+              "notes": null,
+              "steps": [
+                "Stir the labneh and Greek yogurt together until smooth."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "labneh",
+                  "raw_g_per_batch": 300,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "greek-yogurt-nonfat",
+                  "raw_g_per_batch": 300,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-grilled-chicken",
+      "name": "Plain grilled chicken",
+      "description": "Plain grilled chicken breast, sliced.",
+      "cuisine": "mediterranean",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Grilled chicken breast",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 30,
+          "max_serving_g": 200,
+          "default_serving_g": 80,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "grilled",
+              "method": "grilled",
+              "label": "Grilled",
+              "is_default": true,
+              "reference_batch_cooked_g": 745,
+              "cook_time_min": 15,
+              "notes": null,
+              "steps": [
+                "Season the chicken breast with the salt and pepper and grill for 5–6 minutes per side until 74 °C inside. Slice."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "chicken-breast",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "salt",
+                  "raw_g_per_batch": 6,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "black-pepper",
+                  "raw_g_per_batch": 2,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            },
+            {
+              "key": "poached",
+              "method": "poached",
+              "label": "Poached",
+              "is_default": false,
+              "reference_batch_cooked_g": 784,
+              "cook_time_min": 20,
+              "notes": null,
+              "steps": [
+                "Poach the chicken breast with the salt and pepper at a bare simmer for 12 minutes until 74 °C inside. Slice."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "chicken-breast",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "salt",
+                  "raw_g_per_batch": 6,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "black-pepper",
+                  "raw_g_per_batch": 2,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-tuna",
+      "name": "Tuna in water",
+      "description": "Drained tuna in spring water.",
+      "cuisine": "mediterranean",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Tuna",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 30,
+          "max_serving_g": 150,
+          "default_serving_g": 60,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "plain",
+              "method": "raw",
+              "label": "Drained",
+              "is_default": true,
+              "reference_batch_cooked_g": 1020,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Drain the tuna well and flake with a squeeze of lemon."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "tuna-canned-water",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "lemon-juice",
+                  "raw_g_per_batch": 20,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-basmati-rice",
+      "name": "Plain basmati rice",
+      "description": "Plain boiled basmati rice.",
+      "cuisine": "indian",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": false,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Basmati rice",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 30,
+          "max_serving_g": 200,
+          "default_serving_g": 80,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "boiled",
+              "method": "boiled",
+              "label": "Boiled",
+              "is_default": true,
+              "reference_batch_cooked_g": 1459,
+              "cook_time_min": 25,
+              "notes": null,
+              "steps": [
+                "Rinse the rice, boil in the salted water, covered, on the lowest heat for 12 minutes and rest for 5 minutes."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "basmati-rice",
+                  "raw_g_per_batch": 500,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "water",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": "absorbed",
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "salt",
+                  "raw_g_per_batch": 5,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-wholemeal-khubz",
+      "name": "Wholemeal khubz",
+      "description": "Wholemeal Arabic bread.",
+      "cuisine": "levantine",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Wholemeal khubz",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 20,
+          "max_serving_g": 100,
+          "default_serving_g": 40,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "soft",
+              "method": "raw",
+              "label": "Soft",
+              "is_default": true,
+              "reference_batch_cooked_g": 500,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Warm the bread briefly and cut into quarters."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "khubz-wholemeal",
+                  "raw_g_per_batch": 500,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-almonds",
+      "name": "Almonds",
+      "description": "A small handful of almonds.",
+      "cuisine": "mediterranean",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Almonds",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 5,
+          "max_serving_g": 30,
+          "default_serving_g": 15,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "raw",
+              "method": "raw",
+              "label": "Raw",
+              "is_default": true,
+              "reference_batch_cooked_g": 500,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Weigh the almonds."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "almonds",
+                  "raw_g_per_batch": 500,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-orange",
+      "name": "Orange",
+      "description": "A fresh orange, peeled and segmented.",
+      "cuisine": "mediterranean",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Orange",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 50,
+          "max_serving_g": 200,
+          "default_serving_g": 120,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "segments",
+              "method": "raw",
+              "label": "Segments",
+              "is_default": true,
+              "reference_batch_cooked_g": 1000,
+              "cook_time_min": 3,
+              "notes": null,
+              "steps": [
+                "Peel the orange and separate the segments."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "orange",
+                  "raw_g_per_batch": 1000,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-whey-shake",
+      "name": "Whey shake",
+      "description": "Whey protein shaken with cold water.",
+      "cuisine": "american",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "snack",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": false,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Whey shake",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 100,
+          "max_serving_g": 400,
+          "default_serving_g": 250,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "shaken",
+              "method": "blended",
+              "label": "Shaken with water",
+              "is_default": true,
+              "reference_batch_cooked_g": 500,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Shake the whey powder with the cold water until smooth."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "whey-protein",
+                  "raw_g_per_batch": 100,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                },
+                {
+                  "ingredient_slug": "water",
+                  "raw_g_per_batch": 400,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    },
+    {
+      "slug": "adjuster-hummus",
+      "name": "Hummus",
+      "description": "A pot of hummus (contains sesame).",
+      "cuisine": "levantine",
+      "secondary_cuisine": null,
+      "slot_keys": [
+        "breakfast",
+        "lunch",
+        "dinner",
+        "snack",
+        "packed_school_lunch",
+        "packed_work_lunch",
+        "pre_workout",
+        "post_workout"
+      ],
+      "flavour_tags": [],
+      "is_packable": true,
+      "served_cold_ok": true,
+      "source": "seed",
+      "status": "active",
+      "version": 1,
+      "components": [
+        {
+          "key": "side",
+          "name": "Hummus",
+          "role": "adjuster",
+          "portioning": "continuous",
+          "unit_label": null,
+          "min_serving_g": 20,
+          "max_serving_g": 100,
+          "default_serving_g": 40,
+          "step_g": 5,
+          "sort_order": 1,
+          "required": true,
+          "variants": [
+            {
+              "key": "plain",
+              "method": "raw",
+              "label": "Hummus",
+              "is_default": true,
+              "reference_batch_cooked_g": 500,
+              "cook_time_min": 1,
+              "notes": null,
+              "steps": [
+                "Spoon the hummus into a small lidded pot."
+              ],
+              "ingredients": [
+                {
+                  "ingredient_slug": "hummus",
+                  "raw_g_per_batch": 500,
+                  "role_note": null,
+                  "is_absorbed_oil": false,
+                  "cooking_liquid": null,
+                  "yield_override": null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assembly_steps": []
+    }
+  ]
+}

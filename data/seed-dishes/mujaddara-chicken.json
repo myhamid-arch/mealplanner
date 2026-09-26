@@ -1,0 +1,471 @@
+{
+  "slug": "mujaddara-chicken",
+  "name": "Mujaddara with spiced chicken",
+  "description": "Lentils and rice with deeply caramelised onions, served with allspice chicken, yogurt and Arabic salad.",
+  "cuisine": "levantine",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner",
+    "packed_work_lunch"
+  ],
+  "flavour_tags": [
+    "earthy",
+    "caramelised",
+    "homestyle"
+  ],
+  "is_packable": true,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "Allspice chicken",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 260,
+      "default_serving_g": 120,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": true,
+          "reference_batch_cooked_g": 800,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Rub the chicken breasts with the cumin, allspice, lemon juice, crushed garlic, olive oil and salt. Grill for 5–6 minutes per side until 74 °C inside; rest and slice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "allspice",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Roasted",
+          "is_default": false,
+          "reference_batch_cooked_g": 786,
+          "cook_time_min": 30,
+          "notes": null,
+          "steps": [
+            "Rub the chicken breasts with the cumin, allspice, lemon juice, crushed garlic, olive oil and salt. Roast at 210 °C (fan 190 °C) for 22 minutes until 74 °C inside; rest and slice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "allspice",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mujaddara",
+      "name": "Mujaddara",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 380,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "boiled",
+          "label": "Lentils and rice with crispy onions",
+          "is_default": true,
+          "reference_batch_cooked_g": 1977,
+          "cook_time_min": 60,
+          "notes": null,
+          "steps": [
+            "Slice the onions thinly and cook in the olive oil over medium heat for 25–30 minutes, stirring, until dark brown. Keep a third for the top.",
+            "Boil the brown lentils in the water for 15 minutes (they should still be firm).",
+            "Add the rinsed rice, cumin, salt and the rest of the onions, cover and cook on the lowest heat for 15 minutes. Rest 10 minutes; top with the reserved onions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "lentils-brown",
+              "raw_g_per_batch": 250,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 250,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "yogurt",
+      "name": "Plain yogurt",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 20,
+      "max_serving_g": 150,
+      "default_serving_g": 60,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Yogurt",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Serve the yogurt chilled."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-low-fat",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "salad",
+      "name": "Arabic salad",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 250,
+      "default_serving_g": 100,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "lemon",
+          "method": "raw",
+          "label": "Lemon",
+          "is_default": true,
+          "reference_batch_cooked_g": 728,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Dice the cucumber and tomato into 1 cm cubes. Finely chop the onion, parsley and mint.",
+            "Toss with the lemon juice and salt just before serving."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "olive-oil",
+          "method": "raw",
+          "label": "Olive oil and lemon",
+          "is_default": false,
+          "reference_batch_cooked_g": 758,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Dice the cucumber and tomato into 1 cm cubes. Finely chop the onion, parsley and mint.",
+            "Whisk the lemon juice, olive oil and salt, and toss with the vegetables just before serving."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Weigh the mujaddara onto the plate, add the sliced chicken, the salad and yogurt."
+  ]
+}

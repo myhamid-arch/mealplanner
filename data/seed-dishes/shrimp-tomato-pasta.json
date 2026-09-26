@@ -1,0 +1,258 @@
+{
+  "slug": "shrimp-tomato-pasta",
+  "name": "Shrimp and cherry tomato pasta",
+  "description": "Garlic shrimp in a quick cherry tomato and chilli sauce with spaghetti and rocket.",
+  "cuisine": "italian",
+  "secondary_cuisine": "mediterranean",
+  "slot_keys": [
+    "lunch",
+    "dinner"
+  ],
+  "flavour_tags": [
+    "garlicky",
+    "fresh",
+    "quick"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "sauce",
+      "name": "Shrimp and tomato sauce",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 100,
+      "max_serving_g": 380,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "sauteed",
+          "method": "sauteed",
+          "label": "Sautéed",
+          "is_default": true,
+          "reference_batch_cooked_g": 1287,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Heat the olive oil in a wide pan, add the sliced garlic and chilli flakes and cook for 1 minute.",
+            "Add the halved cherry tomatoes and salt and cook over high heat for 6 minutes until they burst.",
+            "Add the shrimp and cook for 3 minutes until pink. Stir in the chopped parsley and lemon juice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "shrimp",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cherry-tomato",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 25,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chilli-powder",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "pasta",
+      "name": "Spaghetti",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 350,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled al dente",
+          "is_default": true,
+          "reference_batch_cooked_g": 1210,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Bring the water and salt to a rolling boil in a large pot.",
+            "Add the pasta and cook for 1 minute less than the packet time (about 9–10 minutes), stirring in the first minute.",
+            "Drain, keeping 100 ml of the cooking water to loosen the sauce if needed. Weigh the cooked pasta for portions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "pasta-dry",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 2.4
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 5000,
+              "role_note": "cooking water, drained",
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "rocket",
+      "name": "Rocket",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 15,
+      "max_serving_g": 80,
+      "default_serving_g": 30,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh rocket",
+          "is_default": true,
+          "reference_batch_cooked_g": 315,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Wash and dry the rocket; toss with the lemon juice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "rocket",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "parmesan",
+      "name": "Grated parmesan",
+      "role": "garnish",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 15,
+      "default_serving_g": 5,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "grated",
+          "method": "raw",
+          "label": "Grated",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Finely grate the parmesan just before serving."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "parmesan",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Toss the spaghetti with a ladle of sauce in a bowl, top with the rest of the portion's sauce and the rocket."
+  ]
+}

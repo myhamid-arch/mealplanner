@@ -1,0 +1,653 @@
+{
+  "slug": "chicken-tikka-rice",
+  "name": "Chicken tikka with rice and raita",
+  "description": "Yogurt-marinated chicken tikka, charred in a hot oven or grill, with basmati rice, cucumber raita and kachumber salad.",
+  "cuisine": "indian",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner",
+    "packed_work_lunch"
+  ],
+  "flavour_tags": [
+    "spiced",
+    "smoky",
+    "tangy"
+  ],
+  "is_packable": true,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "Chicken tikka",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 70,
+      "max_serving_g": 280,
+      "default_serving_g": 150,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": true,
+          "reference_batch_cooked_g": 982,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Cut the chicken into 4 cm pieces. Mix the yogurt, grated ginger and garlic, lemon juice, ground spices, oil and salt. Coat the chicken and marinate in the fridge for 4 hours (up to overnight).",
+            "Thread onto skewers and grill over high heat for 10–12 minutes, turning, until charred and 74 °C inside."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "yogurt-plain-low-fat",
+              "raw_g_per_batch": 150,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "ginger",
+              "raw_g_per_batch": 15,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 15,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chilli-powder",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "coriander-seed",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "turmeric",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 15,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "oven-roasted",
+          "method": "roasted",
+          "label": "Oven-roasted",
+          "is_default": false,
+          "reference_batch_cooked_g": 967,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Cut the chicken into 4 cm pieces. Mix the yogurt, grated ginger and garlic, lemon juice, ground spices, oil and salt. Coat the chicken and marinate in the fridge for 4 hours (up to overnight).",
+            "Heat the oven to 240 °C (fan 220 °C). Spread on a rack over a tray and roast for 15–18 minutes, until charred at the edges and 74 °C inside."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "yogurt-plain-low-fat",
+              "raw_g_per_batch": 150,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "ginger",
+              "raw_g_per_batch": 15,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 15,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chilli-powder",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "coriander-seed",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "turmeric",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 15,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "rice",
+      "name": "Basmati rice",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 350,
+      "default_serving_g": 180,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "boiled",
+          "label": "Plain steamed",
+          "is_default": true,
+          "reference_batch_cooked_g": 1460,
+          "cook_time_min": 35,
+          "notes": null,
+          "steps": [
+            "Rinse the rice in cold water 3 times until the water runs almost clear, then soak it for 20 minutes and drain.",
+            "Bring the water and salt to a boil in a heavy pot with a tight lid.",
+            "Add the rice, return to a boil, then cover and cook on the lowest heat for 12 minutes without lifting the lid.",
+            "Take off the heat and rest, covered, for 5 minutes. Fluff with a fork before weighing portions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "spiced-pilaf",
+          "method": "boiled",
+          "label": "Spiced pilaf",
+          "is_default": false,
+          "reference_batch_cooked_g": 1574,
+          "cook_time_min": 40,
+          "notes": null,
+          "steps": [
+            "Rinse the rice in cold water 3 times, soak for 20 minutes and drain.",
+            "Heat the olive oil in a heavy pot over medium heat. Cook the chopped onion with the cardamom pods, cinnamon stick and bay leaf for 6 minutes, until soft and golden.",
+            "Add the drained rice and stir for 1 minute to coat the grains.",
+            "Add the water and salt, bring to a boil, then cover and cook on the lowest heat for 12 minutes.",
+            "Rest, covered, for 5 minutes. Remove the whole spices and fluff with a fork before weighing portions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cinnamon",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bay-leaf",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "raita",
+      "name": "Cucumber raita",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 20,
+      "max_serving_g": 150,
+      "default_serving_g": 60,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Cucumber and mint",
+          "is_default": true,
+          "reference_batch_cooked_g": 560,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Grate the cucumber and squeeze out the liquid.",
+            "Toast the cumin seeds in a dry pan for 30 seconds and crush them.",
+            "Mix the yogurt, cucumber, chopped mint, cumin and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "yogurt-plain-low-fat",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "salad",
+      "name": "Kachumber salad",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 250,
+      "default_serving_g": 90,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Kachumber",
+          "is_default": true,
+          "reference_batch_cooked_g": 754,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Dice the cucumber, tomato and onion finely, chop the coriander and green chilli, and toss with the lime juice, cumin and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "coriander-fresh",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chilli-green",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lime-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "dressed",
+          "method": "raw",
+          "label": "Kachumber with tempered oil",
+          "is_default": false,
+          "reference_batch_cooked_g": 799,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Dice the cucumber, tomato and onion finely, chop the coriander and green chilli.",
+            "Heat the oil with the cumin seeds until they sizzle (20 seconds), cool for 2 minutes and toss through the salad with the lime juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "coriander-fresh",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chilli-green",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lime-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 45,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Weigh the rice and chicken onto the plate. Serve the raita and kachumber on the side."
+  ]
+}

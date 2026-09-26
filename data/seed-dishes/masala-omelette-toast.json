@@ -1,0 +1,348 @@
+{
+  "slug": "masala-omelette-toast",
+  "name": "Masala omelette with toast",
+  "description": "Indian-style omelette with onion, tomato, green chilli and coriander, with wholemeal toast and fruit.",
+  "cuisine": "indian",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "breakfast",
+    "post_workout"
+  ],
+  "flavour_tags": [
+    "spiced",
+    "fresh",
+    "quick"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "omelette",
+      "name": "Masala omelette",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 320,
+      "default_serving_g": 150,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "pan",
+          "method": "pan_seared",
+          "label": "Folded omelette",
+          "is_default": true,
+          "reference_batch_cooked_g": 1081,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Beat the eggs and whites with the finely chopped onion, tomato, chilli, coriander, turmeric and salt.",
+            "Cook in a non-stick pan brushed with oil over medium heat for 3 minutes, fold and cook 1 minute more."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 350,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg-white",
+              "raw_g_per_batch": 650,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chilli-green",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "coriander-fresh",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "turmeric",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "baked",
+          "method": "baked",
+          "label": "Oven frittata",
+          "is_default": false,
+          "reference_batch_cooked_g": 1179,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Beat the eggs and whites with the finely chopped onion, tomato, chilli, coriander, turmeric and salt.",
+            "Pour into a lined tin and bake at 180 °C (fan 160 °C) for 15 minutes until set. Cut into squares."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 350,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg-white",
+              "raw_g_per_batch": 650,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chilli-green",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "coriander-fresh",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "turmeric",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "toast",
+      "name": "Wholemeal toast",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 120,
+      "default_serving_g": 60,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "toasted",
+          "method": "baked",
+          "label": "Toasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 410,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Toast the wholemeal slices until golden (about 2 minutes)."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "bread-wholemeal",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": false,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Serve the wholemeal slices fresh."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "bread-wholemeal",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "avocado",
+      "name": "Sliced avocado",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 15,
+      "max_serving_g": 80,
+      "default_serving_g": 30,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "sliced",
+          "method": "raw",
+          "label": "Sliced",
+          "is_default": true,
+          "reference_batch_cooked_g": 310,
+          "cook_time_min": 2,
+          "notes": null,
+          "steps": [
+            "Slice the avocado and squeeze over the lime juice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "avocado",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lime-juice",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "fruit",
+      "name": "Fresh fruit",
+      "role": "side",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 200,
+      "default_serving_g": 100,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Mango and papaya",
+          "is_default": true,
+          "reference_batch_cooked_g": 1000,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Peel and cube the mango and papaya."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "mango",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "papaya",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Plate the omelette with the toast and fruit."
+  ]
+}

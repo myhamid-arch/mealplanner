@@ -1,0 +1,456 @@
+{
+  "slug": "warak-enab-yogurt",
+  "name": "Warak enab with yogurt and chicken",
+  "description": "Vine leaves rolled around herbed rice and tomato, cooked in lemon, served cold with garlic yogurt and sliced chicken.",
+  "cuisine": "levantine",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "packed_school_lunch",
+    "packed_work_lunch",
+    "snack"
+  ],
+  "flavour_tags": [
+    "lemony",
+    "herby",
+    "tangy"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "vine-leaves",
+      "name": "Stuffed vine leaves",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 400,
+      "default_serving_g": 170,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "stewed",
+          "method": "stewed",
+          "label": "Simmered",
+          "is_default": true,
+          "reference_batch_cooked_g": 1906,
+          "cook_time_min": 90,
+          "notes": null,
+          "steps": [
+            "Rinse the brined vine leaves and blanch for 1 minute.",
+            "Mix the rinsed raw rice with the finely chopped tomato, parsley, mint, onion, half the olive oil, the allspice and salt.",
+            "Put 1 teaspoon of filling on each leaf, fold in the sides and roll tightly. Pack seam-down in a pot lined with tomato slices.",
+            "Pour over the water, lemon juice and remaining oil, weigh down with a plate and simmer on low heat for 60 minutes. Cool in the pot."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "vine-leaves-brined",
+              "raw_g_per_batch": 250,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 350,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "allspice",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "pressure",
+          "method": "pressure_cooked",
+          "label": "Pressure-cooked",
+          "is_default": false,
+          "reference_batch_cooked_g": 1971,
+          "cook_time_min": 60,
+          "notes": null,
+          "steps": [
+            "Rinse the brined vine leaves and blanch for 1 minute.",
+            "Mix the rinsed raw rice with the finely chopped tomato, parsley, mint, onion, half the olive oil, the allspice and salt.",
+            "Roll 1 teaspoon of filling in each leaf and pack seam-down in the pressure cooker on tomato slices.",
+            "Add the water, lemon juice and remaining oil, weigh down with a plate and cook at high pressure for 15 minutes; release naturally and cool."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "vine-leaves-brined",
+              "raw_g_per_batch": 250,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 350,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "allspice",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "chicken",
+      "name": "Sliced chicken",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 200,
+      "default_serving_g": 90,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "poached",
+          "method": "poached",
+          "label": "Poached",
+          "is_default": true,
+          "reference_batch_cooked_g": 811,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Put the chicken breasts in a pan with the lemon juice, bay leaf, pepper and salt, cover with cold water and poach at a bare simmer for 12 minutes until 74 °C inside.",
+            "Cool in the liquid and slice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bay-leaf",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": false,
+          "reference_batch_cooked_g": 764,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Season the chicken breasts with the lemon juice, pepper and salt and grill for 5–6 minutes per side until 74 °C inside.",
+            "Cool and slice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bay-leaf",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "garlic-sauce",
+      "name": "Garlic yogurt sauce",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 15,
+      "max_serving_g": 120,
+      "default_serving_g": 50,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Garlic yogurt",
+          "is_default": true,
+          "reference_batch_cooked_g": 507,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Crush the garlic with the salt to a paste.",
+            "Whisk into the yogurt with the lemon juice, then whisk in the olive oil in a thin stream. Stir in the chopped mint."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Pack the vine leaves and chicken with the yogurt in a separate pot. Keep chilled."
+  ]
+}

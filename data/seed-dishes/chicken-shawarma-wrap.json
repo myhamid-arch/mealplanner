@@ -1,0 +1,473 @@
+{
+  "slug": "chicken-shawarma-wrap",
+  "name": "Chicken shawarma wrap",
+  "description": "Spiced chicken shawarma rolled in Arabic bread with garlic sauce, pickles, tomato and lettuce.",
+  "cuisine": "levantine",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "packed_school_lunch",
+    "packed_work_lunch",
+    "dinner",
+    "post_workout"
+  ],
+  "flavour_tags": [
+    "garlicky",
+    "spiced",
+    "family-favourite"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "Shawarma chicken",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 250,
+      "default_serving_g": 120,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Oven-roasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 909,
+          "cook_time_min": 35,
+          "notes": null,
+          "steps": [
+            "Mix the yogurt, lemon juice, crushed garlic, spices, olive oil and salt. Coat the skinless chicken thighs and marinate for at least 4 hours.",
+            "Heat the oven to 230 °C (fan 210 °C). Roast the thighs on a rack for 22–25 minutes until charred at the edges and 74 °C inside.",
+            "Rest for 5 minutes and slice thinly."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-thigh",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "yogurt-plain-low-fat",
+              "raw_g_per_batch": 100,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "allspice",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cinnamon",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "turmeric",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 9,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "pan-seared",
+          "method": "pan_seared",
+          "label": "Pan-seared",
+          "is_default": false,
+          "reference_batch_cooked_g": 852,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Mix the yogurt, lemon juice, crushed garlic, spices, olive oil and salt. Coat the skinless chicken thighs and marinate for at least 4 hours.",
+            "Slice the thighs thinly and sear in a very hot pan in batches for 5–6 minutes until caramelised and cooked through."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-thigh",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "yogurt-plain-low-fat",
+              "raw_g_per_batch": 100,
+              "role_note": "marinade",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "allspice",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cinnamon",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "turmeric",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 9,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "bread",
+      "name": "Arabic bread",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 150,
+      "default_serving_g": 70,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "soft",
+          "method": "raw",
+          "label": "Soft",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Use large thin Arabic loaves, warmed for 10 seconds so they roll without cracking."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "khubz",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "toasted",
+          "method": "grilled",
+          "label": "Grill-pressed",
+          "is_default": false,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 4,
+          "notes": null,
+          "steps": [
+            "After rolling, press the wrap on a hot griddle for 1 minute per side until crisp."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "khubz",
+              "raw_g_per_batch": 500,
+              "role_note": "pressed briefly, keeps its mass",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "veg",
+      "name": "Pickles, tomato and lettuce",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 20,
+      "max_serving_g": 120,
+      "default_serving_g": 50,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 650,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Slice the tomato and pickled cucumber thinly and shred the lettuce."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "pickled-cucumber",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lettuce-iceberg",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "garlic-sauce",
+      "name": "Garlic yogurt sauce",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 10,
+      "max_serving_g": 60,
+      "default_serving_g": 30,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Garlic yogurt",
+          "is_default": true,
+          "reference_batch_cooked_g": 507,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Crush the garlic with the salt to a paste.",
+            "Whisk into the yogurt with the lemon juice, then whisk in the olive oil in a thin stream. Stir in the chopped mint."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Spread the garlic sauce on the bread, add the chicken, then the vegetables. Roll tightly, fold the bottom, and wrap in paper."
+  ]
+}

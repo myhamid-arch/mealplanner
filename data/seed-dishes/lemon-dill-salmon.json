@@ -1,0 +1,514 @@
+{
+  "slug": "lemon-dill-salmon",
+  "name": "Lemon-dill salmon with potatoes and greens",
+  "description": "Oven-baked or grilled salmon with lemon and dill, boiled or roasted potatoes and green vegetables.",
+  "cuisine": "mediterranean",
+  "secondary_cuisine": "british",
+  "slot_keys": [
+    "lunch",
+    "dinner"
+  ],
+  "flavour_tags": [
+    "lemony",
+    "herby",
+    "rich"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "salmon",
+      "name": "Lemon-dill salmon",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 220,
+      "default_serving_g": 120,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "baked",
+          "method": "baked",
+          "label": "Oven-baked",
+          "is_default": true,
+          "reference_batch_cooked_g": 835,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 200 °C (fan 180 °C). Season the fillets with the lemon juice, chopped dill, crushed garlic, salt and pepper.",
+            "Bake on a lined tray for 12–14 minutes until just opaque in the centre."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "salmon",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dill-fresh",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": false,
+          "reference_batch_cooked_g": 848,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Season the fillets with the lemon juice, chopped dill, crushed garlic, salt and pepper.",
+            "Grill skin side down for 5 minutes, turn and grill 2–3 minutes more."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "salmon",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dill-fresh",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "potatoes",
+      "name": "Potatoes",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 400,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Roasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 776,
+          "cook_time_min": 45,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 220 °C (fan 200 °C).",
+            "Cut the potatoes (skin on) into 3 cm chunks. Toss with the olive oil, paprika and salt on a lined tray in one layer.",
+            "Roast for 35–40 minutes, turning once, until golden and tender when pierced."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 25,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled",
+          "is_default": false,
+          "reference_batch_cooked_g": 1034,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Cut the potatoes (skin on) into 4 cm chunks and cover with cold water and the salt.",
+            "Bring to a boil and simmer for 15–18 minutes, until a knife slides in easily. Drain.",
+            "Toss with the chopped parsley and paprika while hot."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "air-fried",
+          "method": "air_fried",
+          "label": "Air-fried wedges",
+          "is_default": false,
+          "reference_batch_cooked_g": 766,
+          "cook_time_min": 30,
+          "notes": null,
+          "steps": [
+            "Cut the potatoes into wedges 2 cm thick. Soak in cold water for 10 minutes, drain and pat completely dry.",
+            "Toss with the sunflower oil, paprika and salt.",
+            "Air-fry at 200 °C for 20–22 minutes in one layer, shaking the basket every 7 minutes, until crisp."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "greens",
+      "name": "Broccoli and green beans",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 250,
+      "default_serving_g": 100,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "steamed",
+          "method": "steamed",
+          "label": "Steamed",
+          "is_default": true,
+          "reference_batch_cooked_g": 939,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Cut the broccoli into florets and trim the green beans.",
+            "Steam over boiling water for 5–6 minutes, until bright green and just tender.",
+            "Toss with the lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "broccoli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "sauteed",
+          "method": "sauteed",
+          "label": "Garlic sautéed",
+          "is_default": false,
+          "reference_batch_cooked_g": 671,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Cut the broccoli into florets and trim the green beans. Blanch in boiling salted water for 2 minutes and drain.",
+            "Heat the olive oil in a wide pan over medium-high heat, add the sliced garlic and cook for 30 seconds.",
+            "Add the vegetables and toss for 3–4 minutes. Finish with the lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "broccoli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "yogurt",
+      "name": "Dill yogurt",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 15,
+      "max_serving_g": 100,
+      "default_serving_g": 40,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Dill yogurt",
+          "is_default": true,
+          "reference_batch_cooked_g": 425,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Stir the chopped dill, lemon juice and salt into the yogurt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dill-fresh",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Plate the salmon with the potatoes and greens and add a pot of dill yogurt."
+  ]
+}

@@ -1,0 +1,366 @@
+{
+  "slug": "thai-basil-chicken",
+  "name": "Thai basil chicken with rice",
+  "description": "Pad krapow: chicken mince stir-fried with basil, chilli and garlic, with jasmine-style rice and a cucumber side.",
+  "cuisine": "thai",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner",
+    "packed_work_lunch"
+  ],
+  "flavour_tags": [
+    "spicy",
+    "herby",
+    "quick"
+  ],
+  "is_packable": true,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "Basil chicken",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 300,
+      "default_serving_g": 160,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "stir-fried",
+          "method": "stir_fried",
+          "label": "Wok-fried",
+          "is_default": true,
+          "reference_batch_cooked_g": 1025,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Pound the garlic and chilli to a rough paste.",
+            "Heat the oil in a wok over high heat, fry the paste for 20 seconds, add the chicken mince and stir-fry for 5 minutes, breaking it up.",
+            "Add the sliced green beans for 2 minutes, then the oyster sauce, soy sauce, fish sauce and sugar. Toss in the basil leaves until wilted."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": "minced",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-beans",
+              "raw_g_per_batch": 250,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 25,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chilli-green",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "oyster-sauce",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "soy-sauce",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "fish-sauce",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sugar-white",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "basil-fresh",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 25,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "rice",
+      "name": "Steamed rice",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 350,
+      "default_serving_g": 180,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "boiled",
+          "label": "Plain steamed",
+          "is_default": true,
+          "reference_batch_cooked_g": 1460,
+          "cook_time_min": 35,
+          "notes": null,
+          "steps": [
+            "Rinse the rice in cold water 3 times until the water runs almost clear, then soak it for 20 minutes and drain.",
+            "Bring the water and salt to a boil in a heavy pot with a tight lid.",
+            "Add the rice, return to a boil, then cover and cook on the lowest heat for 12 minutes without lifting the lid.",
+            "Take off the heat and rest, covered, for 5 minutes. Fluff with a fork before weighing portions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "spiced-pilaf",
+          "method": "boiled",
+          "label": "Spiced pilaf",
+          "is_default": false,
+          "reference_batch_cooked_g": 1574,
+          "cook_time_min": 40,
+          "notes": null,
+          "steps": [
+            "Rinse the rice in cold water 3 times, soak for 20 minutes and drain.",
+            "Heat the olive oil in a heavy pot over medium heat. Cook the chopped onion with the cardamom pods, cinnamon stick and bay leaf for 6 minutes, until soft and golden.",
+            "Add the drained rice and stir for 1 minute to coat the grains.",
+            "Add the water and salt, bring to a boil, then cover and cook on the lowest heat for 12 minutes.",
+            "Rest, covered, for 5 minutes. Remove the whole spices and fluff with a fork before weighing portions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cinnamon",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bay-leaf",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "egg",
+      "name": "Fried egg",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 60,
+      "default_serving_g": 50,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "fried",
+          "method": "pan_seared",
+          "label": "Crispy fried egg",
+          "is_default": true,
+          "reference_batch_cooked_g": 492,
+          "cook_time_min": 5,
+          "notes": null,
+          "steps": [
+            "Fry each egg in a hot pan with a little oil for 2 minutes until the white is crisp at the edges and the yolk runny."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "cucumber",
+      "name": "Cucumber slices",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 20,
+      "max_serving_g": 120,
+      "default_serving_g": 50,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 520,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Slice the cucumber on the diagonal and sprinkle with lime juice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lime-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Weigh the rice onto the plate with the basil chicken beside it; top with the egg if served, add the cucumber."
+  ]
+}

@@ -1,0 +1,486 @@
+{
+  "slug": "bbq-chicken-corn",
+  "name": "BBQ chicken with corn and sweet potato",
+  "description": "Smoky honey-paprika glazed chicken with corn on the cob, roasted sweet potato and slaw.",
+  "cuisine": "american",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner",
+    "packed_work_lunch"
+  ],
+  "flavour_tags": [
+    "smoky",
+    "sweet",
+    "charred"
+  ],
+  "is_packable": true,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "BBQ-glazed chicken",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 70,
+      "max_serving_g": 280,
+      "default_serving_g": 150,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": true,
+          "reference_batch_cooked_g": 857,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Mix the tomato paste, honey, paprika, garlic and onion powder, lemon juice, oil and salt into a glaze.",
+            "Grill the chicken breasts over medium-high heat for 5 minutes per side, brushing with the glaze for the last 4 minutes, until 74 °C inside."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato-paste",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "honey",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic-powder",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion-powder",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Oven-roasted",
+          "is_default": false,
+          "reference_batch_cooked_g": 845,
+          "cook_time_min": 30,
+          "notes": null,
+          "steps": [
+            "Mix the tomato paste, honey, paprika, garlic and onion powder, lemon juice, oil and salt into a glaze.",
+            "Heat the oven to 210 °C (fan 190 °C). Coat the chicken with the glaze and roast on a lined tray for 22–25 minutes until 74 °C inside."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato-paste",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "honey",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic-powder",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion-powder",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "sweet-potatoes",
+      "name": "Sweet potatoes",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 400,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Roasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 770,
+          "cook_time_min": 40,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 220 °C (fan 200 °C).",
+            "Cut the sweet potatoes (skin on) into 3 cm chunks and toss with the olive oil, cumin and salt.",
+            "Roast on a lined tray for 30–35 minutes, turning once, until caramelised at the edges."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "sweet-potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "air-fried",
+          "method": "air_fried",
+          "label": "Air-fried wedges",
+          "is_default": false,
+          "reference_batch_cooked_g": 762,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Cut the sweet potatoes into wedges 2 cm thick and toss with the sunflower oil, cumin and salt.",
+            "Air-fry at 200 °C for 18–20 minutes, shaking every 6 minutes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "sweet-potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 12,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "corn",
+      "name": "Corn on the cob",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 200,
+      "default_serving_g": 90,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled",
+          "is_default": true,
+          "reference_batch_cooked_g": 1019,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Cut the cobs into thirds and boil for 8 minutes. Weigh the kernels by cutting them off, or serve on the cob weighed whole minus 35 % for the core."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "corn-sweet",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Chargrilled",
+          "is_default": false,
+          "reference_batch_cooked_g": 746,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Boil the cob pieces for 5 minutes, then char on a hot grill for 6 minutes, turning."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "corn-sweet",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "slaw",
+      "name": "Yogurt slaw",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 150,
+      "default_serving_g": 70,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Yogurt slaw",
+          "is_default": true,
+          "reference_batch_cooked_g": 748,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Finely shred the cabbage and grate the carrot. Toss with the yogurt, mayonnaise, mustard, lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cabbage",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "carrot",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "greek-yogurt-nonfat",
+              "raw_g_per_batch": 120,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mayonnaise",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mustard",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Plate the chicken with the sweet potato, corn and slaw."
+  ]
+}

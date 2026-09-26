@@ -1,0 +1,326 @@
+{
+  "slug": "turkey-cheese-sandwich",
+  "name": "Roast turkey and cheese sandwich",
+  "description": "Wholemeal sandwich of home-roasted turkey breast, reduced-fat cheddar, lettuce, tomato and mustard mayo.",
+  "cuisine": "american",
+  "secondary_cuisine": "british",
+  "slot_keys": [
+    "lunch",
+    "packed_school_lunch",
+    "packed_work_lunch",
+    "post_workout"
+  ],
+  "flavour_tags": [
+    "simple",
+    "savoury",
+    "family-favourite"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "turkey",
+      "name": "Roast turkey breast",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 200,
+      "default_serving_g": 80,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Roasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 750,
+          "cook_time_min": 60,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 190 °C (fan 170 °C). Rub the turkey breast with the thyme, paprika, olive oil, salt and pepper.",
+            "Roast for 45–50 minutes until 74 °C in the thickest part. Rest 15 minutes, chill and slice thinly."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "turkey-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dried-thyme",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "poached",
+          "method": "poached",
+          "label": "Poached",
+          "is_default": false,
+          "reference_batch_cooked_g": 801,
+          "cook_time_min": 45,
+          "notes": null,
+          "steps": [
+            "Season the turkey breast with the thyme, paprika, salt and pepper, tie it, and poach in barely simmering water for 35 minutes until 74 °C inside.",
+            "Chill in the liquid and slice thinly."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "turkey-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dried-thyme",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "paprika",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "bread",
+      "name": "Wholemeal bread",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 35,
+      "max_serving_g": 120,
+      "default_serving_g": 70,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Use sliced wholemeal bread (about 35 g a slice)."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "bread-wholemeal",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "toasted",
+          "method": "baked",
+          "label": "Toasted",
+          "is_default": false,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Toast the slices lightly and cool before filling."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "bread-wholemeal",
+              "raw_g_per_batch": 500,
+              "role_note": "lightly toasted, keeps its mass",
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "cheese",
+      "name": "Reduced-fat cheddar",
+      "role": "fat",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 10,
+      "max_serving_g": 30,
+      "default_serving_g": 15,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "sliced",
+          "method": "raw",
+          "label": "Sliced",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Slice the cheddar thinly."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cheddar-reduced-fat",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "veg",
+      "name": "Lettuce, tomato and mustard mayo",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 15,
+      "max_serving_g": 90,
+      "default_serving_g": 40,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Fresh",
+          "is_default": true,
+          "reference_batch_cooked_g": 510,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Slice the tomato and wash the lettuce. Mix the mayonnaise with the mustard."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lettuce-romaine",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mayonnaise",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mustard",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Spread the mustard mayo on the bread, layer turkey, cheese, tomato and lettuce, close and cut. Keep chilled."
+  ]
+}

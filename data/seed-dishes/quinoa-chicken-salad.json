@@ -1,0 +1,376 @@
+{
+  "slug": "quinoa-chicken-salad",
+  "name": "Quinoa, chicken and chickpea salad",
+  "description": "Cold quinoa salad with chicken, chickpeas, cucumber, tomato, olives and a lemon-oregano dressing.",
+  "cuisine": "mediterranean",
+  "secondary_cuisine": "greek",
+  "slot_keys": [
+    "lunch",
+    "packed_school_lunch",
+    "packed_work_lunch"
+  ],
+  "flavour_tags": [
+    "fresh",
+    "lemony",
+    "herby"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "Lemon-garlic chicken",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 250,
+      "default_serving_g": 120,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": true,
+          "reference_batch_cooked_g": 791,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Season the chicken breasts with the lemon juice, crushed garlic, cumin, olive oil and salt.",
+            "Grill for 5–6 minutes per side until 74 °C inside. Cool and dice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "poached",
+          "method": "poached",
+          "label": "Poached",
+          "is_default": false,
+          "reference_batch_cooked_g": 845,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Put the chicken breasts in a pan with the lemon juice, garlic, cumin and salt, cover with cold water and poach at a bare simmer for 12 minutes until 74 °C inside.",
+            "Cool in the liquid and dice. (Add the olive oil to the dressing.)"
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "quinoa",
+      "name": "Quinoa and chickpea salad",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 380,
+      "default_serving_g": 170,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "boiled",
+          "label": "Quinoa salad",
+          "is_default": true,
+          "reference_batch_cooked_g": 2092,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Rinse the quinoa, simmer in the water for 12 minutes, cover off the heat for 5 minutes, then spread to cool.",
+            "Mix with the drained chickpeas, diced cucumber and tomato, sliced olives, chopped parsley and red onion."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "quinoa",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 900,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "chickpeas-canned",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            },
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cherry-tomato",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olives-black",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "red-onion",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "dressing",
+      "name": "Lemon-oregano dressing",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 40,
+      "default_serving_g": 15,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "classic",
+          "method": "raw",
+          "label": "Lemon-oregano",
+          "is_default": true,
+          "reference_batch_cooked_g": 221,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Whisk the olive oil, lemon juice, oregano, mustard and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 120,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "oregano-dried",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mustard",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "feta",
+      "name": "Crumbled feta",
+      "role": "garnish",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 30,
+      "default_serving_g": 10,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "crumbled",
+          "method": "raw",
+          "label": "Crumbled",
+          "is_default": true,
+          "reference_batch_cooked_g": 100,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Crumble the feta over the salad just before packing."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "feta",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Pack the quinoa salad with the chicken on top; add the dressing in a small pot and the feta on top."
+  ]
+}

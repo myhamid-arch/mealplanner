@@ -1,0 +1,319 @@
+{
+  "slug": "hummus-chicken-box",
+  "name": "Hummus, chicken and veg box",
+  "description": "Hummus with sliced spiced chicken, crunchy vegetable sticks and toasted khubz, for a packed lunch or snack.",
+  "cuisine": "levantine",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "packed_school_lunch",
+    "packed_work_lunch",
+    "snack",
+    "post_workout"
+  ],
+  "flavour_tags": [
+    "crunchy",
+    "fresh",
+    "garlicky"
+  ],
+  "is_packable": true,
+  "served_cold_ok": true,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "Spiced chicken strips",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 200,
+      "default_serving_g": 90,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": true,
+          "reference_batch_cooked_g": 791,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Season the chicken breasts with the lemon juice, crushed garlic, cumin, olive oil and salt.",
+            "Grill for 5–6 minutes per side until 74 °C inside. Cool and cut into strips."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Roasted",
+          "is_default": false,
+          "reference_batch_cooked_g": 777,
+          "cook_time_min": 30,
+          "notes": null,
+          "steps": [
+            "Season the chicken breasts with the lemon juice, crushed garlic, cumin, olive oil and salt.",
+            "Roast at 210 °C (fan 190 °C) for 22 minutes until 74 °C inside. Cool and cut into strips."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hummus",
+      "name": "Hummus",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 15,
+      "max_serving_g": 120,
+      "default_serving_g": 50,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "raw",
+          "label": "Hummus",
+          "is_default": true,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Stir the hummus and spoon into a lidded pot."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "hummus",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "veg",
+      "name": "Vegetable sticks",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 30,
+      "max_serving_g": 200,
+      "default_serving_g": 90,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "fresh",
+          "method": "raw",
+          "label": "Carrot, cucumber and pepper",
+          "is_default": true,
+          "reference_batch_cooked_g": 850,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Cut the carrot, cucumber and red pepper into 8 cm sticks."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "carrot",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bell-pepper-red",
+              "raw_g_per_batch": 250,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "bread",
+      "name": "Toasted khubz",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 15,
+      "max_serving_g": 120,
+      "default_serving_g": 40,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "toasted",
+          "method": "baked",
+          "label": "Toasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 410,
+          "cook_time_min": 8,
+          "notes": null,
+          "steps": [
+            "Cut the khubz into triangles and bake at 200 °C for 6–8 minutes until crisp."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "khubz",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "soft",
+          "method": "raw",
+          "label": "Soft",
+          "is_default": false,
+          "reference_batch_cooked_g": 500,
+          "cook_time_min": 1,
+          "notes": null,
+          "steps": [
+            "Cut the khubz into quarters."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "khubz",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Pack the hummus in a pot, and the chicken, vegetable sticks and bread in separate sections."
+  ]
+}

@@ -1,0 +1,313 @@
+{
+  "slug": "shrimp-egg-fried-rice",
+  "name": "Garlic shrimp with egg fried rice",
+  "description": "Garlic-ginger shrimp with vegetable egg fried rice and stir-fried greens.",
+  "cuisine": "chinese",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner"
+  ],
+  "flavour_tags": [
+    "savoury",
+    "garlicky",
+    "quick"
+  ],
+  "is_packable": false,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "shrimp",
+      "name": "Garlic shrimp",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 70,
+      "max_serving_g": 300,
+      "default_serving_g": 150,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "stir-fried",
+          "method": "stir_fried",
+          "label": "Wok-fried",
+          "is_default": true,
+          "reference_batch_cooked_g": 877,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Pat the peeled shrimp dry. Stir-fry in the oil over high heat with the garlic and ginger for 2–3 minutes until pink. Finish with the soy sauce and spring onion."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "shrimp",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "ginger",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "soy-sauce",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "spring-onion",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 35,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": false,
+          "reference_batch_cooked_g": 844,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Toss the peeled shrimp with the garlic, ginger, soy sauce and oil. Grill on a hot griddle for 1–2 minutes per side until pink. Scatter over the spring onion."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "shrimp",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "ginger",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "soy-sauce",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "spring-onion",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "rice",
+      "name": "Egg fried rice",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 380,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "stir-fried",
+          "method": "stir_fried",
+          "label": "Egg fried rice",
+          "is_default": true,
+          "reference_batch_cooked_g": 1909,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Cook the rice the day before (500 g raw rice with 1 litre of water), spread out and chill overnight.",
+            "Scramble the beaten eggs in half the oil in a hot wok, break up and set aside.",
+            "Stir-fry the frozen vegetables in the rest of the oil for 3 minutes, add the rice and toss for 4 minutes until hot. Add the egg and soy sauce."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 2.9
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "egg",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mixed-vegetables-frozen",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "soy-sauce",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 25,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "greens",
+      "name": "Stir-fried greens",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 200,
+      "default_serving_g": 80,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "stir-fried",
+          "method": "stir_fried",
+          "label": "Garlic stir-fry",
+          "is_default": true,
+          "reference_batch_cooked_g": 530,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Stir-fry the broccoli florets and sliced cabbage in the oil over high heat for 4 minutes, add the garlic and soy sauce and toss for 1 minute."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "broccoli",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cabbage",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "soy-sauce",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Weigh the fried rice into a bowl, top with the shrimp and add the greens."
+  ]
+}

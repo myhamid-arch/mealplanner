@@ -1,0 +1,451 @@
+{
+  "slug": "chicken-pesto-pasta",
+  "name": "Chicken pesto pasta with roasted vegetables",
+  "description": "Grilled lemon-oregano chicken over penne with basil pesto on the side and roasted Mediterranean vegetables.",
+  "cuisine": "italian",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner",
+    "packed_work_lunch"
+  ],
+  "flavour_tags": [
+    "herby",
+    "fresh",
+    "family-favourite"
+  ],
+  "is_packable": true,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "chicken",
+      "name": "Lemon-oregano chicken",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 70,
+      "max_serving_g": 280,
+      "default_serving_g": 140,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Grilled",
+          "is_default": true,
+          "reference_batch_cooked_g": 789,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Butterfly the chicken breasts to an even 2 cm. Rub with the lemon juice, crushed garlic, oregano, olive oil, salt and pepper.",
+            "Grill on a hot griddle for 5–6 minutes per side until 74 °C inside. Rest for 5 minutes and slice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "oregano-dried",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "pan-seared",
+          "method": "pan_seared",
+          "label": "Pan-seared",
+          "is_default": false,
+          "reference_batch_cooked_g": 722,
+          "cook_time_min": 20,
+          "notes": null,
+          "steps": [
+            "Butterfly the chicken breasts to an even 2 cm. Rub with the lemon juice, crushed garlic, oregano, olive oil, salt and pepper.",
+            "Sear in a hot non-stick pan for 5–6 minutes per side until golden and 74 °C inside. Rest for 5 minutes and slice."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "chicken-breast",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "oregano-dried",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 8,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "pasta",
+      "name": "Penne",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 350,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "boiled",
+          "method": "boiled",
+          "label": "Boiled al dente",
+          "is_default": true,
+          "reference_batch_cooked_g": 1210,
+          "cook_time_min": 15,
+          "notes": null,
+          "steps": [
+            "Bring the water and salt to a rolling boil in a large pot.",
+            "Add the pasta and cook for 1 minute less than the packet time (about 9–10 minutes), stirring in the first minute.",
+            "Drain, keeping 100 ml of the cooking water to loosen the sauce if needed. Weigh the cooked pasta for portions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "pasta-wholewheat-dry",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 2.4
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 5000,
+              "role_note": "cooking water, drained",
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "pesto",
+      "name": "Basil pesto",
+      "role": "sauce",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 5,
+      "max_serving_g": 50,
+      "default_serving_g": 20,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "jar",
+          "method": "raw",
+          "label": "Pesto loosened with lemon",
+          "is_default": true,
+          "reference_batch_cooked_g": 260,
+          "cook_time_min": 3,
+          "notes": null,
+          "steps": [
+            "Stir the pesto with the lemon juice and cold water until spoonable."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "pesto",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "vegetables",
+      "name": "Roasted vegetables",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 300,
+      "default_serving_g": 120,
+      "step_g": 5,
+      "sort_order": 4,
+      "required": false,
+      "variants": [
+        {
+          "key": "roasted",
+          "method": "roasted",
+          "label": "Oven-roasted",
+          "is_default": true,
+          "reference_batch_cooked_g": 680,
+          "cook_time_min": 35,
+          "notes": null,
+          "steps": [
+            "Heat the oven to 220 °C (fan 200 °C).",
+            "Cut the zucchini, red pepper, eggplant and onion into 3 cm pieces. Toss with the olive oil, cumin and salt.",
+            "Roast on a lined tray in one layer for 25–30 minutes, turning once, until browned at the edges."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "zucchini",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bell-pepper-red",
+              "raw_g_per_batch": 250,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "eggplant",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 25,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "grilled",
+          "method": "grilled",
+          "label": "Chargrilled",
+          "is_default": false,
+          "reference_batch_cooked_g": 832,
+          "cook_time_min": 25,
+          "notes": null,
+          "steps": [
+            "Cut the zucchini and eggplant into 1 cm slices, the pepper into strips and the onion into wedges.",
+            "Brush with the olive oil and season with the cumin and salt.",
+            "Grill on a hot griddle pan, 3–4 minutes per side, until marked and tender."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "zucchini",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bell-pepper-red",
+              "raw_g_per_batch": 250,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "eggplant",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cumin",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Weigh the penne into a bowl, add the sliced chicken, then spoon over the pesto. Serve the vegetables alongside."
+  ]
+}

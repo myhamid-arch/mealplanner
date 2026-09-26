@@ -1,0 +1,585 @@
+{
+  "slug": "ghormeh-sabzi",
+  "name": "Ghormeh sabzi with rice",
+  "description": "Persian herb stew of beef, kidney beans, parsley, coriander and fenugreek, soured with lime, over rice.",
+  "cuisine": "persian",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner",
+    "packed_work_lunch"
+  ],
+  "flavour_tags": [
+    "herby",
+    "tangy",
+    "slow-cooked"
+  ],
+  "is_packable": true,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "stew",
+      "name": "Ghormeh sabzi",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 100,
+      "max_serving_g": 420,
+      "default_serving_g": 230,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "stewed",
+          "method": "stewed",
+          "label": "Stove-top",
+          "is_default": true,
+          "reference_batch_cooked_g": 2163,
+          "cook_time_min": 150,
+          "notes": null,
+          "steps": [
+            "Finely chop the parsley, coriander, spinach and spring onion. Fry them in half the oil over medium heat for 15 minutes until dark green and fragrant; add the fenugreek for the last minute.",
+            "Brown the beef cubes with the chopped onion and turmeric in the rest of the oil for 8 minutes.",
+            "Add the water and simmer, covered, for 1 hour 30 minutes. Add the fried herbs, beans, lime juice and salt and simmer 30 minutes more until the beef is tender and the stew is thick."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "beef-chuck-stew",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "kidney-beans-canned",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "coriander-fresh",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "spinach",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "spring-onion",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "fenugreek-seed",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "turmeric",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lime-juice",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "retained",
+              "yield_override": 0.3
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "pressure",
+          "method": "pressure_cooked",
+          "label": "Pressure-cooked",
+          "is_default": false,
+          "reference_batch_cooked_g": 2088,
+          "cook_time_min": 70,
+          "notes": null,
+          "steps": [
+            "Finely chop the parsley, coriander, spinach and spring onion. Fry them in half the oil for 15 minutes until dark green; add the fenugreek for the last minute.",
+            "Brown the beef cubes with the chopped onion and turmeric in the rest of the oil in the pressure cooker for 8 minutes.",
+            "Add the water, fried herbs, beans, lime juice and salt. Cook at high pressure for 35 minutes, release, and simmer uncovered for 10 minutes to thicken."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "beef-chuck-stew",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "kidney-beans-canned",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "coriander-fresh",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "spinach",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "spring-onion",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "fenugreek-seed",
+              "raw_g_per_batch": 4,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "turmeric",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lime-juice",
+              "raw_g_per_batch": 50,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 600,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "retained",
+              "yield_override": 0.3
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "rice",
+      "name": "Basmati rice",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 60,
+      "max_serving_g": 350,
+      "default_serving_g": 180,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "plain",
+          "method": "boiled",
+          "label": "Plain steamed",
+          "is_default": true,
+          "reference_batch_cooked_g": 1460,
+          "cook_time_min": 35,
+          "notes": null,
+          "steps": [
+            "Rinse the rice in cold water 3 times until the water runs almost clear, then soak it for 20 minutes and drain.",
+            "Bring the water and salt to a boil in a heavy pot with a tight lid.",
+            "Add the rice, return to a boil, then cover and cook on the lowest heat for 12 minutes without lifting the lid.",
+            "Take off the heat and rest, covered, for 5 minutes. Fluff with a fork before weighing portions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "spiced-pilaf",
+          "method": "boiled",
+          "label": "Spiced pilaf",
+          "is_default": false,
+          "reference_batch_cooked_g": 1574,
+          "cook_time_min": 40,
+          "notes": null,
+          "steps": [
+            "Rinse the rice in cold water 3 times, soak for 20 minutes and drain.",
+            "Heat the olive oil in a heavy pot over medium heat. Cook the chopped onion with the cardamom pods, cinnamon stick and bay leaf for 6 minutes, until soft and golden.",
+            "Add the drained rice and stir for 1 minute to coat the grains.",
+            "Add the water and salt, bring to a boil, then cover and cook on the lowest heat for 12 minutes.",
+            "Rest, covered, for 5 minutes. Remove the whole spices and fluff with a fork before weighing portions."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "basmati-rice",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 80,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cardamom",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "cinnamon",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "bay-leaf",
+              "raw_g_per_batch": 1,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "water",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "absorbed",
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 6,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "salad",
+      "name": "Arabic salad",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 40,
+      "max_serving_g": 250,
+      "default_serving_g": 100,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "lemon",
+          "method": "raw",
+          "label": "Lemon",
+          "is_default": true,
+          "reference_batch_cooked_g": 728,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Dice the cucumber and tomato into 1 cm cubes. Finely chop the onion, parsley and mint.",
+            "Toss with the lemon juice and salt just before serving."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "olive-oil",
+          "method": "raw",
+          "label": "Olive oil and lemon",
+          "is_default": false,
+          "reference_batch_cooked_g": 758,
+          "cook_time_min": 10,
+          "notes": null,
+          "steps": [
+            "Dice the cucumber and tomato into 1 cm cubes. Finely chop the onion, parsley and mint.",
+            "Whisk the lemon juice, olive oil and salt, and toss with the vegetables just before serving."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "cucumber",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "tomato",
+              "raw_g_per_batch": 300,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 60,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "parsley",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "mint-fresh",
+              "raw_g_per_batch": 5,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 30,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Weigh the rice onto the plate and the stew beside it; add the salad."
+  ]
+}

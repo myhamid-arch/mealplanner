@@ -1,0 +1,392 @@
+{
+  "slug": "cottage-pie",
+  "name": "Cottage pie with green vegetables",
+  "description": "Lean beef and vegetable mince in gravy under a mashed potato top, baked until golden, with green vegetables.",
+  "cuisine": "british",
+  "secondary_cuisine": null,
+  "slot_keys": [
+    "lunch",
+    "dinner",
+    "packed_work_lunch"
+  ],
+  "flavour_tags": [
+    "comforting",
+    "homestyle",
+    "savoury"
+  ],
+  "is_packable": true,
+  "served_cold_ok": false,
+  "source": "seed",
+  "status": "active",
+  "version": 1,
+  "components": [
+    {
+      "key": "filling",
+      "name": "Beef and vegetable filling",
+      "role": "protein",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 100,
+      "max_serving_g": 400,
+      "default_serving_g": 200,
+      "step_g": 5,
+      "sort_order": 1,
+      "required": true,
+      "variants": [
+        {
+          "key": "stewed",
+          "method": "stewed",
+          "label": "Simmered mince",
+          "is_default": true,
+          "reference_batch_cooked_g": 1536,
+          "cook_time_min": 50,
+          "notes": null,
+          "steps": [
+            "Cook the diced onion, carrot and celery in the oil over medium heat for 8 minutes.",
+            "Add the mince and brown over high heat for 6 minutes, breaking it up.",
+            "Stir in the tomato paste, Worcestershire sauce and thyme, then the stock. Simmer for 25 minutes until thick. Add the peas for the last 3 minutes."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "beef-mince-extra-lean",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "onion",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "carrot",
+              "raw_g_per_batch": 200,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "celery",
+              "raw_g_per_batch": 100,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-peas-frozen",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": 1
+            },
+            {
+              "ingredient_slug": "tomato-paste",
+              "raw_g_per_batch": 40,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "worcestershire-sauce",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "dried-thyme",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "beef-stock",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": "retained",
+              "yield_override": 0.4
+            },
+            {
+              "ingredient_slug": "sunflower-oil",
+              "raw_g_per_batch": 15,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "black-pepper",
+              "raw_g_per_batch": 2,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mash",
+      "name": "Mashed potato top",
+      "role": "carb",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 80,
+      "max_serving_g": 350,
+      "default_serving_g": 180,
+      "step_g": 5,
+      "sort_order": 2,
+      "required": true,
+      "variants": [
+        {
+          "key": "baked",
+          "method": "baked",
+          "label": "Baked mash",
+          "is_default": true,
+          "reference_batch_cooked_g": 1115,
+          "cook_time_min": 50,
+          "notes": null,
+          "steps": [
+            "Boil the peeled potato chunks in salted water for 15–18 minutes until soft. Drain and steam dry for 2 minutes.",
+            "Mash with the hot milk, butter and salt until smooth.",
+            "Spread over the filling in a baking dish, rough the top with a fork and bake at 200 °C (fan 180 °C) for 25 minutes until golden. Portion the mash top and the filling separately."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "milk-low-fat",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "butter",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "olive-oil",
+          "method": "baked",
+          "label": "Olive-oil mash",
+          "is_default": false,
+          "reference_batch_cooked_g": 1115,
+          "cook_time_min": 50,
+          "notes": null,
+          "steps": [
+            "Boil the peeled potato chunks in salted water for 15–18 minutes until soft. Drain and steam dry for 2 minutes.",
+            "Mash with the hot milk, olive oil and salt until smooth.",
+            "Spread over the filling in a baking dish, rough the top with a fork and bake at 200 °C (fan 180 °C) for 25 minutes until golden. Portion the mash top and the filling separately."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "potato",
+              "raw_g_per_batch": 1000,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "milk-low-fat",
+              "raw_g_per_batch": 150,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 7,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "greens",
+      "name": "Broccoli and green beans",
+      "role": "vegetable",
+      "portioning": "continuous",
+      "unit_label": null,
+      "min_serving_g": 50,
+      "max_serving_g": 250,
+      "default_serving_g": 100,
+      "step_g": 5,
+      "sort_order": 3,
+      "required": false,
+      "variants": [
+        {
+          "key": "steamed",
+          "method": "steamed",
+          "label": "Steamed",
+          "is_default": true,
+          "reference_batch_cooked_g": 939,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Cut the broccoli into florets and trim the green beans.",
+            "Steam over boiling water for 5–6 minutes, until bright green and just tender.",
+            "Toss with the lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "broccoli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        },
+        {
+          "key": "sauteed",
+          "method": "sauteed",
+          "label": "Garlic sautéed",
+          "is_default": false,
+          "reference_batch_cooked_g": 671,
+          "cook_time_min": 12,
+          "notes": null,
+          "steps": [
+            "Cut the broccoli into florets and trim the green beans. Blanch in boiling salted water for 2 minutes and drain.",
+            "Heat the olive oil in a wide pan over medium-high heat, add the sliced garlic and cook for 30 seconds.",
+            "Add the vegetables and toss for 3–4 minutes. Finish with the lemon juice and salt."
+          ],
+          "ingredients": [
+            {
+              "ingredient_slug": "broccoli",
+              "raw_g_per_batch": 500,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "green-beans",
+              "raw_g_per_batch": 400,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "garlic",
+              "raw_g_per_batch": 10,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "olive-oil",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "lemon-juice",
+              "raw_g_per_batch": 20,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            },
+            {
+              "ingredient_slug": "salt",
+              "raw_g_per_batch": 3,
+              "role_note": null,
+              "is_absorbed_oil": false,
+              "cooking_liquid": null,
+              "yield_override": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assembly_steps": [
+    "Spoon the filling onto the plate, then the mash top beside or over it. Add the greens."
+  ]
+}
