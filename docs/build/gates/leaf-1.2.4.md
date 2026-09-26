@@ -1,6 +1,6 @@
 # Gates: leaf-1.2.4 Seed dish library
 
-OWNS: docs/decisions/leaf-1.2.4-*.md, data/seed-dishes/**, data/adjusters.json, scripts/verify/leaf-1.2.4.mjs
+OWNS: docs/decisions/leaf-1.2.4-*.md, data/seed-dishes/**, data/adjusters.json, scripts/verify/leaf-1.2.4.mjs, packages/core/src/nutrition/atwater.ts, packages/core/src/nutrition/index.ts, packages/core/test/nutrition/atwater.test.ts
 
 Scope: Seed dish library, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 
