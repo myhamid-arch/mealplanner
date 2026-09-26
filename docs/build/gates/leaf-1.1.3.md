@@ -12,7 +12,7 @@ Scope: Catalogue data, as specified in docs/spec (see 11-build-plan.md §5 and 1
 - [x] G2: every ingredient passes the Atwater check or is marked confidence low with a reason (NUT-4)
   CHECK: node scripts/verify/leaf-1.1.3.mjs --gate G2
   EXPECT: VERIFY leaf-1.1.3 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=c46c9499802d0e41571539a6711d70c298ebfc65741a024cb31b67d1e22d1dc2; exit=0; EXPECT=matched; output-sha256=efbe0912efd4e642f299de3c62653595adfa1c1de6a90629221a5a79364c16c2; output-bytes=895; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=c46c9499802d0e41571539a6711d70c298ebfc65741a024cb31b67d1e22d1dc2; exit=0; EXPECT=matched; output-sha256=fdfe775f1b889add2b75a60414c6056f41c7c3a306b2e0198af9426c01b95bda; output-bytes=1280; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: method-yield rows exist with a source for every (method, category) used by the seed library (NUT-5)
   CHECK: node scripts/verify/leaf-1.1.3.mjs --gate G3
