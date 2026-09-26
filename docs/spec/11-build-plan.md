@@ -90,7 +90,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 | 1.2.3 | `packages/core/src/planner/select/**`, `packages/core/src/planner/cooksheet/**`, `packages/core/src/planner/index.ts`, `packages/core/test/planner/select/**`, `scripts/verify/leaf-1.2.3.mjs` | 1.2.2, 1.2.4 | judgment | 5 |
 | 1.3.1 | `packages/ai/src/client/**`, `packages/ai/src/recipes/**`, `packages/ai/test/recipes/**`, `scripts/verify/leaf-1.3.1.mjs` | 1.1.2, 1.2.2 | judgment | 4 |
 | 1.3.4 | `packages/graph/**`, `scripts/kg-rebuild.ts`, `scripts/verify/leaf-1.3.4.mjs` | 1.1.2, 1.2.4 | judgment | 5 |
-| 1.4.1 | `apps/web/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/app/api/**`, `apps/web/lib/server/**`, `apps/web/lib/auth/**`, `apps/worker/src/**`, `packages/api-contract/src/**`, `packages/db/src/services/plans/**`, `packages/db/src/seed/**`, `apps/web/test/api/**`, `scripts/verify/leaf-1.4.1.mjs` | 1.1.2, 1.2.3 | judgment | 6 |
+| 1.4.1 | `apps/web/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/app/api/**`, `apps/web/lib/server/**`, `apps/web/lib/auth/**`, `apps/web/app/(shell)/_shell/viewer.ts`, `apps/worker/src/**`, `packages/api-contract/src/**`, `packages/db/src/services/plans/**`, `packages/db/src/seed/**`, `apps/web/test/api/**`, `scripts/verify/leaf-1.4.1.mjs` | 1.1.2, 1.2.3 | judgment | 6 |
 | 1.3.3 | `packages/core/src/learning/rules/**`, `packages/core/test/learning/rules/**`, `packages/ai/src/insights/**`, `packages/db/src/services/proposals/**`, `scripts/verify/leaf-1.3.3.mjs` | 1.3.1, 1.3.2 | judgment | 5 |
 | 1.3.5 | `packages/ai/src/agent/**`, `packages/ai/test/agent/**`, `evals/agent/**`, `scripts/verify/leaf-1.3.5.mjs` | 1.3.1, 1.3.3, 1.4.1 | judgment | 7 |
 | 1.4.3 | `apps/web/app/(app)/onboarding/**`, `apps/web/app/(app)/family/**`, `apps/web/app/(app)/settings/**`, `apps/web/components/config/**`, `apps/web/components/detail-level/**`, `packages/core/src/onboarding/**`, `packages/core/test/onboarding/**`, `apps/web/e2e/config.spec.ts`, `scripts/verify/leaf-1.4.3.mjs` | 1.4.1, 1.4.2 | judgment | 7 |
@@ -325,3 +325,8 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - SPEC-Q-2: 1.3.2 owns `packages/db/test/reviews/**`.
   - SPEC-Q-11 (architect gap): FBK-2 "edits are kept" had no table. 02 now has `review_revision`. Under R-9, 1.3.2 owns `packages/db/src/schema/review-revision.ts`, migration `0002_*` and `packages/db/src/migrations/meta/**`, and may make **single-entry** additions to `packages/db/src/schema/index.ts` (export), `packages/db/src/repos/tables.ts` (the repository entry, household-scoped), `packages/db/test/spec-columns.ts` (the new table's columns) and `packages/db/test/support/populate.ts` (one `review_revision` insert, so 1.1.2 G2 has a row to attack). Migration `0001` stays untouched. 1.1.2's gates G1 and G2 must still pass on the 1.3.2 branch, and the CP2 PR shows that output.
   - SPEC-Q-3 … 10, 12, 13: accepted as proposed.
+
+### Rulings from wave 3 CP3 (leaves 1.3.2, 1.4.2)
+
+- **R-27 (R-21 hand-over).** 1.4.2 is merged; `apps/web/app/(shell)/_shell/viewer.ts` now belongs to 1.4.1, which replaces its body with the session lookup.
+- **W-1 (watch item).** In the architect's CP3 of 1.4.2 at `04f43f1`, G2 failed once in nine runs (three `gate-check --reverify` runs, six direct runs, some under CPU load); the checker truncated the output, and the failure did not reproduce. The next leaf that runs the shell e2e (1.4.4 or 1.4.6) prints full failure output on any G2-style failure; a second occurrence is a finding against `apps/web/e2e/shell.spec.ts`.
