@@ -800,7 +800,7 @@ async function gateG3() {
 
 async function gateG4() {
   const report = new Report("leaf-1.2.3 G4");
-  vitest(report, ["test/planner/select/beam.test.ts"]);
+  vitest(report, ["test/planner/select/beam.test.ts", "test/planner/solver/cutoff.test.ts"]);
   const out = compileCore(report, "G4");
   if (out === null) return report.finish();
   try {
@@ -827,11 +827,11 @@ async function gateG4() {
     const [a, a2, b] = lines;
     report.check(
       a.hash === a2.hash,
-      `same seed, same plan: two F1 week plans with seed 1 in separate processes are identical (sha256 ${a.hash.slice(0, 16)}…, ${a.meals} meals)`,
+      `same seed, same plan: two F1 week plans with seed 1 in separate processes are identical (sha256 ${a.hash}, ${a.meals} meals)`,
     );
     report.check(
       a.hash !== b.hash,
-      `negative control: seed 2 gives a different plan (${b.hash.slice(0, 16)}…), so the comparison can fail`,
+      `negative control: seed 2 gives a different plan (sha256 ${b.hash}), so the comparison can fail`,
     );
     const weekCpu = Math.max(a.cpu, a2.cpu, b.cpu);
     report.check(
