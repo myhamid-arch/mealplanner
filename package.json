@@ -14,7 +14,8 @@
     "format": "prettier --write --ignore-unknown \"apps/**\" \"packages/**\" \"scripts/**\" \".github/workflows/**\" \"*.{json,yaml,yml,mjs}\" \".prettierrc\" \"!**/dist/**\" \"!**/.next/**\" \"!**/next-env.d.ts\" \"!pnpm-lock.yaml\"",
     "format:check": "prettier --check --ignore-unknown \"apps/**\" \"packages/**\" \"scripts/**\" \".github/workflows/**\" \"*.{json,yaml,yml,mjs}\" \".prettierrc\" \"!**/dist/**\" \"!**/.next/**\" \"!**/next-env.d.ts\" \"!pnpm-lock.yaml\"",
     "test:unit": "turbo run test:unit",
-    "test:integration": "turbo run test:integration --concurrency=1"
+    "test:integration": "turbo run test:integration --concurrency=1",
+    "kg:rebuild": "node scripts/kg-rebuild.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
