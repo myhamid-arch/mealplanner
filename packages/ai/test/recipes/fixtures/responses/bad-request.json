@@ -1,0 +1,11 @@
+{
+  "status": 400,
+  "body": {
+    "type": "error",
+    "error": {
+      "type": "invalid_request_error",
+      "message": "fallbacks: unexpected value"
+    },
+    "request_id": "req_wire_400"
+  }
+}

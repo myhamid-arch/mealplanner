@@ -1,0 +1,264 @@
+{
+  "dishes": [
+    {
+      "name": "Garlic prawns with tomato-basil spaghetti and rocket salad",
+      "description": "Spaghetti with a slow-simmered tomato and basil sauce, garlicky prawns, and a peppery rocket and cherry-tomato salad with a lemon dressing on the side.",
+      "cuisine": "italian",
+      "slotKeys": ["dinner", "lunch"],
+      "flavourTags": ["garlicky", "bright", "tomato"],
+      "isPackable": false,
+      "servedColdOk": false,
+      "components": [
+        {
+          "name": "Garlic prawns",
+          "role": "protein",
+          "portioning": "continuous",
+          "minServingG": 60,
+          "maxServingG": 250,
+          "defaultServingG": 120,
+          "required": true,
+          "variants": [
+            {
+              "method": "pan_seared",
+              "label": "Pan-seared",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "shrimp",
+                  "rawGramsPerBatch": 1250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 25,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "chilli-green",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 30,
+                  "isAbsorbedFat": true,
+                  "note": "for the pan"
+                }
+              ],
+              "steps": [
+                "1. Pat the peeled prawns dry.",
+                "2. Heat 30 g olive oil in a wide frying pan over high heat.",
+                "3. Sear the prawns for 90 seconds per side with the sliced garlic and chilli until pink and just opaque.",
+                "4. Take off the heat at once."
+              ],
+              "cookTimeMin": 10
+            },
+            {
+              "method": "grilled",
+              "label": "Grilled skewers",
+              "isDefault": false,
+              "ingredients": [
+                {
+                  "slug": "shrimp",
+                  "rawGramsPerBatch": 1250,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 25,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "chilli-green",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": true,
+                  "note": "brushed on"
+                }
+              ],
+              "steps": [
+                "1. Thread the prawns on skewers, 6 per skewer.",
+                "2. Brush with 15 g olive oil mixed with the garlic and chilli.",
+                "3. Grill on a very hot griddle for 2 minutes per side until pink."
+              ],
+              "cookTimeMin": 12
+            }
+          ]
+        },
+        {
+          "name": "Spaghetti",
+          "role": "carb",
+          "portioning": "continuous",
+          "minServingG": 50,
+          "maxServingG": 300,
+          "defaultServingG": 160,
+          "required": true,
+          "variants": [
+            {
+              "method": "boiled",
+              "label": "Boiled",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "pasta-dry",
+                  "rawGramsPerBatch": 420,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 10,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Bring 5 litres of water to the boil with 10 g salt.",
+                "2. Cook the spaghetti for 9 minutes, until al dente.",
+                "3. Drain, keeping a cup of the water for loosening."
+              ],
+              "cookTimeMin": 15
+            }
+          ]
+        },
+        {
+          "name": "Tomato-basil sauce",
+          "role": "sauce",
+          "portioning": "continuous",
+          "minServingG": 30,
+          "maxServingG": 200,
+          "defaultServingG": 100,
+          "required": true,
+          "variants": [
+            {
+              "method": "stewed",
+              "label": "Simmered",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "tomato-canned",
+                  "rawGramsPerBatch": 900,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "onion",
+                  "rawGramsPerBatch": 120,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "garlic",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 20,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "basil-fresh",
+                  "rawGramsPerBatch": 15,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 6,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Soften the finely chopped onion in 20 g olive oil over medium heat for 8 minutes.",
+                "2. Add the sliced garlic and cook 1 minute without browning.",
+                "3. Add the tomatoes and 6 g salt and simmer uncovered for 25 minutes, stirring now and then, until thick.",
+                "4. Stir in the torn basil off the heat."
+              ],
+              "cookTimeMin": 40
+            }
+          ]
+        },
+        {
+          "name": "Rocket salad",
+          "role": "vegetable",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 150,
+          "defaultServingG": 60,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Fresh",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "rocket",
+                  "rawGramsPerBatch": 500,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "cherry-tomato",
+                  "rawGramsPerBatch": 500,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Wash and spin the rocket dry.",
+                "2. Halve the cherry tomatoes and toss with the rocket just before serving."
+              ],
+              "cookTimeMin": 10
+            }
+          ]
+        },
+        {
+          "name": "Lemon dressing",
+          "role": "fat",
+          "portioning": "continuous",
+          "minServingG": 0,
+          "maxServingG": 30,
+          "defaultServingG": 10,
+          "required": false,
+          "variants": [
+            {
+              "method": "raw",
+              "label": "Whisked",
+              "isDefault": true,
+              "ingredients": [
+                {
+                  "slug": "olive-oil",
+                  "rawGramsPerBatch": 650,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "lemon-juice",
+                  "rawGramsPerBatch": 330,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "salt",
+                  "rawGramsPerBatch": 8,
+                  "isAbsorbedFat": false
+                },
+                {
+                  "slug": "black-pepper",
+                  "rawGramsPerBatch": 4,
+                  "isAbsorbedFat": false
+                }
+              ],
+              "steps": [
+                "1. Whisk the lemon juice with 8 g salt and 4 g black pepper.",
+                "2. Whisk in the olive oil in a thin stream until emulsified."
+              ],
+              "cookTimeMin": 5
+            }
+          ]
+        }
+      ],
+      "assemblySteps": [
+        "Twirl the spaghetti onto the plate, spoon over the weighed sauce, top with the prawns, and serve the salad with its dressing on the side."
+      ]
+    }
+  ],
+  "newIngredients": []
+}
