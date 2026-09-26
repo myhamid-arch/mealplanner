@@ -299,3 +299,10 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - Q-6, Q-7, Q-8: accepted. 1.4.6's sign-out calls `clearOfflineCache()`.
   - Q-9: **overruled.** 1.4.4 needs star ratings (TodayDesktop, RecipePage, RecipeLibrary) before 1.4.5 exists, so `StarRating` is a 1.4.2 primitive.
   - Dependencies `@fontsource-variable/fraunces`, `@fontsource/nunito`, `@fontsource/jetbrains-mono` (5.3.0) are added to `apps/web`. The optional CI e2e job is declined: the architect re-runs G1 and G2 at CP3.
+
+### Rulings from wave 2 CP3 (leaf 1.1.3)
+
+- **R-22. NUT-4 and source-specific energy factors — architect error.** USDA SR computes energy with food-specific Atwater factors (for example 2.44 kcal/g protein in many vegetables). The generic 4/4/9/2 check therefore fails correct USDA data for cucumber, mushrooms, kidney beans, oat bran and others, and R-17's loader rule would have excluded them from planning.
+  - Where the source publishes food-specific factors, the catalogue records them in `meta.atwater_factors` (`protein`, `fat`, `carbohydrate`, numeric, with the source record). An ingredient **passes NUT-4** when either the generic check or the check with its own factors is within 12 %. Its confidence is not lowered for that reason.
+  - Only failures that remain after that are data errors: `low` with a reason, and marked `needs_review` by the loader (R-17).
+  - Computed variants inherit the same gap (a steamed-mushroom component would fail the generic check). The variant check therefore compares the variant's kcal with the sum of its ingredients' predicted energy, each ingredient using its own factors where recorded and 4/4/9/2 otherwise. This amends 1.2.1's `atwaterCheck` for variants; the architect assigns that change when 1.2.4 is dispatched, and 1.2.4 G3 uses it.
