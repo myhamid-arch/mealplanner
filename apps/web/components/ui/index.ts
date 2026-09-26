@@ -29,3 +29,4 @@ export {
   type StarRatingDisplayProps,
   type StarRatingInputProps,
 } from "./star-rating";
+export { TabLinks, type TabLink, type TabLinksProps } from "./tab-links";
