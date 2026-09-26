@@ -1,0 +1,199 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`buildCookSheet > matches the snapshot of the F1 Monday sheet 1`] = `
+[
+  {
+    "date": "2026-09-28",
+    "meals": [
+      {
+        "allergy": [
+          "Child C3: no sesame. Plate Child C3's first, separate spoon.",
+        ],
+        "batches": [
+          "component masala-omelette-toast.omelette.pan 1050 g cooked x5: egg 340, egg-white 631.43, onion 97.14, tomato 97.14, chilli-green 4.86, coriander-fresh 9.71, turmeric 0.97, salt 3.89",
+          "component masala-omelette-toast.toast.toasted 220 g cooked x3: bread-wholemeal 268.29",
+          "component masala-omelette-toast.toast.fresh 105 g cooked x2: bread-wholemeal 105",
+          "component masala-omelette-toast.avocado.sliced 175 g cooked x5: avocado 169.35, lime-juice 5.65",
+          "component masala-omelette-toast.fruit.fresh 635 g cooked x5: mango 317.5, papaya 317.5",
+        ],
+        "meal": "07:00:00 breakfast/shared: Masala omelette with toast",
+        "notes": [],
+        "plating": [
+          "Adult A: Folded omelette 255 | Fresh 65 | Sliced 30 | Mango and papaya 145",
+          "Adult B: Folded omelette 255 | Fresh 40 | Sliced 35 | Mango and papaya 130",
+          "Child C1: Folded omelette 195 | Toasted 80 | Sliced 40 | Mango and papaya 130",
+          "Child C2: Folded omelette 195 | Toasted 80 | Sliced 40 | Mango and papaya 130",
+          "Child C3: Folded omelette 150 | Toasted 60 | Sliced 30 | Mango and papaya 100",
+        ],
+      },
+      {
+        "allergy": [
+          "Child C3: no sesame. Plate Child C3's first, separate spoon.",
+        ],
+        "batches": [
+          "component turkey-cheese-sandwich.turkey.roasted 290 g cooked x3: turkey-breast 386.67, dried-thyme 0.77, paprika 1.16, olive-oil 3.87, salt 3.09, black-pepper 0.77",
+          "component turkey-cheese-sandwich.bread.fresh 250 g cooked x3: bread-wholemeal 250",
+          "component turkey-cheese-sandwich.cheese.sliced 55 g cooked x3: cheddar-reduced-fat 55",
+          "component turkey-cheese-sandwich.veg.fresh 140 g cooked x3: tomato 82.35, lettuce-romaine 41.18, mayonnaise 10.98, mustard 5.49",
+        ],
+        "meal": "12:00:00 packed_school_lunch/shared: Roast turkey and cheese sandwich",
+        "notes": [
+          "Packed meal, no reheating: cool fully, pack chilled and keep cold until eaten.",
+        ],
+        "plating": [
+          "Child C1: Roasted 105 | Fresh 90 | Sliced 20 | Fresh 50",
+          "Child C2: Roasted 105 | Fresh 90 | Sliced 20 | Fresh 50",
+          "Child C3: Roasted 80 | Fresh 70 | Sliced 15 | Fresh 40",
+        ],
+      },
+      {
+        "allergy": [],
+        "batches": [
+          "component turkey-cheese-sandwich.turkey.poached 80 g cooked x1: turkey-breast 99.88, dried-thyme 0.2, paprika 0.3, olive-oil 1, salt 0.8, black-pepper 0.2",
+          "component turkey-cheese-sandwich.bread.fresh 95 g cooked x1: bread-wholemeal 95",
+          "component turkey-cheese-sandwich.cheese.sliced 25 g cooked x1: cheddar-reduced-fat 25",
+          "component turkey-cheese-sandwich.veg.fresh 85 g cooked x1: tomato 50, lettuce-romaine 25, mayonnaise 6.67, mustard 3.33",
+          "adjuster adjuster-rice-cakes.side.plain 25 g cooked x1: rice-cakes 25",
+        ],
+        "meal": "13:00:00 packed_work_lunch/shared: Roast turkey and cheese sandwich",
+        "notes": [
+          "Packed meal: pack in lunch boxes; can be reheated before eating.",
+        ],
+        "plating": [
+          "Adult A: Poached 80 | Fresh 95 | Sliced 25 | Fresh 85 + side for Adult A Rice cakes 25",
+        ],
+      },
+      {
+        "allergy": [],
+        "batches": [
+          "component turkey-cheese-sandwich.turkey.poached 60 g cooked x1: turkey-breast 74.91, dried-thyme 0.15, paprika 0.22, olive-oil 0.75, salt 0.6, black-pepper 0.15",
+          "component turkey-cheese-sandwich.bread.fresh 110 g cooked x1: bread-wholemeal 110",
+          "component turkey-cheese-sandwich.cheese.sliced 30 g cooked x1: cheddar-reduced-fat 30",
+          "component turkey-cheese-sandwich.veg.fresh 85 g cooked x1: tomato 50, lettuce-romaine 25, mayonnaise 6.67, mustard 3.33",
+        ],
+        "meal": "13:00:00 lunch/shared: Roast turkey and cheese sandwich",
+        "notes": [],
+        "plating": [
+          "Adult B: Poached 60 | Fresh 110 | Sliced 30 | Fresh 85",
+        ],
+      },
+      {
+        "allergy": [],
+        "batches": [
+          "component warak-enab-yogurt.vine-leaves.stewed 115 g cooked x1: vine-leaves-brined 15.08, basmati-rice 21.12, tomato 18.1, parsley 4.83, mint-fresh 0.9, onion 6.03, olive-oil 2.41, allspice 0.12, lemon-juice 4.83, water 36.2, salt 0.3",
+          "component warak-enab-yogurt.chicken.poached 40 g cooked x1: chicken-breast 49.33, lemon-juice 0.99, bay-leaf 0.05, black-pepper 0.1, salt 0.39",
+          "component warak-enab-yogurt.garlic-sauce.classic 15 g cooked x1: greek-yogurt-nonfat 11.83, garlic 0.59, lemon-juice 0.59, olive-oil 1.78, mint-fresh 0.09, salt 0.12",
+        ],
+        "meal": "16:00:00 snack/adult_a: Warak enab with yogurt and chicken",
+        "notes": [],
+        "plating": [
+          "Adult A: Simmered 115 | Poached 40 | Garlic yogurt 15",
+        ],
+      },
+      {
+        "allergy": [],
+        "batches": [
+          "component tuna-rice-cakes.tuna.classic 70 g cooked x1: tuna-canned-water 54.12, greek-yogurt-nonfat 13.53, lemon-juice 1.8, dill-fresh 0.45, black-pepper 0.09",
+          "component tuna-rice-cakes.rice-cakes.plain 15 g cooked x1: rice-cakes 15",
+          "component tuna-rice-cakes.cucumber.sliced 30 g cooked x1: cucumber 30",
+          "component tuna-rice-cakes.avocado.sliced 35 g cooked x1: avocado 33.87, lemon-juice 1.13",
+        ],
+        "meal": "16:00:00 snack/adult_b: Tuna and cucumber rice cakes",
+        "notes": [],
+        "plating": [
+          "Adult B: Tuna and yogurt 70 | Plain 15 | Sliced 30 | Sliced 35",
+        ],
+      },
+      {
+        "allergy": [],
+        "batches": [
+          "component warak-enab-yogurt.vine-leaves.stewed 220 g cooked x1: vine-leaves-brined 28.85, basmati-rice 40.4, tomato 34.63, parsley 9.23, mint-fresh 1.73, onion 11.54, olive-oil 4.62, allspice 0.23, lemon-juice 9.23, water 69.25, salt 0.58",
+          "component warak-enab-yogurt.chicken.poached 115 g cooked x1: chicken-breast 141.84, lemon-juice 2.84, bay-leaf 0.14, black-pepper 0.28, salt 1.13",
+          "component warak-enab-yogurt.garlic-sauce.classic 65 g cooked x1: greek-yogurt-nonfat 51.28, garlic 2.56, lemon-juice 2.56, olive-oil 7.69, mint-fresh 0.38, salt 0.51",
+        ],
+        "meal": "16:00:00 snack/c1: Warak enab with yogurt and chicken",
+        "notes": [],
+        "plating": [
+          "Child C1: Simmered 220 | Poached 115 | Garlic yogurt 65",
+        ],
+      },
+      {
+        "allergy": [],
+        "batches": [
+          "component warak-enab-yogurt.vine-leaves.stewed 220 g cooked x1: vine-leaves-brined 28.85, basmati-rice 40.4, tomato 34.63, parsley 9.23, mint-fresh 1.73, onion 11.54, olive-oil 4.62, allspice 0.23, lemon-juice 9.23, water 69.25, salt 0.58",
+          "component warak-enab-yogurt.chicken.poached 115 g cooked x1: chicken-breast 141.84, lemon-juice 2.84, bay-leaf 0.14, black-pepper 0.28, salt 1.13",
+          "component warak-enab-yogurt.garlic-sauce.classic 65 g cooked x1: greek-yogurt-nonfat 51.28, garlic 2.56, lemon-juice 2.56, olive-oil 7.69, mint-fresh 0.38, salt 0.51",
+        ],
+        "meal": "16:00:00 snack/c2: Warak enab with yogurt and chicken",
+        "notes": [],
+        "plating": [
+          "Child C2: Simmered 220 | Poached 115 | Garlic yogurt 65",
+        ],
+      },
+      {
+        "allergy": [
+          "Child C3: no sesame. Plate Child C3's first, separate spoon.",
+        ],
+        "batches": [
+          "component warak-enab-yogurt.vine-leaves.stewed 170 g cooked x1: vine-leaves-brined 22.3, basmati-rice 31.22, tomato 26.76, parsley 7.13, mint-fresh 1.34, onion 8.92, olive-oil 3.57, allspice 0.18, lemon-juice 7.13, water 53.51, salt 0.45",
+          "component warak-enab-yogurt.chicken.poached 90 g cooked x1: chicken-breast 111, lemon-juice 2.22, bay-leaf 0.11, black-pepper 0.22, salt 0.89",
+          "component warak-enab-yogurt.garlic-sauce.classic 50 g cooked x1: greek-yogurt-nonfat 39.45, garlic 1.97, lemon-juice 1.97, olive-oil 5.92, mint-fresh 0.3, salt 0.39",
+        ],
+        "meal": "16:00:00 snack/c3: Warak enab with yogurt and chicken",
+        "notes": [],
+        "plating": [
+          "Child C3: Simmered 170 | Poached 90 | Garlic yogurt 50",
+        ],
+      },
+      {
+        "allergy": [],
+        "batches": [
+          "component tuna-rice-cakes.tuna.classic 75 g cooked x1: tuna-canned-water 57.99, greek-yogurt-nonfat 14.5, lemon-juice 1.93, dill-fresh 0.48, black-pepper 0.1",
+          "component tuna-rice-cakes.rice-cakes.plain 20 g cooked x1: rice-cakes 20",
+          "component tuna-rice-cakes.cucumber.sliced 40 g cooked x1: cucumber 40",
+          "component tuna-rice-cakes.avocado.sliced 35 g cooked x1: avocado 33.87, lemon-juice 1.13",
+        ],
+        "meal": "17:00:00 pre_workout/adult_a: Tuna and cucumber rice cakes",
+        "notes": [],
+        "plating": [
+          "Adult A: Tuna and yogurt 75 | Plain 20 | Sliced 40 | Sliced 35",
+        ],
+      },
+      {
+        "allergy": [],
+        "batches": [
+          "component chicken-avocado-sandwich.chicken.poached 45 g cooked x1: chicken-breast 55.5, lemon-juice 1.11, bay-leaf 0.06, black-pepper 0.11, salt 0.44",
+          "component chicken-avocado-sandwich.bread.fresh 65 g cooked x1: bread-wholemeal 65",
+          "component chicken-avocado-sandwich.avocado.smashed 40 g cooked x1: avocado 37.85, lemon-juice 1.89, salt 0.25",
+          "component chicken-avocado-sandwich.veg.fresh 30 g cooked x1: tomato 20, lettuce-romaine 10",
+        ],
+        "meal": "18:30:00 post_workout/adult_a: Chicken and avocado wholemeal sandwich",
+        "notes": [],
+        "plating": [
+          "Adult A: Poached 45 | Fresh 65 | Smashed 40 | Fresh 30",
+        ],
+      },
+      {
+        "allergy": [
+          "Child C3: no sesame. Plate Child C3's first, separate spoon.",
+        ],
+        "batches": [
+          "component chicken-shawarma-wrap.chicken.roasted 695 g cooked x5: chicken-thigh 764.97, yogurt-plain-low-fat 76.5, lemon-juice 30.6, garlic 11.47, cumin 3.06, paprika 3.06, allspice 2.29, cardamom 0.76, cinnamon 0.76, turmeric 1.53, black-pepper 1.53, olive-oil 11.47, salt 6.88",
+          "component chicken-shawarma-wrap.bread.soft 425 g cooked x5: khubz 425",
+          "component chicken-shawarma-wrap.veg.fresh 335 g cooked x5: tomato 154.62, pickled-cucumber 77.31, lettuce-iceberg 103.08",
+          "component chicken-shawarma-wrap.garlic-sauce.classic 225 g cooked x5: greek-yogurt-nonfat 177.51, garlic 8.88, lemon-juice 8.88, olive-oil 26.63, mint-fresh 1.33, salt 1.78",
+        ],
+        "meal": "19:30:00 dinner/shared: Chicken shawarma wrap",
+        "notes": [],
+        "plating": [
+          "Adult A: Oven-roasted 135 | Soft 100 | Fresh 95 | Garlic yogurt 55",
+          "Adult B: Oven-roasted 130 | Soft 75 | Fresh 60 | Garlic yogurt 60",
+          "Child C1: Oven-roasted 155 | Soft 90 | Fresh 65 | Garlic yogurt 40",
+          "Child C2: Oven-roasted 155 | Soft 90 | Fresh 65 | Garlic yogurt 40",
+          "Child C3: Oven-roasted 120 | Soft 70 | Fresh 50 | Garlic yogurt 30",
+        ],
+      },
+    ],
+  },
+]
+`;
