@@ -360,3 +360,13 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - SPEC-Q-10 (amended): the fingerprint also carries the direction of the change where one exists: the sign of `preference.set.score`, and away/toward for `distribution.set`. Rejecting "less of X" must not suppress "more of X".
   - SPEC-Q-11: a learned dislike exclusion is `hard: false`. Accepted.
 
+- **R-34 (1.2.3 SPEC-Q-1 … 14, ADR-1).** Accepted as proposed, except as amended below.
+  - ADR-1 (state-independent cached solves, then a time-order kcal re-targeting pass with the cumulative band `Bᵢ`): accepted. An in-tolerance plate at slot i keeps the running deviation within ±`Bᵢ`, so a member-day of in-tolerance plates ends within ±`tolerance.kcal`.
+  - SPEC-Q-2: accepted. A member-day with an infeasible plate is flagged with the slot(s) as reason; G1 asserts the ±`tolerance.kcal` band on every other member-day and prints every member-day total.
+  - SPEC-Q-6 (amended): **every exclusion row is a filter, whatever its `hard` flag.** 04 §6.3 lists exclusions as hard filters without distinction; in the merged code `hard` only decides whether relaxing the exclusion is protected (1.1.2 `isProtectedExclusion`). Reading `hard: false` as "not applied" would make 1.3.3's accepted dislike exclusions no-ops. The rest of SPEC-Q-6 (required vs optional components, `hard = never` preferences) is accepted.
+  - Ingredient exclusion keys are slugs (R-36): when building the solver's `MemberCtx.exclusions.ingredientIds`, resolve each `kind = ingredient` key through the catalogue.
+- **R-35 (1.3.4 SPEC-Q-1 … 12, ADR-1/2).** Accepted as proposed, except as amended below.
+  - SPEC-Q-1: `PostgresKgSource` stays in `packages/graph` (no `db` import). Conditions: parameterised SQL only; every household-scoped read filters by `household_id`; the integration tests run on the migrated schema so a column change fails them.
+  - SPEC-Q-2: accepted. Match `kind = ingredient` keys on slug (canonical, R-36) or id.
+  - SPEC-Q-4 (amended): the dish ingredient vector uses 1.3.2's `coreIngredients` (excludes `herb_spice` and `water`), so similarity and the preference model agree on what an ingredient "is" in a dish. PAIRS_WITH and TYPICAL_IN (SPEC-Q-5/6) keep spices and exclude only water, as proposed.
+- **R-36 (cross-leaf: ingredient keys).** 02 §6 did not fix the key format. Recorded from the merged leaves: `exclusion.key` for `kind = ingredient` is the ingredient **slug** (1.3.1 validator, 1.3.3 dislike proposals); `preference.entity_key` and `frequency_rule.entity_key` for `entity_type = ingredient` are the ingredient **id** (1.3.2). Code that matches exclusions against ingredient ids resolves slugs through the catalogue; 1.3.5 (agent) and 1.4.x forms write slugs for exclusions.
