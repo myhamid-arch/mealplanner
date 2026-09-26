@@ -72,7 +72,6 @@ export const SPEC_COLUMNS: Record<string, readonly string[]> = {
     "id",
     "household_id",
     "display_name",
-    "emoji_avatar",
     "color",
     "birth_year",
     "sex",
@@ -101,7 +100,7 @@ export const SPEC_COLUMNS: Record<string, readonly string[]> = {
     "household_id",
     "key",
     "label",
-    "emoji",
+    "icon", // R-23
     "sort_order",
     "default_time",
     "is_shared",
@@ -166,7 +165,7 @@ export const SPEC_COLUMNS: Record<string, readonly string[]> = {
     "fat_retention",
     "oil_absorption_g_per_100g_raw",
   ],
-  cuisine: ["id", "key", "label", "flag_emoji", "parent_key"],
+  cuisine: ["id", "key", "label", "parent_key"], // R-23: no flag_emoji
   // 02 §4 (+ household_id on children, R-8) + R-9 a, b, d, R-12
   dish: [
     "id",
@@ -414,6 +413,10 @@ export const SPEC_ABSENT_COLUMNS: Record<string, readonly string[]> = {
   user: ["password_hash"], // R-11
   method_yield: ["coating_ingredient_id", "coating_g_per_100g_raw"], // R-12
   variant_ingredient: ["retained"], // R-12 replaces SPEC-Q-4c
+  // R-23 (R2-UX-5): no emoji in data
+  member: ["emoji_avatar"],
+  cuisine: ["flag_emoji"],
+  slot_type: ["emoji"],
 };
 
 /** Enumerations whose values 02 / 13 fix, as Postgres enum type → values in order. */

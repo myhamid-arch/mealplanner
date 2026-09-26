@@ -216,7 +216,6 @@ describe(
             id: newId(),
             key: "x",
             label: "x",
-            flagEmoji: null,
             parentKey: null,
           }),
         ).rejects.toBeInstanceOf(GlobalRowReadOnlyError);

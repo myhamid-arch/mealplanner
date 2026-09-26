@@ -1,5 +1,5 @@
 {
-  "id": "dfecfb6d-9321-438b-ab70-013c312f7e0f",
+  "id": "07239bb8-bfe6-4200-b85c-d4732809746c",
   "prevId": "02ab30a3-587d-4bc7-98eb-7e9ad5137224",
   "version": "7",
   "dialect": "postgresql",
@@ -1376,12 +1376,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "emoji_avatar": {
-          "name": "emoji_avatar",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "color": {
           "name": "color",
           "type": "text",
@@ -1788,8 +1782,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "emoji": {
-          "name": "emoji",
+        "icon": {
+          "name": "icon",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -2231,12 +2225,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
-        },
-        "flag_emoji": {
-          "name": "flag_emoji",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         },
         "parent_key": {
           "name": "parent_key",

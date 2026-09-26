@@ -97,6 +97,5 @@ export const cuisine = pgTable("cuisine", {
   id: uuid("id").primaryKey(),
   key: text("key").notNull().unique(),
   label: text("label").notNull(),
-  flagEmoji: text("flag_emoji"),
   parentKey: text("parent_key"),
 });

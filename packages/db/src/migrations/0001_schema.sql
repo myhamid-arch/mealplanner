@@ -205,7 +205,6 @@ CREATE TABLE "member" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"household_id" uuid NOT NULL,
 	"display_name" text NOT NULL,
-	"emoji_avatar" text,
 	"color" text NOT NULL,
 	"birth_year" integer,
 	"sex" "sex",
@@ -252,7 +251,7 @@ CREATE TABLE "slot_type" (
 	"household_id" uuid NOT NULL,
 	"key" text NOT NULL,
 	"label" text NOT NULL,
-	"emoji" text NOT NULL,
+	"icon" text NOT NULL,
 	"sort_order" integer NOT NULL,
 	"default_time" time NOT NULL,
 	"is_shared" boolean NOT NULL,
@@ -307,7 +306,6 @@ CREATE TABLE "cuisine" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"key" text NOT NULL,
 	"label" text NOT NULL,
-	"flag_emoji" text,
 	"parent_key" text,
 	CONSTRAINT "cuisine_key_unique" UNIQUE("key")
 );

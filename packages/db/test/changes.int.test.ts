@@ -11,9 +11,10 @@ import {
   type ChangeOpKind,
 } from "@mealplanner/core/changes";
 import type { HouseholdContext } from "@mealplanner/core/types";
-import type { Executor } from "../src/repos/index.js";
+import { createRepos, type Executor } from "../src/repos/index.js";
 import {
   applyChangeSet,
+  ChangeOpError,
   ChangeValidationError,
   ProtectedOperationError,
   undoChangeSet,
@@ -122,7 +123,7 @@ describe.each([
     await database.drop();
   });
 
-  it("the registry is exactly the AGT-6 v1 ops plus the BLD-8 R-10 ops", () => {
+  it("the registry is exactly the AGT-6 v1 ops plus the BLD-8 R-10 and R-24 ops", () => {
     expect([...PUBLIC_KINDS].sort()).toEqual(
       [
         "household.update",
@@ -166,6 +167,7 @@ describe.each([
         "support.grant",
         "support.revoke",
         "plan.save_days",
+        "portion_bias.set",
       ].sort(),
     );
     const generators = opGenerators(database.db, household);
@@ -227,6 +229,7 @@ describe.each([
       "meal_override.set",
       "support.grant",
       "plan.save_days",
+      "portion_bias.set",
     ];
     const ops: ChangeOp[] = [];
     for (const kind of combinable) ops.push(await generators[kind](random));
@@ -379,6 +382,27 @@ describe.each([
       }),
     ).rejects.toMatchObject({ reason: "agent_may_apply_off" });
     await undoChangeSet(database.db, ctx, off.changeSetId, { actor: "user", source: "ui" });
+  });
+
+  it(`${fixtureId}: portion_bias.set refuses a targeted member (FBK-5, BLD-8 R-24)`, async () => {
+    const targeted = must(
+      (await createRepos(database.db, ctx).member.list()).find((m) => m.isTargeted),
+      "targeted member",
+    );
+    await expect(
+      applyChangeSet(database.db, ctx, {
+        actor: "system",
+        source: "learning",
+        summary: "bias",
+        ops: [
+          {
+            kind: "portion_bias.set",
+            payload: { memberId: targeted.id, componentRole: "carb", bias: 1.2 },
+          },
+        ],
+      }),
+    ).rejects.toBeInstanceOf(ChangeOpError);
+    expect(getOp("portion_bias.set")?.protected).toBe(false);
   });
 
   it(`${fixtureId}: rows.restore is internal and rejected as a public op (BLD-8 R-7)`, async () => {

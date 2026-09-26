@@ -531,7 +531,7 @@ export const F3: FixtureInput = {
       {
         key: "mid_morning",
         label: "Mid-morning",
-        emoji: "☕",
+        icon: "coffee",
         sortOrder: 15,
         defaultTime: "10:30:00",
         isShared: false,
@@ -541,7 +541,7 @@ export const F3: FixtureInput = {
       {
         key: "family_brunch",
         label: "Family brunch",
-        emoji: "🥞",
+        icon: "croissant",
         sortOrder: 12,
         defaultTime: "11:00:00",
         isShared: true,

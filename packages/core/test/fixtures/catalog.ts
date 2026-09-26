@@ -15,16 +15,16 @@ const ing = (
 
 export const fixtureCatalog: FixtureCatalog = {
   cuisines: [
-    { key: "american", label: "American", flagEmoji: "🇺🇸" },
-    { key: "british", label: "British", flagEmoji: "🇬🇧" },
-    { key: "italian", label: "Italian", flagEmoji: "🇮🇹" },
+    { key: "american", label: "American" },
+    { key: "british", label: "British" },
+    { key: "italian", label: "Italian" },
     { key: "levantine", label: "Levantine" },
-    { key: "indian", label: "Indian", flagEmoji: "🇮🇳" },
-    { key: "emirati_gulf", label: "Emirati & Gulf", flagEmoji: "🇦🇪" },
+    { key: "indian", label: "Indian" },
+    { key: "emirati_gulf", label: "Emirati & Gulf" },
     { key: "mediterranean", label: "Mediterranean" },
-    { key: "greek", label: "Greek", flagEmoji: "🇬🇷" },
-    { key: "mexican", label: "Mexican", flagEmoji: "🇲🇽" },
-    { key: "japanese", label: "Japanese", flagEmoji: "🇯🇵" },
+    { key: "greek", label: "Greek" },
+    { key: "mexican", label: "Mexican" },
+    { key: "japanese", label: "Japanese" },
   ],
   methods: [
     { key: "raw", label: "Raw", description: "Served uncooked.", appealTags: ["fresh"] },

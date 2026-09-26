@@ -155,7 +155,7 @@ export function opGenerators(
       payload: {
         key: `custom_${tag(r)}`,
         label: "Custom slot",
-        emoji: "*",
+        icon: "star",
         sortOrder: 70,
         defaultTime: "21:00:00",
         isShared: r() < 0.5,
@@ -586,6 +586,27 @@ export function opGenerators(
         ).id,
       },
     }),
+    "portion_bias.set": async (r) => {
+      const existing = (await repos().portion_bias.list())[0];
+      if (existing !== undefined && r() < 0.4)
+        return {
+          kind: "portion_bias.set",
+          payload: {
+            memberId: existing.memberId,
+            componentRole: existing.componentRole,
+            bias: null,
+          },
+        };
+      const untargeted = (await members()).filter((m) => !m.isTargeted);
+      return {
+        kind: "portion_bias.set",
+        payload: {
+          memberId: pick(r, untargeted, "untargeted member").id,
+          componentRole: pick(r, ["protein", "carb", "vegetable", "sauce"] as const, "role"),
+          bias: round2(0.6 + r()),
+        },
+      };
+    },
     "plan.save_days": async (r) => {
       const component = must(
         (await repos().component.list({ dishId: populated.dishId })).find(

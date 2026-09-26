@@ -23,7 +23,6 @@ export async function seedCatalog(db: Executor, input: FixtureCatalog): Promise<
             id: newId(),
             key: c.key,
             label: c.label,
-            flagEmoji: c.flagEmoji ?? null,
             parentKey: null,
           })),
         )

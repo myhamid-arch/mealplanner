@@ -4,7 +4,8 @@
 export interface DefaultSlot {
   key: string;
   label: string;
-  emoji: string;
+  /** Icon key the UI maps to an inline SVG (R2-UX-5, BLD-8 R-23). */
+  icon: string;
   sortOrder: number;
   defaultTime: string;
   isShared: boolean;
@@ -24,7 +25,7 @@ export const DEFAULT_SLOTS: readonly DefaultSlot[] = [
   {
     key: "breakfast",
     label: "Breakfast",
-    emoji: "🍳",
+    icon: "sunrise",
     sortOrder: 10,
     defaultTime: "07:00:00",
     isShared: true,
@@ -37,7 +38,7 @@ export const DEFAULT_SLOTS: readonly DefaultSlot[] = [
   {
     key: "lunch",
     label: "Lunch",
-    emoji: "🥗",
+    icon: "utensils",
     sortOrder: 30,
     defaultTime: "13:00:00",
     isShared: true,
@@ -50,7 +51,7 @@ export const DEFAULT_SLOTS: readonly DefaultSlot[] = [
   {
     key: "dinner",
     label: "Dinner",
-    emoji: "🍲",
+    icon: "cooking-pot",
     sortOrder: 60,
     defaultTime: "19:30:00",
     isShared: true,
@@ -63,7 +64,7 @@ export const DEFAULT_SLOTS: readonly DefaultSlot[] = [
   {
     key: "snack",
     label: "Snack",
-    emoji: "🍎",
+    icon: "apple",
     sortOrder: 40,
     defaultTime: "16:00:00",
     isShared: false,
@@ -76,7 +77,7 @@ export const DEFAULT_SLOTS: readonly DefaultSlot[] = [
   {
     key: "packed_school_lunch",
     label: "Packed school lunch",
-    emoji: "🎒",
+    icon: "backpack",
     sortOrder: 20,
     defaultTime: "12:00:00",
     isShared: true,
@@ -89,7 +90,7 @@ export const DEFAULT_SLOTS: readonly DefaultSlot[] = [
   {
     key: "packed_work_lunch",
     label: "Packed work lunch",
-    emoji: "💼",
+    icon: "briefcase",
     sortOrder: 25,
     defaultTime: "13:00:00",
     isShared: true,
@@ -102,7 +103,7 @@ export const DEFAULT_SLOTS: readonly DefaultSlot[] = [
   {
     key: "pre_workout",
     label: "Pre-workout",
-    emoji: "⚡",
+    icon: "zap",
     sortOrder: 45,
     defaultTime: "17:00:00",
     isShared: false,
@@ -115,7 +116,7 @@ export const DEFAULT_SLOTS: readonly DefaultSlot[] = [
   {
     key: "post_workout",
     label: "Post-workout",
-    emoji: "💪",
+    icon: "dumbbell",
     sortOrder: 50,
     defaultTime: "18:30:00",
     isShared: false,

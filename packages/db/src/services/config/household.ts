@@ -40,7 +40,7 @@ export function defaultSetupOps(): { ops: ChangeOp[]; slotIds: Record<string, st
         id,
         key: slot.key,
         label: slot.label,
-        emoji: slot.emoji,
+        icon: slot.icon,
         sortOrder: slot.sortOrder,
         defaultTime: slot.defaultTime,
         isShared: slot.isShared,

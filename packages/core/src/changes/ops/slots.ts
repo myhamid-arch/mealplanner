@@ -8,7 +8,7 @@ import { grams, id, share01, slotKey, time, weekday } from "./common.js";
 
 const SlotFields = z.object({
   label: z.string().trim().min(1).max(60),
-  emoji: z.string().min(1).max(16),
+  icon: z.string().regex(/^[a-z0-9-]{1,40}$/, "an icon key (R2-UX-5)"),
   sortOrder: z.number().int().min(0).max(10_000),
   defaultTime: time,
   isShared: z.boolean(),

@@ -120,7 +120,6 @@ export interface MemberRow {
   id: string;
   householdId: string;
   displayName: string;
-  emojiAvatar: string | null;
   color: string;
   birthYear: number | null;
   sex: Sex | null;
@@ -160,7 +159,7 @@ export interface SlotTypeRow {
   householdId: string;
   key: string;
   label: string;
-  emoji: string;
+  icon: string;
   sortOrder: number;
   defaultTime: string;
   isShared: boolean;
@@ -274,7 +273,6 @@ export interface CuisineRow {
   id: string;
   key: string;
   label: string;
-  flagEmoji: string | null;
   parentKey: string | null;
 }
 
@@ -627,6 +625,7 @@ export interface MutableEntityRows {
   day_override: DayOverrideRow;
   meal_distribution: MealDistributionRow;
   slot_target_override: SlotTargetOverrideRow;
+  portion_bias: PortionBiasRow;
   ingredient: IngredientRow;
   dish: DishRow;
   component: ComponentRow;
@@ -672,6 +671,7 @@ export const ENTITY_KEYS = {
   day_override: ["id"],
   meal_distribution: ["memberId", "dayKind", "slotTypeId"],
   slot_target_override: ["memberId", "dayKind", "slotTypeId"],
+  portion_bias: ["memberId", "componentRole"],
   ingredient: ["id"],
   dish: ["id"],
   component: ["id"],

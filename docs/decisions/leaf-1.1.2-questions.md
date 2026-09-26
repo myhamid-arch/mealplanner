@@ -84,3 +84,7 @@ R-10 says save_days replaces the unlocked meals of the given dates. A meal that 
 ## SPEC-Q-14: default slot times and icons
 
 PLN-2 gives no default times; `DEFAULT_SLOTS` uses breakfast 07:00, packed school lunch 12:00, lunch/packed work lunch 13:00, snack 16:00, pre-workout 17:00, post-workout 18:30, dinner 19:30 (editable, used only for ordering). `slot_type.emoji` is required by 02 §2; defaults are emoji characters, although R2-UX-5 draws icons as SVG — the UI decides how to render them.
+
+## CP3 rulings (BLD-8 R-23, R-24)
+- R-23: emoji fields removed (`member.emoji_avatar`, `cuisine.flag_emoji`); `slot_type.emoji` became `slot_type.icon` (icon key). Migration `0001` regenerated in place (not yet merged).
+- R-24: SPEC-Q-10, 12, 13, the default slot times of 14, and D-1 accepted. SPEC-Q-11: `portion_bias.set` added (a `learning` change set, not protected; refuses targeted members, FBK-5); `detail_level` is written directly through its repository (UI preference outside DM-6); invite acceptance belongs to the auth flow (1.4.1).

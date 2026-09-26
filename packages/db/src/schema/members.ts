@@ -43,7 +43,6 @@ export const member = pgTable(
     id: uuid("id").primaryKey(),
     householdId: householdIdColumn(),
     displayName: text("display_name").notNull(),
-    emojiAvatar: text("emoji_avatar"),
     color: text("color").notNull(),
     birthYear: integer("birth_year"),
     sex: sex("sex"),
@@ -65,7 +64,8 @@ export const slotType = pgTable(
     householdId: householdIdColumn(),
     key: text("key").notNull(),
     label: text("label").notNull(),
-    emoji: text("emoji").notNull(),
+    /** Icon key the UI maps to an inline SVG (R2-UX-5, BLD-8 R-23). */
+    icon: text("icon").notNull(),
     sortOrder: integer("sort_order").notNull(),
     defaultTime: time("default_time").notNull(),
     isShared: boolean("is_shared").notNull(),

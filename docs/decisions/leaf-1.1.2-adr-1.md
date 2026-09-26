@@ -16,6 +16,7 @@ Requirement: DM-1, 02-domain-model (all tables), 13-revision-r2 §3–§4, ARC-1
 - No household-owned foreign key cascades. A cascade would delete rows without passing through `ChangeTx`, so the change set's inverse would have no before-image for them (ADR-3); ops delete children explicitly instead (e.g. `dish.update` removes variant ingredients, variants, then components). Only the auth-library tables (`session`, `account`, `two_factor`, `user_notification_pref`) cascade from `user`.
 - Timestamps are `timestamptz(3)` (millisecond precision), so a value read into a JS `Date` and written back by an undo is identical to the original.
 - Weekdays are `0 = Monday … 6 = Sunday` (SPEC-Q-10); `weekdayOf(date)` in `@mealplanner/core/types` converts a date.
+- No emoji in data (BLD-8 R-23, R2-UX-5): `member.emoji_avatar` and `cuisine.flag_emoji` do not exist; `slot_type.icon` is an icon key (`sunrise`, `lunchbox`, `dumbbell` …) the UI maps to an inline SVG. G1 asserts the removed columns are absent.
 - R-9 a–l, R-11 and R-12 are built as ruled: see the column list in `packages/db/test/spec-columns.ts`, which G1 checks against the live database.
 
 ## Consequences

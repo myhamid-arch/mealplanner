@@ -19,6 +19,7 @@ import {
   memberArchive,
   memberCreate,
   memberUpdate,
+  portionBiasSet,
   targetSet,
   toleranceSet,
   trainingSet,
@@ -55,7 +56,7 @@ import {
   preferenceSet,
 } from "./ops/taste.js";
 
-/** Every public op: the AGT-6 v1 list plus the BLD-8 R-10 additions, in the spec's order. */
+/** Every public op: the AGT-6 v1 list plus the BLD-8 R-10 and R-24 additions, in the spec's order. */
 export const PUBLIC_OPS = [
   householdUpdate,
   memberCreate,
@@ -99,6 +100,8 @@ export const PUBLIC_OPS = [
   supportGrant,
   supportRevoke,
   planSaveDays,
+  // BLD-8 R-24
+  portionBiasSet,
 ] as const;
 
 type PublicOp = (typeof PUBLIC_OPS)[number];

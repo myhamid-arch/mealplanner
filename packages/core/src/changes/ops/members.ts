@@ -3,6 +3,8 @@
 import { z } from "zod";
 import {
   APPETITES,
+  COMPONENT_ROLES,
+  PORTION_BIAS_BOUNDS,
   DAY_OVERRIDE_KINDS,
   DEFAULT_TOLERANCE,
   SEXES,
@@ -16,7 +18,6 @@ import { grams, id, isoDate, time, weekday } from "./common.js";
 
 const MemberFields = z.object({
   displayName: z.string().trim().min(1).max(80),
-  emojiAvatar: z.string().max(16).nullable(),
   color: z.string().min(1).max(40),
   birthYear: z.number().int().min(1900).max(2100).nullable(),
   sex: z.enum(SEXES).nullable(),
@@ -33,7 +34,6 @@ export const memberCreate = defineOp({
   kind: "member.create",
   area: "members",
   schema: MemberFields.partial({
-    emojiAvatar: true,
     birthYear: true,
     sex: true,
     appetite: true,
@@ -48,7 +48,6 @@ export const memberCreate = defineOp({
       id: memberId,
       householdId: tx.householdId,
       displayName: p.displayName,
-      emojiAvatar: p.emojiAvatar ?? null,
       color: p.color,
       birthYear: p.birthYear ?? null,
       sex: p.sex ?? null,
@@ -286,6 +285,45 @@ export const dayOverrideSet = defineOp({
       if (existing === undefined)
         throw new ChangeOpError("day_override.set", "no such override to remove");
       await tx.remove("day_override", { id: existing.id });
+    }
+  },
+});
+
+/**
+ * FBK-5 learned role bias for an untargeted member (BLD-8 R-24): written by the learning pipeline
+ * as a `learning` change set; `bias: null` resets the role to 1.0 (row removed). Targeted members'
+ * grams are fixed by their targets, so their quantity feedback never reaches this op.
+ */
+export const portionBiasSet = defineOp({
+  kind: "portion_bias.set",
+  area: "taste",
+  schema: z
+    .object({
+      memberId: id,
+      componentRole: z.enum(COMPONENT_ROLES),
+      bias: z.number().min(PORTION_BIAS_BOUNDS.min).max(PORTION_BIAS_BOUNDS.max).nullable(),
+    })
+    .strict(),
+  title: (p) =>
+    p.bias === null
+      ? `Reset ${p.componentRole} portion bias`
+      : `Set ${p.componentRole} portion bias to ${p.bias.toFixed(2)}`,
+  apply: async (tx, { memberId, componentRole, bias }) => {
+    const member = await requireMember("portion_bias.set", tx, memberId);
+    if (member.isTargeted)
+      throw new ChangeOpError(
+        "portion_bias.set",
+        "targeted members' portions are fixed by their targets (FBK-5)",
+      );
+    const key = { memberId, componentRole };
+    const existing = await tx.get("portion_bias", key);
+    if (bias === null) {
+      if (existing === null) throw new ChangeOpError("portion_bias.set", "no bias to reset");
+      await tx.remove("portion_bias", key);
+    } else if (existing === null) {
+      await tx.insert("portion_bias", { householdId: tx.householdId, ...key, bias });
+    } else {
+      await tx.update("portion_bias", key, { bias });
     }
   },
 });

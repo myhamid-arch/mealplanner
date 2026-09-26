@@ -377,11 +377,21 @@ export async function populateAllTables(db: Executor, loaded: LoadedFixture): Pr
     section: "targets",
     level: "expert",
   });
-  await write.portion_bias.insert({
-    householdId: ctx.householdId,
-    memberId: second.id,
-    componentRole: "carb",
-    bias: 1.1,
+  // FBK-5 learned portion bias: a `learning` change set (BLD-8 R-24).
+  const untargeted = need(
+    members.find((m) => !m.isTargeted),
+    "untargeted member",
+  );
+  await applyChangeSet(db, ctx, {
+    actor: "system",
+    source: "learning",
+    summary: "Populate portion bias",
+    ops: [
+      {
+        kind: "portion_bias.set",
+        payload: { memberId: untargeted.id, componentRole: "carb", bias: 1.1 },
+      },
+    ],
   });
   await write.dish_nutrition_cache.insert({
     variantId: grilled.id,

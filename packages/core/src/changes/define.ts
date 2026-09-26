@@ -27,6 +27,7 @@ export const ENTITY_AREAS: { readonly [E in MutableEntityName]: ChangeArea } = {
   tolerance: "targets",
   meal_distribution: "targets",
   slot_target_override: "targets",
+  portion_bias: "taste",
   slot_type: "schedule",
   member_slot_schedule: "schedule",
   training_schedule: "schedule",

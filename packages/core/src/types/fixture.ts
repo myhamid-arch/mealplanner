@@ -67,7 +67,7 @@ export const FixtureMemberSchema = z.object({
 export const FixtureCustomSlotSchema = z.object({
   key,
   label: z.string().min(1),
-  emoji: z.string().min(1),
+  icon: z.string().regex(/^[a-z0-9-]+$/),
   sortOrder: z.number().int(),
   defaultTime: time,
   isShared: z.boolean(),
@@ -255,7 +255,7 @@ export type FixtureDish = z.output<typeof FixtureDishSchema>;
 
 /** Global catalogue rows a fixture relies on (SPEC-Q-8: test-only until leaf 1.1.3 lands). */
 export const FixtureCatalogSchema = z.object({
-  cuisines: z.array(z.object({ key, label: z.string(), flagEmoji: z.string().optional() })),
+  cuisines: z.array(z.object({ key, label: z.string() })),
   methods: z.array(
     z.object({ key, label: z.string(), description: z.string(), appealTags: z.array(z.string()) }),
   ),
