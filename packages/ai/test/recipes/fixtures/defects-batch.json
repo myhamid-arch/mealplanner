@@ -4,14 +4,8 @@
       "name": "Tandoori chicken with cumin rice and raita",
       "description": "Hammour fillets in a ginger-garlic yoghurt marinade, with cumin-scented basmati, a cooling cucumber raita and turmeric green beans.",
       "cuisine": "indian",
-      "slotKeys": [
-        "dinner"
-      ],
-      "flavourTags": [
-        "spiced",
-        "smoky",
-        "cooling"
-      ],
+      "slotKeys": ["dinner"],
+      "flavourTags": ["spiced", "smoky", "cooling"],
       "isPackable": false,
       "servedColdOk": false,
       "components": [
@@ -238,13 +232,8 @@
       "name": "Grilled chicken with freekeh and tahini sauce",
       "description": "Grilled chicken breast over freekeh with a lemon tahini sauce.",
       "cuisine": "levantine",
-      "slotKeys": [
-        "dinner"
-      ],
-      "flavourTags": [
-        "nutty",
-        "smoky"
-      ],
+      "slotKeys": ["dinner"],
+      "flavourTags": ["nutty", "smoky"],
       "isPackable": false,
       "servedColdOk": false,
       "components": [
@@ -427,23 +416,14 @@
           ]
         }
       ],
-      "assemblySteps": [
-        "Plate the freekeh and chicken and serve the sauce on the side."
-      ]
+      "assemblySteps": ["Plate the freekeh and chicken and serve the sauce on the side."]
     },
     {
       "name": "Chicken or lamb with rice and yoghurt sauce",
       "description": "Marinated chicken breast with fluffy basmati rice, oven-roasted peppers, courgette and onion, and a cool garlic-mint yoghurt on the side.",
       "cuisine": "levantine",
-      "slotKeys": [
-        "dinner",
-        "lunch"
-      ],
-      "flavourTags": [
-        "lemony",
-        "garlicky",
-        "fresh"
-      ],
+      "slotKeys": ["dinner", "lunch"],
+      "flavourTags": ["lemony", "garlicky", "fresh"],
       "isPackable": true,
       "servedColdOk": false,
       "components": [
@@ -725,13 +705,8 @@
       "name": "Red wine braised beef with mash",
       "description": "Beef braised slowly in red wine, with creamy mashed potato.",
       "cuisine": "french",
-      "slotKeys": [
-        "dinner"
-      ],
-      "flavourTags": [
-        "rich",
-        "winey"
-      ],
+      "slotKeys": ["dinner"],
+      "flavourTags": ["rich", "winey"],
       "isPackable": false,
       "servedColdOk": false,
       "components": [
@@ -861,23 +836,14 @@
           ]
         }
       ],
-      "assemblySteps": [
-        "Plate the mash, spoon the beef beside it and add the gravy."
-      ]
+      "assemblySteps": ["Plate the mash, spoon the beef beside it and add the gravy."]
     },
     {
       "name": "Lemon garlic chicken with rice, roasted vegetables and yogurt mint sauce",
       "description": "Marinated chicken breast with fluffy basmati rice, oven-roasted peppers, courgette and onion, and a cool garlic-mint yoghurt on the side.",
       "cuisine": "levantine",
-      "slotKeys": [
-        "dinner",
-        "lunch"
-      ],
-      "flavourTags": [
-        "lemony",
-        "garlicky",
-        "fresh"
-      ],
+      "slotKeys": ["dinner", "lunch"],
+      "flavourTags": ["lemony", "garlicky", "fresh"],
       "isPackable": true,
       "servedColdOk": false,
       "components": [
@@ -1167,14 +1133,8 @@
       "name": "Garden salad with lemon dressing",
       "description": "Crisp leaves, cucumber and tomato with a sharp lemon dressing.",
       "cuisine": "mediterranean",
-      "slotKeys": [
-        "dinner",
-        "lunch"
-      ],
-      "flavourTags": [
-        "fresh",
-        "crisp"
-      ],
+      "slotKeys": ["dinner", "lunch"],
+      "flavourTags": ["fresh", "crisp"],
       "isPackable": true,
       "servedColdOk": true,
       "components": [
@@ -1255,22 +1215,14 @@
           ]
         }
       ],
-      "assemblySteps": [
-        "Plate the salad and serve the dressing on the side."
-      ]
+      "assemblySteps": ["Plate the salad and serve the dressing on the side."]
     },
     {
       "name": "Herb-crusted cod with crushed potatoes, peas and lemon-dill yoghurt",
       "description": "Baked cod under a lemon and parsley crust, with crushed boiled potatoes, garden peas and a lemon-dill yoghurt sauce.",
       "cuisine": "british",
-      "slotKeys": [
-        "dinner"
-      ],
-      "flavourTags": [
-        "herby",
-        "lemony",
-        "comforting"
-      ],
+      "slotKeys": ["dinner"],
+      "flavourTags": ["herby", "lemony", "comforting"],
       "isPackable": false,
       "servedColdOk": false,
       "components": [

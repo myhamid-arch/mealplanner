@@ -3,11 +3,7 @@
 import { describe, expect, it } from "vitest";
 import { generateRecipes } from "../../src/recipes/index.js";
 import { batchFixture, batchResponse } from "./support/recorded.js";
-import {
-  DEFECTS_VALID_DISH,
-  DEFECT_CLASSES,
-  INFEASIBLE_DISH,
-} from "./support/expectations.js";
+import { DEFECTS_VALID_DISH, DEFECT_CLASSES, INFEASIBLE_DISH } from "./support/expectations.js";
 import { f1DinnerRequest, libraryWithChicken, scenario } from "./support/scenario.js";
 
 describe("G1 valid batch", () => {
@@ -43,7 +39,9 @@ describe("G1 valid batch", () => {
     expect(run.generationIds).toEqual(["gen-1"]);
     expect(s.ports.saved).toHaveLength(1);
     expect(s.ports.saved[0]?.generationIds).toEqual(["gen-1"]);
-    expect(s.ports.saved[0]?.dishes.map((d) => d.dish.name)).toEqual(valid.dishes.map((d) => d.name));
+    expect(s.ports.saved[0]?.dishes.map((d) => d.dish.name)).toEqual(
+      valid.dishes.map((d) => d.name),
+    );
   });
 
   it("passes count through (REC-6: count from the request) and does not follow up when met", async () => {
@@ -124,7 +122,9 @@ describe("G1 defect classes", () => {
     for (const expected of DEFECT_CLASSES)
       for (const code of expected.codes)
         expect(errors).toContainEqual(expect.objectContaining({ dish: expected.dish, code }));
-    expect(errors).toContainEqual(expect.objectContaining({ dish: INFEASIBLE_DISH, code: "infeasible" }));
+    expect(errors).toContainEqual(
+      expect.objectContaining({ dish: INFEASIBLE_DISH, code: "infeasible" }),
+    );
     expect(s.ports.records[1]?.validationErrors).toBeNull();
     expect(s.ports.records[1]?.cacheReadTokens).toBe(14000);
     expect(s.ports.saved).toHaveLength(1);

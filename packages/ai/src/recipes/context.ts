@@ -90,27 +90,47 @@ function escapeRegExp(s: string): string {
 }
 
 /**
- * Replaces every member's display name (and each word of it of 3+ letters) in household free text
- * with the member's pseudonymous label, or "a family member" for a member not at this meal.
+ * Replaces e-mail addresses with "[email]", then every member's display name (and each word of it
+ * of 3+ letters) in household free text with the member's pseudonymous label, or "a family member"
+ * for a member not at this meal.
  */
 export function scrubNames(text: string, names: ReadonlyMap<string, string>): string {
-  const terms: Array<[string, string]> = [];
+  // Each whole name maps to its member's label; each word of 3+ letters too, unless several
+  // members share it (a family name), in which case it becomes "[family name]".
+  const whole = new Map<string, string>();
+  const words = new Map<string, Set<string>>();
   for (const [name, label] of names) {
     const trimmed = name.trim();
     if (trimmed === "") continue;
-    terms.push([trimmed, label]);
-    for (const word of trimmed.split(/\s+/)) if (word.length >= 3) terms.push([word, label]);
+    whole.set(trimmed.toLowerCase(), label);
+    for (const word of trimmed.split(/\s+/)) {
+      if (word.length < 3) continue;
+      const key = word.toLowerCase();
+      if (!words.has(key)) words.set(key, new Set());
+      words.get(key)?.add(label === "a family member" ? `other:${name}` : label);
+    }
   }
-  // Longest first, so "Omar Khalid" is replaced before "Omar".
-  terms.sort((a, b) => b[0].length - a[0].length);
-  let out = text;
-  for (const [term, label] of terms) {
-    out = out.replace(
-      new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(term)}(?![\\p{L}\\p{N}])`, "giu"),
-      label,
+  const replacement = new Map<string, string>(whole);
+  for (const [word, labels] of words) {
+    if (whole.has(word)) continue;
+    const [first = ""] = labels;
+    replacement.set(
+      word,
+      labels.size > 1 ? "[family name]" : first.startsWith("other:") ? "a family member" : first,
     );
   }
-  return out;
+  // E-mail addresses first, so a name inside one does not leave the rest behind.
+  const out = text.replace(/[\p{L}\p{N}._%+-]+@[\p{L}\p{N}.-]+\.[\p{L}]{2,}/gu, "[email]");
+  if (replacement.size === 0) return out;
+  // One pass, longest term first ("Omar Haddad" before "Omar"), so inserted labels are not rescanned.
+  const alternatives = [...replacement.keys()]
+    .sort((a, b) => b.length - a.length)
+    .map(escapeRegExp)
+    .join("|");
+  return out.replace(
+    new RegExp(`(?<![\\p{L}\\p{N}])(?:${alternatives})(?![\\p{L}\\p{N}])`, "giu"),
+    (match) => replacement.get(match.toLowerCase()) ?? match,
+  );
 }
 
 function sortedUnique(values: Iterable<string>): string[] {

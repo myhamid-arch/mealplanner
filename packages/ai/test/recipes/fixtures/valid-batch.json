@@ -4,15 +4,8 @@
       "name": "Lemon-garlic chicken with rice, roasted vegetables and yoghurt-mint sauce",
       "description": "Marinated chicken breast with fluffy basmati rice, oven-roasted peppers, courgette and onion, and a cool garlic-mint yoghurt on the side.",
       "cuisine": "levantine",
-      "slotKeys": [
-        "dinner",
-        "lunch"
-      ],
-      "flavourTags": [
-        "lemony",
-        "garlicky",
-        "fresh"
-      ],
+      "slotKeys": ["dinner", "lunch"],
+      "flavourTags": ["lemony", "garlicky", "fresh"],
       "isPackable": true,
       "servedColdOk": false,
       "components": [
@@ -302,15 +295,8 @@
       "name": "Garlic prawns with tomato-basil spaghetti and rocket salad",
       "description": "Spaghetti with a slow-simmered tomato and basil sauce, garlicky prawns, and a peppery rocket and cherry-tomato salad with a lemon dressing on the side.",
       "cuisine": "italian",
-      "slotKeys": [
-        "dinner",
-        "lunch"
-      ],
-      "flavourTags": [
-        "garlicky",
-        "bright",
-        "tomato"
-      ],
+      "slotKeys": ["dinner", "lunch"],
+      "flavourTags": ["garlicky", "bright", "tomato"],
       "isPackable": false,
       "servedColdOk": false,
       "components": [
@@ -568,14 +554,8 @@
       "name": "Tandoori-spiced hammour with cumin rice, cucumber raita and spiced green beans",
       "description": "Hammour fillets in a ginger-garlic yoghurt marinade, with cumin-scented basmati, a cooling cucumber raita and turmeric green beans.",
       "cuisine": "indian",
-      "slotKeys": [
-        "dinner"
-      ],
-      "flavourTags": [
-        "spiced",
-        "smoky",
-        "cooling"
-      ],
+      "slotKeys": ["dinner"],
+      "flavourTags": ["spiced", "smoky", "cooling"],
       "isPackable": false,
       "servedColdOk": false,
       "components": [

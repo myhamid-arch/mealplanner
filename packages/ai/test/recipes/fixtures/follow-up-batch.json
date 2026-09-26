@@ -4,15 +4,8 @@
       "name": "Garlic prawns with tomato-basil spaghetti and rocket salad",
       "description": "Spaghetti with a slow-simmered tomato and basil sauce, garlicky prawns, and a peppery rocket and cherry-tomato salad with a lemon dressing on the side.",
       "cuisine": "italian",
-      "slotKeys": [
-        "dinner",
-        "lunch"
-      ],
-      "flavourTags": [
-        "garlicky",
-        "bright",
-        "tomato"
-      ],
+      "slotKeys": ["dinner", "lunch"],
+      "flavourTags": ["garlicky", "bright", "tomato"],
       "isPackable": false,
       "servedColdOk": false,
       "components": [

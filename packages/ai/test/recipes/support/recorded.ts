@@ -18,8 +18,7 @@ export type RecordedRequest = {
 };
 
 export type RecordedResponse =
-  | { status: number; body: unknown; headers?: Record<string, string> }
-  | { networkError: string };
+  { status: number; body: unknown; headers?: Record<string, string> } | { networkError: string };
 
 export type Recorder = { anthropic: Anthropic; requests: RecordedRequest[]; remaining(): number };
 
@@ -50,7 +49,11 @@ export function recordedClient(
     return Promise.resolve(
       new Response(JSON.stringify(next.body), {
         status: next.status,
-        headers: { "content-type": "application/json", "request-id": `req_recorded_${String(requests.length)}`, ...next.headers },
+        headers: {
+          "content-type": "application/json",
+          "request-id": `req_recorded_${String(requests.length)}`,
+          ...next.headers,
+        },
       }),
     );
   };
