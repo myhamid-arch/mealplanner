@@ -6,6 +6,7 @@ export * from "./catalog.js";
 export * from "./recipes.js";
 export * from "./plans.js";
 export * from "./feedback.js";
+export * from "./review-revision.js";
 export * from "./agent.js";
 export * from "./graph.js";
 export * from "./audit.js";

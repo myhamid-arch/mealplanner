@@ -1,6 +1,6 @@
 # leaf-1.3.2 ADR-1: preference learning, keys and the write path
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, BLD-8 R-26)
 Requirement: FBK-2, FBK-3, FBK-4, FBK-5, DM-6, SC-3; BLD-8 R-7, R-24
 Libraries: none added. Uses `zod` 4.6.5 (already in `@mealplanner/core`) and `drizzle-orm` 0.45.3 (already in `@mealplanner/db`).
 
@@ -23,9 +23,9 @@ FBK-4 defines the score as `Σ(wᵢ·sᵢ) / (Σwᵢ + k)` with `k = 2`, stored 
 
 Ids match `review.target_id`, so a review's target key is its preference key.
 
-**Incremental update.** For an existing row with `score = S` and `evidence_weight = W`, the weighted sum is recovered as `Σws = S·(W + k)`. Adding contributions `(wᵢ, sᵢ)` gives `W' = W + Σwᵢ` and `S' = (S·(W + k) + Σwᵢsᵢ) / (W' + k)`. Both values are rounded to 3 decimals, as the column stores them. Each weight is rounded to 3 decimals before use, so the stored `evidence_weight` equals the sum of the FBK-4 weights as written. The rounding error on the score is at most 0.0005 per update, and the change is not otherwise lossy.
+**Incremental update.** For an existing row with `score = S` and `evidence_weight = W`, the weighted sum is recovered as `Σws = S·(W + k)`. Adding contributions `(wᵢ, sᵢ)` gives `W' = W + Σwᵢ` and `S' = (S·(W + k) + Σwᵢsᵢ) / (W' + k)`. Both values are rounded to 3 decimals, as the column stores them. Each weight is rounded to 3 decimals before use, so the stored `evidence_weight` equals the sum of the FBK-4 weights as written. Each update adds at most 0.0005 of rounding to the score, and earlier rounding is carried forward scaled by `(W + k)/(W' + k) ≤ 1`. The tests measure the drift: under 0.003 against the closed form after 40 mixed reviews, and 0.001 after an edit that retracts and re-applies a review. An exact running Σw·s would need a new column. This leaf does not request one.
 
-**One contribution per key per review.** Contributions to the same key in one review are summed (for example, two eaten variants with the same method). The method key receives the weight once per review, because "each eaten variant's method" names methods, not variants. A distinct method receives 0.3.
+**One contribution per key per review.** A review reaches each key at most once. For example, two eaten variants cooked by the same method give that method 0.3 once, because "each eaten variant's method" names methods, not variants. A core ingredient shared by several eaten variants counts once toward `n`, and it receives `0.15/√n` once.
 
 **Locked.** Learning reads the key's rows first and never emits `preference.set` for a locked `learned` row (SPEC-Q-8). The `preference.set` op also refuses that write, as a second line of defence.
 
