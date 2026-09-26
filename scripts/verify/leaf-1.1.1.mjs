@@ -228,6 +228,21 @@ const ILLEGAL_PROBES = [
   },
   {
     file: "packages/core/src/__probe__.ts",
+    code: 'export * from "@mealplanner/db";',
+    rule: "boundaries/dependencies",
+  },
+  {
+    file: "packages/core/src/__probe__.ts",
+    code: 'export const lazy = import("@mealplanner/db");',
+    rule: "boundaries/dependencies",
+  },
+  {
+    file: "packages/core/src/__probe__.ts",
+    code: 'import type { Anything } from "@mealplanner/db";\nexport type Alias = Anything;',
+    rule: "boundaries/dependencies",
+  },
+  {
+    file: "packages/core/src/__probe__.ts",
     code: 'import "node:fs";',
     rule: "no-restricted-imports",
   },
@@ -365,7 +380,7 @@ async function gateG2() {
     const results = lintProbes(copy.dir, probes);
     for (const probe of probes) {
       const messages = results.get(join(copy.dir, probe.file)) ?? null;
-      const where = `${probe.file.split("/").slice(0, 2).join("/")} \`${probe.code}\``;
+      const where = `${probe.file.split("/").slice(0, 2).join("/")} \`${probe.code.replaceAll("\n", " ")}\``;
       if (probe.legal) {
         report.check(
           messages !== null && messages.length === 0,
