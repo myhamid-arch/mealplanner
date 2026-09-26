@@ -57,3 +57,6 @@ Defined from the PLN-5 naturalness term: for a plate with main-dish components `
 
 ## SPEC-Q-16: variant appeal of a combination
 `variantAppeal` in the PLN-5 objective is the mean appeal of the chosen variants of the components served (g > 0). Missing appeal counts as 0. With more than 24 combinations the top-3 variants per component are kept by appeal, ties broken by `is_default`, then input order.
+
+## SPEC-Q-17: G4 median ratio deviation with λ_ratio = 0.5 (blocks G4; raised on PR #6)
+With the 04 §4 constants the centring term (`Σ|dev|/tol`, up to 4 inside the band) outweighs naturalness (`0.5·Σ|g−ρG|/G_ref ≈ 0.5·r`), so the solver picks dead-centre plates over natural ones. On the leaf's 25-dish test set against F1's week of slot targets, the median ratio deviation of the 350 in-tolerance plates is 0.273 (0.270 after the reference plates were set to high-protein defaults). Diagnostic runs, constants unchanged in code: λ_ratio 1 → 0.246, 2 → 0.210, 5 → 0.183, 20 → 0.130. Options put to the architect: raise `LAMBDA_RATIO` (recommended: 2), revise the G4 threshold or metric, or a different centring term. No constant, gate or threshold has been changed.
