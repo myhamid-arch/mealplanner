@@ -20,6 +20,7 @@ import {
   verification,
 } from "@mealplanner/db/schema";
 import { emailNotConfigured, type Mailer } from "../server/mail";
+import { authRequestFlags } from "./request-flags";
 
 export interface AuthOptions {
   db: NodePgDatabase;
@@ -102,6 +103,17 @@ export function createAuth(options: AuthOptions) {
       },
     },
     databaseHooks: {
+      // R-42: the library removes the password of an unverified account on its first magic-link
+      // sign-in (pre-registration takeover defence); the auth route reports it to the client.
+      account: {
+        delete: {
+          before: (a) => {
+            const flags = authRequestFlags.getStore();
+            if (flags !== undefined && a.providerId === "credential") flags.passwordRemoved = true;
+            return Promise.resolve();
+          },
+        },
+      },
       session: {
         create: {
           before: async (s, context) => {

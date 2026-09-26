@@ -76,7 +76,9 @@ export const account = pgTable(
 export const verification = pgTable(
   "verification",
   {
-    id: uuid("id").primaryKey(),
+    // text, not uuid (BLD-8 R-42): Better Auth 1.7.6 `reserveVerificationValue` writes its own
+    // non-UUID primary key (base64url of a SHA-256), e.g. on magic-link sign-in.
+    id: text("id").primaryKey(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: tstz("expires_at").notNull(),

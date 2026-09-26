@@ -181,7 +181,7 @@ export function buildOpenApiDocument(endpoints: readonly EndpointSpec[] = ENDPOI
       title: "Family Meal Planner API",
       version: "1.0.0",
       description:
-        "REST JSON API (ARC-5). Errors are RFC 7807 problem+json. Every household endpoint enforces the ARC-6 role matrix (`x-roles`) and household scope.",
+        "REST JSON API (ARC-5). Errors are RFC 7807 problem+json. Every household endpoint enforces the ARC-6 role matrix (`x-roles`) and household scope. Sign-in, magic link and the two-step step are Better Auth's endpoints under `/api/auth`; when the first magic-link sign-in of an unverified account removes its password, the verify redirect carries `passwordRemoved=1` and the header `x-password-removed: 1` (BLD-8 R-42).",
     },
     servers: [{ url: "/" }],
     tags: [...new Set(endpoints.map((e) => e.tag))].map((name) => ({ name })),

@@ -107,7 +107,7 @@ const GATES = {
   G4: {
     title:
       "block revokes all sessions immediately (next request 401); invites single-use with expiry; TOTP enforced when required (R2-ADM)",
-    files: ["test/api/g4-access.int.test.ts"],
+    files: ["test/api/g4-access.int.test.ts", "test/api/g4-magic-link.int.test.ts"],
     required: [
       "G4 blocking a login deletes all its sessions at once: the next request is 401 and sign-in is refused; unblocking restores access",
       "G4 a platform block revokes every session of the user and refuses sign-in",
@@ -120,6 +120,8 @@ const GATES = {
       "G4 undoing an unblock blocks the login again and revokes its sessions",
       "G4 a removed login rejoins with a new invite and its own credentials",
       "G4 a suspended household's admin still sees and cancels an operator's deletion, and nothing else",
+      "G4 a magic link signs a login in; the first one for an unverified account removes its password and sessions and says so (R-42)",
+      "G4 no magic link is sent to a user with two-step sign-in on, and their password and sessions stay (SPEC-Q-6)",
     ],
     negative: [
       "G4 negative control: an access.block applied without the session revocation leaves the sessions alive",
@@ -696,6 +698,21 @@ function checkG4(report, measured) {
       one("suspended-cancel")?.cancel === 200 &&
       one("suspended-cancel")?.other === 403,
     "undoing an unblock revokes sessions; a removed login rejoins with its credentials; a suspended household can cancel its deletion",
+  );
+  const ml = one("magic-link");
+  report.check(
+    ml?.firstFlagged === true &&
+      ml.me === 200 &&
+      ml.oldToken === 401 &&
+      ml.passwordAfter !== 200 &&
+      ml.secondMe === 200 &&
+      one("magic-link-totp")?.mailed === false &&
+      one("magic-link-totp")?.sessionsKept === true,
+    "magic link: signs in; the first for an unverified account removes the password and sessions and flags it (R-42); none is sent with two-step sign-in on",
+  );
+  report.check(
+    ml?.secondFlagged === false,
+    "negative control: a later magic link (nothing removed) carries no flag",
   );
   const noReq = one("negative-no-requirement");
   report.check(

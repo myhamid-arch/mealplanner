@@ -59,4 +59,6 @@ BEGIN
 	RETURN OLD;
 END;
 $$;--> statement-breakpoint
-CREATE TRIGGER "job_delete_only_queued" BEFORE DELETE ON "job" FOR EACH ROW EXECUTE FUNCTION "job_delete_only_queued"();
+CREATE TRIGGER "job_delete_only_queued" BEFORE DELETE ON "job" FOR EACH ROW EXECUTE FUNCTION "job_delete_only_queued"();--> statement-breakpoint
+-- BLD-8 R-42: Better Auth writes non-UUID verification ids (reserveVerificationValue).
+ALTER TABLE "verification" ALTER COLUMN "id" TYPE text;

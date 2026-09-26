@@ -30,3 +30,11 @@ export const JobRef = z.object({ jobId: Id });
 export const Ok = z.object({ ok: z.literal(true) });
 
 export const Empty = z.object({}).strict();
+
+/**
+ * R-42: the first magic-link sign-in of an account whose email was not verified removes its
+ * password (the auth library's pre-registration takeover defence). The verify response then
+ * carries this query parameter on its redirect and this header, so the client can say "Your
+ * password was removed because you signed in by email link; set a new one in Account".
+ */
+export const PASSWORD_REMOVED = { query: "passwordRemoved", header: "x-password-removed" } as const;
