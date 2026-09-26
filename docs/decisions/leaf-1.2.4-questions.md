@@ -11,7 +11,7 @@ DM-3 says variants SHOULD share their core ingredients; REC-5 step 4 makes it me
 
 ## SPEC-Q-2: "feasible for both targeted adults at their dinner target" (G4)
 - Targets are what 1.2.2's `resolveSlotTargets` produces for the F1 fixture (`f1Config()`) over the F1 week, dinner slot only, with R-28's per-slot kcal band. Adult A and Adult B each have a `default` and a `training` dinner target in that week; the distinct (member, day kind) targets are used (identical dates give identical targets).
-- A dish counts as feasible only if `solvePlate` returns `in_tolerance` in strict mode for **every** one of those targets for **both** adults, **without adjusters** and with empty appeal (the stricter reading: PLN-8 lets the planner add adjusters, but a library that needs them for most dinners would not give 1.2.3 room). The rate with the seed adjusters offered is measured and printed alongside, not gated.
+- A dish counts as feasible only if `solvePlate` returns `in_tolerance` in strict mode for **every** one of those targets for **both** adults, with the seed adjusters of `data/adjusters.json` offered (up to 2 per plate, PLN-6, as the planner runs it) and empty appeal. **Amended by R-31** (the proposal was: without adjusters). The rate without adjusters and the failing dishes are printed alongside, not gated. Threshold ≥ 80 %.
 - Only dishes whose `slot_keys` include `dinner` are in the denominator; G1 requires at least 8 of them, and the library has many more (the PR reports the count).
 
 ## SPEC-Q-3: "every slot type has ≥ 8 suitable dishes" (G1)
