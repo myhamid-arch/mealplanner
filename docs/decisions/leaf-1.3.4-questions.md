@@ -1,6 +1,6 @@
 # leaf-1.3.4 spec questions
 
-Each question states the reading this leaf builds on (the more conservative one) until the architect rules. None blocks a gate.
+Each question states the reading this leaf builds on. Rulings: BLD-8 R-35 (CP1 APPROVED). SPEC-Q-1 was accepted with conditions (parameterised SQL only; every household-scoped read filters by `household_id`; integration tests on the migrated schema; a G3 test that the source never returns another household's rows). SPEC-Q-2 was accepted with the key format fixed by R-36 (ingredient exclusion keys are slugs; an id also matches). SPEC-Q-4 was amended: the dish vector uses 1.3.2's `coreIngredients`. SPEC-Q-3 and SPEC-Q-5 to SPEC-Q-12 were accepted as proposed.
 
 ## SPEC-Q-1: where sync reads the relational rows
 08 §3 says recipe, member and preference writes enqueue `kg.sync`, and 10 §2 puts "sync" in `packages/graph`. R-2 forbids `graph → db` imports. The sync must still read dishes, members, preferences, exclusions and the catalogue.
@@ -23,6 +23,7 @@ Reading: sort by weight descending, then by macro distance `|Δprotein| + |Δcar
 Reading (ADR-2):
 - Dish ingredient vector: the mean over components of the mean over each component's variants of CONTAINS weights. Every component counts equally, whatever its raw mass.
 - `water` is excluded from the vector: it is the largest raw mass in every boiled-grain variant, and it would make any two rice dishes look alike.
+- **Ruling (R-35):** the vector uses 1.3.2's `coreIngredients`, which also leaves out `herb_spice`, so similarity and the preference model agree on what an ingredient of a dish is. Built that way.
 - Cuisine term: `max over cuisines c of min(w₁(c), w₂(c))`, where w is the OF_CUISINE weight (primary 1, secondary 0.5).
 - Methods and flavour tags: Jaccard of the two sets.
 - Candidates are dishes visible to the household with status `active` or `retired`. Retired dishes stay in the graph so that reviews on them still inform `kgSimilarityTerm`. Draft dishes are not in the graph (SPEC-Q-10).

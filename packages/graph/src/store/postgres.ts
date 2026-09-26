@@ -86,17 +86,37 @@ export class PostgresGraphStore implements GraphSyncStore {
   // Transactions
   // -------------------------------------------------------------------------------------------
 
+  /**
+   * With a pool, checks out a client and runs `work` in BEGIN … COMMIT. With a single client, joins
+   * the caller's open transaction through a savepoint (so the caller's COMMIT or ROLLBACK decides),
+   * or opens its own when none is open.
+   */
   async transaction<T>(work: (store: GraphSyncStore) => Promise<T>): Promise<T> {
     const db = this.#db;
     const client = isConnectable(db) ? await db.connect() : null;
     const conn: Queryable = client ?? db;
+    // SAVEPOINT succeeds only inside a transaction block; outside one it fails with 25P01.
+    const nested =
+      client === null &&
+      (await conn.query("SAVEPOINT kg_graph_store").then(
+        () => true,
+        (error: unknown) => {
+          if ((error as { code?: unknown }).code === "25P01") return false;
+          throw error;
+        },
+      ));
     try {
-      await conn.query("BEGIN");
+      if (!nested) await conn.query("BEGIN");
       const result = await work(new TransactionalGraphStore(conn, this.#options));
-      await conn.query("COMMIT");
+      await conn.query(nested ? "RELEASE SAVEPOINT kg_graph_store" : "COMMIT");
       return result;
     } catch (error) {
-      await conn.query("ROLLBACK").catch(() => undefined);
+      if (nested)
+        await conn
+          .query("ROLLBACK TO SAVEPOINT kg_graph_store")
+          .then(() => conn.query("RELEASE SAVEPOINT kg_graph_store"))
+          .catch(() => undefined);
+      else await conn.query("ROLLBACK").catch(() => undefined);
       throw error;
     } finally {
       client?.release();

@@ -1,6 +1,6 @@
 # leaf-1.3.4 ADR-2: graph derivation, sync and rebuild
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, BLD-8 R-35 with the SPEC-Q-4 amendment below)
 Requirements: KG-1 … KG-4 (08 §1–§5), FBK-4 (`kgSimilarityTerm`)
 
 ## Layers
@@ -47,8 +47,8 @@ Each request runs in one transaction: upsert the entity's nodes, replace the edg
 `rebuildGraph()` deletes every node and edge except `source = 'ai'` edges and the nodes they touch (SPEC-Q-8), then runs catalogue, every dish, every household's members and preferences, and `recomputeLibrary()`, in one transaction.
 
 ## KG-4 uses
-- **Similarity.** `sim(d₁,d₂) = 0.6·J + 0.2·C + 0.1·M + 0.1·F` (SPEC-Q-4): `J` weighted Jaccard `Σmin/Σmax` over dish ingredient vectors, a dish vector being the mean over its components of the mean over the component's variants of the CONTAINS weights, water excluded; `C = max over cuisines of min(OF_CUISINE weights)`; `M` Jaccard of the dishes' method sets; `F` Jaccard of flavour-tag sets. `why` cites the shared ingredients (top 3 by shared weight, by label), the shared cuisine, methods and flavour tags. Candidates are dishes visible to the household with `sim > 0`, sorted by `sim` desc then dish id.
+- **Similarity.** `sim(d₁,d₂) = 0.6·J + 0.2·C + 0.1·M + 0.1·F` (SPEC-Q-4): `J` weighted Jaccard `Σmin/Σmax` over dish core-ingredient vectors (R-35: 1.3.2's `coreIngredients`, which leaves out `herb_spice` and `water`). Each variant's core ingredients are renormalised to shares of their raw grams (the CONTAINS `rawG` prop); a component's vector is the mean over its variants; the dish vector is the mean over the components that have core ingredients; `C = max over cuisines of min(OF_CUISINE weights)`; `M` Jaccard of the dishes' method sets; `F` Jaccard of flavour-tag sets. `why` cites the shared ingredients (top 3 by shared weight, by label), the shared cuisine, methods and flavour tags. Candidates are dishes visible to the household with `sim > 0`, sorted by `sim` desc then dish id. `similarDishes` computes the features of every visible dish per call (one recursive-CTE query); at the seed library's size (62 dishes plus a household's own) that is one query and a few milliseconds of arithmetic.
 - **`kgSimilarityTerm`** (FBK-4): `Σ simᵢ·scoreᵢ / Σ simᵢ` over the 10 most similar dishes that the member has a dish score for; 0 when there are none.
-- **Substitution.** `substitutes()` returns SUBSTITUTES_FOR neighbours visible to the household, minus any candidate hit by the household's exclusions (SPEC-Q-2), sorted by weight desc, then macro distance `|ΔP|+|ΔC|+|ΔF|` asc, then id (SPEC-Q-3).
+- **Substitution.** `substitutes()` returns SUBSTITUTES_FOR neighbours visible to the household, minus any candidate hit by the household's exclusions (SPEC-Q-2; every row whatever its `hard` flag, R-34; ingredient keys are slugs, R-36, and an id also matches), sorted by weight desc, then macro distance `|ΔP|+|ΔC|+|ΔF|` asc, then id (SPEC-Q-3).
 - **Palette.** `expandPalette(store, { householdId, ingredientIds, cuisineKeys, limit })` ranks candidate ingredients by `Σ PAIRS_WITH weight from the window's ingredients + Σ TYPICAL_IN weight to the requested cuisines`, excluding the window's own ingredients, with the contributing paths as `why`.
 - **Explanations** are the `why` strings of `similarDishes` and `expandPalette` (graph paths by label).

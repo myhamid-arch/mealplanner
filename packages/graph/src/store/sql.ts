@@ -8,13 +8,16 @@ export interface Queryable {
   query(text: string, values?: unknown[]): Promise<{ rows: unknown[]; rowCount: number | null }>;
 }
 
-/** A pool: a client can be checked out for a transaction. */
+/** A pool (`pg.Pool`): a client can be checked out for a transaction. */
 export interface Connectable extends Queryable {
   connect(): Promise<Queryable & { release(err?: Error | boolean): void }>;
+  /** Present on `pg.Pool` only; `pg.Client` also has `connect()`, which connects itself. */
+  readonly idleCount: number;
 }
 
 export function isConnectable(db: Queryable): db is Connectable {
-  return typeof (db as Partial<Connectable>).connect === "function";
+  const candidate = db as Partial<Connectable>;
+  return typeof candidate.connect === "function" && typeof candidate.idleCount === "number";
 }
 
 export async function rows<T>(db: Queryable, text: string, values: unknown[] = []): Promise<T[]> {
