@@ -4,32 +4,32 @@ OWNS: docs/decisions/leaf-1.2.3-*.md, packages/core/src/planner/select/**, packa
 
 Scope: Dish scoring, plan search, cook sheet, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 
-- [ ] G1: SC-1: F1 7-day plan with seed library and AI off has 100% targeted member-meals in tolerance or flagged with reason (measured)
+- [x] G1: SC-1: F1 7-day plan with seed library and AI off has 100% targeted member-meals in tolerance or flagged with reason (measured)
   CHECK: node scripts/verify/leaf-1.2.3.mjs --gate G1
   EXPECT: VERIFY leaf-1.2.3 G1 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=98e8beb4acd97c272126722ff86c9c6b232efbf940fc2d7cd5dc267a862e51e3; exit=0; EXPECT=matched; output-sha256=a6567bd1c2f2ba71b17ceb762c4a9e676c7ac74ac9ea9cd4615d8118095c118a; output-bytes=2178; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G2: SC-2: distinct ingredients with economy 0.4 vs 0 drop by at least 25% (measured, not asserted from a constant)
   CHECK: node scripts/verify/leaf-1.2.3.mjs --gate G2
   EXPECT: VERIFY leaf-1.2.3 G2 PASSED
   EVIDENCE: pending
 
-- [ ] G3: C3 sesame never appears in any C3 plate across 50 seeded plans; removing the exclusion makes it appear (negative control)
+- [x] G3: C3 sesame never appears in any C3 plate across 50 seeded plans; removing the exclusion makes it appear (negative control)
   CHECK: node scripts/verify/leaf-1.2.3.mjs --gate G3
   EXPECT: VERIFY leaf-1.2.3 G3 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=c6ec9f26e8b69614436cb841b0209ff6b0f0e31a440ab22244dff191f7b77911; exit=0; EXPECT=matched; output-sha256=e935903e857e89f09a60e0a54f08fd8cce9268a379244460ed047be5ee32b093; output-bytes=727; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G4: same seed gives identical plan; week at most 30 s, day at most 5 s (PLN-11)
+- [x] G4: same seed gives identical plan; week at most 30 s, day at most 5 s (PLN-11)
   CHECK: node scripts/verify/leaf-1.2.3.mjs --gate G4
   EXPECT: VERIFY leaf-1.2.3 G4 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=74e117842326cdef2f6dfe557a516fde64b271d898b9b9a80c388bd1391d04fb; exit=0; EXPECT=matched; output-sha256=f764e24963b9521e9b5ca22d5e77520a83b2946dd7037222f7fb125ebc5e9afa; output-bytes=1158; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G5: cook sheet raw totals equal the sum of plate raw equivalents and the plating table covers every attendee (PLN-14)
+- [x] G5: cook sheet raw totals equal the sum of plate raw equivalents and the plating table covers every attendee (PLN-14)
   CHECK: node scripts/verify/leaf-1.2.3.mjs --gate G5
   EXPECT: VERIFY leaf-1.2.3 G5 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=ea6eb42b49bd6606bab13e5bb18efedc865151aea62ab07cd7d9d49f59c9da5a; exit=0; EXPECT=matched; output-sha256=3ab578485d0dba347a4d1829351a950d256c221652180609e0146b5126fad4e4; output-bytes=748; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G6: meal_override split_member and make_individual are honoured (R2-MEAL-2)
+- [x] G6: meal_override split_member and make_individual are honoured (R2-MEAL-2)
   CHECK: node scripts/verify/leaf-1.2.3.mjs --gate G6
   EXPECT: VERIFY leaf-1.2.3 G6 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=618f8d1596ee96c0d12b55f8d79e4ec51a3d9641320ae4ca24f8b08ed6eb23be; exit=0; EXPECT=matched; output-sha256=bfad45c5bd00bf7a5f3fbc095d80beec79d4c39210f121bb6c3a16ed885aa186; output-bytes=842; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries

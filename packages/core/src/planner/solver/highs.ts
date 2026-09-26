@@ -68,8 +68,14 @@ const PLATE_OPTIONS = {
   mip_allow_cut_separation_at_nodes: false,
 } as const;
 
-/** Solves one MILP with a time limit; a time-limited run counts only if it has a feasible point. */
-export function solveMilp(milp: Milp, timeLimitS: number): MilpResult {
+/**
+ * Solves one MILP with a time limit; a time-limited run counts only if it has a feasible point.
+ * With `cutoff`, HiGHS prunes every node whose bound exceeds it (`objective_bound`). A model whose
+ * optimum is above the cutoff ends early, with no solution or with a feasible point, which can
+ * never be better than that optimum. A model whose optimum is at or below the cutoff is solved to
+ * the same proven optimum, unless the time limit ends the search first (leaf-1.2.3 ADR-2).
+ */
+export function solveMilp(milp: Milp, timeLimitS: number, cutoff?: number): MilpResult {
   const highs = highsRuntime();
   const starts: number[] = [0];
   const indices: number[] = [];
@@ -103,7 +109,11 @@ export function solveMilp(milp: Milp, timeLimitS: number): MilpResult {
   const status = highs.constants.modelStatus;
   try {
     return highs.withModel(data, (model) => {
-      model.options.set({ ...PLATE_OPTIONS, time_limit: timeLimitS });
+      model.options.set(
+        cutoff === undefined
+          ? { ...PLATE_OPTIONS, time_limit: timeLimitS }
+          : { ...PLATE_OPTIONS, time_limit: timeLimitS, objective_bound: cutoff },
+      );
       model.run();
       const code = model.getModelStatus();
       const hasPoint =

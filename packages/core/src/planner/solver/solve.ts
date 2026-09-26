@@ -166,7 +166,13 @@ function runStage(
     hard,
     relaxed,
   });
-  const bounded: Array<{ index: number; combo: Combo; main: MainTerm[]; bound: number }> = [];
+  const bounded: Array<{
+    index: number;
+    combo: Combo;
+    main: MainTerm[];
+    bound: number;
+    appealBound: number;
+  }> = [];
   combos.forEach((combo, index) => {
     const main: MainTerm[] = p.dish.components.map((component, i) => ({
       grid: gridOf(component),
@@ -182,15 +188,25 @@ function runStage(
       0,
       ...combo.filter((v): v is VariantForSolve => v !== null).map((v) => appealOf(v, p.member)),
     );
-    bounded.push({ index, combo, main, bound: lp.objective - LAMBDA_APPEAL * bestAppeal });
+    bounded.push({
+      index,
+      combo,
+      main,
+      bound: lp.objective - LAMBDA_APPEAL * bestAppeal,
+      appealBound: bestAppeal,
+    });
   });
   bounded.sort((a, b) => a.bound - b.bound || a.index - b.index);
 
   let best: (Candidate & { index: number }) | undefined;
-  for (const { index, combo, main, bound } of bounded) {
+  for (const { index, combo, main, bound, appealBound } of bounded) {
     if (best !== undefined && bound > best.objective + 1e-9) break;
     const model = buildPlateModel(modelInput(main, false));
-    const result = solveMilp(model.milp, TIME_LIMIT_PER_COMBINATION_S);
+    // Once a best plate exists, a combination matters only if its MILP optimum (appeal excluded)
+    // can reach best + λ_appeal·(its best appeal), within the tie slack; HiGHS may cut off the rest.
+    const cutoff =
+      best === undefined ? undefined : best.objective + LAMBDA_APPEAL * appealBound + CUTOFF_SLACK;
+    const result = solveMilp(model.milp, TIME_LIMIT_PER_COMBINATION_S, cutoff);
     if (result.status !== "solved") continue;
     const mainGrams = main.map((term, i) => {
       const k = Math.round(result.x[model.mainCol(i)] ?? 0);
@@ -221,6 +237,12 @@ function runStage(
   }
   return best;
 }
+
+/**
+ * Slack above the cutoff (objective units): larger than the 1e-9 tie window of the comparison
+ * below and the TypeScript re-evaluation's float noise, so no combination that could win is cut.
+ */
+const CUTOFF_SLACK = 1e-4;
 
 function fitOf(deviation: Record<MacroKey, number>, tol: Record<MacroKey, number>): number {
   const ratios = MACROS.map((m) =>
