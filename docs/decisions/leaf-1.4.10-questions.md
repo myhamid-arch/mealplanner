@@ -58,11 +58,11 @@ equals the rebuild's exactly. The start-up does not start computing library edge
 
 ## SPEC-Q-6: household-scoped nodes in the same guard (W-13, G2)
 
-The fix makes a `dish` sync create the catalogue nodes its edges need when they are missing. The
-same race exists for a household's own ingredient: `syncRequests`
-(`apps/worker/src/jobs/handlers.ts`) queues the change set's `dish` request **before** its
-household `catalogue` request, so a change set that adds a private ingredient and a dish using it
-syncs the dish first.
+The fix makes a `dish` sync create the catalogue nodes its edges need when they are missing. A
+household's own ingredient has the same problem, by code reading (not reproduced): `syncRequests`
+(`apps/worker/src/jobs/handlers.ts`) puts the change set's `dish` request **before** its household
+`catalogue` request in the same job. A change set that adds a private ingredient and a dish using
+it would sync the dish first, and it would fail on every retry, since the order does not change.
 
 Reading (pending the architect's answer at CP1): the guard covers the scope of the missing nodes,
 global and the dish's household, since it is the same code path; G2 tests the global case the gate
