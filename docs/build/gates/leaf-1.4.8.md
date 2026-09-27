@@ -7,27 +7,27 @@ Scope: Plan follow-ups (R-58): drag and keyboard move of a meal between days (UX
 - [x] G1: move: plan_meal.move op and route; both days re-solved; occupied slot exchanges; locked meal or published day refused 409; admin only; undo via change log; drag and keyboard Move menu call it; negative control on unsolved plates
   CHECK: node scripts/verify/leaf-1.4.8.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.8 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=a42f4578c6b0166c19157a15333421fa21c1ed1e9e6cf816c1007f4db43a8d20; exit=0; EXPECT=matched; output-sha256=1abdb11617195f945a09307053a431867e4badd4b9ceb9d4b46ab5df54af6f2b; output-bytes=3141; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=a42f4578c6b0166c19157a15333421fa21c1ed1e9e6cf816c1007f4db43a8d20; exit=0; EXPECT=matched; output-sha256=f7a42603d7385adcedf4c4592c28f860c2b873fd207936d63eda80822457d1f5; output-bytes=3139; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [x] G2: substitution step text: steps name the substitute (name or alias, whole word, case-insensitive) or carry the leading "Use X wherever Y is mentioned" note; olive oil to canola oil; negative control against the pre-fix replaced()
+- [ ] G2: substitution step text: steps name the substitute (name or alias, whole word, case-insensitive) or carry the leading "Use X wherever Y is mentioned" note; olive oil to canola oil; negative control against the pre-fix replaced()
   CHECK: node scripts/verify/leaf-1.4.8.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.8 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=654477050bdaee5368c5a94811afcabb464e7de40937f709944889ecc889c613; exit=0; EXPECT=matched; output-sha256=998d6f7cbb60dcd9c2af7bc2e36abbb81e1d767555e579f91e18bafdf78c30c5; output-bytes=1351; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: pending
 
 - [x] G3: day sums: F1 slot kcal targets sum exactly to the day target for every member and day kind; Plan and Plate show the resolver's day target; the 2146 vs 2150 case reproduced then fixed; negative control on the pre-fix code
   CHECK: node scripts/verify/leaf-1.4.8.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.8 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=9735f0099a8c28c33ae13a5caf6b952688a6fc6d87039adc77ff7c128224d0f0; exit=0; EXPECT=matched; output-sha256=2a60256e2fd60fc6b3a64be4b0a4d3b951f441c93012c60d02f1224456949896; output-bytes=1786; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=9735f0099a8c28c33ae13a5caf6b952688a6fc6d87039adc77ff7c128224d0f0; exit=0; EXPECT=matched; output-sha256=a22a45d67143d6b1cd02c8873ee7bfc1ce50121f4ecb3137a83b21ab52526619; output-bytes=1784; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: "Use for <day> <slot>" on the recipe page calls planMeals.swap; excluded or infeasible dishes refused with the reason shown
   CHECK: node scripts/verify/leaf-1.4.8.mjs --gate G4
   EXPECT: VERIFY leaf-1.4.8 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=9fd6c12cfae4a7223d2c2996525d0f14536904e2fac9baf1b36bc984319ac044; exit=0; EXPECT=matched; output-sha256=b34d33b945734cd353535a1ec2e802d3612f4181438ce3d2b2ab552ade4b67d2; output-bytes=1357; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=9fd6c12cfae4a7223d2c2996525d0f14536904e2fac9baf1b36bc984319ac044; exit=0; EXPECT=matched; output-sha256=4467667e3bdc8796f5b549c3cf3d96d3d21aa65694062b42d6539ca1cbeea448; output-bytes=1355; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G5: Playwright at 390 px and 1280 px plus axe-core (no serious/critical) for drag, Move menu, substituted cook sheet and the Use-for action; 1.4.4 G1-G3 still pass
   CHECK: node scripts/verify/leaf-1.4.8.mjs --gate G5
   EXPECT: VERIFY leaf-1.4.8 G5 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=ac2b5a9ad65d36784e5685891783fc08f4a8fa3813b1cb994ed93648b13fce01; exit=0; EXPECT=matched; output-sha256=7710027905cbe4d860ccde8676a91c947e2fb50c1032ee6e5e3934c4435f3991; output-bytes=1573; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=ac2b5a9ad65d36784e5685891783fc08f4a8fa3813b1cb994ed93648b13fce01; exit=0; EXPECT=matched; output-sha256=8428162ffce0d0530bc201aeff89bd66b93c3c4a81f09042e619343bca7ac751; output-bytes=1573; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G6: architect visual review against the Plan mockups and the substituted cook sheet
   EVIDENCE: pending
