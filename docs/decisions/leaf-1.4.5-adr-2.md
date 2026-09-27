@@ -16,7 +16,7 @@ No Markdown dependency is added (anti-drift 3). `components/chat/markdown.tsx` r
 
 ## Cards
 
-Card payloads are `JsonValue` in the contract. The recipe card's Save posts the draft's own `ops` (R-53) with `POST /change-sets`. `components/chat/cards/parse.ts` validates each card with a Zod schema per `CARD_TYPES` entry (types imported from `@mealplanner/ai/agent` with `import type` only, so no SDK code reaches the browser bundle); an unknown or malformed card renders a small "This card can't be shown" note with its type, never a crash. Each card type has its own component (AGT-7 list plus `iteration_limit`).
+Card payloads are `JsonValue` in the contract. The recipe card's Save posts the draft's own `ops` (R-53) with `POST /change-sets`. `components/chat/cards/parse.ts` validates each card with a Zod schema per `CARD_TYPES` entry, written from `packages/ai/src/agent/cards.ts` and the tools that fill them (nothing from `@mealplanner/ai` is imported into the browser bundle; the tool labels for replayed turns come from the server page as props); an unknown or malformed card renders a small "This card can't be shown" note with its type, never a crash. Each card type has its own component (AGT-7 list plus `iteration_limit`).
 
 ## Voice input
 
@@ -24,4 +24,4 @@ The Web Speech API (`SpeechRecognition` / `webkitSpeechRecognition`), feature-de
 
 ## Libraries
 
-None added. `motion` (already a dependency, UX-5) for the Accept "stamp" and card rise, behind `prefers-reduced-motion`. Primitives from `components/ui` (1.4.2); the fetch client, problem messages and `useLoad` from `components/admin` (1.4.6, imported, not copied).
+None added. `motion` (already a dependency, UX-5) for the Accept "stamp", off under `prefers-reduced-motion`. Primitives from `components/ui` (1.4.2); the fetch client, problem messages and `useLoad` from `components/admin` (1.4.6, imported, not copied).
