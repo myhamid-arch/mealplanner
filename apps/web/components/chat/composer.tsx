@@ -130,7 +130,15 @@ export function Composer({
   return (
     <div className="flex flex-col gap-2.5">
       {suggestions.length > 0 && !running && (
-        <div role="group" aria-label="Suggestions" className="flex flex-wrap gap-2">
+        // CP3 finding 2: on phones one row that scrolls sideways, so the chips don't take the
+        // conversation's height; from 1024 px they wrap.
+        <div
+          role="region"
+          aria-label="Suggestions"
+          tabIndex={0}
+          className="-mb-1 flex gap-2 overflow-x-auto pb-1 lg:mb-0 lg:flex-wrap lg:overflow-visible lg:pb-0"
+          data-suggestions
+        >
           {suggestions.map((s) => (
             <button
               key={s}
@@ -140,7 +148,7 @@ export function Composer({
                 onChange(s);
                 input.current?.focus();
               }}
-              className="min-h-11 rounded-full border-[1.5px] border-line-strong bg-card px-3 text-left text-sm font-bold text-ink hover:bg-flour disabled:opacity-60"
+              className="min-h-11 shrink-0 rounded-full border-[1.5px] border-line-strong bg-card px-3 text-left text-sm font-bold whitespace-nowrap text-ink hover:bg-flour disabled:opacity-60 lg:shrink lg:whitespace-normal"
             >
               {s}
             </button>

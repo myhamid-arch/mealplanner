@@ -49,7 +49,7 @@ export function AppliedBody({
           </span>
         )}
       </div>
-      <ChangeDiff descriptions={descriptions} names={names} />
+      <ChangeDiff descriptions={descriptions} names={names} applied />
       {isUndone ? (
         <Chip tone="neutral" icon="refresh" size="sm">
           Undone

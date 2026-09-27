@@ -285,18 +285,23 @@ test.describe.serial("@G3 chat cards", () => {
     await expect(log.locator("[data-card=applied_change]")).toBeVisible();
     await expect(log.locator("[data-card=plan_day]")).toBeVisible();
     await expect(log.locator("[data-card=job_progress]")).toBeVisible();
-    await expect(log.locator("table")).toContainText("waiting for you");
+    await expect(log.locator("table:not([data-comparison])")).toContainText("waiting for you");
     await expect(page).toHaveURL(/\/chat\/[0-9a-f-]{36}$/);
     const check = async () => {
       const proposal = log.locator("[data-card=proposal]");
       expect(await isProposalCard(proposal)).toBe(true);
       // R-34: a soft exclusion still means "never serve", never "may be served".
       await expect(proposal).toContainText(/Never serve mushrooms to (Layla|Zayd)/);
-      await expect(proposal).toContainText("Protected from automatic change");
       await expect(proposal).not.toContainText(/may be served/i);
+      // CP3 finding 1: labels, not stored values; defaults of a new row are not listed.
+      await expect(proposal).toContainText("Ingredient");
+      await expect(proposal).toContainText("Dislike");
+      await expect(proposal).not.toContainText("dislike");
+      await expect(proposal).not.toContainText("Protected from automatic change");
       const applied = log.locator("[data-card=applied_change]");
       await expect(applied).toContainText("APPLIED · you asked");
       await expect(applied).toContainText("More Italian for everyone");
+      await expect(applied).not.toContainText(/"italian"|Locked|Rule/);
       await expect(applied.getByRole("button", { name: /^Undo/ })).toBeVisible();
       const day = log.locator("[data-card=plan_day]");
       await expect(day.locator("li").first()).toBeVisible();
