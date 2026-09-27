@@ -20,6 +20,12 @@ export type Block =
 export interface Recording {
   /** A label for failures and logs. */
   name: string;
+  /**
+   * Answers every matching request, in any order and any number of times (requests whose count
+   * depends on the page's timing, such as the onboarding parse after typing stops). Recordings
+   * without it answer exactly one request each, in order.
+   */
+  repeat?: boolean;
   expect: {
     /** The request streams (the agent) or not (structured calls). */
     stream: boolean;
@@ -39,6 +45,8 @@ export interface RecordedModel {
   url: string;
   /** Every request body received, in order. */
   requests: unknown[];
+  /** How many requests each recording answered, by name. */
+  answered: Map<string, number>;
   /** Requests that no recording answered, with the reason. */
   failures: string[];
   /** Recordings not used yet. */
@@ -177,7 +185,9 @@ function readBody(req: IncomingMessage): Promise<string> {
 
 /** Starts the server; recordings are answered in order, each only once. */
 export async function startRecordedModel(recordings: Recording[]): Promise<RecordedModel> {
-  const queue = [...recordings];
+  const queue = recordings.filter((r) => r.repeat !== true);
+  const repeatable = recordings.filter((r) => r.repeat === true);
+  const answered = new Map<string, number>();
   const requests: unknown[] = [];
   const failures: string[] = [];
   const server: Server = createServer((req, res) => {
@@ -190,11 +200,14 @@ export async function startRecordedModel(recordings: Recording[]): Promise<Recor
       }
       const body = JSON.parse(raw) as Body;
       requests.push(body);
-      const next = queue[0];
-      const why = next === undefined ? "no recording left" : mismatch(next, body);
+      const head = queue[0];
+      const headWhy = head === undefined ? "no recording left" : mismatch(head, body);
+      const any = headWhy === null ? undefined : repeatable.find((r) => mismatch(r, body) === null);
+      const next = headWhy === null ? head : any;
+      const why = next === undefined ? headWhy : null;
       if (next === undefined || why !== null) {
         failures.push(
-          `request ${String(requests.length)} ${String(req.url)} (${next?.name ?? "none"}): ${String(why)}; body keys ${Object.keys(body).join(",")}`,
+          `request ${String(requests.length)} ${String(req.url)} (next: ${head?.name ?? "none"}): ${String(why)}`,
         );
         res
           .writeHead(500, { "content-type": "application/json" })
@@ -203,7 +216,8 @@ export async function startRecordedModel(recordings: Recording[]): Promise<Recor
           );
         return;
       }
-      queue.shift();
+      if (next === head) queue.shift();
+      answered.set(next.name, (answered.get(next.name) ?? 0) + 1);
       const m = message(body.model ?? "claude-recorded", next);
       if (body.stream === true) {
         res.writeHead(200, { "content-type": "text/event-stream", "request-id": `req_${m.id}` });
@@ -224,9 +238,11 @@ export async function startRecordedModel(recordings: Recording[]): Promise<Recor
     url: `http://127.0.0.1:${String(port)}`,
     requests,
     failures,
+    answered,
     remaining: () => queue.map((r) => r.name),
     add: (more) => {
-      queue.push(...more);
+      queue.push(...more.filter((r) => r.repeat !== true));
+      repeatable.push(...more.filter((r) => r.repeat === true));
     },
     close: () =>
       new Promise((resolve) => {

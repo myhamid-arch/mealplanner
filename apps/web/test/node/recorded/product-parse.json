@@ -1,0 +1,93 @@
+{
+  "about": "node-1.4 N3 (R-69, SPEC-Q-6): the onboarding parse (POST /onboarding/parse, structured, not streamed) of the Onboarding mockup's answers, read the way the deterministic parse reads them. Written by hand in the shape of Messages API responses. Each may answer any number of requests: the page asks 800 ms after typing stops, so how often depends on timing.",
+  "recordings": [
+    {
+      "name": "parse: who eats at home",
+      "repeat": true,
+      "expect": {
+        "stream": false,
+        "systemContains": [
+          "Who eats at home?"
+        ],
+        "lastUserText": [
+          "Omar 41, Sara 39, Layla 18, Adam 15, Zayd 10"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"people\":[{\"name\":\"Omar\",\"age\":41,\"sex\":null},{\"name\":\"Sara\",\"age\":39,\"sex\":null},{\"name\":\"Layla\",\"age\":18,\"sex\":null},{\"name\":\"Adam\",\"age\":15,\"sex\":null},{\"name\":\"Zayd\",\"age\":10,\"sex\":null}]}"
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    },
+    {
+      "name": "parse: Omar's targets",
+      "repeat": true,
+      "expect": {
+        "stream": false,
+        "systemContains": [
+          "macro targets"
+        ],
+        "lastUserText": [
+          "2150 cal, 180p 200c 70f"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"day\":{\"kcal\":2150,\"proteinG\":180,\"carbsG\":200,\"fatG\":70,\"satFatMaxG\":null,\"solubleFibreMinG\":null,\"fibreMinG\":null,\"sodiumMaxMg\":null},\"training\":null,\"problem\":null}"
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    },
+    {
+      "name": "parse: Sara's targets",
+      "repeat": true,
+      "expect": {
+        "stream": false,
+        "systemContains": [
+          "macro targets"
+        ],
+        "lastUserText": [
+          "1655 / 130 / 160 / 55"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"day\":{\"kcal\":1655,\"proteinG\":130,\"carbsG\":160,\"fatG\":55,\"satFatMaxG\":null,\"solubleFibreMinG\":null,\"fibreMinG\":null,\"sodiumMaxMg\":null},\"training\":null,\"problem\":null}"
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    },
+    {
+      "name": "parse: never eat",
+      "repeat": true,
+      "expect": {
+        "stream": false,
+        "systemContains": [
+          "must never eat"
+        ],
+        "lastUserText": [
+          "Zayd is allergic to sesame"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"rules\":[{\"who\":\"Zayd\",\"term\":\"sesame\",\"reason\":\"allergy\"},{\"who\":\"everyone\",\"term\":\"pork\",\"reason\":\"religious\"},{\"who\":\"everyone\",\"term\":\"alcohol\",\"reason\":\"religious\"},{\"who\":\"Sara\",\"term\":\"liver\",\"reason\":\"dislike\"}]}"
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    }
+  ]
+}
