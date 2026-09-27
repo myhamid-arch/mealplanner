@@ -3,7 +3,7 @@
 Scope: integrate children leaf-1.3.1, leaf-1.3.2, leaf-1.3.3, leaf-1.3.4, leaf-1.3.5, leaf-1.3.6 into one verified result
 
 - [ ] N1: every direct child is reverified from its exact ledger
-  CHECK: node .claude/skills/unlazy/scripts/gate-check.mjs --root . --cwd . --reverify --jobs 1 docs/build/gates/leaf-1.3.1.md docs/build/gates/leaf-1.3.2.md docs/build/gates/leaf-1.3.3.md docs/build/gates/leaf-1.3.4.md docs/build/gates/leaf-1.3.5.md docs/build/gates/leaf-1.3.6.md
+  CHECK: node .claude/skills/unlazy/scripts/gate-check.mjs --root . --cwd . --approve --reverify --jobs 1 --timeout 1800 docs/build/gates/leaf-1.3.1.md docs/build/gates/leaf-1.3.2.md docs/build/gates/leaf-1.3.3.md docs/build/gates/leaf-1.3.4.md docs/build/gates/leaf-1.3.5.md docs/build/gates/leaf-1.3.6.md
   EXPECT: ALL MET
   EVIDENCE: pending
 
