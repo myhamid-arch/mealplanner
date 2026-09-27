@@ -20,9 +20,11 @@
 // PostgreSQL 16 cluster on a free port), its own Next.js build directory, a free port, its own
 // worker process and its own temp directory. Package builds and `next build` run under locks.
 // On any failed test the full error and output are printed (W-1).
+import { Buffer } from "node:buffer";
 import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import {
+  appendFileSync,
   closeSync,
   existsSync,
   mkdirSync,
@@ -737,6 +739,7 @@ if (process.argv[1] !== undefined && fileURLToPath(import.meta.url) === resolve(
     );
     process.exit(2);
   }
+  const log = keepFullOutput(gate);
   try {
     process.exitCode = await fn();
   } catch (error) {
@@ -744,4 +747,44 @@ if (process.argv[1] !== undefined && fileURLToPath(import.meta.url) === resolve(
     console.log(`VERIFY leaf-1.4.3 ${gate} FAILED (error)`);
     process.exitCode = 1;
   }
+  log.finish(process.exitCode !== 0);
+}
+
+/**
+ * W-1 under gate-check: gate-check shows only the first and last lines of a failing gate's output,
+ * so the whole output also goes to a log file that outlives the run, named on the first line, and
+ * a failure ends with the failing checks and tests named and the log's path again.
+ */
+function keepFullOutput(gate) {
+  const dir = join(tmpdir(), "leaf-1.4.3-verify");
+  mkdirSync(dir, { recursive: true });
+  const file = join(
+    dir,
+    `${gate}-${new Date().toISOString().replaceAll(":", "-")}-${String(process.pid)}.log`,
+  );
+  const failing = [];
+  const tee =
+    (write) =>
+    (chunk, ...rest) => {
+      const text = typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8");
+      appendFileSync(file, text);
+      for (const line of text.split("\n")) {
+        const check = /^FAIL - (.*)$/.exec(line);
+        const test = /^\s+(failed|timedOut|interrupted|skipped)\s+(.*)$/.exec(line);
+        if (check !== null) failing.push(check[1]);
+        else if (test !== null) failing.push(`${test[1]}: ${test[2]}`);
+      }
+      return write(chunk, ...rest);
+    };
+  process.stdout.write = tee(process.stdout.write.bind(process.stdout));
+  process.stderr.write = tee(process.stderr.write.bind(process.stderr));
+  // First, so that it survives gate-check's excerpt.
+  console.log(`full output: ${file}`);
+  return {
+    finish(failed) {
+      if (!failed) return;
+      console.log(`failing: ${failing.length === 0 ? "(see log)" : failing.join(" | ")}`);
+      console.log(`full output: ${file}`);
+    },
+  };
 }
