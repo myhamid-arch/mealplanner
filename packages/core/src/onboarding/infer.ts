@@ -39,6 +39,8 @@ export const CUISINE_LIKE_SCORE = 0.5;
 /** Total fibre goal per 1,000 kcal and its soluble share (R-28, OQ-4). */
 export const FIBRE_G_PER_1000_KCAL = 14;
 export const SOLUBLE_SHARE = 0.25;
+/** Marks a value the admin typed, as against one worked out (review explanations). */
+const YOUR_NUMBER = "your number";
 
 const REASON_RANK: Readonly<Record<ExclusionReason, number>> = {
   allergy: 5,
@@ -148,7 +150,8 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
     numbers: t.numbers,
   }));
   for (const { member, numbers } of targeted) {
-    const { training, ...day } = numbers;
+    const { training: trainingOwn, ...day } = numbers;
+    const training = trainingOwn === undefined ? undefined : withDayExtras(trainingOwn, day);
     ops.push({
       kind: "target.set",
       payload: { memberId: member.id, kind: "default", profile: profile(day) },
@@ -178,7 +181,7 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
     const satParts = targeted.map(({ member, numbers }) =>
       numbers.satFatMaxG === undefined
         ? `${String(Math.round(((ctx.satFatDefaultPct / 100) * numbers.kcal) / 9))} g for ${member.person.name} (${String(ctx.satFatDefaultPct)} % of calories)`
-        : `${String(numbers.satFatMaxG)} g for ${member.person.name}`,
+        : `${String(numbers.satFatMaxG)} g for ${member.person.name} (${YOUR_NUMBER})`,
     );
     explain(2, `Saturated fat capped at ${listJoin(satParts)}.`, {
       screen: "member",
@@ -188,7 +191,15 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
     const fibreParts = targeted.map(({ member, numbers }) => {
       const total = numbers.fibreMinG ?? Math.round((FIBRE_G_PER_1000_KCAL * numbers.kcal) / 1000);
       const soluble = numbers.solubleFibreMinG ?? Math.round(total * SOLUBLE_SHARE);
-      return `${member.person.name} ${String(total)} g, ${String(soluble)} g soluble`;
+      const totalSource =
+        numbers.fibreMinG === undefined
+          ? `${String(FIBRE_G_PER_1000_KCAL)} g per 1,000 kcal`
+          : YOUR_NUMBER;
+      const solubleSource =
+        numbers.solubleFibreMinG === undefined
+          ? `${String(Math.round(SOLUBLE_SHARE * 100))} % of fibre`
+          : YOUR_NUMBER;
+      return `${member.person.name} ${String(total)} g (${totalSource}), ${String(soluble)} g soluble (${solubleSource})`;
     });
     explain(2, `Fibre goals: ${listJoin(fibreParts)}.`, {
       screen: "member",
@@ -450,6 +461,20 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
     members: members.map((m) => ({ name: m.person.name, id: m.id })),
     coverage,
     unresolved,
+  };
+}
+
+/**
+ * Sat fat, soluble fibre, fibre and sodium typed once apply to training days too, unless the
+ * training part gives its own value ("… sat fat 22 g. Training days: 2390 / 180 / 260 / 70").
+ */
+function withDayExtras(training: DayTargets, day: DayTargets): DayTargets {
+  return {
+    ...training,
+    satFatMaxG: training.satFatMaxG ?? day.satFatMaxG,
+    solubleFibreMinG: training.solubleFibreMinG ?? day.solubleFibreMinG,
+    fibreMinG: training.fibreMinG ?? day.fibreMinG,
+    sodiumMaxMg: training.sodiumMaxMg ?? day.sodiumMaxMg,
   };
 }
 

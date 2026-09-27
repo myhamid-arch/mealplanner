@@ -124,6 +124,9 @@ describe("R2-ONB-2 skipping and SC-7 explanations", () => {
     expect(setup.explanations.map((e) => e.text)).toContain(
       "Saturated fat capped at 14 g for Omar (6 % of calories) and 11 g for Sara (6 % of calories).",
     );
+    expect(setup.explanations.map((e) => e.text)).toContain(
+      "Fibre goals: Omar 30 g (14 g per 1,000 kcal), 8 g soluble (25 % of fibre) and Sara 23 g (14 g per 1,000 kcal), 6 g soluble (25 % of fibre).",
+    );
     expect(setup.explanations.some((e) => /more carbs/i.test(e.text))).toBe(false); // SPEC-Q-3
   });
 

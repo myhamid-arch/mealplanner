@@ -59,13 +59,15 @@ export const REFERENCE_YEAR = 2026;
 
 /**
  * F1 (11-build-plan §2) as the five answers an admin would give. Question 5 names only C3's
- * sesame allergy, the one exclusion F1 has.
+ * sesame allergy, the one exclusion F1 has. Adult A's answer is phrased as on the Onboarding
+ * mockup: sat fat and soluble fibre typed once, before the training-day numbers, and F1 has them
+ * on both profiles.
  */
 export const F1_TEXT = {
   people: "Adult A 40, Adult B 37, Child C1 18 F, Child C2 15 M, Child C3 10 M",
   targets: {
     "Adult A":
-      "2150 cal, 180p 200c 70f, sat fat 22g, soluble fibre 10g. Training days: 2390 / 180 / 260 / 70, sat fat 22g, soluble fibre 10g",
+      "2150 cal, 180p 200c 70f, sat fat 22 g, soluble fibre 10 g. Training days: 2390 / 180 / 260 / 70",
     "Adult B": "1655 / 130 / 160 / 55, sat fat max 18 g",
   },
   neverEat: "Child C3 is allergic to sesame.",

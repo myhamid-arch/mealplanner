@@ -356,6 +356,8 @@ function collectPlaywright(suite) {
       out.push({
         title: spec.title,
         status: last?.status ?? t.status ?? "unknown",
+        durationMs: last?.duration ?? 0,
+        timeoutMs: t.timeout ?? 0,
         errors: (last?.errors ?? []).map((e) => e.stack ?? e.message ?? JSON.stringify(e)),
         stdout: (last?.stdout ?? []).map((s) => s.text ?? "").join(""),
       });
@@ -400,7 +402,11 @@ async function playwright(report, gate, db, expected, extraEnv = {}) {
     const results = existsSync(jsonFile)
       ? collectPlaywright(JSON.parse(readFileSync(jsonFile, "utf8")))
       : [];
-    for (const r of results) console.log(`       ${r.status.padEnd(8)} ${r.title}`);
+    // Measured figures: how much of its timeout each test used (a run under load shows the margin).
+    for (const r of results)
+      console.log(
+        `       ${r.status.padEnd(8)} ${r.title} (${(r.durationMs / 1000).toFixed(1)} s of ${String(r.timeoutMs / 1000)} s)`,
+      );
     const failed = results.filter((r) => r.status !== "passed");
     // W-1: the whole failure, never a tail.
     const detail = [

@@ -111,6 +111,55 @@ describe("G4 inferSetup golden: F1", () => {
     expect(snap.targets.filter((t) => t.includes('"Child'))).toEqual([]);
   });
 
+  it("G4 extras typed once apply to training days too, unless the training part has its own", async () => {
+    const trainingOf = (snap: Snapshot) =>
+      snap.targets.find((t) => t.includes('"Adult A"') && t.includes('"training"'));
+    const { snap } = await inferred(answersFrom(F1_TEXT));
+    const training = trainingOf(snap);
+    expect(training).toContain('"satFatMaxG":22');
+    expect(training).toContain('"solubleFibreMinG":10');
+    // Repeating the extras on the training line gives the same configuration.
+    const repeated = await inferred(
+      answersFrom({
+        ...F1_TEXT,
+        targets: {
+          ...F1_TEXT.targets,
+          "Adult A":
+            "2150 cal, 180p 200c 70f, sat fat 22g, soluble fibre 10g. Training days: 2390 / 180 / 260 / 70, sat fat 22g, soluble fibre 10g",
+        },
+      }),
+    );
+    expect(diffSnapshots(snap, repeated.snap)).toEqual([]);
+    // A value given on the training line wins for training days only.
+    const own = await inferred(
+      answersFrom({
+        ...F1_TEXT,
+        targets: {
+          ...F1_TEXT.targets,
+          "Adult A":
+            "2150 cal, 180p 200c 70f, sat fat 22 g, soluble fibre 10 g. Training days: 2390 / 180 / 260 / 70, sat fat 25 g",
+        },
+      }),
+    );
+    expect(trainingOf(own.snap)).toContain('"satFatMaxG":25');
+    expect(trainingOf(own.snap)).toContain('"solubleFibreMinG":10');
+    expect(
+      own.snap.targets.find((t) => t.includes('"Adult A"') && t.includes('"default"')),
+    ).toContain('"satFatMaxG":22');
+  });
+
+  it("G4 the review labels each sat-fat and fibre value by its source", async () => {
+    const tx = new MemoryTx(idFactory(2));
+    const setup = inferSetup(answersFrom(F1_TEXT), context(await newHousehold(tx)));
+    const texts = setup.explanations.map((e) => e.text);
+    expect(texts).toContain(
+      "Saturated fat capped at 22 g for Adult A (your number) and 18 g for Adult B (your number).",
+    );
+    expect(texts).toContain(
+      "Fibre goals: Adult A 30 g (14 g per 1,000 kcal), 10 g soluble (your number) and Adult B 23 g (14 g per 1,000 kcal), 6 g soluble (25 % of fibre).",
+    );
+  });
+
   it("G4 negative control: one changed answer is reported as a difference", async () => {
     const expected = withoutRuleFields(await f1Snapshot());
     const olderChild = await inferred(
