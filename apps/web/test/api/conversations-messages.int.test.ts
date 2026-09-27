@@ -724,6 +724,49 @@ describe("worker: jobs started from chat report back (SPEC-Q-9, R-46)", () => {
     expect(content.cards[0]?.error).toMatch(/credential|disabled/i);
   }, 120_000);
 
+  it("an insights run not started from chat posts its digest to each admin's most recently active conversation", async () => {
+    // Two conversations of the admin: the older one is the more recently active.
+    const older = await newConversation(w.a.admin);
+    const newer = await newConversation(w.a.admin);
+    await send(w.a.admin, older, "Hello", new Stub([msg([say("Hi.")], "end_turn")]));
+    // Reviews that trigger the dish-dislike rule (FBK-7: 2 reviews with a mean rating <= 2.5).
+    for (const rating of [1, 2])
+      expect(
+        (
+          await callJson(
+            c.reviewsCreate,
+            {
+              body: {
+                targetType: "dish",
+                targetId: w.a.dishId,
+                rating,
+                tags: [],
+                onBehalfOfMemberId: w.a.childId,
+              },
+            },
+            w.a.admin,
+          )
+        ).status,
+      ).toBe(201);
+    const run = ok<{ jobId: string }>(await callJson(c.insightsRun, {}, w.a.admin), "insights run");
+    const row = await finished(run.jobId);
+    expect(row.status).toBe("succeeded");
+    const digest = (await eventRows(older)).find(
+      (e) => (e.content as { cards: { type: string }[] }).cards[0]?.type === "insight_digest",
+    );
+    expect(digest, worker.output().slice(-1500)).toBeDefined();
+    expect((await conversationRows(rt, w.a.id, newer)).filter((r) => r.role === "event")).toEqual(
+      [],
+    );
+    // The second admin had no conversation: an "Updates" conversation was made for the digest.
+    const [updates] = await rt.db
+      .select()
+      .from(conversation)
+      .where(and(eq(conversation.householdId, w.a.id), eq(conversation.userId, w.a.admin2.userId)));
+    expect(updates?.title).toBe("Updates");
+    expect((await eventRows(updates?.id ?? "")).length).toBe(1);
+  }, 180_000);
+
   it("generate_plan from chat is logged as the assistant's change (R-49) and reports back", async () => {
     const id = await newConversation(w.a.admin);
     const stub = new Stub([

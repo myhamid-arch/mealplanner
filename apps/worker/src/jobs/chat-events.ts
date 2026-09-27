@@ -2,7 +2,7 @@
 // active admin's most recent conversation (or a new "Updates" conversation), and a job the agent
 // started posts its completion into the conversation that started it. Event rows are display only
 // (they are not replayed to the model; SPEC-Q-3).
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import {
   digestHasNews,
   insightDigestEvent,
@@ -34,15 +34,23 @@ async function insertEvent(
   return id;
 }
 
-/** The admin's most recent open conversation, or a new "Updates" conversation. */
+/** The admin's most recently active open conversation, or a new "Updates" conversation. */
 async function conversationFor(
   rt: WorkerRuntime,
   householdId: string,
   userId: string,
 ): Promise<string> {
+  const lastActive = sql<Date>`coalesce(max(${chatMessage.createdAt}), ${conversation.createdAt})`;
   const [latest] = await rt.db
-    .select({ id: conversation.id })
+    .select({ id: conversation.id, lastActive })
     .from(conversation)
+    .leftJoin(
+      chatMessage,
+      and(
+        eq(chatMessage.householdId, conversation.householdId),
+        eq(chatMessage.conversationId, conversation.id),
+      ),
+    )
     .where(
       and(
         eq(conversation.householdId, householdId),
@@ -50,7 +58,8 @@ async function conversationFor(
         isNull(conversation.archivedAt),
       ),
     )
-    .orderBy(desc(conversation.createdAt))
+    .groupBy(conversation.id, conversation.createdAt)
+    .orderBy(desc(lastActive))
     .limit(1);
   if (latest !== undefined) return latest.id;
   const id = newId();

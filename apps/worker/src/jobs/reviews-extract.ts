@@ -51,28 +51,34 @@ export const reviewsExtract: JobHandler = async (ctx) => {
   if (result.status === "failed")
     throw new Error(`extraction failed (${result.code}): ${result.message}`);
 
-  // Once only: a concurrent run or an earlier success leaves the row as it is.
-  const [updated] = await ctx.rt.db
-    .update(review)
-    .set({ extractedTags: result.tags, extractedAt: new Date() })
-    .where(
-      and(
-        eq(review.householdId, hh.householdId),
-        eq(review.id, row.id),
-        isNull(review.extractedAt),
-      ),
-    )
-    .returning();
-  if (updated === undefined) return toJson({ status: "skipped", reason: "already extracted" });
-
-  let learningChangeSetId: string | null = null;
-  if (result.tags.length > 0)
-    learningChangeSetId = await learnFromReview(
-      ctx.rt.db,
-      hh,
-      { ...updated, tags: [...updated.tags, ...result.tags] },
-      { rating: updated.rating, tags: updated.tags },
-    );
+  // Once only, and together with its learning: a failed learning step leaves the review unmarked,
+  // so a retry extracts it again instead of skipping a signal that was never learned.
+  const stored = await ctx.rt.db.transaction(async (trx) => {
+    const [updated] = await trx
+      .update(review)
+      .set({ extractedTags: result.tags, extractedAt: new Date() })
+      .where(
+        and(
+          eq(review.householdId, hh.householdId),
+          eq(review.id, row.id),
+          isNull(review.extractedAt),
+        ),
+      )
+      .returning();
+    if (updated === undefined) return null;
+    const learningChangeSetId =
+      result.tags.length === 0
+        ? null
+        : await learnFromReview(
+            trx,
+            hh,
+            { ...updated, tags: [...updated.tags, ...result.tags] },
+            { rating: updated.rating, tags: updated.tags },
+          );
+    return { learningChangeSetId };
+  });
+  if (stored === null) return toJson({ status: "skipped", reason: "already extracted" });
+  const { learningChangeSetId } = stored;
   const followUps = await followUpsOf(ctx.rt, hh.householdId, learningChangeSetId);
   return toJson({
     status: "extracted",
