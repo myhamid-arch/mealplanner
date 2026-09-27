@@ -23,7 +23,7 @@ import { toJson, type JobContext, type JobHandler } from "../runner.js";
 import type { WorkerRuntime } from "../runtime.js";
 import { reviseRecipe } from "./revise.js";
 import { purgeDueHouseholds } from "./purge.js";
-import { postInsightDigest } from "./chat-events.js";
+import { planReadySummary, postInsightDigest } from "./chat-events.js";
 import { recipeDraft } from "./recipe-draft.js";
 import { reviewsExtract } from "./reviews-extract.js";
 import { plansPreview } from "./plans-preview.js";
@@ -119,6 +119,8 @@ export const planGenerate: JobHandler = async (ctx) => {
     flags: toJson(result.plan.flags),
     proposals: result.proposals.map((r) => r.id),
     stats: toJson(stats),
+    // 1.4.9 (R-61): what the "plan is ready" row in Updates shows (W-9b).
+    ready: planReadySummary(result.plan),
   };
 };
 
