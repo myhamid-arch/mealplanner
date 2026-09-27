@@ -4,7 +4,7 @@
 //        no horizontal scroll: the first-days page (today's follow-up card, coming up, the
 //        checklist; answering it), the onboarding parse confirmation (and the page keeping its
 //        own reading without a credential), and the Planning balance "Next week, if you save"
-//        panel (figures, changes, Save & replan).
+//        panel (figures, changes, Save & replan); the follow-up card on Today (admins only, R-57).
 //   @G1  (also) the onboarding page without a credential: no confirmation, its own reading stays.
 //   Negative controls: axe reports a known-bad page; a page wider than the viewport is reported.
 // The parse route is answered in the browser by `page.route` with a typed reading (the route and
@@ -393,6 +393,64 @@ for (const vp of VIEWPORTS) {
       .toBe(0.9);
   });
 }
+
+for (const vp of VIEWPORTS)
+  test(`@G4 today card at ${vp.name} px: the admin answers today's question on Today; a member sees none`, async ({
+    page,
+    browser,
+  }) => {
+    test.setTimeout(300_000);
+    await page.setViewportSize({ width: vp.width, height: vp.height });
+    await onboardMockupFamily(page);
+    const members = await getJson<{ members: { id: string; displayName: string }[] }>(
+      page.request,
+      "/api/v1/members",
+    );
+    const sara = members.members.find((m) => m.displayName === "Sara");
+    if (sara === undefined) throw new Error("no Sara");
+    const code = (
+      await postJson<{ code: string }>(
+        page.request,
+        "/api/v1/invites",
+        { role: "member", memberId: sara.id, expiresIn: "7d", channel: "link" },
+        201,
+      )
+    ).code;
+    await page.goto("/today");
+    const card = page.locator("[data-today-followup] [data-followup]");
+    await expect(card).toHaveAttribute("data-followup", "school_nut_free");
+    await expect(card.getByText("QUICK QUESTION · 1 OF 3")).toBeVisible();
+    await expectFits(page, "today with the card");
+    expect(await axeBoth(page, "today card", "[data-today-followup]")).toEqual([]);
+    await shot(page, `today-card-${vp.name}`);
+    await card.getByRole("button", { name: "Not sure · Ask me later", exact: true }).click();
+    await expect(page.getByText("I'll ask again another day.")).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Getting set up · \d+ \/ \d+$/ })).toBeVisible();
+    await page.reload();
+    await expect(page.locator("[data-today-followup]")).toHaveCount(0);
+    // A member of the household sees no follow-up card.
+    const other = await browser.newContext();
+    try {
+      const memberPage = await other.newPage();
+      await memberPage.setViewportSize({ width: vp.width, height: vp.height });
+      const accept = await memberPage.request.post("/api/v1/invites/accept", {
+        data: {
+          code,
+          signup: {
+            email: `sara-${Math.random().toString(36).slice(2, 8)}@example.test`,
+            password: "another horse battery",
+            name: "Sara",
+          },
+        },
+      });
+      expect(accept.status(), await accept.text()).toBe(200);
+      await memberPage.goto("/today");
+      await expect(memberPage.getByRole("main")).toBeVisible();
+      await expect(memberPage.locator("[data-today-followup]")).toHaveCount(0);
+    } finally {
+      await other.close();
+    }
+  });
 
 test("@G4 negative control: axe reports an unlabelled button on a bad page", async ({ page }) => {
   await page.setContent(

@@ -792,6 +792,7 @@ async function gateG4() {
       `@G4 parse confirmation at ${v} px: the assistant's reading is shown, and used on request`,
       `@G1 @G4 without a credential at ${v} px: no confirmation, the page keeps its own reading`,
       `@G4 next-week preview at ${v} px: figures, the meals that change, Save & replan`,
+      `@G4 today card at ${v} px: the admin answers today's question on Today; a member sees none`,
     ]),
     "@G4 negative control: axe reports an unlabelled button on a bad page",
     "@G4 negative control: a page wider than the viewport is reported",
