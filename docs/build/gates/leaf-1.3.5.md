@@ -17,7 +17,7 @@ Scope: Admin agent loop and tools, as specified in docs/spec (see 11-build-plan.
 - [x] G3: history append-only: replayed stored blocks are byte-identical (AGT-8)
   CHECK: node scripts/verify/leaf-1.3.5.mjs --gate G3
   EXPECT: VERIFY leaf-1.3.5 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=a86e0a56cb07fc9e0ce45297dcbbf0d1e71d061cc749f557e742b08a04b0f65c; exit=0; EXPECT=matched; output-sha256=56bcbdf3b50a9a268fd845c1449e35cf853c342cc8cbc035e8e0c2a375fa3e8a; output-bytes=975; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=a86e0a56cb07fc9e0ce45297dcbbf0d1e71d061cc749f557e742b08a04b0f65c; exit=0; EXPECT=matched; output-sha256=7bc1142a175b64e3411ba39f224af9cb9093c2d7c55b0f347cbad6782f77238a; output-bytes=1090; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G4: agent eval set passes at least 90% (HANDOFF if no credentials) (AGT-9)
   EVIDENCE: pending
