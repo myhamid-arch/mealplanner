@@ -1127,9 +1127,11 @@ interface FlagView {
   note: string | null;
   job: { status: string } | null;
   result: {
+    substituteId?: string | null;
     substituteName: string | null;
     meals: Array<{
       planMealId: string;
+      date: string;
       slotLabel: string;
       fromDishName: string;
       toDishName: string;
@@ -1355,3 +1357,581 @@ test("@G3 negative control: the admin view without the substitution result fails
   expect(await outcomeVisible(page, flag)).not.toEqual([]);
   await ctx.close();
 });
+
+// =================================================================================================
+// Leaf 1.4.8 (BLD-8 R-58, R-60): move, day targets, "Use for", substituted cook sheet. Tagged
+// `@1.4.8-G<n>`, which 1.4.4's `@G<n>` greps do not match. Each viewport gets its own planned week
+// (five and six weeks ahead), planned on first use, so 1.4.4's weeks are untouched.
+// =================================================================================================
+
+const moveWeeks = new Map<string, string>();
+/** The planned week (Monday) of a viewport for the 1.4.8 tests. */
+async function moveWeek(v: Viewport): Promise<string> {
+  const known = moveWeeks.get(v.name);
+  if (known !== undefined) return known;
+  const monday = addDays(mondayOf(world.today), v.name === "390" ? 35 : 42);
+  await plan(world.admin, week(monday));
+  moveWeeks.set(v.name, monday);
+  return monday;
+}
+
+/** Drags `from` onto `to` with the mouse (pointer events, ADR-1), in small steps. */
+async function drag(
+  page: Page,
+  from: ReturnType<Page["getByTestId"]>,
+  to: ReturnType<Page["getByTestId"]>,
+) {
+  await from.evaluate((el) => {
+    el.scrollIntoView({ block: "center" });
+  });
+  const a = await from.boundingBox();
+  if (a === null) throw new Error("drag source is not visible");
+  await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(a.x + a.width / 2 + 12, a.y + a.height / 2 + 12, { steps: 3 });
+  await expect(page.getByTestId("drag-ghost")).toBeVisible();
+  // The phone list can put the target below the fold: scroll with the wheel mid-drag, as a user would.
+  const vh = page.viewportSize()?.height ?? 0;
+  let b = await to.boundingBox();
+  for (let i = 0; i < 12 && b !== null && b.y + b.height / 2 > vh - 40; i += 1) {
+    await page.mouse.wheel(0, 200);
+    await page.waitForTimeout(100);
+    b = await to.boundingBox();
+  }
+  if (b === null) throw new Error("drop target is not visible");
+  expect(b.y + b.height / 2, "drop target within the viewport").toBeLessThan(vh);
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 12 });
+  await page.mouse.up();
+}
+
+/** Did the exchange of two meals reach the plan (API, independently of the page)? */
+async function exchanged(a: Meal, b: Meal, slotKey: string): Promise<boolean> {
+  const nowA = await mealOf(world.admin, a.date, slotKey);
+  const nowB = await mealOf(world.admin, b.date, slotKey);
+  return (
+    nowA.id === b.id && nowA.dishId === b.dishId && nowB.id === a.id && nowB.dishId === a.dishId
+  );
+}
+
+for (const v of VIEWPORTS) {
+  test(`@1.4.8-G1 drag a meal onto another day's slot at ${v.name} px`, async ({ browser }) => {
+    test.setTimeout(600_000);
+    const monday = await moveWeek(v);
+    const from = addDays(monday, 1);
+    const to = addDays(monday, 2);
+    const a = await mealOf(world.admin, from, "dinner");
+    const b = await mealOf(world.admin, to, "dinner");
+    const { ctx, page } = await as(browser, "admin", v);
+    await page.goto(`/plan?week=${from}`);
+    const src = page.getByTestId(`cell-${from}-dinner`);
+    await expect(src).toHaveAttribute("data-draggable", "true", { timeout: 60_000 });
+    await drag(page, src, page.getByTestId(`cell-${to}-dinner`));
+    await expect(page.getByRole("status").filter({ hasText: "is now on" })).toBeVisible({
+      timeout: 180_000,
+    });
+    expect(await exchanged(a, b, "dinner")).toBe(true);
+    await expect(page.getByTestId(`cell-${to}-dinner`)).toContainText(a.dishName);
+    await expectFits(page, `week after a drag ${v.name}`);
+    await ctx.close();
+  });
+
+  test(`@1.4.8-G1 Move to… from the keyboard at ${v.name} px`, async ({ browser }) => {
+    test.setTimeout(600_000);
+    const monday = await moveWeek(v);
+    const from = addDays(monday, 3);
+    const to = addDays(monday, 5);
+    const a = await mealOf(world.admin, from, "breakfast");
+    const b = await mealOf(world.admin, to, "breakfast");
+    const { ctx, page } = await as(browser, "admin", v);
+    await page.goto(`/plan?week=${from}`);
+    const cell = page.getByTestId(`cell-${from}-breakfast`);
+    await expect(cell).toBeVisible({ timeout: 60_000 });
+    await cell.focus();
+    await page.keyboard.press("Enter");
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    const toggle = dialog.getByRole("button", { name: "Move to…" });
+    await toggle.focus();
+    await page.keyboard.press("Enter");
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    const option = dialog.getByTestId(`move-to-${to}`);
+    await expect(option).toContainText(`Swap with ${b.dishName}`);
+    for (let i = 0; i < 8; i += 1) {
+      if (await option.evaluate((el) => el === document.activeElement)) break;
+      await page.keyboard.press("ArrowDown");
+    }
+    await expect(option).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("status").filter({ hasText: "is now on" })).toBeVisible({
+      timeout: 180_000,
+    });
+    expect(await exchanged(a, b, "breakfast")).toBe(true);
+    await ctx.close();
+  });
+}
+
+test("@1.4.8-G1 a move the planner refuses says why and changes nothing", async ({ browser }) => {
+  test.setTimeout(300_000);
+  const monday = await moveWeek(VIEWPORTS[1]);
+  // Omar's pre-workout is on his training days (Mon/Wed/Fri); Tuesday is not one.
+  const mon = await mealOf(world.admin, monday, "pre_workout", false);
+  const before = JSON.stringify(await days(world.admin, monday, addDays(monday, 1)));
+  const { ctx, page } = await as(browser, "admin", VIEWPORTS[1]);
+  await page.goto(`/plan?week=${monday}`);
+  await openCell(page, monday, "pre_workout");
+  const block = page.getByTestId("meal-block").filter({ hasText: mon.dishName }).first();
+  await block.getByRole("button", { name: "Move to…" }).click();
+  await block.getByTestId(`move-to-${addDays(monday, 1)}`).click();
+  await expect(block.getByRole("alert")).toContainText(/cannot be the pre-workout/i, {
+    timeout: 120_000,
+  });
+  expect(JSON.stringify(await days(world.admin, monday, addDays(monday, 1)))).toBe(before);
+  await ctx.close();
+});
+
+test("@1.4.8-G1 negative control: a drag the server refused is not reported as moved", async ({
+  browser,
+}) => {
+  test.setTimeout(300_000);
+  const monday = await moveWeek(VIEWPORTS[1]);
+  const from = addDays(monday, 4);
+  const to = addDays(monday, 6);
+  const a = await mealOf(world.admin, from, "dinner");
+  const b = await mealOf(world.admin, to, "dinner");
+  const { ctx, page } = await as(browser, "admin", VIEWPORTS[1]);
+  await page.route("**/api/v1/plan-meals/*/move", (route) =>
+    route.fulfill({
+      status: 409,
+      contentType: "application/problem+json",
+      json: { type: "about:blank", title: "Conflict", status: 409, detail: "the plan is locked" },
+    }),
+  );
+  await page.goto(`/plan?week=${from}`);
+  await expect(page.getByTestId(`cell-${from}-dinner`)).toBeVisible({ timeout: 60_000 });
+  await drag(page, page.getByTestId(`cell-${from}-dinner`), page.getByTestId(`cell-${to}-dinner`));
+  await expect(page.getByRole("alert").filter({ hasText: "locked" })).toBeVisible({
+    timeout: 60_000,
+  });
+  await expect(page.getByRole("status").filter({ hasText: "is now on" })).toHaveCount(0);
+  expect(await exchanged(a, b, "dinner")).toBe(false);
+  await ctx.close();
+});
+
+// G3: the day target on Plan and Plate (W-7) -------------------------------------------------------
+
+for (const v of VIEWPORTS)
+  test(`@1.4.8-G3 Plan and Plate show the day target of the day kind at ${v.name} px`, async ({
+    browser,
+  }) => {
+    test.setTimeout(600_000);
+    const monday = await moveWeek(v);
+    const sunday = addDays(monday, 6);
+    const { ctx, page } = await as(browser, "admin", v);
+    // Omar: 2390 on his training Monday, 2150 on Sunday (rest), whatever his plates' targets sum to.
+    for (const [date, kcal] of [
+      [monday, 2390],
+      [sunday, 2150],
+    ] as const) {
+      const dinner = await mealOf(world.admin, date, "dinner");
+      const omar = dinner.plates.find((p) => p.memberId === world.members.omar);
+      if (omar === undefined) throw new Error(`no plate for Omar on ${date}`);
+      const sum = (await days(world.admin, date, date))[0]?.meals
+        .flatMap((m) => m.plates)
+        .filter((p) => p.memberId === world.members.omar)
+        .reduce((s, p) => s + ((p.target as { kcal?: number } | null)?.kcal ?? 0), 0);
+      console.log(
+        `  ${date}: Omar's plate targets sum to ${String(Math.round(sum ?? 0))}, day target ${String(kcal)}`,
+      );
+      await page.goto(`/plan?week=${date}`);
+      await openCell(page, date, "dinner");
+      const row = page.getByRole("dialog").getByRole("listitem").filter({ hasText: "Omar" });
+      await expect(row.getByTestId("day-target")).toContainText(`of ${String(kcal)} kcal today`);
+      await page.keyboard.press("Escape");
+      await page.goto(`/today/plates/${omar.id}`);
+      await expect(
+        page.getByText(
+          `on a ${String(kcal)} kcal day (${date === monday ? "training" : "rest"} day)`,
+        ),
+      ).toBeVisible({ timeout: 60_000 });
+      await expectFits(page, `plate ${date} ${v.name}`);
+    }
+    await ctx.close();
+    // A member without schedules: Sara's own plate names her day target.
+    const m = await as(browser, "sara", v);
+    const hers = (await mealOf(world.admin, sunday, "dinner")).plates.find(
+      (p) => p.memberId === world.members.sara,
+    );
+    await m.page.goto(`/today/plates/${hers?.id ?? ""}`);
+    await expect(m.page.getByText("on a 1655 kcal day")).toBeVisible({ timeout: 60_000 });
+    await m.ctx.close();
+  });
+
+// G4: "Use for <day> <slot>" on the recipe page -----------------------------------------------------
+
+/** A dinner dish containing an ingredient flagged `contains_sesame` (Zayd's allergy). */
+async function sesameDish(api: APIRequestContext): Promise<{ id: string; name: string }> {
+  const ingredients = (
+    await json<{ ingredients: Array<{ id: string; dietaryFlags: string[] }> }>(
+      await api.get("/api/v1/ingredients?limit=500"),
+      "ingredients",
+    )
+  ).ingredients;
+  const sesame = new Set(
+    ingredients.filter((i) => i.dietaryFlags.includes("contains_sesame")).map((i) => i.id),
+  );
+  const dishes = (
+    await json<{ dishes: Array<{ id: string; name: string; isAdjuster: boolean }> }>(
+      await api.get("/api/v1/dishes?slot=dinner&status=active"),
+      "dishes",
+    )
+  ).dishes.filter((d) => !d.isAdjuster);
+  for (const d of dishes) {
+    const full = await json<{
+      components: Array<{ variants: Array<{ ingredients: Array<{ ingredientId: string }> }> }>;
+    }>(await api.get(`/api/v1/dishes/${d.id}`), "dish");
+    if (
+      full.components.every((c) =>
+        c.variants.every((x) => x.ingredients.some((i) => sesame.has(i.ingredientId))),
+      )
+    )
+      return { id: d.id, name: d.name };
+  }
+  throw new Error("no dinner dish contains sesame in every variant");
+}
+
+let strictWorld: {
+  state: Awaited<ReturnType<APIRequestContext["storageState"]>>;
+  date: string;
+} | null = null;
+/** A second household whose one targeted member cannot be fed in tolerance (strict), planned. */
+async function strictHousehold(playwright: {
+  request: { newContext: (o: { baseURL: string }) => Promise<APIRequestContext> };
+}) {
+  if (strictWorld !== null) return strictWorld;
+  const api = await playwright.request.newContext({ baseURL: world.base });
+  const tag = Math.random().toString(36).slice(2, 8);
+  await json(
+    await api.post("/api/v1/signup", {
+      data: {
+        email: `strict-${tag}@example.test`,
+        password: "correct horse battery",
+        name: "Nour",
+        householdName: "Strict targets",
+      },
+    }),
+    "signup",
+  );
+  const nour = crypto.randomUUID();
+  await json(
+    await api.post("/api/v1/change-sets", {
+      data: {
+        summary: "test setup (strict)",
+        ops: [
+          {
+            kind: "member.create",
+            payload: {
+              id: nour,
+              displayName: "Nour",
+              color: "sea",
+              birthYear: 1990,
+              isTargeted: true,
+            },
+          },
+          {
+            kind: "target.set",
+            payload: {
+              memberId: nour,
+              kind: "default",
+              profile: { kcal: 2000, proteinG: 150, carbsG: 200, fatG: 65 },
+            },
+          },
+        ],
+      },
+    }),
+    "setup",
+  );
+  const date = addDays(mondayOf(world.today), 36);
+  await plan(api, [date]);
+  // Now out of reach: every dinner is infeasible for Nour, who is strict (the default).
+  await json(
+    await api.post("/api/v1/change-sets", {
+      data: {
+        summary: "test: targets out of reach",
+        ops: [
+          {
+            kind: "target.set",
+            payload: {
+              memberId: nour,
+              kind: "default",
+              profile: { kcal: 9000, proteinG: 900, carbsG: 900, fatG: 300 },
+            },
+          },
+        ],
+      },
+    }),
+    "targets",
+  );
+  strictWorld = { state: await api.storageState(), date };
+  await api.dispose();
+  return strictWorld;
+}
+
+for (const v of VIEWPORTS)
+  test(`@1.4.8-G4 Use for <day> <slot> on the recipe page at ${v.name} px`, async ({
+    browser,
+    playwright,
+  }) => {
+    test.setTimeout(600_000);
+    const monday = await moveWeek(v);
+    const date = addDays(monday, 5);
+    const meal = await mealOf(world.admin, date, "dinner");
+    const alts = (
+      await json<{
+        alternatives: Array<{
+          dishId: string;
+          dishName: string;
+          plates: Array<{ fitStatus: string }>;
+        }>;
+      }>(await world.admin.get(`/api/v1/plan-meals/${meal.id}/alternatives`), "alternatives")
+    ).alternatives;
+    const good = alts.find((x) => x.plates.every((p) => p.fitStatus !== "infeasible"));
+    if (good === undefined) throw new Error("no in-tolerance alternative");
+    const { ctx, page } = await as(browser, "admin", v);
+    const label = `Use for ${new Date(`${date}T00:00:00Z`).toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" })} dinner`;
+
+    // Accepted: the dish is now that dinner (API), with re-solved plates.
+    await page.goto(`/recipes/${good.dishId}?date=${date}&slot=dinner`);
+    const button = page.getByRole("button", { name: label });
+    await expect(button).toBeEnabled({ timeout: 60_000 });
+    await button.click();
+    await expect(page.getByTestId("use-for").getByRole("status")).toContainText("is now", {
+      timeout: 180_000,
+    });
+    const now = await mealOf(world.admin, date, "dinner");
+    expect(now.dishId).toBe(good.dishId);
+    expect(now.plates.map((p) => p.id).some((id) => meal.plates.some((p) => p.id === id))).toBe(
+      false,
+    );
+    await expect(page.getByRole("link", { name: "See the plan" })).toHaveAttribute(
+      "href",
+      new RegExp(`meal=${meal.id}`),
+    );
+    await expectFits(page, `recipe use-for ${v.name}`);
+
+    // Excluded: a dish with sesame (Zayd's allergy) is refused, with the reason.
+    const sesame = await sesameDish(world.admin);
+    await page.goto(`/recipes/${sesame.id}?date=${date}&slot=dinner`);
+    await page.getByRole("button", { name: label }).click();
+    await expect(page.getByTestId("use-for").getByRole("alert")).toContainText(
+      /not allowed for this meal/i,
+      { timeout: 120_000 },
+    );
+    expect((await mealOf(world.admin, date, "dinner")).dishId).toBe(good.dishId);
+
+    // Without a date and slot there is no action; with a date that has no plan it says so.
+    await page.goto(`/recipes/${good.dishId}`);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByTestId("use-for")).toHaveCount(0);
+    await page.goto(`/recipes/${good.dishId}?date=${addDays(monday, 70)}&slot=dinner`);
+    await expect(page.getByText(/Nothing is planned for/)).toBeVisible({ timeout: 60_000 });
+    await ctx.close();
+
+    // Infeasible for a strict member: refused, naming the member, macro and amount (R-60).
+    const strict = await strictHousehold(playwright);
+    const s = await browser.newContext({
+      storageState: strict.state,
+      viewport: { width: v.width, height: v.height },
+    });
+    const sp = await s.newPage();
+    const sApi = s.request;
+    const sMeal = (
+      await json<{ days: Day[] }>(
+        await sApi.get(`/api/v1/plans?from=${strict.date}&to=${strict.date}`),
+        "plans",
+      )
+    ).days[0]?.meals.find((m) => m.slotKey === "dinner");
+    if (sMeal === undefined) throw new Error("no dinner in the strict household");
+    const other = alts.find((x) => x.dishId !== sMeal.dishId) ?? good;
+    const sLabel = `Use for ${new Date(`${strict.date}T00:00:00Z`).toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" })} dinner`;
+    await sp.goto(`/recipes/${other.dishId}?date=${strict.date}&slot=dinner`);
+    await sp.getByRole("button", { name: sLabel }).click();
+    await expect(sp.getByTestId("use-for").getByRole("alert")).toContainText(
+      /Nour's dinner would miss (protein|carbs|fat|calories) by \d+/,
+      { timeout: 120_000 },
+    );
+    await s.close();
+  });
+
+// G5: the substituted cook sheet, and axe on every new state -------------------------------------
+
+/** What in a cook sheet's batches still names `names` (steps, labels, component names). */
+function namesLeft(
+  batches: Array<{ componentName: string; variantLabel: string; steps: string[] }>,
+  names: string[],
+  sub: string,
+): string[] {
+  const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(
+    `(?<![\\p{L}\\p{N}])(?:${names.map(esc).join("|")})(?![\\p{L}\\p{N}])`,
+    "iu",
+  );
+  const bare = (x: string) => x.replace(new RegExp(esc(sub), "giu"), "");
+  const note = /^Use .+ wherever .+ is mentioned\.$/;
+  return batches.flatMap((b) => [
+    ...[b.componentName, b.variantLabel].filter((t) => re.test(bare(t))),
+    ...b.steps.filter((t) => !note.test(t) && re.test(bare(t))),
+  ]);
+}
+
+interface SheetBatch {
+  componentName: string;
+  variantLabel: string;
+  steps: string[];
+  raw: Array<{ ingredientId: string; slug: string }>;
+}
+
+let substituted: { date: string; mealId: string; sub: string; names: string[] } | null = null;
+
+test("@1.4.8-G5 the substituted cook sheet names the substitute (olive oil → canola oil when served)", async ({
+  browser,
+  playwright,
+}) => {
+  test.setTimeout(600_000);
+  const monday = await moveWeek(VIEWPORTS[0]);
+  const date = addDays(monday, 6);
+  type Sheet = { meals: Array<{ planMealId: string; dishName: string; batches: SheetBatch[] }> };
+  const sheet = await json<Sheet>(await world.admin.get(`/api/v1/cook-sheets/${date}`), "sheet");
+  const counts = substituteCounts();
+  const raw = sheet.meals.flatMap((m) => m.batches.flatMap((b) => b.raw.map((r) => ({ ...r, m }))));
+  // Olive oil when the day serves it (the W-6 case), otherwise the most substitutable ingredient.
+  const pick =
+    raw.find((r) => r.slug === "olive-oil") ??
+    raw
+      .filter((r) => counts.has(r.slug))
+      .sort(
+        (x, y) =>
+          (counts.get(y.slug) ?? 0) - (counts.get(x.slug) ?? 0) || x.slug.localeCompare(y.slug),
+      )[0];
+  if (pick === undefined) throw new Error("no served ingredient has a catalogue substitute");
+  const ing = await json<{ name: string; aliases: string[] }>(
+    await world.admin.get(`/api/v1/ingredients/${pick.ingredientId}`),
+    "ingredient",
+  );
+  const kitchen = await playwright.request.newContext({
+    baseURL: world.base,
+    storageState: world.states.kitchen,
+  });
+  const flagged = await json<{ jobId: string }>(
+    await kitchen.post(`/api/v1/cook-sheets/${date}/flags`, {
+      data: { kind: "unavailable", ingredientId: pick.ingredientId, planMealId: pick.m.planMealId },
+    }),
+    "flag",
+  );
+  await waitJob(world.admin, flagged.jobId);
+  const flags = (
+    await json<{ flags: FlagView[] }>(
+      await world.admin.get(`/api/v1/cook-sheets/${date}/flags`),
+      "flags",
+    )
+  ).flags;
+  const result = flags.find((f) => f.kind === "unavailable")?.result;
+  const sub = result?.substituteName ?? "";
+  expect(sub, JSON.stringify(result)).not.toBe("");
+  const changed = result?.meals.find((m) => m.date === date);
+  if (changed === undefined) throw new Error("no meal of the date was substituted");
+  const names = [ing.name, ...ing.aliases];
+  const after = await json<Sheet>(await kitchen.get(`/api/v1/cook-sheets/${date}`), "sheet after");
+  const copy = after.meals.find((m) => m.planMealId === changed.planMealId);
+  expect(copy?.dishName).toBe(changed.toDishName);
+  // The copy's batches that now use the substitute: nothing in them names the ingredient.
+  const touched = (copy?.batches ?? []).filter((b) =>
+    b.raw.some((r) => r.ingredientId === result?.substituteId),
+  );
+  expect(touched.length).toBeGreaterThan(0);
+  expect(namesLeft(touched, names, sub)).toEqual([]);
+  // Negative control: the same check on the date's original batches with the ingredient fails.
+  const mentioning = sheet.meals.flatMap((m) =>
+    m.batches.filter((b) => b.raw.some((r) => r.ingredientId === pick.ingredientId)),
+  );
+  expect(namesLeft(mentioning, names, sub).length).toBeGreaterThan(0);
+  await kitchen.dispose();
+  substituted = { date, mealId: changed.planMealId, sub, names };
+
+  // The kitchen reads it on the page at both widths: the copy's steps as the API gives them.
+  for (const v of VIEWPORTS) {
+    const { ctx, page } = await as(browser, "kitchen", v);
+    await page.goto(`/kitchen?date=${date}&meal=${changed.planMealId}`);
+    const article = page.getByTestId("cook-meal").filter({ visible: true }).first();
+    await expect(article).toContainText(changed.toDishName, { timeout: 60_000 });
+    for (const b of touched) for (const step of b.steps) await expect(article).toContainText(step);
+    await expectFits(page, `substituted cook sheet ${v.name}`);
+    await ctx.close();
+  }
+});
+
+for (const v of VIEWPORTS)
+  test(`@1.4.8-G5 axe on the move, day-target, use-for and substituted states at ${v.name} px, light and dark`, async ({
+    browser,
+  }) => {
+    test.setTimeout(600_000);
+    const monday = await moveWeek(v);
+    const date = addDays(monday, 2);
+    const dinner = await mealOf(world.admin, date, "dinner");
+    const omar = dinner.plates.find((p) => p.memberId === world.members.omar);
+    const alts = (
+      await json<{ alternatives: Array<{ dishId: string }> }>(
+        await world.admin.get(`/api/v1/plan-meals/${dinner.id}/alternatives`),
+        "alternatives",
+      )
+    ).alternatives;
+    for (const dark of [false, true]) {
+      const theme = dark ? "dark" : "light";
+      const { ctx, page } = await as(browser, "admin", v, dark);
+      await page.goto(`/plan?week=${date}`);
+      await expect(page.getByTestId(`cell-${date}-dinner`)).toBeVisible({ timeout: 60_000 });
+      await axe(page, `week with drag ${v.name} ${theme}`);
+      // Mid-drag: the ghost and the drop targets.
+      const src = page.getByTestId(`cell-${date}-dinner`);
+      await src.evaluate((el) => {
+        el.scrollIntoView({ block: "center" });
+      });
+      const box = await src.boundingBox();
+      if (box !== null) {
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(box.x + box.width / 2 + 20, box.y + box.height / 2 + 20, {
+          steps: 4,
+        });
+        await expect(page.getByTestId("drag-ghost")).toBeVisible();
+        await axe(page, `week mid-drag ${v.name} ${theme}`);
+        await page.keyboard.press("Escape");
+        await page.mouse.up();
+        await expect(page.getByTestId("drag-ghost")).toHaveCount(0);
+      }
+      await openCell(page, date, "dinner");
+      await page.getByRole("dialog").getByRole("button", { name: "Move to…" }).first().click();
+      await expect(page.getByRole("dialog").getByRole("list", { name: /^Move / })).toBeVisible();
+      await axe(page, `meal sheet with Move menu and day targets ${v.name} ${theme}`);
+      await page.keyboard.press("Escape");
+      await page.goto(`/today/plates/${omar?.id ?? ""}`);
+      await expect(page.getByText(/kcal day/)).toBeVisible({ timeout: 60_000 });
+      await axe(page, `plate with day target ${v.name} ${theme}`);
+      await page.goto(`/recipes/${alts[0]?.dishId ?? dinner.dishId}?date=${date}&slot=dinner`);
+      await expect(page.getByTestId("use-for").getByRole("button")).toBeEnabled({
+        timeout: 60_000,
+      });
+      await axe(page, `recipe with Use for ${v.name} ${theme}`);
+      await page.goto(`/recipes/${dinner.dishId}?date=${addDays(monday, 70)}&slot=dinner`);
+      await expect(page.getByText(/Nothing is planned for/)).toBeVisible({ timeout: 60_000 });
+      await axe(page, `recipe with Use for disabled ${v.name} ${theme}`);
+      if (substituted !== null) {
+        await page.goto(`/kitchen?date=${substituted.date}&meal=${substituted.mealId}`);
+        await expect(page.getByTestId("cook-meal").filter({ visible: true }).first()).toBeVisible({
+          timeout: 60_000,
+        });
+        await axe(page, `substituted cook sheet ${v.name} ${theme}`);
+      }
+      await ctx.close();
+    }
+    expect(substituted, "the substituted cook sheet test ran first").not.toBeNull();
+  });
