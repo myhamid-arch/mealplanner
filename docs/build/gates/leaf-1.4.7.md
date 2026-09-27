@@ -4,25 +4,25 @@ OWNS: docs/decisions/leaf-1.4.7-*.md, packages/ai/src/onboarding/**, packages/ai
 
 Scope: The W-5 deferred scope (R-55): model-backed onboarding free-text parse (R2-ONB-3), the PlanningBalance "Next week, if you save" preview (UX-4), and the first-days follow-up questions with the "Getting set up" checklist (R2-ONB-6), as specified in docs/spec (see 11-build-plan.md §5 and §8 W-5, R-55) and matching docs/mockups.
 
-- [ ] G1: onboarding parse: typed results from recorded model responses; schema-failing answers refused; 503 without credential with deterministic fallback in the page; admin only
+- [x] G1: onboarding parse: typed results from recorded model responses; schema-failing answers refused; 503 without credential with deterministic fallback in the page; admin only
   CHECK: node scripts/verify/leaf-1.4.7.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.7 G1 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=b4f510006542ca7b16d8501173b7d96e3d7992977e7df20be79deb6c7d31b9ec; exit=0; EXPECT=matched; output-sha256=abff7ad3a311d17231885b304a699b4df5f1631cbd43169c7578e34b75cea951; output-bytes=3756; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G2: planning preview: current vs proposed without writing plan rows; proposed equals the real replan with the same weights and seed
+- [x] G2: planning preview: current vs proposed without writing plan rows; proposed equals the real replan with the same weights and seed
   CHECK: node scripts/verify/leaf-1.4.7.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.7 G2 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=f741468ce7c54b99dc156a1af44368c93e265cd84ec4a0cb8e80393604e6270b; exit=0; EXPECT=matched; output-sha256=88427d01392e43466d42ab1a967a4453648168c9c79334cadea0b6b127699c9d; output-bytes=1747; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G3: first days: only unsettled items proposed (F1 expected list), one card per day, dismiss and answers persist, checklist progress; negative control
+- [x] G3: first days: only unsettled items proposed (F1 expected list), one card per day, dismiss and answers persist, checklist progress; negative control
   CHECK: node scripts/verify/leaf-1.4.7.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.7 G3 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=6bf98da7abc7a9028fb04dca05b05a33fe76da5eda19b83fe1739954619eebb3; exit=0; EXPECT=matched; output-sha256=af7839f1db1bcd22288db02d3ffbb61e11253c59ac7372fb09c81e7a9d7ba251; output-bytes=1834; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G4: Playwright 390/1280 and axe-core (no serious or critical) on the preview panel, parse confirmation, follow-up card and checklist
+- [x] G4: Playwright 390/1280 and axe-core (no serious or critical) on the preview panel, parse confirmation, follow-up card and checklist
   CHECK: node scripts/verify/leaf-1.4.7.mjs --gate G4
   EXPECT: VERIFY leaf-1.4.7 G4 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=f07620ac575a2018e3996bd5d7084727c22eba702a08375cea5bb10fc3026624; exit=0; EXPECT=matched; output-sha256=b8067fb74647d6ae02c92858f9e794e7aa38b0bbc815a44b862b497a4569b090; output-bytes=3222; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G5: architect visual review against PlanningBalance (preview panel) and FirstDaysPhone mockups
   MANUAL: architect compares screenshots at 390 and 1280 px with the mockups
@@ -32,3 +32,5 @@ Scope: The W-5 deferred scope (R-55): model-backed onboarding free-text parse (R
   CHECK: node scripts/verify/leaf-1.4.7.mjs --live
   EXPECT: VERIFY leaf-1.4.7 LIVE PASSED
   EVIDENCE: pending
+
+ABANDON: G6 owner credential handoff (BLD-8 R-56): no Anthropic credential exists in the build environment; the owner runs `ANTHROPIC_API_KEY=<key> node scripts/verify/leaf-1.4.7.mjs --live`, which parses the F1 answers with the live model and must print VERIFY leaf-1.4.7 LIVE PASSED (without a credential it refuses and exits 1)

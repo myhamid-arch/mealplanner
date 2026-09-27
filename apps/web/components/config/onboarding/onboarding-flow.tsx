@@ -2,7 +2,9 @@
 // Onboarding (R2-ONB-1 … 4; Onboarding.dc.html; SC-6, SC-7): five optional questions, a live
 // "What I've worked out" panel, a review, then one change set and tomorrow's plan. Nothing is
 // saved before "Looks right: plan tomorrow" (R2-ONB-4); before that, Adjust returns to the answer;
-// afterwards it links to the screen where the setting lives (leaf-1.4.3 SPEC-Q-7).
+// afterwards it links to the screen where the setting lives (leaf-1.4.3 SPEC-Q-7). The free-text
+// answers are also read by the assistant (W-5, leaf 1.4.7): its reading is shown for confirmation
+// and replaces the page's own only when the admin taps Use this reading.
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import {
@@ -32,6 +34,12 @@ import {
   WeekQuestion,
   type WeekState,
 } from "./questions";
+import {
+  ModelParseConfirm,
+  READING_LINES,
+  readingOr,
+  useModelReadings,
+} from "../../setup/model-parse";
 
 const STEPS = ["Who", "Targets", "Week", "Food", "Never", "Review"] as const;
 
@@ -125,18 +133,29 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
   const [confirmed, setConfirmed] = useState<InferredSetup | null>(null);
   const ids = useRef<string[]>([]);
 
-  const people = useMemo(() => parsePeople(peopleText), [peopleText]);
+  const peopleModel = useModelReadings("people", { "": peopleText });
+  const ownPeople = useMemo(() => parsePeople(peopleText), [peopleText]);
+  const people = readingOr("people", peopleModel, "", peopleText, ownPeople);
   const names = people.map((p) => p.name);
-  const parses: Record<string, TargetParse> = useMemo(
+  const targetsModel = useModelReadings("targets", targetTexts);
+  const ownParses: Record<string, TargetParse> = useMemo(
     () => Object.fromEntries(Object.entries(targetTexts).map(([n, t]) => [n, parseTargets(t)])),
     [targetTexts],
   );
+  const parses: Record<string, TargetParse> = Object.fromEntries(
+    Object.entries(ownParses).map(([n, p]) => [
+      n,
+      readingOr("targets", targetsModel, n, targetTexts[n] ?? "", p),
+    ]),
+  );
   const weekState = week ?? defaultWeek(people);
   const namesKey = names.join("\u0000");
-  const neverItems = useMemo(
+  const neverModel = useModelReadings("never_eat", { "": neverText }, names);
+  const ownNeverItems = useMemo(
     () => parseNeverEat(neverText, namesKey === "" ? [] : namesKey.split("\u0000")),
     [neverText, namesKey],
   );
+  const neverItems = readingOr("never_eat", neverModel, "", neverText, ownNeverItems);
 
   const answers: OnboardingAnswers = {
     people: skipped.has(0) || people.length === 0 ? null : people,
@@ -334,6 +353,13 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
                   error={inferError}
                 />
               )}
+              {step === 0 && (
+                <ModelParseConfirm
+                  kind={{ field: "people", lines: READING_LINES.people }}
+                  readings={peopleModel}
+                  entries={[{ key: "", text: peopleText, label: "the people", mine: ownPeople }]}
+                />
+              )}
               {step === 1 &&
                 (people.length === 0 ? (
                   <>
@@ -364,6 +390,20 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
                     parses={parses}
                   />
                 ))}
+              {step === 1 && (
+                <ModelParseConfirm
+                  kind={{ field: "targets", lines: READING_LINES.targets }}
+                  readings={targetsModel}
+                  entries={names
+                    .filter((n) => tapped.has(n))
+                    .map((n) => ({
+                      key: n,
+                      text: targetTexts[n] ?? "",
+                      label: `${n}'s numbers`,
+                      mine: ownParses[n],
+                    }))}
+                />
+              )}
               {step === 2 && (
                 <WeekQuestion
                   people={
@@ -395,6 +435,20 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
                   onText={setNeverText}
                   items={neverItems}
                   describe={describe}
+                />
+              )}
+              {step === 4 && (
+                <ModelParseConfirm
+                  kind={{ field: "never_eat", lines: (items) => items.map(describe) }}
+                  readings={neverModel}
+                  entries={[
+                    {
+                      key: "",
+                      text: neverText,
+                      label: "the never-eat answer",
+                      mine: ownNeverItems,
+                    },
+                  ]}
                 />
               )}
               {step === 5 && (
@@ -627,6 +681,10 @@ function Result({
         className="flex min-h-13 w-fit items-center rounded-xl bg-action px-6 font-extrabold text-on-action no-underline hover:text-on-action"
       >
         Open tomorrow&apos;s plan
+      </Link>
+      {/* W-5 (leaf 1.4.7): the first-days follow-ups and checklist (R2-ONB-6). */}
+      <Link href="/getting-started" className="w-fit font-extrabold">
+        Getting set up: one quick question a day
       </Link>
     </div>
   );

@@ -2,8 +2,9 @@
 // Planning balance (PlanningBalance.dc.html; UX-2 Planning; PRD-2). Basic: one preset. Detailed:
 // weight sliders and fairness. Expert: weekday presets, adjusters, variants per component, the
 // economy window and AI recipes. Macros always stay within each person's precision (PRD-2).
-// The "Next week, if you save" preview needs a what-if plan endpoint (W-5, R-47) and is omitted;
-// after saving, the admin can replan next week.
+// At Detailed and Expert the "Next week, if you save" panel (W-5, leaf 1.4.7, R-56) previews the
+// draft weights and saves and replans; at Basic, presets apply on tap and next week can be
+// replanned.
 import Link from "next/link";
 import { useState } from "react";
 import type { ChangeOp } from "@mealplanner/core/changes";
@@ -21,6 +22,7 @@ import {
 } from "../detail-level/detail-control";
 import { levelRank, type Level } from "../detail-level/logic";
 import { TabLinks } from "../ui/tab-links";
+import { PlanPreviewPanel } from "../setup/plan-preview-panel";
 
 type Weight = "macroPrecision" | "appeal" | "ingredientEconomy" | "variety" | "fairness";
 type WeightValues = Record<Weight, number>;
@@ -129,23 +131,40 @@ function tomorrow(timezone: string): Date {
 
 export function PlanningScreen({ tabs }: { readonly tabs: readonly SettingsTab[] }) {
   const { data, error, loading, reload } = useHousehold();
+  // Kept here: saving from the preview panel reloads (and remounts) the screen below.
+  const [replanned, setReplanned] = useState(false);
   if (data === null)
     return error === null || loading ? (
       <LoadingBlock label="Loading planning balance" />
     ) : (
       <ErrorBlock message={error} onRetry={() => void reload()} />
     );
-  return <Planning key={JSON.stringify(data.weights)} data={data} reload={reload} tabs={tabs} />;
+  return (
+    <Planning
+      key={JSON.stringify(data.weights)}
+      data={data}
+      reload={reload}
+      tabs={tabs}
+      replanned={replanned}
+      onReplanned={() => {
+        setReplanned(true);
+      }}
+    />
+  );
 }
 
 function Planning({
   data,
   reload,
   tabs,
+  replanned,
+  onReplanned,
 }: {
   readonly data: HouseholdData;
   readonly reload: () => Promise<void>;
   readonly tabs: readonly SettingsTab[];
+  readonly replanned: boolean;
+  readonly onReplanned: () => void;
 }) {
   const {
     level,
@@ -174,7 +193,13 @@ function Planning({
       setError(problemText(e));
     }
   };
-  const dirty = (Object.keys(draft) as Weight[]).some((k) => !same(draft[k], w[k]));
+  const savedValues: WeightValues = {
+    macroPrecision: w.macroPrecision,
+    appeal: w.appeal,
+    ingredientEconomy: w.ingredientEconomy,
+    variety: w.variety,
+    fairness: w.fairness,
+  };
   const hiddenAt = (l: Level) =>
     (levelRank(l) < 1 && current === undefined ? 1 : 0) +
     (levelRank(l) < 2 ? data.presets.length + expertChanged(w) : 0);
@@ -256,106 +281,97 @@ function Planning({
         </p>
       )}
       {levelRank(level) >= 1 && (
-        <Section id="fine-tune" title="Fine-tune">
-          {SLIDERS.map((s, i) => {
-            const own = !same(draft[s.key], PRESETS[1]?.values[s.key] ?? 0);
-            return (
-              <div
-                key={s.key}
-                className={`flex flex-col gap-1.5 ${i === 3 ? "border-t border-line pt-3" : ""}`}
-                data-weight={s.key}
-              >
-                <label
-                  className={`flex items-center justify-between gap-2 text-[17px] font-extrabold ${s.cls}`}
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+          <Section id="fine-tune" title="Fine-tune" className="grow">
+            {SLIDERS.map((s, i) => {
+              const own = !same(draft[s.key], PRESETS[1]?.values[s.key] ?? 0);
+              return (
+                <div
+                  key={s.key}
+                  className={`flex flex-col gap-1.5 ${i === 3 ? "border-t border-line pt-3" : ""}`}
+                  data-weight={s.key}
                 >
-                  {s.label}
-                  <span className="tabular text-ink">{draft[s.key].toFixed(1)}</span>
-                </label>
-                <input
-                  type="range"
-                  min={0}
-                  max={10}
-                  step={1}
-                  aria-label={s.label}
-                  value={Math.round(draft[s.key] * 10)}
-                  onChange={(e) => {
-                    setDraft({ ...draft, [s.key]: Number(e.target.value) / 10 });
-                  }}
-                  className={`w-full ${s.cls}`}
-                />
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="grow text-[13px] text-ink-soft">{s.help}</span>
-                  <AutoTag
-                    state={own ? "yours" : "auto"}
-                    editable
-                    what={s.label}
-                    onBackToAuto={() => {
-                      setDraft({ ...draft, [s.key]: PRESETS[1]?.values[s.key] ?? draft[s.key] });
+                  <label
+                    className={`flex items-center justify-between gap-2 text-[17px] font-extrabold ${s.cls}`}
+                  >
+                    {s.label}
+                    <span className="tabular text-ink">{draft[s.key].toFixed(1)}</span>
+                  </label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={10}
+                    step={1}
+                    aria-label={s.label}
+                    value={Math.round(draft[s.key] * 10)}
+                    onChange={(e) => {
+                      setDraft({ ...draft, [s.key]: Number(e.target.value) / 10 });
                     }}
+                    className={`w-full ${s.cls}`}
                   />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="grow text-[13px] text-ink-soft">{s.help}</span>
+                    <AutoTag
+                      state={own ? "yours" : "auto"}
+                      editable
+                      what={s.label}
+                      onBackToAuto={() => {
+                        setDraft({ ...draft, [s.key]: PRESETS[1]?.values[s.key] ?? draft[s.key] });
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-          {levelRank(level) === 2 && <WeekdayPresets data={data} run={run} />}
-          <div className="flex flex-wrap gap-2.5">
-            <button
-              type="button"
-              disabled={!dirty}
-              onClick={() =>
-                void run("Change planning weights", [{ kind: "weights.set", payload: draft }])
-              }
-              className="min-h-12 rounded-lg bg-action px-5 font-extrabold text-on-action"
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              disabled={!dirty}
-              onClick={() => {
-                setDraft({
-                  macroPrecision: w.macroPrecision,
-                  appeal: w.appeal,
-                  ingredientEconomy: w.ingredientEconomy,
-                  variety: w.variety,
-                  fairness: w.fairness,
-                });
-              }}
-              className="min-h-12 rounded-lg border-[1.5px] border-ink bg-card px-5 font-extrabold text-ink"
-            >
-              Reset
-            </button>
-          </div>
-        </Section>
+              );
+            })}
+            {levelRank(level) === 2 && <WeekdayPresets data={data} run={run} />}
+          </Section>
+          <PlanPreviewPanel
+            draft={draft}
+            saved={savedValues}
+            timezone={data.household.timezone}
+            members={data.members}
+            replanned={replanned}
+            onReset={() => {
+              setDraft(savedValues);
+            }}
+            onSaved={async () => {
+              onReplanned();
+              setSaved(true);
+              await reload();
+            }}
+          />
+        </div>
       )}
       {levelRank(level) === 2 && <ExpertSettings weights={w} run={run} />}
-      <section
-        aria-label="Replan"
-        className="flex flex-wrap items-center gap-3 rounded-2xl bg-card p-4 shadow-card"
-      >
-        <p className="m-0 grow text-sm text-ink-soft">
-          New settings apply to the next plan. Unlocked meals of the coming week can be planned
-          again now.
-        </p>
-        {replan === "queued" ? (
-          <Link href="/plan" className="font-extrabold">
-            Replanning next week: open the plan
-          </Link>
-        ) : (
-          <button
-            type="button"
-            onClick={() => void replanWeek()}
-            className="min-h-11 rounded-md bg-flour px-4 font-extrabold text-ink"
-          >
-            Replan next week
-          </button>
-        )}
-        {replan === "failed" && (
-          <p role="alert" className="m-0 w-full text-sm font-bold text-pomegranate-text">
-            The plan could not be started. Try again in a moment.
+      {levelRank(level) === 0 && (
+        <section
+          aria-label="Replan"
+          className="flex flex-wrap items-center gap-3 rounded-2xl bg-card p-4 shadow-card"
+        >
+          <p className="m-0 grow text-sm text-ink-soft">
+            New settings apply to the next plan. Unlocked meals of the coming week can be planned
+            again now.
           </p>
-        )}
-      </section>
+          {replan === "queued" ? (
+            <Link href="/plan" className="font-extrabold">
+              Replanning next week: open the plan
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => void replanWeek()}
+              className="min-h-11 rounded-md bg-flour px-4 font-extrabold text-ink"
+            >
+              Replan next week
+            </button>
+          )}
+          {replan === "failed" && (
+            <p role="alert" className="m-0 w-full text-sm font-bold text-pomegranate-text">
+              The plan could not be started. Try again in a moment.
+            </p>
+          )}
+        </section>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <SaveStatus error={error} saved={saved} />
         <TellAssistant prompt="Change the planning balance: " />

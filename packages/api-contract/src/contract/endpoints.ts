@@ -972,6 +972,73 @@ export const detailLevelsSet = endpoint({
   response: d.DetailLevelDto,
 });
 
+// W-5 (1.4.7, R-55): onboarding parse, planning preview, first-days follow-ups ------------------
+
+export const onboardingParse = endpoint({
+  id: "onboarding.parse",
+  method: "POST",
+  path: `${V}/onboarding/parse`,
+  summary:
+    "Read one onboarding answer with the assistant (structured output; shown for confirmation)",
+  tag: "config",
+  auth: "household",
+  roles: ADMIN,
+  body: d.OnboardingParseBody,
+  response: d.OnboardingParseDto,
+  errors: [502, 503],
+});
+
+export const plansPreview = endpoint({
+  id: "plans.preview",
+  method: "POST",
+  path: `${V}/plans/preview`,
+  summary: "Queue a what-if plan with other weights; writes no plan (result at /jobs/{id}/events)",
+  tag: "plans",
+  auth: "household",
+  roles: ADMIN,
+  body: d.PlanPreviewBody,
+  status: 202,
+  response: JobRef,
+});
+
+export const setupFollowupsGet = endpoint({
+  id: "setupFollowups.get",
+  method: "GET",
+  path: `${V}/setup-followups`,
+  summary: "Today's follow-up question, the ones coming up, and the Getting set up checklist",
+  tag: "config",
+  auth: "household",
+  roles: ADMIN,
+  response: d.SetupFollowupsDto,
+});
+
+export const setupFollowupsAnswer = endpoint({
+  id: "setupFollowups.answer",
+  method: "POST",
+  path: `${V}/setup-followups/{key}/answer`,
+  summary: "Answer a follow-up with one of its choices (applied as one change set)",
+  tag: "config",
+  auth: "household",
+  roles: ADMIN,
+  params: z.object({ key: d.FollowupKey }),
+  body: d.FollowupAnswerBody,
+  response: d.FollowupAnswerDto,
+  errors: [409, 422],
+});
+
+export const setupFollowupsDismiss = endpoint({
+  id: "setupFollowups.dismiss",
+  method: "POST",
+  path: `${V}/setup-followups/{key}/dismiss`,
+  summary: "Not sure: ask me later (the follow-up comes back after the others)",
+  tag: "config",
+  auth: "household",
+  roles: ADMIN,
+  params: z.object({ key: d.FollowupKey }),
+  response: d.SetupFollowupsDto,
+  errors: [409],
+});
+
 // Proposals, change log, insights ----------------------------------------------------------------
 
 export const proposalsList = endpoint({
@@ -1491,6 +1558,12 @@ export const ENDPOINTS = [
   preferencesReset,
   detailLevelsList,
   detailLevelsSet,
+  // W-5 (1.4.7, R-55)
+  onboardingParse,
+  plansPreview,
+  setupFollowupsGet,
+  setupFollowupsAnswer,
+  setupFollowupsDismiss,
   proposalsList,
   proposalsAccept,
   proposalsReject,

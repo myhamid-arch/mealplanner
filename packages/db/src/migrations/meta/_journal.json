@@ -43,6 +43,13 @@
       "when": 1790467525260,
       "tag": "0005_review_extraction",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790486287584,
+      "tag": "0006_setup_followups",
+      "breakpoints": true
     }
   ]
 }

@@ -377,6 +377,17 @@ export async function populateAllTables(db: Executor, loaded: LoadedFixture): Pr
     section: "targets",
     level: "expert",
   });
+  // R-56 (leaf-1.4.7): a dismissed first-days follow-up.
+  await write.setup_followup.insert({
+    id: newId(),
+    householdId: ctx.householdId,
+    key: "dinner_time",
+    status: "dismissed",
+    choice: null,
+    changeSetId: null,
+    resolvedByUserId: adminUserId,
+    resolvedAt: now,
+  });
   // FBK-5 learned portion bias: a `learning` change set (BLD-8 R-24).
   const untargeted = need(
     members.find((m) => !m.isTargeted),

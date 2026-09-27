@@ -42,6 +42,7 @@ import {
   TOLERANCE_MODES,
   TRAINING_INTENSITIES,
 } from "@mealplanner/core/types";
+import { FOLLOWUP_KINDS } from "@mealplanner/core/onboarding/followups";
 import { Id, IsoDate, JsonValue, Time, Timestamp } from "./common.js";
 
 const nullableNumber = z.number().nullable();
@@ -1014,6 +1015,151 @@ export const PortionBiasDto = z.object({
   memberId: Id,
   componentRole: z.enum(COMPONENT_ROLES),
   factor: z.number(),
+});
+
+// W-5 (1.4.7, R-55): onboarding parse, planning preview, first-days follow-ups ------------------
+
+/** R2-ONB-3: one free-text answer for the assistant to read (leaf-1.4.7 SPEC-Q-2 … 5). */
+export const OnboardingParseBody = z
+  .object({
+    field: z.enum(["people", "targets", "never_eat"]),
+    text: z.string().trim().min(1).max(2000),
+    /** Question 1's names, for `never_eat`. */
+    people: z.array(z.string().trim().min(1).max(80)).max(20).optional(),
+  })
+  .strict();
+
+const PersonAnswerDto = z.object({
+  name: z.string(),
+  age: z.number().int().nullable(),
+  sex: z.enum(SEXES).nullable(),
+});
+
+const DayTargetsDto = z.object({
+  kcal: z.number(),
+  proteinG: z.number(),
+  carbsG: z.number(),
+  fatG: z.number(),
+  satFatMaxG: z.number().optional(),
+  solubleFibreMinG: z.number().optional(),
+  fibreMinG: z.number().optional(),
+  sodiumMaxMg: z.number().optional(),
+});
+
+/** The shape of `TargetParse` (@mealplanner/core/onboarding). */
+const TargetParseDto = z.union([
+  z.object({
+    ok: z.literal(true),
+    value: DayTargetsDto.extend({ training: DayTargetsDto.optional() }),
+  }),
+  z.object({ ok: z.literal(false), reason: z.string() }),
+]);
+
+export const OnboardingParseDto = z.union([
+  z.object({ people: z.array(PersonAnswerDto) }),
+  z.object({ targets: TargetParseDto }),
+  z.object({
+    neverEat: z.array(
+      z.object({ who: z.string(), term: z.string(), reason: z.enum(EXCLUSION_REASONS) }),
+    ),
+  }),
+]);
+
+/** UX-4: weights to preview; the five numeric weights of `weights.set`, any subset. */
+export const PlanPreviewBody = z
+  .object({
+    dates: z.array(IsoDate).min(1).max(7),
+    weights: z
+      .object({
+        macroPrecision: z.number().min(0).max(1),
+        appeal: z.number().min(0).max(1),
+        ingredientEconomy: z.number().min(0).max(1),
+        variety: z.number().min(0).max(1),
+        fairness: z.number().min(0).max(1),
+      })
+      .partial()
+      .strict(),
+    seed: z.number().int().min(0).max(2_147_483_647).default(1),
+  })
+  .strict();
+
+const PreviewMetricsDto = z.object({
+  /** Distinct core ingredients over the dates' meals (SC-2's count). */
+  distinctIngredients: z.number().int(),
+  /** Targeted plates in tolerance, in %; null when no plate is targeted. */
+  inTolerancePct: z.number().nullable(),
+  meals: z.number().int(),
+  targetedPlates: z.number().int(),
+});
+
+const PreviewSideDto = z.object({
+  dishId: Id,
+  dishName: z.string(),
+  /** A member's variant choices (`kind: variant`), e.g. "Fried eggs". */
+  variants: z.array(z.string()),
+});
+
+/** The job result of `plans.preview` (leaf-1.4.7 SPEC-Q-6), the `done` event's payload. */
+export const PlanPreviewDto = z.object({
+  dates: z.array(IsoDate),
+  seed: z.number().int(),
+  currentSource: z.enum(["saved", "computed"]),
+  current: PreviewMetricsDto,
+  proposed: PreviewMetricsDto,
+  changes: z.array(
+    z.object({
+      date: IsoDate,
+      slotKey: z.string(),
+      slotLabel: z.string(),
+      /** `shared`, or the member of an individual meal. */
+      memberScope: z.string(),
+      kind: z.enum(["dish", "variant", "added", "removed"]),
+      /** The member whose variants change (`kind: variant`). */
+      memberId: Id.nullable(),
+      before: PreviewSideDto.nullable(),
+      after: PreviewSideDto.nullable(),
+    }),
+  ),
+  /** PLN-12 requests for new recipes the replan would make (a preview generates none). */
+  generationRequests: z.number().int(),
+});
+
+const LinkDto = z.object({ label: z.string(), href: z.string() });
+
+export const FollowupDto = z.object({
+  key: z.string(),
+  kind: z.enum(FOLLOWUP_KINDS),
+  question: z.string(),
+  choices: z.array(z.object({ id: z.string(), label: z.string(), then: LinkDto.nullable() })),
+  more: LinkDto.nullable(),
+});
+
+/** R2-ONB-6 (FirstDaysPhone): today's card, what comes next, and the checklist. */
+export const SetupFollowupsDto = z.object({
+  today: IsoDate,
+  /** "day N": the household's first local day is 1. */
+  day: z.number().int(),
+  card: FollowupDto.nullable(),
+  position: z.number().int(),
+  total: z.number().int(),
+  upcoming: z.array(FollowupDto),
+  checklist: z.object({
+    items: z.array(z.object({ key: z.string(), label: z.string(), done: z.boolean() })),
+    done: z.number().int(),
+    total: z.number().int(),
+  }),
+});
+
+export const FollowupKey = z.string().regex(/^[a-z_]{1,40}(:[0-9a-f-]{36})?$/);
+
+export const FollowupAnswerBody = z.object({ choice: z.string().min(1).max(20) }).strict();
+
+export const FollowupAnswerDto = z.object({
+  /** The change set the answer applied; null when it changed nothing. */
+  changeSetId: Id.nullable(),
+  /** Where the rest of the answer is entered ("Go up": the training-day numbers). */
+  then: LinkDto.nullable(),
+  followups: SetupFollowupsDto,
 });
 
 // BLD-8 R-52 (leaf 1.4.4) ------------------------------------------------------------------------

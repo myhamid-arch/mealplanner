@@ -23,6 +23,8 @@ export const JOB_KINDS = [
   "household.purge",
   "reviews.extract",
   "recipe.draft",
+  // W-5 (1.4.7, R-56): the what-if plan of Planning balance (UX-4); writes no plan.
+  "plans.preview",
 ] as const;
 export type JobKind = (typeof JOB_KINDS)[number];
 

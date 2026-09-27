@@ -225,7 +225,14 @@ export type ChangeSource = (typeof CHANGE_SOURCES)[number];
 export const KG_EDGE_SOURCES = ["seed", "derived", "learned", "ai"] as const;
 export type KgEdgeSource = (typeof KG_EDGE_SOURCES)[number];
 
-export const AI_PURPOSES = ["recipe", "insights", "chat", "comment_extraction"] as const;
+export const AI_PURPOSES = [
+  "recipe",
+  "insights",
+  "chat",
+  "comment_extraction",
+  // R-56 (leaf-1.4.7 SPEC-Q-1): the onboarding free-text parse (R2-ONB-3).
+  "onboarding_parse",
+] as const;
 export type AiPurpose = (typeof AI_PURPOSES)[number];
 
 /** Weekdays are 0 = Monday … 6 = Sunday (ISO order minus one) everywhere in the domain model. */
