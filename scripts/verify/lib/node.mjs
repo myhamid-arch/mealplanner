@@ -670,15 +670,19 @@ async function n2NegativeControl(report, control) {
     )
       return;
     writeFileSync(file, changed);
-    const rebuild = await runAsync("pnpm", ["run", "build"], {
-      cwd: join(copy.dir, control.packageDir),
-      timeoutMs: 600_000,
-    });
-    report.check(
-      rebuild.code === 0,
-      `negative control: ${control.packageDir} still builds with the changed type`,
-      tail(rebuild, 30),
-    );
+    // A source change is rebuilt into dist/ (and must still build, so the break is the
+    // consumer's). A change to a published declaration under dist/ is what consumers read as is.
+    if (!control.file.includes("/dist/")) {
+      const rebuild = await runAsync("pnpm", ["run", "build"], {
+        cwd: join(copy.dir, control.packageDir),
+        timeoutMs: 600_000,
+      });
+      report.check(
+        rebuild.code === 0,
+        `negative control: ${control.packageDir} still builds with the changed type`,
+        tail(rebuild, 30),
+      );
+    }
     const after = await runAsync("pnpm", ["run", "typecheck"], {
       cwd: consumerDir,
       timeoutMs: 1_200_000,
@@ -1157,7 +1161,7 @@ export async function runE2ESuite(report, { webDir, distDir, server }) {
       });
   }
 
-  const jobs = Math.max(1, Number(process.env.NODE_E2E_JOBS ?? "2") || 2);
+  const jobs = Math.max(1, Number(process.env.NODE_E2E_JOBS ?? "1") || 1);
   const slots = Math.max(1, Number(process.env.NODE_E2E_SLOTS ?? "2") || 2);
   const queue = [...runs];
   const done = new Map();

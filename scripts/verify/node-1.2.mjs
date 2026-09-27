@@ -40,8 +40,8 @@ const LABEL = "node-1.2";
 const N2_CONTROL = {
   description: "PlanResult.flags is renamed to planFlags",
   file: "packages/core/src/planner/select/types.ts",
-  find: /(export type PlanResult = \{[^}]*?)\n {2}flags: PlanFlag\[\];/,
-  replace: "$1\n  planFlags: PlanFlag[];",
+  find: /\n {2}flags: PlanFlag\[\];\n {2}generationRequests: PlanGenerationRequest\[\];/,
+  replace: "\n  planFlags: PlanFlag[];\n  generationRequests: PlanGenerationRequest[];",
   packageDir: "packages/core",
   consumer: "@mealplanner/db",
   consumerDir: "packages/db",

@@ -5,8 +5,8 @@
 //
 // N2  The branch packages (@mealplanner/core, db, ai, graph) are built; every workspace package that
 //     depends on them typechecks against their dist/ declarations; the api-contract contract tests
-//     pass. Negative control: in a disposable copy, `AgentPorts.getPreferences` in @mealplanner/ai
-//     returns another type and @mealplanner/web's typecheck fails.
+//     pass. Negative control: in a disposable copy, the published `ApplyOutcome.appliedAt` of
+//     @mealplanner/ai (dist declaration) becomes a number and @mealplanner/web's typecheck fails.
 // N3  apps/web/test/node/intelligence.node.ts against the built web app and the real worker on a
 //     fresh database of the gate's own (migrated from zero, catalogue, F1), with recorded model
 //     responses served over ANTHROPIC_BASE_URL (SPEC-Q-6; no credential, no live call): SC-3
@@ -38,10 +38,12 @@ import {
 const LABEL = "node-1.3";
 
 const N2_CONTROL = {
-  description: "AgentPorts.getPreferences returns Promise<number> instead of Promise<ToolOutput>",
-  file: "packages/ai/src/agent/types.ts",
-  find: /getPreferences\(input: ToolInput<"get_preferences">, call: ToolCall\): Promise<ToolOutput>;/,
-  replace: 'getPreferences(input: ToolInput<"get_preferences">, call: ToolCall): Promise<number>;',
+  // @mealplanner/ai's own tests implement AgentPorts, so a source change would break its build;
+  // the published declaration is changed instead, which is what consumers compile against.
+  description: "the published ApplyOutcome's appliedAt changes from string to number",
+  file: "packages/ai/dist/src/agent/types.d.ts",
+  find: /(status: "applied";\s*changeSetId: string;\s*)appliedAt: string;/,
+  replace: "$1appliedAt: number;",
   packageDir: "packages/ai",
   consumer: "@mealplanner/web",
   consumerDir: "apps/web",
