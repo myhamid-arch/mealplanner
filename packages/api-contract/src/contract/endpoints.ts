@@ -1355,6 +1355,20 @@ export const openapiGet = endpoint({
 });
 
 /** Every endpoint, in document order. */
+// Portion biases (FBK-5, FBK-9; leaf 1.4.5, BLD-8 R-53) ------------------------------------------
+
+export const portionBiasesList = endpoint({
+  id: "portionBiases.list",
+  method: "GET",
+  path: `${V}/portion-biases`,
+  summary: "Learned portion biases per member and component role (a member sees only their own)",
+  tag: "reviews",
+  auth: "household",
+  roles: ADMIN_MEMBER,
+  query: z.object({ memberId: Id.optional() }),
+  response: list("biases", d.PortionBiasDto),
+});
+
 // BLD-8 R-52 (leaf 1.4.4) ------------------------------------------------------------------------
 
 export const cookSheetsFlags = endpoint({
@@ -1508,6 +1522,8 @@ export const ENDPOINTS = [
   supportPlans,
   supportChangeLog,
   openapiGet,
+  // Portion biases (leaf 1.4.5, R-53)
+  portionBiasesList,
 ] as const;
 
 /** Endpoints by id. */

@@ -5,7 +5,12 @@
 import { GenerationContextError, buildGenerationContext } from "@mealplanner/ai/recipes";
 import type { HouseholdConfig } from "@mealplanner/core/types";
 import { loadHouseholdConfig } from "@mealplanner/db/services/config";
-import { loadPlanPool, type ChangeActorInput } from "@mealplanner/db/services/plans";
+import {
+  generatedDishOps,
+  householdDishSlugs,
+  loadPlanPool,
+  type ChangeActorInput,
+} from "@mealplanner/db/services/plans";
 import { localDate } from "@mealplanner/db/services/proposals";
 import { generateDishes } from "../ai.js";
 import { toJson, type JobHandler } from "../runner.js";
@@ -91,10 +96,25 @@ export const recipeDraft: JobHandler = async (ctx) => {
   const { scrub } = buildGenerationContext({ config, date, slotKey, count: p.count });
   const nameOf = new Map<string, string>();
   for (const m of config.members) nameOf.set(scrub(m.displayName), m.displayName);
+  // Each draft carries the exact ops its Save applies through POST /change-sets (R-53: the one
+  // mapping `saveGeneratedDishes` also uses). Slugs are free as of now and distinct across drafts.
+  const taken = new Set(await householdDishSlugs(ctx.rt.db, hh));
+  const draftOps = outcome.survivors.map((s) => {
+    const { ops } = generatedDishOps({
+      survivors: [{ dish: s.dish, newIngredients: s.newIngredients, call: s.call }],
+      generationIds: outcome.run.generationIds,
+      catalog: pool.catalog,
+      takenSlugs: taken,
+    });
+    for (const op of ops)
+      if (op.kind === "dish.create") taken.add((op.payload as { slug: string }).slug);
+    return { ops, summary: `Add AI recipe "${s.dish.name.slice(0, 120)}"` };
+  });
   return toJson({
     slotKey,
     date,
-    dishes: outcome.survivors.map((s) => ({
+    dishes: outcome.survivors.map((s, i) => ({
+      ...draftOps[i],
       dish: s.dish,
       newIngredients: s.newIngredients,
       nutrition: s.nutrition,

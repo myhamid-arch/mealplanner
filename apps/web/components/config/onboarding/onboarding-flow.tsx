@@ -306,10 +306,7 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
             );
           })}
         </ol>
-        <Link
-          href={`/chat?prompt=${encodeURIComponent("Set up my household: ")}`}
-          className="ml-auto text-sm font-extrabold"
-        >
+        <Link href="/chat/setup" className="ml-auto text-sm font-extrabold">
           Rather just talk? Tell the assistant
         </Link>
       </div>

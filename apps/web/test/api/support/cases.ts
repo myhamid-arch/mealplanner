@@ -525,4 +525,7 @@ export const CASES: Record<string, Case> = {
   }),
   "support.changeLog": ({ w }) => ({ caller: w.operator, input: { params: { id: w.a.id } } }),
   "openapi.get": () => ({ caller: ANON, input: {} }),
+
+  // Portion biases (1.4.5, R-53)
+  "portionBiases.list": () => ({ input: {} }),
 };

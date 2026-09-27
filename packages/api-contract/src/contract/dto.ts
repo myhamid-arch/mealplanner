@@ -1007,6 +1007,15 @@ export const DetailLevelSetBody = z
   .object({ memberId: Id.nullable(), section: DetailSection, level: z.enum(DETAIL_LEVELS) })
   .strict();
 
+// Portion biases (FBK-5, FBK-9; leaf 1.4.5, BLD-8 R-53) ------------------------------------------
+
+/** One learned role bias of an untargeted member's portions (FBK-5: 0.6 … 1.6, starts at 1). */
+export const PortionBiasDto = z.object({
+  memberId: Id,
+  componentRole: z.enum(COMPONENT_ROLES),
+  factor: z.number(),
+});
+
 // BLD-8 R-52 (leaf 1.4.4) ------------------------------------------------------------------------
 
 /** One changed meal of a `plates.substitute` run (R2-UX-1). */

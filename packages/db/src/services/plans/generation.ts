@@ -130,21 +130,20 @@ function ingredientSlugOf(slug: string): string {
 }
 
 /**
- * REC-5 "survivors are saved via a change set": `ingredient.create` for each new ingredient
- * (`ai_estimate`, low confidence, NUT-7) and `dish.create` with `source: ai`, in one change set.
- * Returns the new dish ids in input order and the change set (for its follow-up jobs).
+ * The ops that save generated dishes (REC-5), pure: `ingredient.create` for each new ingredient
+ * (`ai_estimate`, low confidence, NUT-7; one per slug across the survivors) and `dish.create` with
+ * `source: ai`, each dish on a slug not in `takenSlugs`. Returns the ops and the new dish ids in
+ * input order. Used by `saveGeneratedDishes` and by the chat's recipe drafts (R-53: one mapping).
  */
-export async function saveGeneratedDishes(
-  db: Executor,
-  ctx: HouseholdContext,
-  args: {
-    survivors: readonly SurvivorInput[];
-    generationIds: readonly string[];
-    catalog: DbCatalog;
-    by: ChangeActorInput;
-  },
-): Promise<{ dishIds: string[]; changeSetId: string | null }> {
-  if (args.survivors.length === 0) return { dishIds: [], changeSetId: null };
+export function generatedDishOps(args: {
+  survivors: readonly SurvivorInput[];
+  generationIds: readonly string[];
+  catalog: DbCatalog;
+  /** Household dish slugs already used. */
+  takenSlugs: Iterable<string>;
+  newId?: () => string;
+}): { ops: ChangeOp[]; dishIds: string[] } {
+  const makeId = args.newId ?? newId;
   const ingredientIds = new Map(args.catalog.idBySlug);
   const ops: ChangeOp[] = [];
   for (const s of args.survivors)
@@ -157,7 +156,7 @@ export async function saveGeneratedDishes(
         ingredientIds.set(n.slug, existing);
         continue;
       }
-      const id = newId();
+      const id = makeId();
       ingredientIds.set(n.slug, id);
       ingredientIds.set(slug, id);
       ops.push({
@@ -181,11 +180,7 @@ export async function saveGeneratedDishes(
         },
       });
     }
-  const taken = new Set(
-    (
-      await db.select({ slug: dish.slug }).from(dish).where(eq(dish.householdId, ctx.householdId))
-    ).map((d) => d.slug),
-  );
+  const taken = new Set(args.takenSlugs);
   const need = (map: ReadonlyMap<string, string>, key: string, what: string) => {
     const v = map.get(key);
     if (v === undefined)
@@ -198,7 +193,7 @@ export async function saveGeneratedDishes(
     let slug = slugOf(d.name);
     for (let i = 2; taken.has(slug); i++) slug = `${slugOf(d.name).slice(0, 95)}-${String(i)}`;
     taken.add(slug);
-    const id = newId();
+    const id = makeId();
     dishIds.push(id);
     const assembly =
       d.assemblySteps.length === 0
@@ -252,6 +247,37 @@ export async function saveGeneratedDishes(
       },
     });
   }
+  return { ops, dishIds };
+}
+
+/** The household's dish slugs (taken for new dishes). */
+export async function householdDishSlugs(db: Executor, ctx: HouseholdContext): Promise<string[]> {
+  return (
+    await db.select({ slug: dish.slug }).from(dish).where(eq(dish.householdId, ctx.householdId))
+  ).map((d) => d.slug);
+}
+
+/**
+ * REC-5 "survivors are saved via a change set": the `generatedDishOps` applied as one change set.
+ * Returns the new dish ids in input order and the change set (for its follow-up jobs).
+ */
+export async function saveGeneratedDishes(
+  db: Executor,
+  ctx: HouseholdContext,
+  args: {
+    survivors: readonly SurvivorInput[];
+    generationIds: readonly string[];
+    catalog: DbCatalog;
+    by: ChangeActorInput;
+  },
+): Promise<{ dishIds: string[]; changeSetId: string | null }> {
+  if (args.survivors.length === 0) return { dishIds: [], changeSetId: null };
+  const { ops, dishIds } = generatedDishOps({
+    survivors: args.survivors,
+    generationIds: args.generationIds,
+    catalog: args.catalog,
+    takenSlugs: await householdDishSlugs(db, ctx),
+  });
   const applied = await applyChangeSet(db, ctx, {
     actor: args.by.actor,
     source: args.by.source,
