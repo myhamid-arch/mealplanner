@@ -58,6 +58,15 @@ export function invalidJsonResult(
   return errorResult(id, { INVALID_JSON: JSON.stringify(input ?? null), issues });
 }
 
+function validTimeZone(tz: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en-GB", { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Validates each op against the registry (AGT-6) and applies the agent-specific rules. */
 async function checkOps(ops: readonly WireOp[], ports: AgentPorts): Promise<void> {
   for (const [index, op] of ops.entries()) {
@@ -77,6 +86,18 @@ async function checkOps(ops: readonly WireOp[], ports: AgentPorts): Promise<void
         })),
       });
     const p = parsed.data;
+    // As on POST /change-sets: the scheduler and follow-ups compute local dates from it.
+    if (
+      p.kind === "household.update" &&
+      p.payload.timezone !== undefined &&
+      !validTimeZone(p.payload.timezone)
+    )
+      throw new ToolError(
+        `ops[${String(index)}]: "${p.payload.timezone}" is not an IANA time zone`,
+        {
+          index,
+        },
+      );
     // R-36: an ingredient exclusion's key is the ingredient slug.
     if (p.kind === "exclusion.add" && p.payload.kind === "ingredient") {
       const key = await ports.ingredientKey(p.payload.key);

@@ -107,3 +107,19 @@ Consumers that should see extracted tags (1.3.3 rule inputs in `load.ts`) are th
 ## SPEC-Q-16: the eval set (AGT-9, G4)
 
 Reading: `evals/agent/cases/*.yaml` (≥ 25 cases, schema checked by a unit test that runs in CI), and `evals/agent/run.ts`, which runs the real loop against a live model only when `RUN_LLM_EVALS=1`, with in-memory ports over fixture F1 (tools return fixture data; writes are recorded, not applied). A case passes when every expected tool call and op kind occurs and no must-not check fires; the score is printed. G4 stays a manual handoff: no credential here (architect note, 1.3.1 G4 precedent). Needs `js-yaml` (Requests R-F).
+
+## SPEC-Q-17: `suggest_alternatives` with an `instruction`
+
+AGT-4: "Top 5 alternatives, optionally steered by text through the scorer, and AI generation if `instruction` asks for something new". 1.2.3's scorer takes no free text, and `planAlternatives` returns the scored alternatives only.
+
+Reading: the tool returns 1.2.3's alternatives with their score breakdowns and echoes the instruction; the model applies it to the candidates it was given (names, cuisines, scores) and, when the admin asks for something the library lacks, calls `create_recipe` (the system prompt says so). No text scorer is invented here.
+
+## SPEC-Q-18: who a plan generated from chat is attributed to
+
+`generate_plan` enqueues `plan.generate` with the admin as the job's creator, so 1.4.1's handler writes the saved days as `actor: user, source: ui` (its SPEC-Q-12 rule for UI-started jobs). The change log (R2-ADM-7) would then badge an agent-started plan as a UI change. Reading: the job payload carries `source: "agent"` and `conversationId`; attributing it as `agent` / `agent_apply` needs a line in `apps/worker/src/jobs/handlers.ts` (`planGenerate`'s `by`). Asked (ARCHITECT QUESTION on the PR); until then the plan is attributed to the admin who asked.
+
+## Open ARCHITECT QUESTIONs (PR #14)
+
+- 1.4.1's `matrix.ts` validates every SSE endpoint's events as `JobEventDto` (blocks 1.4.1 G1 for `conversations.send`).
+- `review.extracted_*` columns: `ReviewRow` and four review-row literals outside the grant (blocks the `reviews.extract` job and 1.3.3's `load.ts` union).
+- 1.3.3's `satisfied.ts` drops a relaxing `exclusion.add` proposal (blocks one case of G2).

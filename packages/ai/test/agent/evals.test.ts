@@ -1,13 +1,24 @@
 // AGT-9: the eval set (evals/agent/*.yaml) is well-formed and large enough, and the grader passes
 // a correct transcript and fails a wrong one. The live run itself is G4's owner handoff.
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { load } from "js-yaml";
 import { describe, expect, it } from "vitest";
 import { EvalFileSchema, gradeCase, passRate, type EvalCase } from "../../src/agent/index.js";
 
-const DIR = join(dirname(fileURLToPath(import.meta.url)), "../../../../evals/agent");
+/** The repository root (the directory with pnpm-workspace.yaml), from the source or the build. */
+function repoRoot(): string {
+  let dir = dirname(fileURLToPath(import.meta.url));
+  while (!existsSync(join(dir, "pnpm-workspace.yaml"))) {
+    const up = dirname(dir);
+    if (up === dir) throw new Error("repository root not found");
+    dir = up;
+  }
+  return dir;
+}
+
+const DIR = join(repoRoot(), "evals/agent");
 
 function cases(): EvalCase[] {
   return readdirSync(DIR)

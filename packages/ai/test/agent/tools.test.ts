@@ -233,3 +233,20 @@ function run(r: { result: { content?: unknown } }): string {
   const body = parse(r.result.content);
   return typeof body.error === "string" ? body.error : String(r.result.content);
 }
+
+describe("change tools: time zones", () => {
+  it("household.update with an unknown time zone is refused before any port", async () => {
+    const ports = recordingPorts();
+    const bad = await runTool(
+      toolUse("apply_change", {
+        summary: "Move to Mars",
+        ops: [{ kind: "household.update", payload: { timezone: "Mars/Olympus" } }],
+      }),
+      ports,
+      "row-2",
+      () => undefined,
+    );
+    expect(run(bad)).toContain("not an IANA time zone");
+    expect(ports.calls).toEqual([]);
+  });
+});
