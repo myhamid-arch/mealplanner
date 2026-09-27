@@ -35,8 +35,8 @@
 // on DATABASE_URL's server, else localhost:5432, else a throwaway PostgreSQL 16 cluster), Next.js
 // build directory (.next/verify-1.4.10-<gate>), port, worker and temp directories. Package builds
 // run under a lock shared with the other leaves' scripts; `next build` runs with DATABASE_URL
-// cleared (R-50). Regression gates run as child processes, LEAF1410_REGRESSION_JOBS at a time
-// (default 2); a failure prints their output. 1.4.2's regression gates always run with
+// cleared (R-50). Regression gates run as child processes, at most LEAF1410_REGRESSION_JOBS at a
+// time across the whole ledger (default 2); a failure prints their output. 1.4.2's regression gates always run with
 // DATABASE_URL cleared (R-50). G4 captures for the architect (G5) go to $SCREENSHOT_DIR when set.
 // One regression runs alone: 1.2.6 G2 runs 1.2.5 G1–G4 (they need an idle machine, R-54) and
 // 1.2.2 G1–G5 (they delete and rebuild packages/core/dist/src/planner in place). G1 runs it last,
@@ -231,6 +231,32 @@ async function acquireExclusive() {
     });
   while (others().length > 0) await pause(2000);
   return () => rmSync(EXCLUSIVE, { recursive: true, force: true });
+}
+
+/**
+ * One of the ledger's regression slots (LEAF1410_REGRESSION_JOBS, default 2), shared by every gate
+ * of this ledger: with the gates in parallel, at most that many other leaves' gates run at once.
+ * Their tests carry fixed timeouts (5 s, 10 s hooks) that more load than that breaks.
+ */
+async function acquireSlot() {
+  const slots = Math.max(1, Number(process.env.LEAF1410_REGRESSION_JOBS ?? "2") || 2);
+  for (;;) {
+    for (let i = 0; i < slots; i += 1) {
+      const dir = join(tmpdir(), `mealplanner-leaf1410-slot-${LEDGER_LOCK}-${String(i)}`);
+      try {
+        mkdirSync(dir);
+        writeFileSync(join(dir, "pid"), String(process.pid));
+        return () => rmSync(dir, { recursive: true, force: true });
+      } catch (error) {
+        if (error.code !== "EEXIST") throw error;
+        const file = join(dir, "pid");
+        const pid = existsSync(file) ? Number(readFileSync(file, "utf8")) : NaN;
+        if (Number.isInteger(pid) && pid > 0 && !processAlive(pid))
+          rmSync(dir, { recursive: true, force: true });
+      }
+    }
+    await pause(1000);
+  }
 }
 
 /** A cross-process lock (atomic mkdir); a lock left by a dead process is taken over. */
@@ -626,6 +652,7 @@ async function regressions(report, list) {
   const workers = Array.from({ length: Math.min(jobs, queue.length) }, async () => {
     for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
       const [leaf, gate] = next;
+      const releaseSlot = await acquireSlot();
       const started = Date.now();
       const r = await runAsync(
         process.execPath,
@@ -639,6 +666,7 @@ async function regressions(report, list) {
           timeoutMs: 1_700_000,
         },
       );
+      releaseSlot();
       results.set(`${leaf} ${gate}`, { ...r, seconds: Math.round((Date.now() - started) / 1000) });
     }
   });

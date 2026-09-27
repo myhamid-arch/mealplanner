@@ -438,14 +438,17 @@ test.describe.serial("@G4 plain reasons and change-log subjects", () => {
       await expect(list.first()).toBeVisible({ timeout: 120_000 });
       const titles = await page.locator("ol li span.font-extrabold").allInnerTexts();
       expect(logProblems(titles)).toEqual([]);
-      const target = list.filter({ hasText: "Sara's protein target 130 → 140 g" });
+      // Entries by their exact title: an undo reason may quote another entry's title.
+      const entry = (title: string | RegExp) =>
+        list.filter({ has: page.getByText(title, { exact: true }) });
+      const target = entry("Sara's protein target 130 → 140 g");
       await expect(target.locator("del")).toHaveText("protein 130 g · calories 1655 kcal");
       await expect(target).toContainText("protein 140 g · calories 1695 kcal");
-      const block = list.filter({ hasText: "Blocked Ravi (kitchen)" });
+      const block = entry("Blocked Ravi (kitchen)");
       await expect(
         block.getByRole("button", { name: "Undo: Blocked Ravi (kitchen)" }),
       ).toBeVisible();
-      const settings = list.filter({ hasText: "Household settings: time zone" });
+      const settings = entry(/^Household settings: time zone \S+ → Europe\/London$/);
       await expect(settings.locator("del")).toContainText("time zone");
       await expect(settings).toContainText("time zone Europe/London");
       expect(await axeBoth(page, `changelog ${v.name}`)).toEqual([]);
