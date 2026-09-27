@@ -334,7 +334,7 @@ test.describe.serial("@G4 plain reasons and change-log subjects", () => {
        JOIN variant_ingredient vi ON vi.variant_id = pi.variant_id JOIN ingredient i ON i.id = vi.ingredient_id
        JOIN kg_node s ON s.key = i.id::text AND s.type = 'Ingredient'
        JOIN kg_edge e ON e.src_id = s.id AND e.type = 'SUBSTITUTES_FOR'
-       WHERE p.plan_meal_id = $1 AND i.category NOT IN ('herb_spice', 'water')
+       WHERE p.plan_meal_id = $1 AND i.category <> 'herb_spice' AND i.slug <> 'water'
        GROUP BY i.id, i.name, i.slug, i.aliases ORDER BY count(*) DESC, i.name LIMIT 1`,
       [dinner.id],
     );

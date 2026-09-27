@@ -185,7 +185,6 @@ function beforeOf(
 const str = (v: unknown): string | null =>
   typeof v === "string" ? v : typeof v === "number" || typeof v === "boolean" ? String(v) : null;
 
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const words = (key: string) => key.replaceAll("_", " ");
 const possessive = (name: string) => (name.endsWith("s") ? `${name}'` : `${name}'s`);
 const num = (v: unknown) =>
@@ -303,7 +302,9 @@ function fieldChanges(
     if (!(key in after)) return [];
     const was = before === null ? null : f.show(before[key]);
     const now = f.show(after[key]);
-    return was === now ? [] : [{ label: f.label, before: was, after: now }];
+    // A new row's empty optional fields are not changes worth a chip.
+    if (was === now || (was === null && now === "none")) return [];
+    return [{ label: f.label, before: was, after: now }];
   });
 }
 
@@ -541,7 +542,7 @@ const DESCRIBERS: Record<string, Describer> = {
     return {
       key: `member:${id}`,
       subject: name,
-      title: `${op.payload.active === true ? "" : "No longer "}${op.payload.active === true ? cap(thing) : thing} for ${name} on ${shortDate(date)}`,
+      title: `${name}: ${op.payload.active === true ? "" : "no longer "}${thing} on ${shortDate(date)}`,
       changes: [],
     };
   },
