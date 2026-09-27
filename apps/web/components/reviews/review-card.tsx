@@ -213,7 +213,10 @@ export function ReviewCard({
             {p.title}
           </span>
           {p.status === "pending" && (
-            <Link href="/insights#waiting" className="text-sm font-extrabold">
+            <Link
+              href="/insights#waiting"
+              className="text-sm font-extrabold text-aubergine-text underline hover:text-aubergine-text"
+            >
               Review proposal
             </Link>
           )}

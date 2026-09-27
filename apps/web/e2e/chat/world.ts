@@ -64,19 +64,80 @@ export async function createWorld(browser: Browser, tag: string): Promise<World>
   );
   const householdId = signup.householdId as string;
   const adminUserId = (signup.user as { id: string }).id;
-  const members = { omar: randomUUID(), sara: randomUUID(), layla: randomUUID(), zayd: randomUUID() };
+  const members = {
+    omar: randomUUID(),
+    sara: randomUUID(),
+    layla: randomUUID(),
+    zayd: randomUUID(),
+  };
   const year = new Date().getUTCFullYear();
   await ok(
     await a.post("/api/v1/change-sets", {
       data: {
         summary: "Set up the family",
         ops: [
-          { kind: "member.create", payload: { id: members.omar, displayName: "Omar", color: "sea", isTargeted: true, birthYear: year - 41, sex: "male" } },
-          { kind: "member.create", payload: { id: members.sara, displayName: "Sara", color: "tomato", isTargeted: true, birthYear: year - 39, sex: "female" } },
-          { kind: "member.create", payload: { id: members.layla, displayName: "Layla", color: "basil", isTargeted: false, birthYear: year - 18, sex: "female", appetite: "large" } },
-          { kind: "member.create", payload: { id: members.zayd, displayName: "Zayd", color: "saffron", isTargeted: false, birthYear: year - 10, sex: "male", appetite: "medium" } },
-          { kind: "target.set", payload: { memberId: members.omar, kind: "default", profile: { kcal: 2150, proteinG: 180, carbsG: 200, fatG: 70 } } },
-          { kind: "target.set", payload: { memberId: members.sara, kind: "default", profile: { kcal: 1655, proteinG: 130, carbsG: 160, fatG: 55 } } },
+          {
+            kind: "member.create",
+            payload: {
+              id: members.omar,
+              displayName: "Omar",
+              color: "sea",
+              isTargeted: true,
+              birthYear: year - 41,
+              sex: "male",
+            },
+          },
+          {
+            kind: "member.create",
+            payload: {
+              id: members.sara,
+              displayName: "Sara",
+              color: "tomato",
+              isTargeted: true,
+              birthYear: year - 39,
+              sex: "female",
+            },
+          },
+          {
+            kind: "member.create",
+            payload: {
+              id: members.layla,
+              displayName: "Layla",
+              color: "basil",
+              isTargeted: false,
+              birthYear: year - 18,
+              sex: "female",
+              appetite: "large",
+            },
+          },
+          {
+            kind: "member.create",
+            payload: {
+              id: members.zayd,
+              displayName: "Zayd",
+              color: "saffron",
+              isTargeted: false,
+              birthYear: year - 10,
+              sex: "male",
+              appetite: "medium",
+            },
+          },
+          {
+            kind: "target.set",
+            payload: {
+              memberId: members.omar,
+              kind: "default",
+              profile: { kcal: 2150, proteinG: 180, carbsG: 200, fatG: 70 },
+            },
+          },
+          {
+            kind: "target.set",
+            payload: {
+              memberId: members.sara,
+              kind: "default",
+              profile: { kcal: 1655, proteinG: 130, carbsG: 160, fatG: 55 },
+            },
+          },
           { kind: "household.update", payload: { membersReviewForSiblings: true } },
         ],
       },
@@ -98,16 +159,34 @@ export async function createWorld(browser: Browser, tag: string): Promise<World>
     "accept",
   );
   const date = today();
-  const job = await ok(await a.post("/api/v1/plans/generate", { data: { dates: [date] } }), "generate");
+  const job = await ok(
+    await a.post("/api/v1/plans/generate", { data: { dates: [date] } }),
+    "generate",
+  );
   await waitForJob(a, job.jobId as string);
   const plans = (await (await a.get(`/api/v1/plans?from=${date}&to=${date}`)).json()) as {
-    days: { meals: { id: string; dishId: string; dishName: string; slotLabel: string; kind: string; attendees: string[] }[] }[];
+    days: {
+      meals: {
+        id: string;
+        dishId: string;
+        dishName: string;
+        slotLabel: string;
+        kind: string;
+        attendees: string[];
+      }[];
+    }[];
   };
   const meals = plans.days[0]?.meals ?? [];
   const meal =
-    meals.find((m) => m.kind === "shared" && m.attendees.includes(members.layla) && m.attendees.includes(members.zayd) && m.attendees.includes(members.omar)) ??
-    meals.find((m) => m.attendees.includes(members.layla));
-  if (meal === undefined) throw new Error(`no meal for Layla today (${String(meals.length)} meals)`);
+    meals.find(
+      (m) =>
+        m.kind === "shared" &&
+        m.attendees.includes(members.layla) &&
+        m.attendees.includes(members.zayd) &&
+        m.attendees.includes(members.omar),
+    ) ?? meals.find((m) => m.attendees.includes(members.layla));
+  if (meal === undefined)
+    throw new Error(`no meal for Layla today (${String(meals.length)} meals)`);
   const world: World = {
     run,
     householdId,

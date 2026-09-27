@@ -88,7 +88,11 @@ function respond(request) {
   if (said.includes("what have you learned")) {
     if (results.length === 0) return message([use("run_insights", {})], "tool_use");
     return message(
-      [text("I've started a check of the latest reviews. What I find will appear here as proposals.")],
+      [
+        text(
+          "I've started a check of the latest reviews. What I find will appear here as proposals.",
+        ),
+      ],
       "end_turn",
     );
   }

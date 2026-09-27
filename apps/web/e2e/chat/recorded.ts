@@ -39,12 +39,16 @@ interface Batch {
   newIngredients: unknown[];
 }
 
-export async function recordedRows(databaseUrl: string, householdId: string): Promise<RecordedRows> {
+export async function recordedRows(
+  databaseUrl: string,
+  householdId: string,
+): Promise<RecordedRows> {
   const batch = JSON.parse(readFileSync(BATCH, "utf8")) as Batch;
   const pool = new pg.Pool({ connectionString: databaseUrl, max: 2 });
   try {
     const catalog = await loadDbCatalog(drizzle(pool), householdId);
     const taken = new Set<string>();
+    const draftDishIds: string[] = [];
     const dishes = batch.dishes.slice(0, 2).map((dish, i) => {
       const { ops, dishIds } = generatedDishOps({
         survivors: [
@@ -60,19 +64,38 @@ export async function recordedRows(databaseUrl: string, householdId: string): Pr
       });
       for (const op of ops)
         if (op.kind === "dish.create") taken.add((op.payload as { slug: string }).slug);
+      if (dishIds[0] !== undefined) draftDishIds.push(dishIds[0]);
       return {
         ops: ops as unknown as Json,
         summary: `Add AI recipe "${dish.name}"`,
-        dish: dish as unknown as Json,
+        dish: dish,
         newIngredients: [],
         nutrition: [],
         candidate: i === 0,
-        reasons: i === 0 ? [] : [{ step: 7, code: "infeasible", message: "no plate for Member 2 reaches the 1655 kcal target within tolerance" }],
+        reasons:
+          i === 0
+            ? []
+            : [
+                {
+                  step: 7,
+                  code: "infeasible",
+                  message: "no plate for Member 2 reaches the 1655 kcal target within tolerance",
+                },
+              ],
         plates: [
-          { label: "Member 1", member: "Omar", status: "in_tolerance", explain: ["chicken 210 g · rice 180 g"] },
-          { label: "Member 2", member: "Sara", status: i === 0 ? "in_tolerance" : "infeasible", explain: ["chicken 150 g · rice 110 g"] },
+          {
+            label: "Member 1",
+            member: "Omar",
+            status: "in_tolerance",
+            explain: ["chicken 210 g · rice 180 g"],
+          },
+          {
+            label: "Member 2",
+            member: "Sara",
+            status: i === 0 ? "in_tolerance" : "infeasible",
+            explain: ["chicken 150 g · rice 110 g"],
+          },
         ],
-        _dishId: dishIds[0] ?? null,
       };
     });
     const recipe = jobCompletionEvent({
@@ -82,10 +105,17 @@ export async function recordedRows(databaseUrl: string, householdId: string): Pr
       result: {
         slotKey: "dinner",
         date: new Date().toISOString().slice(0, 10),
-        dishes: dishes.map(({ _dishId: _, ...d }) => d),
-        rejected: [{ dishName: "Sesame chicken", reasons: [{ step: 3, code: "exclusion", message: "uses sesame, which Zayd must never eat" }] }],
+        dishes,
+        rejected: [
+          {
+            dishName: "Sesame chicken",
+            reasons: [
+              { step: 3, code: "exclusion", message: "uses sesame, which Zayd must never eat" },
+            ],
+          },
+        ],
       },
-    }) as Json;
+    });
     const digest = insightDigestEvent({
       runAt: new Date(),
       stored: [],
@@ -93,14 +123,19 @@ export async function recordedRows(databaseUrl: string, householdId: string): Pr
         { title: "Less rice for Adam", reason: "budget" },
         { title: "More fish on Fridays", reason: "suppressed" },
       ],
-      notes: [{ title: "Tahini sauce too thick", rationale: "“Too thick” twice this week; a recipe revision may help." }],
-    }) as Json;
+      notes: [
+        {
+          title: "Tahini sauce too thick",
+          rationale: "“Too thick” twice this week; a recipe revision may help.",
+        },
+      ],
+    });
     const failedJob = jobCompletionEvent({
       id: "01a0e0f0-0000-7000-8000-00000000abce",
       kind: "plan.generate",
       status: "failed",
       result: { message: "no feasible plate for Sara at lunch" },
-    }) as Json;
+    });
     const toolCards = toolRowContent({
       results: [],
       cards: [
@@ -108,8 +143,20 @@ export async function recordedRows(databaseUrl: string, householdId: string): Pr
           type: "macro_table",
           date: new Date().toISOString().slice(0, 10),
           rows: [
-            { member: "Omar", slot: "Lunch", target: { kcal: 650, protein: 55, carbs: 60, fat: 20 }, actual: { kcal: 640, protein: 54, carbs: 62, fat: 19 }, fitStatus: "in_tolerance" },
-            { member: "Sara", slot: "Lunch", target: { kcal: 500, protein: 40, carbs: 48, fat: 16 }, actual: { kcal: 540, protein: 38, carbs: 55, fat: 19 }, fitStatus: "flexible_miss" },
+            {
+              member: "Omar",
+              slot: "Lunch",
+              target: { kcal: 650, protein: 55, carbs: 60, fat: 20 },
+              actual: { kcal: 640, protein: 54, carbs: 62, fat: 19 },
+              fitStatus: "in_tolerance",
+            },
+            {
+              member: "Sara",
+              slot: "Lunch",
+              target: { kcal: 500, protein: 40, carbs: 48, fat: 16 },
+              actual: { kcal: 540, protein: 38, carbs: 55, fat: 19 },
+              fitStatus: "flexible_miss",
+            },
             { who: "someone", note: "a row of another shape" },
           ],
         },
@@ -125,17 +172,20 @@ export async function recordedRows(databaseUrl: string, householdId: string): Pr
         { type: "weather", forecast: "sunny" },
         { type: "proposal", title: 5 },
       ] as never,
-    }) as Json;
+    });
     return {
       rows: [
         { role: "event", content: recipe },
         { role: "event", content: digest },
         { role: "event", content: failedJob },
         { role: "tool", content: toolCards },
-        { role: "event", content: eventRowContent({ text: "That's everything recorded.", cards: [] }) as Json },
+        {
+          role: "event",
+          content: eventRowContent({ text: "That's everything recorded.", cards: [] }),
+        },
       ],
-      draftDishIds: dishes.map((d) => d._dishId).filter((x): x is string => x !== null),
-      draftNames: dishes.map((d) => (d.dish as { name: string }).name),
+      draftDishIds,
+      draftNames: dishes.map((d) => (d.dish).name),
     };
   } finally {
     await pool.end();

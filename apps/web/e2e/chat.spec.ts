@@ -15,12 +15,23 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import pg from "pg";
 import { recordedRows } from "./chat/recorded";
-import { contextFor, createWorld, DESKTOP, PHONE, type World } from "./chat/world";
+import {
+  BASE_URL,
+  contextFor,
+  createWorld,
+  DESKTOP,
+  PHONE,
+  waitForJob,
+  type World,
+} from "./chat/world";
 
 const DATABASE_URL = process.env.DATABASE_URL ?? "";
 const WORLD_FILE = process.env.WORLD_FILE ?? "";
 
-async function sql<T = Record<string, unknown>>(text: string, values: unknown[] = []): Promise<T[]> {
+async function sql<T = Record<string, unknown>>(
+  text: string,
+  values: unknown[] = [],
+): Promise<T[]> {
   const client = new pg.Client({ connectionString: DATABASE_URL });
   await client.connect();
   try {
@@ -53,11 +64,15 @@ function world(key: string): World {
 test.describe.serial("@G1 reviews to proposals", () => {
   test.setTimeout(240_000);
 
-  test("@G1 set-up: a household of four with a member login and today's plan", async ({ browser }) => {
+  test("@G1 set-up: a household of four with a member login and today's plan", async ({
+    browser,
+  }) => {
     writeShared("g1", await createWorld(browser, "g1"));
   });
 
-  test("@G1 quick rating at 390 px: Layla rates the meal with stars and one-tap tags", async ({ browser }) => {
+  test("@G1 quick rating at 390 px: Layla rates the meal with stars and one-tap tags", async ({
+    browser,
+  }) => {
     const w = world("g1");
     const ctx = await contextFor(browser, w.memberState, PHONE);
     const page = await ctx.newPage();
@@ -67,7 +82,10 @@ test.describe.serial("@G1 reviews to proposals", () => {
     await sheet.getByRole("radio", { name: "4 of 5" }).check({ force: true });
     await sheet.getByRole("button", { name: "Loved it" }).click();
     await sheet.getByRole("button", { name: "More often" }).click();
-    await expect(sheet.getByRole("button", { name: "More often" })).toHaveAttribute("aria-pressed", "true");
+    await expect(sheet.getByRole("button", { name: "More often" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
     await sheet.getByRole("button", { name: "Done" }).click();
     await page.waitForURL("**/reviews");
     const card = page.locator("article", { hasText: "Layla" }).first();
@@ -84,7 +102,9 @@ test.describe.serial("@G1 reviews to proposals", () => {
     await ctx.close();
   });
 
-  test("@G1 detailed review at 1280 px: Sara reviews for Omar and for Zayd, part by part", async ({ browser }) => {
+  test("@G1 detailed review at 1280 px: Sara reviews for Omar and for Zayd, part by part", async ({
+    browser,
+  }) => {
     const w = world("g1");
     const ctx = await contextFor(browser, w.adminState, DESKTOP);
     const page = await ctx.newPage();
@@ -92,14 +112,23 @@ test.describe.serial("@G1 reviews to proposals", () => {
     await page.goto(`/reviews/new?planMealId=${w.meal.id}&for=${w.members.omar}`);
     await expect(page.getByRole("heading", { name: "Review", level: 1 })).toBeVisible();
     await expect(page.getByLabel("Reviewing for")).toHaveValue(w.members.omar);
-    await page.getByRole("radiogroup", { name: "Rating for the whole meal" }).getByRole("radio", { name: "5 of 5" }).check({ force: true });
-    await page.getByRole("group", { name: "How often?" }).getByRole("button", { name: "More often" }).click();
+    await page
+      .getByRole("radiogroup", { name: "Rating for the whole meal" })
+      .getByRole("radio", { name: "5 of 5" })
+      .check({ force: true });
+    await page
+      .getByRole("group", { name: "How often?" })
+      .getByRole("button", { name: "More often" })
+      .click();
     await page.getByRole("button", { name: "Post review" }).click();
     await page.waitForURL("**/reviews");
     // For Zayd: two stars, a part tagged, never again, a comment.
     await page.goto(`/reviews/new?planMealId=${w.meal.id}`);
     await page.getByLabel("Reviewing for").selectOption(w.members.zayd);
-    await page.getByRole("radiogroup", { name: "Rating for the whole meal" }).getByRole("radio", { name: "2 of 5" }).check({ force: true });
+    await page
+      .getByRole("radiogroup", { name: "Rating for the whole meal" })
+      .getByRole("radio", { name: "2 of 5" })
+      .check({ force: true });
     const parts = page.getByRole("region", { name: "Each part (optional)" });
     await expect(parts).toBeVisible();
     const firstPart = parts.getByRole("group").first();
@@ -107,7 +136,10 @@ test.describe.serial("@G1 reviews to proposals", () => {
     const firstChip = firstPart.getByRole("button").first();
     const chipTag = (await firstChip.getAttribute("data-tag")) ?? "";
     await firstChip.click();
-    await page.getByRole("group", { name: "How often?" }).getByRole("button", { name: "Never again" }).click();
+    await page
+      .getByRole("group", { name: "How often?" })
+      .getByRole("button", { name: "Never again" })
+      .click();
     await page.getByLabel("Comment").fill("Zayd picked it all out. Not again, please.");
     await page.getByRole("button", { name: "Post review" }).click();
     await page.waitForURL("**/reviews");
@@ -128,7 +160,9 @@ test.describe.serial("@G1 reviews to proposals", () => {
     await ctx.close();
   });
 
-  test("@G1 the proposals appear in the chat at 390 px; accept one, then undo it", async ({ browser }) => {
+  test("@G1 the proposals appear in the chat at 390 px; accept one, then undo it", async ({
+    browser,
+  }) => {
     const w = world("g1");
     const ctx = await contextFor(browser, w.adminState, PHONE);
     const page = await ctx.newPage();
@@ -154,13 +188,17 @@ test.describe.serial("@G1 reviews to proposals", () => {
     await expect(never.getByText("Accepted, then undone")).toBeVisible();
     // After a reload the stored card shows the decision (accepted, then undone), not the buttons.
     await page.reload();
-    const again = page.locator("[data-card=insight_digest] [data-proposal-id]", { hasText: "Zayd" });
+    const again = page.locator("[data-card=insight_digest] [data-proposal-id]", {
+      hasText: "Zayd",
+    });
     await expect(again.getByText("Accepted, then undone")).toBeVisible();
     await expect(again.getByRole("button")).toHaveCount(0);
     await ctx.close();
   });
 
-  test("@G1 Insights at 1280 px: the other proposal shows what changes and is rejected with a reason", async ({ browser }) => {
+  test("@G1 Insights at 1280 px: the other proposal shows what changes and is rejected with a reason", async ({
+    browser,
+  }) => {
     const w = world("g1");
     const ctx = await contextFor(browser, w.adminState, DESKTOP);
     const page = await ctx.newPage();
@@ -205,7 +243,11 @@ async function isMacroTable(card: Locator): Promise<boolean> {
   );
 }
 
-async function newConversation(w: World, title: string, rows: { role: string; content: unknown }[]) {
+async function newConversation(
+  w: World,
+  title: string,
+  rows: { role: string; content: unknown }[],
+) {
   const [conv] = await sql<{ id: string }>(
     `INSERT INTO conversation (id, household_id, user_id, title, created_at, archived_at)
      VALUES (gen_random_uuid(), $1, $2, $3, now() - interval '1 minute', NULL) RETURNING id`,
@@ -228,7 +270,9 @@ test.describe.serial("@G3 chat cards", () => {
     writeShared("g3", await createWorld(browser, "g3"));
   });
 
-  test("@G3 live and replayed: a stubbed turn draws proposal, applied_change, plan_day and job_progress cards", async ({ browser }) => {
+  test("@G3 live and replayed: a stubbed turn draws proposal, applied_change, plan_day and job_progress cards", async ({
+    browser,
+  }) => {
     const w = world("g3");
     const ctx = await contextFor(browser, w.adminState, DESKTOP);
     const page = await ctx.newPage();
@@ -267,12 +311,19 @@ test.describe.serial("@G3 chat cards", () => {
     // The cards act: undo the applied change, accept the proposal.
     await log.locator("[data-card=applied_change]").getByRole("button", { name: /^Undo/ }).click();
     await expect(log.locator("[data-card=applied_change]").getByText("Undone")).toBeVisible();
-    await log.locator("[data-card=proposal]").getByRole("button", { name: /^Accept/ }).click();
-    await expect(log.locator("[data-card=proposal]").getByText("Accepted", { exact: true })).toBeVisible();
+    await log
+      .locator("[data-card=proposal]")
+      .getByRole("button", { name: /^Accept/ })
+      .click();
+    await expect(
+      log.locator("[data-card=proposal]").getByText("Accepted", { exact: true }),
+    ).toBeVisible();
     await ctx.close();
   });
 
-  test("@G3 recorded: recipe (Save, Discard), insight_digest, failed job_progress, macro_table and iteration_limit", async ({ browser }) => {
+  test("@G3 recorded: recipe (Save, Discard), insight_digest, failed job_progress, macro_table and iteration_limit", async ({
+    browser,
+  }) => {
     const w = world("g3");
     const recorded = await recordedRows(DATABASE_URL, w.householdId);
     const id = await newConversation(w, "Recorded cards", recorded.rows);
@@ -294,14 +345,20 @@ test.describe.serial("@G3 chat cards", () => {
       const digest = log.locator("[data-card=insight_digest]");
       await expect(digest).toContainText("Tahini sauce too thick");
       await expect(digest).toContainText("2 more ideas were held back");
-      await expect(log.locator("[data-card=job_progress]", { hasText: "Writing recipe ideas" })).toContainText("Finished");
+      await expect(
+        log.locator("[data-card=job_progress]", { hasText: "Writing recipe ideas" }),
+      ).toContainText("Finished");
       await expect(log.locator("[data-card=job_progress]", { hasText: "Planning" })).toContainText(
         "Did not finish: no feasible plate for Sara at lunch",
       );
       expect(await isMacroTable(log.locator("[data-card=macro_table]"))).toBe(true);
       await expect(log.locator("[data-card=macro_table] tbody tr")).toHaveCount(3);
-      await expect(log.locator("[data-card=iteration_limit]")).toContainText("Stopped after 12 steps");
-      await expect(log.locator("[data-card=iteration_limit]")).toContainText("Not done yet: apply change");
+      await expect(log.locator("[data-card=iteration_limit]")).toContainText(
+        "Stopped after 12 steps",
+      );
+      await expect(log.locator("[data-card=iteration_limit]")).toContainText(
+        "Not done yet: apply change",
+      );
       // The unknown and the malformed card say so, and nothing else breaks.
       await expect(log.locator("[data-card=unreadable]")).toHaveCount(2);
       await ctx.close();
@@ -313,7 +370,10 @@ test.describe.serial("@G3 chat cards", () => {
     const drafts = page.locator("[data-card=recipe] [data-draft]");
     await drafts.first().getByRole("button", { name: /^Save/ }).click();
     await expect(drafts.first().getByText("SAVED TO RECIPES")).toBeVisible();
-    await drafts.nth(1).getByRole("button", { name: /^Discard/ }).click();
+    await drafts
+      .nth(1)
+      .getByRole("button", { name: /^Discard/ })
+      .click();
     await expect(page.getByText(/^Discarded “/)).toBeVisible();
     const saved = await sql<{ source: string; name: string }>(
       `SELECT source, name FROM dish WHERE id = $1 AND household_id = $2`,
@@ -329,7 +389,9 @@ test.describe.serial("@G3 chat cards", () => {
     await ctx.close();
   });
 
-  test("@G3 negative control: the card checks fail on the malformed proposal and on another card type", async ({ browser }) => {
+  test("@G3 negative control: the card checks fail on the malformed proposal and on another card type", async ({
+    browser,
+  }) => {
     const w = world("g3");
     const id = readShared().g3Recorded as string;
     const ctx = await contextFor(browser, w.adminState, DESKTOP);
@@ -342,7 +404,9 @@ test.describe.serial("@G3 chat cards", () => {
     await ctx.close();
   });
 
-  test("@G3 problem states: 409 while another reply runs, 429 over the hourly limit, 503 without a model", async ({ browser }) => {
+  test("@G3 problem states: 409 while another reply runs, 429 over the hourly limit, 503 without a model", async ({
+    browser,
+  }) => {
     const w = world("g3");
     const ctx = await contextFor(browser, w.adminState, PHONE);
     const page = await ctx.newPage();
@@ -353,7 +417,10 @@ test.describe.serial("@G3 chat cards", () => {
       data: { text: "Take your time with this one" },
     });
     await expect
-      .poll(async () => (await sql(`SELECT 1 FROM chat_message WHERE conversation_id = $1`, [busyId])).length)
+      .poll(
+        async () =>
+          (await sql(`SELECT 1 FROM chat_message WHERE conversation_id = $1`, [busyId])).length,
+      )
       .toBeGreaterThan(0);
     await page.getByRole("textbox", { name: "Message" }).fill("And another thing");
     await page.getByRole("button", { name: "Send" }).click();
@@ -364,7 +431,10 @@ test.describe.serial("@G3 chat cards", () => {
     const limitId = await newConversation(
       w,
       "Limit",
-      Array.from({ length: 30 }, (_, i) => ({ role: "user", content: [{ type: "text", text: `turn ${String(i)}` }] })),
+      Array.from({ length: 30 }, (_, i) => ({
+        role: "user",
+        content: [{ type: "text", text: `turn ${String(i)}` }],
+      })),
     );
     await page.goto(`/chat/${limitId}`);
     await page.getByRole("textbox", { name: "Message" }).fill("One more");
@@ -383,9 +453,323 @@ test.describe.serial("@G3 chat cards", () => {
     await p2.goto("/chat?new=1");
     await p2.getByRole("textbox", { name: "Message" }).fill("Plan tomorrow");
     await p2.getByRole("button", { name: "Send" }).click();
-    await expect(p2.locator("[data-problem=unavailable]")).toContainText("isn't set up on this server");
+    await expect(p2.locator("[data-problem=unavailable]")).toContainText(
+      "isn't set up on this server",
+    );
     await expect(p2.getByRole("textbox", { name: "Message" })).toBeDisabled();
     await bare.close();
+    await ctx.close();
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// @G2 — axe-core on every screen of the leaf
+// ---------------------------------------------------------------------------------------------
+
+const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
+
+async function seriousViolations(page: Page): Promise<string[]> {
+  const result = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
+  // UX-1: 390 px is first-class; a page wider than the screen hides content.
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  const layout =
+    overflow > 0 ? [`horizontal-scroll (serious): page is ${String(overflow)} px too wide`] : [];
+  return layout.concat(
+    result.violations
+      .filter((v) => v.impact === "serious" || v.impact === "critical")
+      .map(
+        (v) =>
+          `${v.id} (${String(v.impact)}): ${v.nodes
+            .map((n) => n.target.join(" "))
+            .slice(0, 5)
+            .join(", ")}`,
+      ),
+  );
+}
+
+/** Scans the open page in light, then dark (the tokens follow prefers-color-scheme live). */
+async function scanBothSchemes(page: Page, state: string, failures: string[]) {
+  for (const scheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.evaluate(() =>
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.effect?.getComputedTiming().endTime !== Infinity)
+          .map((a) => a.finished.catch(() => undefined)),
+      ),
+    );
+    for (const v of await seriousViolations(page)) failures.push(`${state} (${scheme}): ${v}`);
+  }
+  await page.emulateMedia({ colorScheme: "light" });
+}
+
+type Flow = {
+  name: string;
+  session: "admin" | "member" | "fresh";
+  run: (page: Page, scan: (state: string) => Promise<void>, w: World) => Promise<void>;
+};
+
+const FLOWS: readonly Flow[] = [
+  {
+    name: "reviews feed",
+    session: "admin",
+    run: async (p, scan) => {
+      await p.goto("/reviews");
+      await expect(p.locator("article").first()).toBeVisible();
+      await scan("reviews feed");
+      await p
+        .locator("article")
+        .first()
+        .getByRole("button", { name: /^Reply/ })
+        .click();
+      await scan("reviews feed, replying");
+      await p.getByRole("button", { name: "Kitchen" }).click();
+      await scan("reviews feed, nothing matches");
+    },
+  },
+  {
+    name: "quick rating",
+    session: "member",
+    run: async (p, scan, w) => {
+      await p.goto(`/reviews/rate?planMealId=${w.meal.id}`);
+      const sheet = p.getByRole("dialog");
+      await expect(sheet).toBeVisible();
+      await scan("quick rating");
+      await sheet.getByRole("radio", { name: "5 of 5" }).check({ force: true });
+      await sheet.getByRole("button", { name: "Loved it" }).click();
+      await scan("quick rating, chosen");
+    },
+  },
+  {
+    name: "detailed review",
+    session: "admin",
+    run: async (p, scan, w) => {
+      await p.goto(`/reviews/new?planMealId=${w.meal.id}&for=${w.members.zayd}`);
+      await expect(p.getByRole("region", { name: "Each part (optional)" })).toBeVisible();
+      await scan("detailed review");
+      await p
+        .getByRole("region", { name: "Each part (optional)" })
+        .getByRole("button")
+        .first()
+        .click();
+      await p
+        .getByRole("group", { name: "How often?" })
+        .getByRole("button", { name: "Never again" })
+        .click();
+      await scan("detailed review, tagged");
+      await p.goto(`/reviews/new?targetType=dish&targetId=${w.meal.dishId}`);
+      await expect(p.getByRole("button", { name: "Post review" })).toBeVisible();
+      await scan("review of a dish");
+    },
+  },
+  {
+    name: "insights",
+    session: "admin",
+    run: async (p, scan) => {
+      await p.goto("/insights");
+      await expect(p.getByRole("heading", { name: "What the app has learned" })).toBeVisible();
+      await expect(p.locator("#waiting [data-proposal-id]").first()).toBeVisible();
+      await scan("insights");
+      const row = p.locator("#waiting [data-proposal-id]").first();
+      await row.getByRole("button", { name: "What changes" }).click();
+      await expect(row.locator("dl")).toBeVisible();
+      await row.getByRole("button", { name: /^Reject/ }).click();
+      await scan("insights, a proposal opened and rejecting");
+      await p.getByRole("button", { name: "Zayd", exact: true }).click();
+      await scan("insights, another person");
+    },
+  },
+  {
+    name: "chat",
+    session: "admin",
+    run: async (p, scan) => {
+      const cards = readShared().g2Cards as string;
+      const recorded = readShared().g2Recorded as string;
+      await p.goto(`/chat/${cards}`);
+      await expect(p.locator("[data-card=proposal]")).toBeVisible();
+      await scan("chat with live cards");
+      await p.getByText(/^Details · /).click();
+      await p.locator("[data-card=proposal]").getByRole("button", { name: /^Edit/ }).click();
+      await expect(p.getByRole("button", { name: "Apply edited" })).toBeVisible();
+      await scan("chat, editing a proposal");
+      await p.goto(`/chat/${recorded}`);
+      await expect(p.locator("[data-card=recipe]")).toBeVisible();
+      await scan("chat with recorded cards");
+      await p.goto("/chat?prompt=Plan%20tomorrow");
+      await expect(p.getByRole("textbox", { name: "Message" })).toHaveValue("Plan tomorrow");
+      await scan("chat, new with a prompt");
+      const list = p.getByRole("button", { name: "Conversations" });
+      if (await list.isVisible()) {
+        await list.click();
+        await scan("chat, conversation list (phone)");
+      }
+    },
+  },
+  {
+    name: "side panel",
+    session: "admin",
+    run: async (p, scan) => {
+      await p.goto("/insights");
+      const open = p.getByRole("button", { name: "Open the assistant beside this page" });
+      if (!(await open.isVisible())) return; // phones: the chat is a full-screen page instead
+      await open.click();
+      await expect(p.getByRole("complementary", { name: "Assistant" })).toBeVisible();
+      await expect(p.getByRole("textbox", { name: "Message" })).toBeVisible();
+      await scan("side panel");
+    },
+  },
+  {
+    name: "set up by conversation",
+    session: "fresh",
+    run: async (p, scan) => {
+      await p.goto("/chat/setup");
+      const answer = p.getByRole("textbox", { name: "Your answer" });
+      await expect(answer).toBeVisible();
+      await scan("chat set-up, first question");
+      await answer.fill("Omar 41, Sara 39, Layla 18, Zayd 10");
+      await p.getByRole("button", { name: "Send" }).click();
+      await answer.fill("Omar 2150 cal, 180p 200c 70f; Sara 1655 / 130 / 160 / 55");
+      await p.getByRole("button", { name: "Send" }).click();
+      await p
+        .getByRole("group", { name: "Packed school lunch, Mon–Fri" })
+        .getByRole("button", { name: "Zayd" })
+        .click();
+      await p.getByRole("group", { name: "Trains" }).getByRole("button", { name: "Omar" }).click();
+      await scan("chat set-up, the week");
+      await p.getByRole("button", { name: "Done" }).click();
+      await p
+        .getByRole("group", { name: "Cuisines the family loves" })
+        .getByRole("button")
+        .first()
+        .click();
+      await p.getByRole("button", { name: "Done" }).click();
+      await answer.fill("Zayd is allergic to sesame");
+      await p.getByRole("button", { name: "Send" }).click();
+      await expect(p.locator("[data-card=setup_proposal]")).toBeVisible();
+      await expect(p.locator("[data-card=setup_proposal]")).toContainText("2150 · P180 C200 F70");
+      await scan("chat set-up, the proposal");
+    },
+  },
+];
+
+test.describe("@G2 axe-core on every screen of the leaf", () => {
+  test.describe.configure({ mode: "default" });
+  test.setTimeout(300_000);
+
+  test("@G2 set-up: reviews, proposals, a conversation with cards and a household to set up", async ({
+    browser,
+  }) => {
+    const w = await createWorld(browser, "g2");
+    writeShared("g2", w);
+    const admin = await contextFor(browser, w.adminState, DESKTOP);
+    const member = await contextFor(browser, w.memberState, DESKTOP);
+    const post = async (ctx: typeof admin, data: unknown) => {
+      const r = await ctx.request.post("/api/v1/reviews", { data });
+      expect(r.status()).toBe(201);
+    };
+    await post(member, {
+      targetType: "plan_meal",
+      targetId: w.meal.id,
+      planMealId: w.meal.id,
+      rating: 4,
+      tags: ["loved_it", "more_often"],
+      comment: "Lovely, more of this.",
+    });
+    await post(admin, {
+      targetType: "plan_meal",
+      targetId: w.meal.id,
+      planMealId: w.meal.id,
+      onBehalfOfMemberId: w.members.omar,
+      rating: 5,
+      tags: ["more_often"],
+    });
+    await post(admin, {
+      targetType: "plan_meal",
+      targetId: w.meal.id,
+      planMealId: w.meal.id,
+      onBehalfOfMemberId: w.members.zayd,
+      rating: 1,
+      tags: ["never_again"],
+      comment: "No thanks.",
+    });
+    const run = (await (await admin.request.post("/api/v1/insights/run", { data: {} })).json()) as {
+      jobId: string;
+    };
+    await waitForJob(admin.request, run.jobId);
+    // A conversation with live cards (the scripted model), and one with recorded cards.
+    const conv = (await (
+      await admin.request.post("/api/v1/conversations", { data: { title: "Every card" } })
+    ).json()) as { id: string };
+    const turn = await admin.request.post(`/api/v1/conversations/${conv.id}/messages`, {
+      data: { text: "Show me every card" },
+    });
+    expect(turn.status()).toBe(200);
+    await turn.text();
+    writeShared("g2Cards", conv.id);
+    const recorded = await recordedRows(DATABASE_URL, w.householdId);
+    writeShared("g2Recorded", await newConversation(w, "Recorded cards", recorded.rows));
+    // A household with nobody in it yet, for the set-up conversation.
+    const fresh = await browser.newContext({ baseURL: BASE_URL });
+    const signup = await fresh.request.post("/api/v1/signup", {
+      data: {
+        email: `omar-${w.run}@example.com`,
+        password: "omar-password-1",
+        name: "Omar",
+        householdName: "New home",
+      },
+    });
+    expect(signup.status()).toBe(201);
+    writeShared("g2Fresh", JSON.stringify(await fresh.storageState()));
+    await Promise.all([admin.close(), member.close(), fresh.close()]);
+  });
+
+  for (const viewport of [PHONE, DESKTOP]) {
+    test(`@G2 every screen at ${String(viewport.width)} px, light and dark`, async ({
+      browser,
+    }) => {
+      const w = world("g2");
+      const sessions = {
+        admin: w.adminState,
+        member: w.memberState,
+        fresh: readShared().g2Fresh as string,
+      };
+      const failures: string[] = [];
+      for (const flow of FLOWS) {
+        const ctx = await contextFor(browser, sessions[flow.session], viewport);
+        const page = await ctx.newPage();
+        await flow.run(page, (state) => scanBothSchemes(page, state, failures), w);
+        await ctx.close();
+      }
+      expect(failures).toEqual([]);
+    });
+  }
+
+  test("@G2 negative control: the scan reports an unnamed button, low-contrast text and a page wider than the screen", async ({
+    browser,
+  }) => {
+    const w = world("g2");
+    const ctx = await contextFor(browser, w.adminState, DESKTOP);
+    const page = await ctx.newPage();
+    await page.goto("/reviews");
+    await expect(page.locator("article").first()).toBeVisible();
+    expect(await seriousViolations(page)).toEqual([]);
+    await page.evaluate(() => {
+      const b = document.createElement("button");
+      b.innerHTML = '<svg width="20" height="20" aria-hidden="true"></svg>';
+      const t = document.createElement("p");
+      t.textContent = "Faint text nobody can read";
+      t.style.cssText = "color:#B8A791;background:#FFF8EE;font-size:14px";
+      const wide = document.createElement("div");
+      wide.style.cssText = "width:2000px;height:1px";
+      document.querySelector("main")?.append(b, t, wide);
+    });
+    const found = await seriousViolations(page);
+    expect(found.some((v) => v.startsWith("button-name"))).toBe(true);
+    expect(found.some((v) => v.startsWith("color-contrast"))).toBe(true);
+    expect(found.some((v) => v.startsWith("horizontal-scroll"))).toBe(true);
     await ctx.close();
   });
 });
