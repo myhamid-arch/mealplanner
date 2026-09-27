@@ -13,8 +13,7 @@ import { fileURLToPath } from "node:url";
 const RECORDED_DIR = join(dirname(fileURLToPath(import.meta.url)), "recorded");
 
 export type Block =
-  | { type: "text"; text: string }
-  | { type: "tool_use"; id?: string; name: string; input: unknown };
+  { type: "text"; text: string } | { type: "tool_use"; id?: string; name: string; input: unknown };
 
 /** One recorded exchange: what the request must carry, and the response to it. */
 export interface Recording {
@@ -61,7 +60,8 @@ export function loadRecordings(file: string, values: Record<string, string>): Re
   let text = readFileSync(join(RECORDED_DIR, `${file}.json`), "utf8");
   for (const [k, v] of Object.entries(values)) text = text.replaceAll(`{{${k}}}`, v);
   const unresolved = /\{\{(\w+)\}\}/.exec(text);
-  if (unresolved !== null) throw new Error(`recording ${file}: no value for {{${unresolved[1] ?? ""}}}`);
+  if (unresolved !== null)
+    throw new Error(`recording ${file}: no value for {{${unresolved[1] ?? ""}}}`);
   return (JSON.parse(text) as { recordings: Recording[] }).recordings;
 }
 
@@ -110,7 +110,8 @@ function mismatch(r: Recording, body: Body): string | null {
   if (Boolean(body.stream) !== e.stream) return `stream ${String(body.stream)}`;
   const last = body.messages?.at(-1);
   for (const s of e.lastUserText ?? [])
-    if (last?.role !== "user" || !textOf(last.content).includes(s)) return `last user text lacks "${s}"`;
+    if (last?.role !== "user" || !textOf(last.content).includes(s))
+      return `last user text lacks "${s}"`;
   if (e.toolResultOf !== undefined) {
     const result = toolResults(body).find((t) => t.name === e.toolResultOf);
     if (result === undefined) return `no tool_result of ${e.toolResultOf}`;
@@ -132,7 +133,9 @@ function message(model: string, r: Recording) {
     role: "assistant",
     model,
     content: r.response.content.map((b, i) =>
-      b.type === "tool_use" ? { ...b, id: b.id ?? `toolu_recorded_${String(seq)}_${String(i)}` } : b,
+      b.type === "tool_use"
+        ? { ...b, id: b.id ?? `toolu_recorded_${String(seq)}_${String(i)}` }
+        : b,
     ),
     stop_reason: r.response.stop_reason,
     stop_sequence: null,
@@ -146,7 +149,12 @@ function sse(m: ReturnType<typeof message>): string {
   const send = (type: string, data: unknown) =>
     out.push(`event: ${type}\ndata: ${JSON.stringify({ type, ...(data as object) })}\n\n`);
   send("message_start", {
-    message: { ...m, content: [], stop_reason: null, usage: { input_tokens: 100, output_tokens: 1 } },
+    message: {
+      ...m,
+      content: [],
+      stop_reason: null,
+      usage: { input_tokens: 100, output_tokens: 1 },
+    },
   });
   m.content.forEach((block, index) => {
     if (block.type === "text") {
@@ -209,11 +217,12 @@ export async function startRecordedModel(recordings: Recording[]): Promise<Recor
         failures.push(
           `request ${String(requests.length)} ${String(req.url)} (next: ${head?.name ?? "none"}): ${String(why)}`,
         );
-        res
-          .writeHead(500, { "content-type": "application/json" })
-          .end(
-            JSON.stringify({ type: "error", error: { type: "api_error", message: `unrecorded request: ${String(why)}` } }),
-          );
+        res.writeHead(500, { "content-type": "application/json" }).end(
+          JSON.stringify({
+            type: "error",
+            error: { type: "api_error", message: `unrecorded request: ${String(why)}` },
+          }),
+        );
         return;
       }
       if (next === head) queue.shift();

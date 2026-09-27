@@ -37,7 +37,11 @@ export async function foundationOps(
       },
       {
         kind: "member.update",
-        payload: { memberId: child.id, displayName: `${child.displayName} ${tag}`, appetite: "small" },
+        payload: {
+          memberId: child.id,
+          displayName: `${child.displayName} ${tag}`,
+          appetite: "small",
+        },
       },
       {
         kind: "target.set",
@@ -49,7 +53,12 @@ export async function foundationOps(
       },
       {
         kind: "exclusion.add",
-        payload: { memberId: child.id, kind: "ingredient", key: `ingredient_${tag}`, reason: "dislike" },
+        payload: {
+          memberId: child.id,
+          kind: "ingredient",
+          key: `ingredient_${tag}`,
+          reason: "dislike",
+        },
       },
       {
         kind: "household.update",

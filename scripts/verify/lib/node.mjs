@@ -20,7 +20,8 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
-import { createServer } from "node:net";
+import { Buffer } from "node:buffer";
+import { createServer as createNetServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -127,7 +128,8 @@ function stale(pkgDir) {
 /** Builds the workspace packages and the worker when a source is newer than its dist (locked). */
 export async function buildPackages(report) {
   const result = await withLock("packages-build", () => {
-    if (![...PACKAGE_DIRS, WORKER].some(stale)) return { code: 0, stdout: "up to date", stderr: "" };
+    if (![...PACKAGE_DIRS, WORKER].some(stale))
+      return { code: 0, stdout: "up to date", stderr: "" };
     return runAsync(
       "pnpm",
       ["exec", "turbo", "run", "build", "--filter=./packages/*", "--filter=@mealplanner/worker"],
@@ -190,7 +192,7 @@ export function runAsync(command, args, { cwd, env = {}, timeoutMs = 1_800_000 }
 
 export function freePort() {
   return new Promise((resolvePort, reject) => {
-    const server = createServer();
+    const server = createNetServer();
     server.once("error", reject);
     server.listen(0, "127.0.0.1", () => {
       const { port } = server.address();
@@ -558,7 +560,11 @@ export async function gateN2(report, node) {
       ["test/api/g1-contract-matrix.int.test.ts", "test/api/g3-openapi.int.test.ts"],
       { DATABASE_URL: server.url, LOG_LEVEL: "silent" },
     );
-    const counts = judgeTests(report, "@mealplanner/api-contract contract tests (g1, g3)", contract);
+    const counts = judgeTests(
+      report,
+      "@mealplanner/api-contract contract tests (g1, g3)",
+      contract,
+    );
     const files = new Set(contract.tests.map((t) => t.file));
     report.check(
       files.has("apps/web/test/api/g1-contract-matrix.int.test.ts") &&
@@ -643,6 +649,622 @@ async function n2NegativeControl(report, control) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// N4: the full suite on the integration tree
+// ---------------------------------------------------------------------------------------------
+
+/** Workspace packages with a given script, as { dir, name }. */
+function withScript(script) {
+  return listWorkspacePackages(ROOT)
+    .filter((p) => typeof p.manifest.scripts?.[script] === "string")
+    .map((p) => ({ dir: p.dir, name: p.manifest.name }));
+}
+
+/**
+ * Runs `script` (test:unit or test:integration) of every workspace package that has it, through
+ * the package's own script with a JSON report appended. Returns per-package results.
+ */
+export async function runVitestSuite(root, script, env = {}) {
+  const packages = listWorkspacePackages(root).filter(
+    (p) => typeof p.manifest.scripts?.[script] === "string",
+  );
+  const out = [];
+  for (const p of packages) {
+    const dir = mkdtempSync(join(tmpdir(), "node-gate-suite-"));
+    const file = join(dir, "report.json");
+    try {
+      const r = await runAsync(
+        "pnpm",
+        ["run", script, "--reporter=json", `--outputFile.json=${file}`, "--reporter=default"],
+        { cwd: join(root, p.dir), env, timeoutMs: 2_400_000 },
+      );
+      const json = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : null;
+      out.push({
+        name: p.manifest.name,
+        code: r.code,
+        reported: json !== null,
+        tests: collectVitest(json),
+        files: (json?.testResults ?? []).map((f) => ({
+          file: f.name ?? "",
+          status: f.status,
+          message: f.message ?? "",
+        })),
+        output: `${r.stdout}\n${r.stderr}`,
+      });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  }
+  return out;
+}
+
+/** The verdict on a suite's results: every package exited 0 and reported, nothing failed or skipped. */
+export function judgeSuite(results) {
+  const problems = [];
+  let total = 0;
+  let passed = 0;
+  for (const r of results) {
+    total += r.tests.length;
+    passed += r.tests.filter((t) => t.status === "passed").length;
+    if (r.code !== 0) problems.push(`${r.name}: exit ${String(r.code)}`);
+    if (!r.reported) problems.push(`${r.name}: no JSON report`);
+    for (const t of r.tests.filter((x) => x.status !== "passed"))
+      problems.push(`${r.name}: [${t.status}] ${t.fullName}`);
+    for (const f of r.files.filter((x) => x.status === "failed" && x.message !== ""))
+      problems.push(`${r.name}: ${relative(ROOT, f.file)}: ${f.message.split("\n")[0]}`);
+  }
+  return { total, passed, problems, ok: total > 0 && problems.length === 0 };
+}
+
+function reportSuite(report, label, results) {
+  for (const r of results) {
+    const counts = {};
+    for (const t of r.tests) counts[t.status] = (counts[t.status] ?? 0) + 1;
+    console.log(
+      `       ${label} ${r.name}: ${String(r.tests.length)} tests (${
+        Object.entries(counts)
+          .map(([k, v]) => `${String(v)} ${k}`)
+          .join(", ") || "none"
+      }), exit ${String(r.code)}`,
+    );
+  }
+  const verdict = judgeSuite(results);
+  const failedOutput = results
+    .filter((r) => r.code !== 0)
+    .map((r) => `--- ${r.name}\n${r.output.split("\n").slice(-40).join("\n")}`)
+    .join("\n");
+  report.check(
+    verdict.ok,
+    `${label}: ${String(verdict.passed)} of ${String(verdict.total)} tests passed in ${String(results.length)} packages, none failed or skipped`,
+    `${verdict.problems.join("\n")}\n${failedOutput}`.slice(0, 30_000),
+  );
+  return verdict;
+}
+
+// Web e2e (SPEC-Q-1): every Playwright spec of apps/web, once per tag group, each group in the
+// environment its leaf's verify script gives that tag (fresh database, the worker, the stubs).
+
+/** The runs that make up the web e2e suite: a spec file (default config) or a whole config. */
+const E2E_SPECS = [
+  { file: "e2e/shell.spec.ts", env: "shell" },
+  { file: "e2e/config.spec.ts", env: "app", worker: (tag) => tag !== "@G3" },
+  { file: "e2e/plan.spec.ts", env: "app", worker: () => true, graph: ["@G3", "@1.4.8-G5"] },
+  { file: "e2e/setup.spec.ts", env: "app", worker: () => true },
+  { file: "e2e/chat.spec.ts", env: "chat" },
+  { file: "e2e/admin.spec.ts", env: "admin" },
+  { config: "test/chat/playwright.config.ts", env: "updates" },
+  { config: "e2e/node-1.4/playwright.config.ts", env: "node14" },
+];
+
+const PLAYWRIGHT_CLI = (webDir) => join(webDir, "node_modules/@playwright/test/cli.js");
+
+/** Every Playwright config of apps/web (outside node_modules and build output). */
+function playwrightConfigs(webDir) {
+  const found = [];
+  const walk = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (["node_modules", ".next", "dist", ".turbo"].includes(entry.name)) continue;
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else if (entry.name === "playwright.config.ts") found.push(relative(webDir, path));
+    }
+  };
+  walk(webDir);
+  return found.sort();
+}
+
+/** `playwright test --list` for a config (and optional file): [{ file, title }]. */
+async function listTests(webDir, config, file) {
+  const dir = mkdtempSync(join(tmpdir(), "node-gate-list-"));
+  const reportFile = join(dir, "list.json");
+  try {
+    const r = await runAsync(
+      process.execPath,
+      [
+        PLAYWRIGHT_CLI(webDir),
+        "test",
+        "--config",
+        config,
+        ...(file ? [file] : []),
+        "--list",
+        "--reporter=json",
+      ],
+      { cwd: webDir, env: { PLAYWRIGHT_JSON_OUTPUT_NAME: reportFile }, timeoutMs: 300_000 },
+    );
+    if (r.code !== 0) throw new Error(`playwright --list ${config} ${file ?? ""}:\n${tail(r, 30)}`);
+    const configDir = dirname(join(webDir, config));
+    return playwrightResults(reportFile).map((t) => ({
+      file: relative(webDir, join(configDir, t.file)),
+      title: t.title,
+    }));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+const tagOf = (title) => /^(@[\w.-]+)/.exec(title)?.[1] ?? null;
+const grepFor = (tag) => `${tag.replace(/[.*+?^${}()|[\]\\-]/g, "\\$&")}(?![\\w.-])`;
+
+// A minimal SMTP sink for admin.spec.ts (the protocol leaf 1.4.6's verify script speaks): every
+// message is written to MAIL_DIR as JSON { to, subject, text, at }, which is what the spec reads.
+function decodeQuotedPrintable(text) {
+  return text
+    .replace(/=\r?\n/g, "")
+    .replace(/=([0-9A-F]{2})/gi, (_, hex) => String.fromCharCode(Number.parseInt(hex, 16)));
+}
+
+function parseMail(raw) {
+  const split = raw.search(/\r?\n\r?\n/);
+  const head = split === -1 ? raw : raw.slice(0, split);
+  const body = split === -1 ? "" : raw.slice(split).replace(/^\r?\n\r?\n/, "");
+  const headers = head.replace(/\r?\n[ \t]+/g, " ").split(/\r?\n/);
+  const header = (name) =>
+    headers
+      .find((h) => h.toLowerCase().startsWith(`${name.toLowerCase()}:`))
+      ?.slice(name.length + 1)
+      .trim() ?? "";
+  const encoding = header("Content-Transfer-Encoding").toLowerCase();
+  const text =
+    encoding === "quoted-printable"
+      ? decodeQuotedPrintable(body)
+      : encoding === "base64"
+        ? Buffer.from(body.replace(/\s/g, ""), "base64").toString("utf8")
+        : body;
+  return { subject: header("Subject"), text };
+}
+
+function startSmtp(dir) {
+  let count = 0;
+  const server = createNetServer((socket) => {
+    socket.setEncoding("utf8");
+    let buffer = "";
+    let inData = false;
+    let to = [];
+    const reply = (line) => socket.write(`${line}\r\n`);
+    const pump = () => {
+      for (;;) {
+        if (inData) {
+          const end = buffer.indexOf("\r\n.\r\n");
+          if (end === -1) return;
+          const raw = buffer
+            .slice(0, end)
+            .split("\r\n")
+            .map((l) => (l.startsWith("..") ? l.slice(1) : l))
+            .join("\r\n");
+          buffer = buffer.slice(end + 5);
+          inData = false;
+          const { subject, text } = parseMail(raw);
+          count += 1;
+          writeFileSync(
+            join(dir, `${String(Date.now())}-${String(count).padStart(4, "0")}.json`),
+            JSON.stringify({ to: to.join(", "), subject, text, at: Date.now() }),
+          );
+          to = [];
+          reply("250 OK queued");
+          continue;
+        }
+        const eol = buffer.indexOf("\r\n");
+        if (eol === -1) return;
+        const line = buffer.slice(0, eol);
+        buffer = buffer.slice(eol + 2);
+        const verb = line.slice(0, 4).toUpperCase();
+        if (verb === "EHLO") socket.write("250-localhost\r\n250 8BITMIME\r\n");
+        else if (verb === "HELO") reply("250 localhost");
+        else if (verb === "RCPT") {
+          to.push(
+            line
+              .replace(/^RCPT TO:\s*/i, "")
+              .replace(/[<>]/g, "")
+              .trim(),
+          );
+          reply("250 OK");
+        } else if (verb === "DATA") {
+          inData = true;
+          reply("354 End data with <CR><LF>.<CR><LF>");
+        } else if (verb === "RSET") {
+          to = [];
+          reply("250 OK");
+        } else if (verb === "QUIT") {
+          socket.end("221 Bye\r\n");
+          return;
+        } else reply("250 OK");
+      }
+    };
+    reply("220 localhost ESMTP node-gate stub");
+    socket.on("data", (chunk) => {
+      buffer += chunk;
+      pump();
+    });
+    socket.on("error", () => undefined);
+  });
+  return new Promise((resolveStart) => {
+    server.listen(0, "127.0.0.1", () => {
+      resolveStart({ port: server.address().port, stop: () => server.close() });
+    });
+  });
+}
+
+/** A background process whose output is kept (bounded) for failure messages. */
+function background(command, args, { cwd, env }) {
+  const child = spawn(command, args, { cwd, env: { ...process.env, ...CHILD_ENV, ...env } });
+  let output = "";
+  child.stdout.on("data", (d) => (output = (output + d).slice(-20_000)));
+  child.stderr.on("data", (d) => (output = (output + d).slice(-20_000)));
+  return {
+    output: () => output,
+    stop: () =>
+      new Promise((resolveStop) => {
+        if (child.exitCode !== null || child.signalCode !== null) return resolveStop();
+        child.once("close", () => resolveStop());
+        child.kill("SIGTERM");
+        setTimeout(() => child.kill("SIGKILL"), 5000);
+      }),
+  };
+}
+
+async function waitForHttp(url, ms = 120_000) {
+  const deadline = Date.now() + ms;
+  for (;;) {
+    try {
+      if ((await globalThis.fetch(url)).ok) return;
+    } catch {
+      // not up yet
+    }
+    if (Date.now() > deadline) throw new Error(`${url} did not answer`);
+    await new Promise((r) => setTimeout(r, 300));
+  }
+}
+
+/**
+ * One run of the web e2e suite: `spec` (a file under the default config, or a whole config) with
+ * `tag` (or everything), in its environment. Returns the Playwright results and the output.
+ */
+async function e2eRun({ webDir, distDir, server, spec, tag }) {
+  const scratch = mkdtempSync(join(tmpdir(), "node-gate-e2e-"));
+  const reportFile = join(scratch, "report.json");
+  const processes = [];
+  let db;
+  let smtp;
+  try {
+    const port = await freePort();
+    const appUrl = `http://localhost:${String(port)}`;
+    const secret = randomBytes(32).toString("base64url");
+    const env = {
+      MISE_NEXT_DIST_DIR: distDir,
+      PLAYWRIGHT_PORT: String(port),
+      PLAYWRIGHT_SKIP_BUILD: "1",
+      PLAYWRIGHT_JSON_OUTPUT_NAME: reportFile,
+      PLAYWRIGHT_OUTPUT_DIR: join(scratch, "artefacts"),
+      SHELL_SCREENSHOT_DIR: join(scratch, "shots"),
+      SETUP_SCREENSHOT_DIR: join(scratch, "shots"),
+      SCREENSHOT_DIR: join(scratch, "shots"),
+      LEAF143_TRACE_DIR: join(scratch, "trace"),
+      ...(chromium() === undefined ? {} : { PLAYWRIGHT_CHROMIUM_EXECUTABLE: chromium() }),
+    };
+    if (spec.env === "shell") {
+      // R-50 / W-1: the shell e2e runs without a database.
+      env.DATABASE_URL = "";
+    } else {
+      db = await createDatabase(server, "node_e2e");
+      const seed = await import(
+        pathToFileURL(join(ROOT, "packages/db/dist/src/seed/index.js")).href
+      );
+      const migrations = await import(
+        pathToFileURL(join(ROOT, "packages/db/dist/src/migrations/index.js")).href
+      );
+      // admin.spec.ts works on a migrated database without the catalogue (leaf 1.4.6).
+      if (spec.env === "admin") await migrations.runMigrations(db.url);
+      else if (spec.env !== "node14") await seed.migrateAndSeed(db.url);
+      Object.assign(env, { DATABASE_URL: db.url, AUTH_SECRET: secret, APP_URL: appUrl });
+      if (spec.env === "node14")
+        Object.assign(env, {
+          DATABASE_URL: "",
+          NODE_DB_URL: db.url,
+          NODE_DIST_DIR: distDir,
+          NODE_PORT: String(port),
+          NODE_MEASURE_FILE: join(scratch, "measure.jsonl"),
+        });
+      if (spec.graph?.includes(tag)) {
+        const kg = await runAsync(process.execPath, ["scripts/kg-rebuild.ts"], {
+          cwd: ROOT,
+          env: { DATABASE_URL: db.url },
+          timeoutMs: 600_000,
+        });
+        if (kg.code !== 0) throw new Error(`kg-rebuild failed:\n${tail(kg, 30)}`);
+      }
+      const wantsWorker =
+        spec.env === "chat" || spec.env === "updates" || (spec.env === "app" && spec.worker(tag));
+      if (wantsWorker) {
+        const worker = background(process.execPath, ["dist/src/main.js"], {
+          cwd: WORKER,
+          env: { DATABASE_URL: db.url, DATA_DIR: join(ROOT, "data"), LOG_LEVEL: "warn" },
+        });
+        processes.push(worker);
+      }
+      if (spec.env === "chat") {
+        env.WORLD_FILE = join(scratch, "world.json");
+        env.NODE_OPTIONS = `--import ${pathToFileURL(join(webDir, "e2e/chat/agent-stub.mjs")).href}`;
+        // The same build without the scripted model, for the chat route's 503 (leaf 1.4.5 G3).
+        const bare = await freePort();
+        const noModel = background(
+          process.execPath,
+          [join(webDir, "node_modules/next/dist/bin/next"), "start", "--port", String(bare)],
+          {
+            cwd: webDir,
+            env: {
+              MISE_NEXT_DIST_DIR: distDir,
+              DATABASE_URL: db.url,
+              AUTH_SECRET: secret,
+              APP_URL: `http://localhost:${String(bare)}`,
+            },
+          },
+        );
+        processes.push(noModel);
+        await waitForHttp(`http://localhost:${String(bare)}/offline`);
+        env.PLAYWRIGHT_PORT_NO_MODEL = String(bare);
+      }
+      if (spec.env === "updates") env.WORLD_FILE = join(scratch, "world.json");
+      if (spec.env === "admin") {
+        const mailDir = join(scratch, "mail");
+        mkdirSync(mailDir);
+        smtp = await startSmtp(mailDir);
+        Object.assign(env, {
+          EMAIL_SERVER: `smtp://127.0.0.1:${String(smtp.port)}`,
+          EMAIL_FROM: "Mise <no-reply@example.com>",
+          MAIL_DIR: mailDir,
+        });
+      }
+      if (spec.env === "updates") {
+        // Its config starts `next start` itself and never builds (leaf 1.4.9).
+        env.APP_URL = appUrl;
+      }
+    }
+    const args = spec.file
+      ? ["test", spec.file, ...(tag === null ? [] : ["--grep", grepFor(tag)])]
+      : ["test", "--config", spec.config];
+    const r = await runAsync(
+      process.execPath,
+      [PLAYWRIGHT_CLI(webDir), ...args, "--reporter=list,json"],
+      {
+        cwd: webDir,
+        env,
+        timeoutMs: 3_000_000,
+      },
+    );
+    return { r, tests: playwrightResults(reportFile), processes: processes.map((p) => p.output()) };
+  } finally {
+    for (const p of processes.reverse()) await p.stop();
+    smtp?.stop();
+    if (db !== undefined) await db.drop().catch(() => undefined);
+    rmSync(scratch, { recursive: true, force: true });
+  }
+}
+
+/** The web e2e suite (SPEC-Q-1): every spec file and tag group; returns the per-run results. */
+export async function runE2ESuite(report, { webDir, distDir, server }) {
+  // Coverage: every Playwright config and every spec file it collects is one of E2E_SPECS.
+  const configs = playwrightConfigs(webDir);
+  const knownConfigs = new Set([
+    "playwright.config.ts",
+    ...E2E_SPECS.filter((s) => s.config).map((s) => s.config),
+  ]);
+  report.check(
+    configs.every((c) => knownConfigs.has(c)),
+    `every Playwright config of apps/web is run (${configs.join(", ")})`,
+    configs.filter((c) => !knownConfigs.has(c)).join("\n"),
+  );
+  const defaultTests = await listTests(webDir, "playwright.config.ts");
+  const defaultFiles = [...new Set(defaultTests.map((t) => t.file))].sort();
+  const knownFiles = new Set(E2E_SPECS.filter((s) => s.file).map((s) => s.file));
+  report.check(
+    defaultFiles.every((f) => knownFiles.has(f)),
+    `every spec file of the default config is run (${defaultFiles.join(", ")})`,
+    defaultFiles.filter((f) => !knownFiles.has(f)).join("\n"),
+  );
+
+  const runs = [];
+  for (const spec of E2E_SPECS) {
+    if (spec.config) {
+      const listed = await listTests(webDir, spec.config);
+      runs.push({ spec, tag: null, label: spec.config, expected: listed.map((t) => t.title) });
+      continue;
+    }
+    const listed = defaultTests.filter((t) => t.file === spec.file);
+    const untagged = listed.filter((t) => tagOf(t.title) === null);
+    report.check(
+      listed.length > 0 && untagged.length === 0,
+      `${spec.file}: ${String(listed.length)} tests, every one in a tag group`,
+      untagged.map((t) => t.title).join("\n") || "no tests listed",
+    );
+    const tags = [...new Set(listed.map((t) => tagOf(t.title)).filter((t) => t !== null))].sort();
+    for (const tag of tags)
+      runs.push({
+        spec,
+        tag,
+        label: `${spec.file} ${tag}`,
+        expected: listed.filter((t) => tagOf(t.title) === tag).map((t) => t.title),
+      });
+  }
+
+  const jobs = Math.max(1, Number(process.env.NODE_E2E_JOBS ?? "2") || 2);
+  const queue = [...runs];
+  const done = new Map();
+  await Promise.all(
+    Array.from({ length: Math.min(jobs, queue.length) }, async () => {
+      for (let run = queue.shift(); run !== undefined; run = queue.shift()) {
+        const started = Date.now();
+        try {
+          const out = await e2eRun({ webDir, distDir, server, spec: run.spec, tag: run.tag });
+          done.set(run.label, { ...out, seconds: Math.round((Date.now() - started) / 1000) });
+        } catch (error) {
+          done.set(run.label, { error: String(error?.stack ?? error), tests: [], seconds: 0 });
+        }
+      }
+    }),
+  );
+  let total = 0;
+  let passed = 0;
+  for (const run of runs) {
+    const out = done.get(run.label);
+    const tests = out?.tests ?? [];
+    total += tests.length;
+    passed += tests.filter((t) => t.status === "passed").length;
+    const bad = tests.filter((t) => t.status !== "passed");
+    const missing = run.expected.filter((title) => !tests.some((t) => t.title === title));
+    const ok =
+      out?.error === undefined &&
+      out?.r?.code === 0 &&
+      bad.length === 0 &&
+      missing.length === 0 &&
+      tests.length > 0;
+    if (!ok)
+      console.log(
+        `----- ${run.label} (exit ${String(out?.r?.code)}) -----\n${out?.error ?? tail(out.r, 80)}\n${(out?.processes ?? []).map((o) => o.slice(-3000)).join("\n")}`,
+      );
+    report.check(
+      ok,
+      `e2e ${run.label}: ${String(tests.length - bad.length)} of ${String(run.expected.length)} tests passed (${String(out?.seconds)} s)`,
+      [
+        ...bad.map((t) => `[${t.status}] ${t.title}\n${t.error.slice(0, 1500)}`),
+        ...missing.map((m) => `[not run] ${m}`),
+      ].join("\n"),
+    );
+  }
+  report.check(
+    total > 0 && passed === total,
+    `web e2e suite: ${String(passed)} of ${String(total)} tests passed in ${String(runs.length)} runs, none skipped`,
+  );
+}
+
+/** N4: format, lint, typecheck, build, unit, integration, web e2e; plus the negative control. */
+export async function gateN4(report, node) {
+  if (!(await buildPackages(report))) return;
+  const step = async (label, command, args, cwd = ROOT, env = {}) => {
+    const started = Date.now();
+    const r = await runAsync(command, args, { cwd, env, timeoutMs: 1_800_000 });
+    report.check(
+      r.code === 0,
+      `${label} (${String(Math.round((Date.now() - started) / 1000))} s)`,
+      tail(r, 60),
+    );
+    return r;
+  };
+  await step("pnpm format:check exits 0", "pnpm", ["format:check"]);
+  await step("pnpm lint exits 0", "pnpm", ["lint"]);
+
+  // typecheck: every workspace package's own typecheck script (not turbo, whose cache can replay
+  // an earlier result), and the root's `tsc -p scripts`.
+  const typecheckers = withScript("typecheck");
+  const typechecks = await Promise.all(
+    typecheckers.map(async (p) => ({
+      p,
+      r: await runAsync("pnpm", ["run", "typecheck"], {
+        cwd: join(ROOT, p.dir),
+        timeoutMs: 1_200_000,
+      }),
+    })),
+  );
+  for (const { p, r } of typechecks) report.check(r.code === 0, `typecheck ${p.name}`, tail(r, 40));
+  await step("typecheck scripts (tsc -p scripts)", process.execPath, [
+    join(ROOT, "node_modules/typescript/bin/tsc"),
+    "-p",
+    "scripts",
+  ]);
+
+  // build: each package's and the worker's compile into a private directory (concurrent gates keep
+  // reading the shared dist/), and `next build` into this gate's own directory (R-50).
+  const outRoot = mkdtempSync(join(tmpdir(), `${node.label}-n4-build-`));
+  try {
+    const builders = withScript("build").filter((p) => p.dir !== "apps/web");
+    const builds = await Promise.all(
+      builders.map(async (p) => ({
+        p,
+        r: await runAsync(
+          process.execPath,
+          [
+            join(ROOT, "node_modules/typescript/bin/tsc"),
+            "-p",
+            "tsconfig.json",
+            "--outDir",
+            join(outRoot, p.dir),
+          ],
+          { cwd: join(ROOT, p.dir), timeoutMs: 1_200_000 },
+        ),
+      })),
+    );
+    for (const { p, r } of builds) report.check(r.code === 0, `build ${p.name} (tsc)`, tail(r, 40));
+  } finally {
+    rmSync(outRoot, { recursive: true, force: true });
+  }
+  const distDir = distDirFor(node.label, "N4");
+  if (!(await buildWeb(report, distDir))) return;
+
+  const server = await acquireServer(report, `${node.label}-n4`);
+  try {
+    reportSuite(report, "test:unit", await runVitestSuite(ROOT, "test:unit"));
+    reportSuite(
+      report,
+      "test:integration",
+      await runVitestSuite(ROOT, "test:integration", { DATABASE_URL: server.url }),
+    );
+    await runE2ESuite(report, { webDir: WEB, distDir, server });
+  } finally {
+    server.stop();
+  }
+
+  // Negative control: a disposable copy with one failing unit test fails the same unit verdict.
+  const copy = copyWorkspace(ROOT);
+  try {
+    const install = installCopy(copy.dir);
+    if (!report.check(install.code === 0, "negative control: the copy installs", tail(install)))
+      return;
+    const build = await runAsync(
+      "pnpm",
+      ["exec", "turbo", "run", "build", "--filter=./packages/*", "--filter=@mealplanner/worker"],
+      { cwd: copy.dir, timeoutMs: 1_200_000 },
+    );
+    if (!report.check(build.code === 0, "negative control: the copy builds", tail(build, 30)))
+      return;
+    const title = "node N4 negative control: this unit test fails";
+    writeFileSync(
+      join(copy.dir, "packages/core/test/node-n4-control.test.ts"),
+      `import { expect, it } from "vitest";\n\nit(${JSON.stringify(title)}, () => {\n  expect(1 + 1).toBe(3);\n});\n`,
+    );
+    const results = await runVitestSuite(copy.dir, "test:unit");
+    const verdict = judgeSuite(results);
+    const named = verdict.problems.some((p) => p.includes(title));
+    console.log(
+      `       measured (negative control): ${String(verdict.problems.length)} problem(s) in the copy: ${verdict.problems.slice(0, 3).join("; ")}`,
+    );
+    report.check(
+      !verdict.ok && named,
+      "negative control: one failing unit test in a copy fails the unit-suite verdict",
+    );
+  } finally {
+    copy.dispose();
+  }
+}
+
+// ---------------------------------------------------------------------------------------------
 // Entry point shared by node-1.<n>.mjs
 // ---------------------------------------------------------------------------------------------
 
@@ -688,7 +1310,3 @@ export async function nodeMain(node) {
 }
 
 export { Report, randomBytes };
-
-export async function gateN4(report) {
-  report.check(false, "N4 is being written");
-}

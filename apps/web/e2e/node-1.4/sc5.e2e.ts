@@ -20,7 +20,13 @@ import {
   startRecordedModel,
   type RecordedModel,
 } from "../../test/node/recorded-model";
-import { requiredEnv, startBuiltApp, startWorker, type BuiltApp, type Child } from "../../test/node/support";
+import {
+  requiredEnv,
+  startBuiltApp,
+  startWorker,
+  type BuiltApp,
+  type Child,
+} from "../../test/node/support";
 
 const VIEWPORTS = [
   { name: "390", width: 390, height: 844 },
@@ -37,20 +43,23 @@ const ANSWERS = {
 let model: RecordedModel;
 let app: BuiltApp;
 let worker: Child;
+/** Stops what the tests started, last first. */
+const cleanup: (() => Promise<void>)[] = [];
 
 test.beforeAll(async () => {
   test.setTimeout(600_000);
   const url = requiredEnv("NODE_DB_URL");
   await migrateAndSeed(url);
   model = await startRecordedModel(loadRecordings("product-parse", {}));
+  cleanup.push(() => model.close());
   worker = await startWorker(url, recordedModelEnv(model));
+  cleanup.push(() => worker.stop());
   app = await startBuiltApp(url, recordedModelEnv(model));
+  cleanup.push(() => app.stop());
 });
 
 test.afterAll(async () => {
-  await app?.stop();
-  await worker?.stop();
-  await model?.close();
+  for (const stop of cleanup.reverse()) await stop();
 });
 
 /** axe-core in light and dark once the finite animations have ended: no serious or critical finding. */
@@ -70,7 +79,13 @@ async function axe(page: Page, where: string): Promise<void> {
       .analyze();
     const bad = result.violations
       .filter((v) => v.impact === "serious" || v.impact === "critical")
-      .map((v) => `${v.id} (${String(v.impact)}): ${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")}`);
+      .map(
+        (v) =>
+          `${v.id} (${String(v.impact)}): ${v.nodes
+            .map((n) => n.target.join(" "))
+            .slice(0, 3)
+            .join(" | ")}`,
+      );
     measure({ check: "axe", where, colorScheme, serious: bad.length });
     expect(bad, `${where} (${colorScheme})`).toEqual([]);
   }
@@ -100,18 +115,26 @@ for (const vp of VIEWPORTS) {
     let hh: Household;
 
     test.beforeAll(async ({ browser }) => {
-      ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, baseURL: app.url });
+      ctx = await browser.newContext({
+        viewport: { width: vp.width, height: vp.height },
+        baseURL: app.url,
+      });
       page = await ctx.newPage();
     });
 
     test.afterAll(async () => {
-      await ctx?.close();
+      await ctx.close();
     });
 
     test(`SC-5 onboarding to a first plan at ${vp.name} px: at most five questions, UAE, metric`, async () => {
       const email = `node14-${vp.name}-${String(Date.now())}@example.test`;
       const signup = await page.request.post("/api/v1/signup", {
-        data: { email, password: "correct horse battery", name: "Omar", householdName: `SC-5 ${vp.name}` },
+        data: {
+          email,
+          password: "correct horse battery",
+          name: "Omar",
+          householdName: `SC-5 ${vp.name}`,
+        },
       });
       expect(signup.status(), await signup.text()).toBe(201);
       await page.goto("/onboarding");
@@ -138,18 +161,24 @@ for (const vp of VIEWPORTS) {
       await record();
       await page.getByRole("button", { name: "Next", exact: true }).click();
 
-      await expect(page.getByRole("heading", { name: "What does a normal week look like?" })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "What does a normal week look like?" }),
+      ).toBeVisible();
       await page.getByRole("button", { name: "Kids go to school" }).click();
       await record();
       await page.getByRole("button", { name: "Next", exact: true }).click();
 
-      await expect(page.getByRole("heading", { name: "What food does the family love?" })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "What food does the family love?" }),
+      ).toBeVisible();
       for (const c of ["Levantine", "Italian", "Indian", "British"])
         await page.getByRole("button", { name: c, exact: true }).click();
       await record();
       await page.getByRole("button", { name: "Next", exact: true }).click();
 
-      await expect(page.getByRole("heading", { name: "Anything anyone must never eat?" })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Anything anyone must never eat?" }),
+      ).toBeVisible();
       await page.getByLabel("Never eat").fill(ANSWERS.never);
       await expect(page.getByText(/Zayd: never anything with sesame/)).toBeVisible();
       await record();
@@ -184,7 +213,10 @@ for (const vp of VIEWPORTS) {
       }>(page, `/api/v1/plans?from=${date}&to=${date}`);
       const day = plans.days.find((x) => x.date === date);
       const dinner = day?.meals.find((m) => m.slotKey === "dinner" && m.memberScope === "shared");
-      const members = await json<{ members: { id: string; displayName: string }[] }>(page, "/api/v1/members");
+      const members = await json<{ members: { id: string; displayName: string }[] }>(
+        page,
+        "/api/v1/members",
+      );
       measure({
         check: "onboarding",
         width: vp.name,
@@ -207,7 +239,9 @@ for (const vp of VIEWPORTS) {
         dinnerName: dinner?.dishName ?? "",
         // The week grid names a slot's dish when it is shared (an individual slot shows the count).
         dishNames: [
-          ...new Set(day?.meals.filter((m) => m.memberScope === "shared").map((m) => m.dishName) ?? []),
+          ...new Set(
+            day?.meals.filter((m) => m.memberScope === "shared").map((m) => m.dishName) ?? [],
+          ),
         ],
         omarId: members.members.find((m) => m.displayName === "Omar")?.id ?? "",
       };
@@ -243,10 +277,9 @@ for (const vp of VIEWPORTS) {
       await sheet.getByRole("button", { name: "Done" }).click();
       await page.waitForURL("**/reviews");
       await axe(page, `reviews at ${vp.name}`);
-      const reviews = await json<{ reviews: { planMealId: string | null; rating: number | null }[] }>(
-        page,
-        "/api/v1/reviews?limit=200",
-      );
+      const reviews = await json<{
+        reviews: { planMealId: string | null; rating: number | null }[];
+      }>(page, "/api/v1/reviews?limit=200");
       const mine = reviews.reviews.filter((r) => r.planMealId === hh.dinnerId && r.rating === 4);
       measure({ check: "review", width: vp.name, stored: mine.length });
       expect(mine).toHaveLength(1);
@@ -255,7 +288,9 @@ for (const vp of VIEWPORTS) {
     test(`SC-5 a chat proposal accepted and visible in the change log at ${vp.name} px`, async () => {
       model.add(loadRecordings("product-chat", { OMAR_ID: hh.omarId }));
       await page.goto("/chat?new=1");
-      await page.getByRole("textbox", { name: "Message" }).fill("Loosen Omar's protein tolerance to 10 g, please.");
+      await page
+        .getByRole("textbox", { name: "Message" })
+        .fill("Loosen Omar's protein tolerance to 10 g, please.");
       await page.getByRole("button", { name: "Send" }).click();
       const log = page.getByRole("log", { name: "Conversation" });
       const card = log.locator("[data-card=proposal]");
@@ -268,14 +303,23 @@ for (const vp of VIEWPORTS) {
         "/api/v1/proposals?status=accepted",
       );
       const changeSetId = accepted.proposals.find((p) => p.changeSetId !== null)?.changeSetId ?? "";
-      const log2 = await json<{ entries: { id: string; source: string }[] }>(page, "/api/v1/change-sets?limit=100");
+      const log2 = await json<{ entries: { id: string; source: string }[] }>(
+        page,
+        "/api/v1/change-sets?limit=100",
+      );
       const entry = log2.entries.find((e) => e.id === changeSetId);
       expect(entry?.source).toBe("proposal_accept");
       await page.goto("/changelog");
       const badge = page.getByText(/^Proposal accepted by you$/);
       await expect(badge.first()).toBeVisible({ timeout: 60_000 });
       await axe(page, `change log at ${vp.name}`);
-      measure({ check: "chat", width: vp.name, changeSetId, source: entry?.source, badges: await badge.count() });
+      measure({
+        check: "chat",
+        width: vp.name,
+        changeSetId,
+        source: entry?.source,
+        badges: await badge.count(),
+      });
       expect(model.failures, model.failures.join("\n")).toEqual([]);
     });
   });

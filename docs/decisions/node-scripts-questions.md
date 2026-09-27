@@ -81,3 +81,52 @@ The planner's repeat gaps and economy window look back at earlier plan days. Twe
 - **R-2.**
   - No `package.json` script is added.
   - The ledgers call the scripts directly.
+
+## Rulings at CP1 (R-70)
+
+- SPEC-Q-1: the reading above. At CP2, every e2e spec file is listed with the run that covers it. A spec file that no run covers fails N4.
+- SPEC-Q-2 … 6: accepted as recorded. SPEC-Q-4 keeps the assertion that the change set touched no excluded table.
+- Amendment 1: change-log titles are not pinned. Entries are found by id, source and actor.
+- Amendment 2: node-1.2 SC-1 also compares the stored per-plate totals with the recomputed ones, and reports the largest difference.
+- Amendment 3: each gate's elapsed time is its last `ok` line.
+
+## Raised while building
+
+### SPEC-Q-7: tables a chat turn writes besides its change set (node-1.3 SC-4)
+
+An agent turn writes rows that its change set does not own:
+
+- `conversation`, `chat_message` (AGT-8 history);
+- `ai_generation` (the DM-7 model-call audit).
+
+Undo does not restore them, so they are left out of SC-4's equality, just as SPEC-Q-4 leaves out the request's bookkeeping.
+
+**Reading used.** The exclusion is shown by evidence, not assumed. The test:
+
+1. snapshots every table except SPEC-Q-4's around the turn;
+2. takes the tables the turn changed outside its change set's before-images;
+3. requires them to be a subset of those three tables;
+4. requires the change set's own images to name none of them.
+
+### SPEC-Q-8: the login's last-activity write (node-1.1 N3, HTTP path)
+
+Every authenticated request records the login's `household_user.last_active_at`, at most once every 5 minutes (R2-ADM-3).
+
+The first API call after sign-in therefore changes that row. It is not part of the change set.
+
+**Reading used.** The HTTP test makes one authenticated request before the "before" snapshot, which takes that write out of the window. The comparison stays full-row. If a run ever took longer than 5 minutes, it would fail, never pass wrongly.
+
+### Plan changes against the CP1 text
+
+- **node-1.3's "one 1★ review gives no proposal".**
+  - It runs on the same household, before the second review, not in a template clone.
+  - The dislike rule reads every review in its window (`reviewsWithin`), not only unprocessed ones, so the order gives the same check without a second worker.
+- **node-1.2 SC-1.** The run for seed 1 at economy 0.4 is also the SC-2 run for that seed and weight. The two share the same inputs, so there are 20 plan jobs, not 21.
+- **Onboarding parse recordings.** These may answer any number of requests (`repeat`). The page sends the parse 800 ms after typing stops, so the count depends on timing. The spec requires at least one parse request answered and no request left unanswered.
+
+## Requests (added)
+
+- **R-3 (blocks node-1.4 N3; ARCHITECT QUESTION on the PR).** A single-entry edit in `apps/web/components/config/onboarding/questions.tsx:90`.
+  - The "Read as" chip row is `<div aria-live="polite" aria-label="Read as">` with no role. While it is empty (question 1 before anything is typed), axe reports `aria-prohibited-attr` as serious.
+  - The fix is `role="group"` or no `aria-label`.
+  - 1.4.3's G2 scans question 1 only after it is filled, so it does not see this.

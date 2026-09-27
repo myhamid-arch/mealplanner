@@ -84,7 +84,10 @@ function recheck(report, m) {
     `       measured SC-3: after one 1★ review ${String(control?.pending)} pending proposal(s); after two: dish score ${String(sc3?.scoreBefore)} → ${String(sc3?.scoreAfter)}, plate appeal ${String(sc3?.appealBefore)} → ${String(sc3?.appealAfter)}, other members unchanged ${String(sc3?.othersUnchanged)}, ${String(sc3?.proposals)} dislike proposal(s)`,
   );
   report.check(control?.pending === 0, "one 1★ review gives no proposal");
-  report.check(sc3Ok(sc3), "two 1★ reviews lower the member's dish score and appeal and give one proposal");
+  report.check(
+    sc3Ok(sc3),
+    "two 1★ reviews lower the member's dish score and appeal and give one proposal",
+  );
   report.check(
     !sc3Ok({ ...sc3, appealAfter: sc3?.appealBefore }),
     "negative control of the re-check: an unchanged appeal is rejected",
@@ -93,12 +96,18 @@ function recheck(report, m) {
   console.log(
     `       measured: the accepted proposal is change set ${String(accept?.changeSetId)} (actor ${String(accept?.actor)}, source ${String(accept?.source)})`,
   );
-  report.check(accept?.source === "proposal_accept", "the accepted proposal is a proposal_accept change set in the log");
+  report.check(
+    accept?.source === "proposal_accept",
+    "the accepted proposal is a proposal_accept change set in the log",
+  );
   const kg = one("kg");
   console.log(
     `       measured: DISLIKES edge weight ${String(kg?.weight)} (locked ${String(kg?.locked)}), ${String(kg?.syncJobs)} kg.sync job(s) succeeded`,
   );
-  report.check(kg?.weight === 0.8 && kg?.syncJobs > 0, "kg.sync wrote the member's DISLIKES edge at 0.8");
+  report.check(
+    kg?.weight === 0.8 && kg?.syncJobs > 0,
+    "kg.sync wrote the member's DISLIKES edge at 0.8",
+  );
   const prefs = one("get_preferences");
   report.check(
     prefs?.resultCarriesDish === true && prefs?.failures.length === 0,
@@ -108,16 +117,30 @@ function recheck(report, m) {
   console.log(
     `       measured SC-4: agent change set ${String(sc4?.changeSetId)} (${String(sc4?.actor)}/${String(sc4?.source)}) touched ${(sc4?.entities ?? []).join(", ")}; the turn also wrote ${(sc4?.turnWrites ?? []).join(", ")}; ${String(sc4?.restoreDiff)} row(s) differ after undo; not compared: ${(sc4?.excluded ?? []).join(", ")}`,
   );
-  report.check(sc4Ok(sc4), "SC-4: the agent's change is logged as the agent's and its undo restores every compared table");
-  report.check(!sc4Ok({ ...sc4, restoreDiff: 1 }), "negative control of the re-check: one differing row is rejected");
+  report.check(
+    sc4Ok(sc4),
+    "SC-4: the agent's change is logged as the agent's and its undo restores every compared table",
+  );
+  report.check(
+    !sc4Ok({ ...sc4, restoreDiff: 1 }),
+    "negative control of the re-check: one differing row is rejected",
+  );
   const sc4c = one("sc4-control");
-  console.log(`       measured (negative control): ${String(sc4c?.restoreDiff)} row(s) differ after the undo without one before-image`);
-  report.check(sc4c?.restoreDiff > 0 && !sc4Ok({ ...sc4, restoreDiff: sc4c?.restoreDiff }), "the undo without one before-image fails the check");
+  console.log(
+    `       measured (negative control): ${String(sc4c?.restoreDiff)} row(s) differ after the undo without one before-image`,
+  );
+  report.check(
+    sc4c?.restoreDiff > 0 && !sc4Ok({ ...sc4, restoreDiff: sc4c?.restoreDiff }),
+    "the undo without one before-image fails the check",
+  );
   const model = one("model");
   console.log(
     `       measured: ${String(model?.requests)} model request(s), all answered from recordings; ${String(model?.failures?.length)} unrecorded`,
   );
-  report.check(model?.failures?.length === 0 && model?.remaining?.length === 0, "every model request was answered from a recording");
+  report.check(
+    model?.failures?.length === 0 && model?.remaining?.length === 0,
+    "every model request was answered from a recording",
+  );
 }
 
 async function gateN3(report) {
@@ -140,7 +163,11 @@ async function gateN3(report) {
         NODE_PORT: String(await freePort()),
       },
     );
-    judgeTests(report, "apps/web test/node/intelligence.node.ts (built app, worker, recorded model)", r);
+    judgeTests(
+      report,
+      "apps/web test/node/intelligence.node.ts (built app, worker, recorded model)",
+      r,
+    );
     requireTitles(report, r.tests, TESTS);
     recheck(report, readMeasurements(measureFile));
   } finally {

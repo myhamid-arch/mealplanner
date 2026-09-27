@@ -173,7 +173,9 @@ export async function giveCredential(
     .where(eq(householdUser.userId, u.id));
   if (hh === undefined) throw new Error(`${email} has no household`);
   const hash = await ctx.password.hash(password);
-  await db.delete(account).where(and(eq(account.userId, u.id), eq(account.providerId, "credential")));
+  await db
+    .delete(account)
+    .where(and(eq(account.userId, u.id), eq(account.providerId, "credential")));
   const now = new Date();
   await db.insert(account).values({
     id: newId(),
@@ -226,7 +228,7 @@ export async function signInInProcess(
 }
 
 export interface Api {
-  (method: string, path: string, body?: unknown): Promise<{ status: number; json: any }>;
+  (method: string, path: string, body?: unknown): Promise<{ status: number; json: unknown }>;
 }
 
 /** JSON calls to the running app as the signed-in login. */
@@ -253,14 +255,16 @@ export function api(app: BuiltApp, login: { token: string; householdId: string }
 }
 
 /** Polls `GET /jobs/{id}` until the job succeeded or failed. */
-export async function waitForJob(call: Api, jobId: string, ms = 600_000): Promise<any> {
+export async function waitForJob(call: Api, jobId: string, ms = 600_000): Promise<unknown> {
   const deadline = Date.now() + ms;
   for (;;) {
     const r = await call("GET", `/jobs/${jobId}`);
-    if (r.status !== 200) throw new Error(`GET /jobs/${jobId}: ${String(r.status)} ${JSON.stringify(r.json)}`);
-    if (r.json.status === "succeeded") return r.json;
-    if (r.json.status === "failed") throw new Error(`job ${jobId} failed: ${JSON.stringify(r.json)}`);
-    if (Date.now() > deadline) throw new Error(`job ${jobId} still ${String(r.json.status)}`);
+    if (r.status !== 200)
+      throw new Error(`GET /jobs/${jobId}: ${String(r.status)} ${JSON.stringify(r.json)}`);
+    const status = (r.json as { status?: string }).status;
+    if (status === "succeeded") return r.json;
+    if (status === "failed") throw new Error(`job ${jobId} failed: ${JSON.stringify(r.json)}`);
+    if (Date.now() > deadline) throw new Error(`job ${jobId} still ${String(status)}`);
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 }

@@ -87,7 +87,10 @@ function recheck(report, m) {
   console.log(
     `       measured: ${String(runs?.runs)} plan.generate runs by the worker (${(runs?.seconds ?? []).join(", ")} s); seed 1 persisted ${String(runs?.days)} days, ${String(runs?.meals)} meals, ${String(runs?.plates)} plates`,
   );
-  report.check(runs?.runs === 20 && runs?.days === 7, "20 runs; the seed-1 plan has 7 persisted days");
+  report.check(
+    runs?.runs === 20 && runs?.days === 7,
+    "20 runs; the seed-1 plan has 7 persisted days",
+  );
 
   const sc1 = one("sc1");
   console.log(
@@ -96,7 +99,10 @@ function recheck(report, m) {
   console.log(
     `       measured: largest |recomputed − stored per-plate total| ${String(sc1?.maxStoredDiff)} (${String(sc1?.maxStoredDiffAt)})`,
   );
-  report.check(sc1Ok(sc1), "SC-1: every targeted member-meal in tolerance or flagged; stored totals match their items");
+  report.check(
+    sc1Ok(sc1),
+    "SC-1: every targeted member-meal in tolerance or flagged; stored totals match their items",
+  );
   report.check(
     !sc1Ok({ ...sc1, failures: ["x: out of tolerance and not flagged"] }),
     "negative control of the re-check: an unflagged miss is rejected",
@@ -111,14 +117,20 @@ function recheck(report, m) {
     `       measured OQ-8: ${String(gaps?.pairs)} same-dish pairs with a shared eater, ${String(gaps?.relaxed)} relaxed, ${String(gaps?.violations?.length)} inside the gap`,
   );
   report.check(gapsOk(gaps), "OQ-8 repeat gaps hold on the persisted plan");
-  report.check(!gapsOk({ ...gaps, violations: ["x"] }), "negative control of the re-check: one violation is rejected");
+  report.check(
+    !gapsOk({ ...gaps, violations: ["x"] }),
+    "negative control of the re-check: one violation is rejected",
+  );
 
   const cook = one("cooksheet");
   console.log(
     `       measured cook sheet (day 1): ${String(cook?.batches)} batches, ${String(cook?.lines)} ingredient lines, largest difference ${String(cook?.maxDiffG)} g`,
   );
   report.check(cookOk(cook), "day 1's cook sheet raw totals equal the plates' raw equivalents");
-  report.check(!cookOk({ ...cook, failures: ["x"] }), "negative control of the re-check: one differing line is rejected");
+  report.check(
+    !cookOk({ ...cook, failures: ["x"] }),
+    "negative control of the re-check: one differing line is rejected",
+  );
 
   const sc2 = one("sc2");
   for (const s of sc2?.perSeed ?? [])
@@ -145,10 +157,14 @@ function recheck(report, m) {
     `       measured (negative control): tampered plate grams give ${String(tampered?.failures)} SC-1 failure(s); repeated dish gives ${String(one("gaps-control")?.violations)} gap violation(s)`,
   );
   report.check(
-    tampered?.failures > 0 && !sc1Ok({ ...sc1, failures: new Array(tampered?.failures ?? 0).fill("x") }),
+    tampered?.failures > 0 &&
+      !sc1Ok({ ...sc1, failures: new Array(tampered?.failures ?? 0).fill("x") }),
     "the tampered persisted plate fails SC-1",
   );
-  report.check(one("gaps-control")?.violations > 0, "the repeated dish inside the gap fails the repeat check");
+  report.check(
+    one("gaps-control")?.violations > 0,
+    "the repeated dish inside the gap fails the repeat check",
+  );
   report.check(one("sc2-control")?.self?.pass === false, "SC-2 against itself fails");
 }
 
@@ -172,11 +188,15 @@ async function gateN3(report) {
   } finally {
     if (db !== undefined) {
       // The per-run copies carry the template's name as their prefix.
-      const copies = await query(server.url, "SELECT datname FROM pg_database WHERE datname LIKE $1", [
-        `${db.name.slice(0, 40)}\\_r%`,
-      ]);
+      const copies = await query(
+        server.url,
+        "SELECT datname FROM pg_database WHERE datname LIKE $1",
+        [`${db.name.slice(0, 40)}\\_r%`],
+      );
       for (const { datname } of copies)
-        await query(server.url, `DROP DATABASE IF EXISTS "${datname}" WITH (FORCE)`).catch(() => undefined);
+        await query(server.url, `DROP DATABASE IF EXISTS "${datname}" WITH (FORCE)`).catch(
+          () => undefined,
+        );
       await db.drop().catch(() => undefined);
     }
     server.stop();

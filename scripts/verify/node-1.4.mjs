@@ -120,9 +120,14 @@ function recheck(report, m) {
       o.unitSystem === "metric" &&
       o.meals > 0;
     report.check(ok(onb), `${w} px: at most five questions, UAE and metric, a first plan`);
-    report.check(!ok({ ...onb, questions: 6 }), `${w} px: negative control of the re-check: six questions are rejected`);
     report.check(
-      one("cooksheet")?.quantities > 0 && one("review")?.stored === 1 && one("chat")?.source === "proposal_accept",
+      !ok({ ...onb, questions: 6 }),
+      `${w} px: negative control of the re-check: six questions are rejected`,
+    );
+    report.check(
+      one("cooksheet")?.quantities > 0 &&
+        one("review")?.stored === 1 &&
+        one("chat")?.source === "proposal_accept",
       `${w} px: the cook sheet shows metric quantities, the review is stored, the accepted proposal is in the log`,
     );
   }
@@ -132,15 +137,23 @@ function recheck(report, m) {
   console.log(
     `       measured: axe on ${String(screens.size)} screens × light/dark (${String(axe.length)} runs), ${String(serious)} serious or critical`,
   );
-  report.check(axe.length >= 20 && serious === 0, "axe: no serious or critical finding on any screen");
+  report.check(
+    axe.length >= 20 && serious === 0,
+    "axe: no serious or critical finding on any screen",
+  );
   const control = m.find((r) => r.check === "axe-control");
-  console.log(`       measured (negative control): axe on the known-bad page: ${(control?.ids ?? []).join(", ")}`);
+  console.log(
+    `       measured (negative control): axe on the known-bad page: ${(control?.ids ?? []).join(", ")}`,
+  );
   report.check(control?.serious > 0, "negative control: axe reports the known-bad page");
   const model = m.find((r) => r.check === "model");
   console.log(
     `       measured: ${String(model?.requests)} model request(s): ${String(model?.parse)} onboarding parse, ${String(model?.chat)} chat; ${String(model?.failures?.length)} unrecorded`,
   );
-  report.check(model?.failures?.length === 0 && model?.parse > 0 && model?.chat === 2, "the recorded model answered every request");
+  report.check(
+    model?.failures?.length === 0 && model?.parse > 0 && model?.chat === 2,
+    "the recorded model answered every request",
+  );
 }
 
 async function gateN3(report) {
@@ -156,31 +169,54 @@ async function gateN3(report) {
     report.check(
       r.code === 0 && tests.length > 0 && failed.length === 0,
       `apps/web/e2e/node-1.4/sc5.e2e.ts: ${String(tests.length)} tests, ${String(tests.length - failed.length)} passed, none skipped or failed`,
-      failed.map((t) => `[${t.status}] ${t.title}\n${t.error}`).join("\n").slice(0, 8000),
+      failed
+        .map((t) => `[${t.status}] ${t.title}\n${t.error}`)
+        .join("\n")
+        .slice(0, 8000),
     );
     for (const title of TESTS) {
       const hit = tests.filter((t) => t.title === title);
-      report.check(hit.length === 1 && hit[0].status === "passed", `ran and passed: ${title}`, hit.map((t) => t.status).join(", ") || "missing");
+      report.check(
+        hit.length === 1 && hit[0].status === "passed",
+        `ran and passed: ${title}`,
+        hit.map((t) => t.status).join(", ") || "missing",
+      );
     }
     const unexpected = tests.filter((t) => !TESTS.includes(t.title));
-    report.check(unexpected.length === 0, "no test outside the required list", unexpected.map((t) => t.title).join("\n"));
+    report.check(
+      unexpected.length === 0,
+      "no test outside the required list",
+      unexpected.map((t) => t.title).join("\n"),
+    );
     recheck(report, measures);
 
     // Negative control: the same spec against a copy without the cook sheet's route.
     const copy = copyWorkspace(ROOT);
     try {
       const install = installCopy(copy.dir);
-      if (!report.check(install.code === 0, "negative control: the copy installs", tail(install))) return;
+      if (!report.check(install.code === 0, "negative control: the copy installs", tail(install)))
+        return;
       const kitchen = join(copy.dir, "apps/web/app/(app)/kitchen");
       rmSync(kitchen, { recursive: true, force: true });
-      report.check(!existsSync(kitchen), "negative control: the copy has no apps/web/app/(app)/kitchen route");
+      report.check(
+        !existsSync(kitchen),
+        "negative control: the copy has no apps/web/app/(app)/kitchen route",
+      );
       const build = await runAsync(
         "pnpm",
         ["exec", "turbo", "run", "build", "--filter=./packages/*", "--filter=@mealplanner/worker"],
         { cwd: copy.dir, timeoutMs: 1_200_000 },
       );
-      if (!report.check(build.code === 0, "negative control: the copy's packages build", tail(build, 30))) return;
-      if (!(await buildWeb(report, ".next/node-1.4-n3-control", join(copy.dir, "apps/web")))) return;
+      if (
+        !report.check(
+          build.code === 0,
+          "negative control: the copy's packages build",
+          tail(build, 30),
+        )
+      )
+        return;
+      if (!(await buildWeb(report, ".next/node-1.4-n3-control", join(copy.dir, "apps/web"))))
+        return;
       const control = await runSpec(
         join(copy.dir, "apps/web"),
         ".next/node-1.4-n3-control",

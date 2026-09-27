@@ -225,7 +225,8 @@ export function evaluateSc1(
   for (const meal of meals)
     for (const plate of meal.plates) {
       const { n, missing } = recompute(plate, per100g);
-      for (const v of missing) r.failures.push(`${meal.date} ${meal.slotKey}: variant ${v} unknown`);
+      for (const v of missing)
+        r.failures.push(`${meal.date} ${meal.slotKey}: variant ${v} unknown`);
       for (const k of NUTRIENTS) {
         const stored = plate.actual[k];
         const diff = typeof stored === "number" ? Math.abs(stored - n[k]) : Infinity;
@@ -238,11 +239,15 @@ export function evaluateSc1(
   const flagKey = (f: Flag) => `${f.date}|${String(f.slotKey)}|${String(f.memberId)}`;
   const memberFlags = new Set(flags.filter((f) => f.memberId !== null).map(flagKey));
   const mealFlags = new Set(
-    flags.filter((f) => f.memberId === null && f.slotKey !== null).map((f) => `${f.date}|${String(f.slotKey)}`),
+    flags
+      .filter((f) => f.memberId === null && f.slotKey !== null)
+      .map((f) => `${f.date}|${String(f.slotKey)}`),
   );
   const slotOrder = (id: string) => {
     const s = cfg.slotTypes.find((x) => x.id === id);
-    return s === undefined ? "" : `${s.defaultTime}|${String(s.sortOrder).padStart(6, "0")}|${s.key}`;
+    return s === undefined
+      ? ""
+      : `${s.defaultTime}|${String(s.sortOrder).padStart(6, "0")}|${s.key}`;
   };
   for (const date of dates) {
     const targets = resolveSlotTargets(cfg, date);
@@ -308,9 +313,13 @@ export function evaluateSc1(
       }
       const target = own.reduce((s, t) => s + t.kcal, 0);
       if (Math.abs(band - tolKcal) > EPS)
-        r.failures.push(`${date} ${member}: slot bands sum to ${String(band)}, not ${String(tolKcal)}`);
+        r.failures.push(
+          `${date} ${member}: slot bands sum to ${String(band)}, not ${String(tolKcal)}`,
+        );
       if (!dayFlagged && Math.abs(total - target) > tolKcal + EPS)
-        r.failures.push(`${date} ${member}: day total ${total.toFixed(1)} outside ${String(target)} ± ${String(tolKcal)}`);
+        r.failures.push(
+          `${date} ${member}: day total ${total.toFixed(1)} outside ${String(target)} ± ${String(tolKcal)}`,
+        );
       if (
         dayFlagged &&
         !flags.some((f) => f.kind === "member_day_kcal" && f.date === date && f.memberId === member)
@@ -396,13 +405,19 @@ export async function checkCookSheet(
     r.failures.push(`no cook sheet for ${date}`);
     return r;
   }
-  const compare = (label: string, sheetRaw: Record<string, number>, platesRaw: Record<string, number>) => {
+  const compare = (
+    label: string,
+    sheetRaw: Record<string, number>,
+    platesRaw: Record<string, number>,
+  ) => {
     for (const id of new Set([...Object.keys(sheetRaw), ...Object.keys(platesRaw)])) {
       r.lines += 1;
       const diff = Math.abs((sheetRaw[id] ?? 0) - (platesRaw[id] ?? 0));
       r.maxDiffG = Math.max(r.maxDiffG, diff);
       if (diff > toleranceG)
-        r.failures.push(`${label} ${id}: ${String(sheetRaw[id] ?? 0)} g vs plates ${String(platesRaw[id] ?? 0)} g`);
+        r.failures.push(
+          `${label} ${id}: ${String(sheetRaw[id] ?? 0)} g vs plates ${String(platesRaw[id] ?? 0)} g`,
+        );
     }
   };
   const platesRawOf = (meal: StoredMeal, variantId: string) => {
@@ -423,11 +438,16 @@ export async function checkCookSheet(
     for (const b of cookMeal.batches) {
       r.batches += 1;
       const raw: Record<string, number> = {};
-      for (const x of [...b.raw, ...b.discardedFat]) raw[x.ingredientId] = (raw[x.ingredientId] ?? 0) + x.rawG;
+      for (const x of [...b.raw, ...b.discardedFat])
+        raw[x.ingredientId] = (raw[x.ingredientId] ?? 0) + x.rawG;
       compare(`${meal.slotKey} ${b.variantId}`, raw, platesRawOf(meal, b.variantId));
     }
     for (const stored of meal.batches)
-      compare(`${meal.slotKey} stored batch ${stored.variantId}`, stored.raw, platesRawOf(meal, stored.variantId));
+      compare(
+        `${meal.slotKey} stored batch ${stored.variantId}`,
+        stored.raw,
+        platesRawOf(meal, stored.variantId),
+      );
   }
   return r;
 }

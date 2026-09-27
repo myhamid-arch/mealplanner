@@ -5,12 +5,8 @@
       "name": "chat: loosen Omar's protein tolerance",
       "expect": {
         "stream": true,
-        "systemContains": [
-          "You are this household's meal-planning assistant"
-        ],
-        "lastUserText": [
-          "Loosen Omar's protein tolerance"
-        ]
+        "systemContains": ["You are this household's meal-planning assistant"],
+        "lastUserText": ["Loosen Omar's protein tolerance"]
       },
       "response": {
         "content": [

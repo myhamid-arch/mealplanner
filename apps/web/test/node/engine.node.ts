@@ -5,7 +5,7 @@
 // job and the real worker process (apps/worker/dist) runs it. Everything measured is read back
 // from what the worker persisted.
 import { randomBytes } from "node:crypto";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as c from "@mealplanner/api-contract/contract";
@@ -115,7 +115,10 @@ async function planRun(seed: number, economy: number): Promise<Run> {
             body: {
               summary: `node-1.2 N3 weights (economy ${String(economy)})`,
               ops: [
-                { kind: "weights.set", payload: { ingredientEconomy: economy, aiGeneration: "off" } },
+                {
+                  kind: "weights.set",
+                  payload: { ingredientEconomy: economy, aiGeneration: "off" },
+                },
               ],
             },
           },
@@ -128,7 +131,10 @@ async function planRun(seed: number, economy: number): Promise<Run> {
           caller,
         );
         if (generate.status !== 202) throw new Error(`plans/generate: ${generate.text}`);
-        return { jobId: (generate.json as { jobId: string }).jobId, householdId: login.householdId };
+        return {
+          jobId: (generate.json as { jobId: string }).jobId,
+          householdId: login.householdId,
+        };
       } finally {
         await app.close();
       }
@@ -176,11 +182,16 @@ async function pooled<T, R>(items: readonly T[], width: number, fn: (x: T) => Pr
 }
 
 let main: Run | undefined;
-let mainPool: pg.Pool;
+let mainPool: pg.Pool | undefined;
 let ctx: HouseholdContext;
 const runs: Run[] = [];
 
-beforeAll(() => undefined);
+/** The seed-1, economy-0.4 run the SC-1, gap and cook-sheet checks read. */
+function kept(): { main: Run; pool: pg.Pool } {
+  if (main === undefined || mainPool === undefined)
+    throw new Error("the seed-1 plan run did not complete");
+  return { main, pool: mainPool };
+}
 
 afterAll(async () => {
   if (mainPool !== undefined) await mainPool.end();
@@ -226,12 +237,13 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
     expect(main).toBeDefined();
     if (main === undefined) return;
     mainPool = new pg.Pool({ connectionString: main.url, max: 4 });
-    ctx = { householdId: main.householdId, userId: null, role: "system" };
-    const { rows } = await mainPool.query<{ days: number; meals: number; plates: number }>(
+    const k = kept();
+    ctx = { householdId: k.main.householdId, userId: null, role: "system" };
+    const { rows } = await k.pool.query<{ days: number; meals: number; plates: number }>(
       `SELECT (SELECT count(*) FROM plan_day WHERE household_id = $1)::int AS days,
               (SELECT count(*) FROM plan_meal WHERE household_id = $1)::int AS meals,
               (SELECT count(*) FROM plate WHERE household_id = $1)::int AS plates`,
-      [main.householdId],
+      [k.main.householdId],
     );
     expect(rows[0]?.days).toBe(7);
     measure({
@@ -245,12 +257,17 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
   });
 
   it("N3 SC-1 from the persisted plates: every targeted member-meal in tolerance or flagged with its reason", async () => {
-    expect(main).toBeDefined();
-    if (main === undefined) return;
-    const db = drizzle(mainPool);
-    const meals = await readPlan(mainPool, main.householdId, F1_WEEK);
+    const k = kept();
+    const db = drizzle(k.pool);
+    const meals = await readPlan(k.pool, k.main.householdId, F1_WEEK);
     const cfg = await householdConfig(db, ctx);
-    const result = evaluateSc1(cfg, F1_WEEK, meals, await variantNutrients(db, ctx, meals), main.flags);
+    const result = evaluateSc1(
+      cfg,
+      F1_WEEK,
+      meals,
+      await variantNutrients(db, ctx, meals),
+      k.main.flags,
+    );
     measure({ check: "sc1", ...result, failures: result.failures.slice(0, 20) });
     expect(result.failures).toEqual([]);
     expect(result.total).toBeGreaterThan(0);
@@ -259,20 +276,18 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
   });
 
   it("N3 the OQ-8 repeat gaps hold on the persisted plan", async () => {
-    expect(main).toBeDefined();
-    if (main === undefined) return;
-    const result = checkRepeatGaps(await readPlan(mainPool, main.householdId, F1_WEEK));
+    const k = kept();
+    const result = checkRepeatGaps(await readPlan(k.pool, k.main.householdId, F1_WEEK));
     measure({ check: "gaps", ...result });
     expect(result.violations).toEqual([]);
     expect(result.pairs).toBeGreaterThan(0);
   });
 
   it("N3 day 1's cook sheet from the persisted plan: raw totals equal the sum of plate raw equivalents", async () => {
-    expect(main).toBeDefined();
-    if (main === undefined) return;
-    const day1 = F1_WEEK[0] ?? "";
-    const meals = await readPlan(mainPool, main.householdId, [day1]);
-    const result = await checkCookSheet(drizzle(mainPool), ctx, day1, meals, RAW_TOLERANCE_G);
+    const k = kept();
+    const day1 = F1_WEEK[0];
+    const meals = await readPlan(k.pool, k.main.householdId, [day1]);
+    const result = await checkCookSheet(drizzle(k.pool), ctx, day1, meals, RAW_TOLERANCE_G);
     measure({ check: "cooksheet", ...result, failures: result.failures.slice(0, 20) });
     expect(result.failures).toEqual([]);
     expect(result.batches).toBeGreaterThan(0);
@@ -283,7 +298,8 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
     for (const seed of SEEDS) {
       const count = async (economy: number) => {
         const r = runs.find((x) => x.seed === seed && x.economy === economy);
-        if (r === undefined) throw new Error(`no run for seed ${String(seed)} economy ${String(economy)}`);
+        if (r === undefined)
+          throw new Error(`no run for seed ${String(seed)} economy ${String(economy)}`);
         const pool = new pg.Pool({ connectionString: r.url, max: 1 });
         try {
           return (await coreIngredients(pool, r.householdId, F1_WEEK)).length;
@@ -302,39 +318,50 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
   });
 
   it("N3 negative control: persisted plate grams tampered off tolerance fail SC-1", async () => {
-    expect(main).toBeDefined();
-    if (main === undefined) return;
-    const db = drizzle(mainPool);
+    const k = kept();
+    const db = drizzle(k.pool);
     const cfg = await householdConfig(db, ctx);
-    const before = await readPlan(mainPool, main.householdId, F1_WEEK);
+    const before = await readPlan(k.pool, k.main.householdId, F1_WEEK);
     const targetedIds = new Set(cfg.members.filter((m) => m.isTargeted).map((m) => m.id));
     const plate = before
       .flatMap((m) => m.plates)
       .find((p) => targetedIds.has(p.memberId) && p.fitStatus === "in_tolerance");
     const item = plate?.items.reduce((a, b) => (b.cookedG > a.cookedG ? b : a));
     expect(item).toBeDefined();
-    await mainPool.query(
+    await k.pool.query(
       "UPDATE plate_item SET cooked_g = cooked_g * 1.6 WHERE plate_id = $1 AND variant_id = $2 AND component_id = $3",
       [plate?.id, item?.variantId, item?.componentId],
     );
-    const meals = await readPlan(mainPool, main.householdId, F1_WEEK);
-    const result = evaluateSc1(cfg, F1_WEEK, meals, await variantNutrients(db, ctx, meals), main.flags);
-    measure({ check: "sc1-control", failures: result.failures.length, maxStoredDiff: result.maxStoredDiff });
+    const meals = await readPlan(k.pool, k.main.householdId, F1_WEEK);
+    const result = evaluateSc1(
+      cfg,
+      F1_WEEK,
+      meals,
+      await variantNutrients(db, ctx, meals),
+      k.main.flags,
+    );
+    measure({
+      check: "sc1-control",
+      failures: result.failures.length,
+      maxStoredDiff: result.maxStoredDiff,
+    });
     expect(result.failures.some((f) => f.includes("out of tolerance and not flagged"))).toBe(true);
     expect(result.maxStoredDiff).toBeGreaterThan(0.001);
   });
 
   it("N3 negative control: a repeated dish inside the gap fails the repeat check", async () => {
-    expect(main).toBeDefined();
-    if (main === undefined) return;
-    const meals = await readPlan(mainPool, main.householdId, F1_WEEK);
+    const k = kept();
+    const meals = await readPlan(k.pool, k.main.householdId, F1_WEEK);
     // A dinner two days after another dinner gets that dinner's dish (both are main meals: gap 7).
     const first = meals.find((m) => m.slotKey === "dinner" && m.date === F1_WEEK[0]);
     const second = meals.find((m) => m.slotKey === "dinner" && m.date === F1_WEEK[2]);
     expect(first).toBeDefined();
     expect(second).toBeDefined();
-    await mainPool.query("UPDATE plan_meal SET dish_id = $1 WHERE id = $2", [first?.dishId, second?.id]);
-    const result = checkRepeatGaps(await readPlan(mainPool, main.householdId, F1_WEEK));
+    await k.pool.query("UPDATE plan_meal SET dish_id = $1 WHERE id = $2", [
+      first?.dishId,
+      second?.id,
+    ]);
+    const result = checkRepeatGaps(await readPlan(k.pool, k.main.householdId, F1_WEEK));
     measure({ check: "gaps-control", violations: result.violations.length });
     expect(result.violations.length).toBeGreaterThan(0);
   });

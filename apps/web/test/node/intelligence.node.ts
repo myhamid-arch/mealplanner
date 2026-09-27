@@ -29,7 +29,12 @@ import {
   NOT_COMPARED,
 } from "../../../../packages/db/test/node/support";
 import { snapshotDatabase } from "../../../../packages/db/test/support/snapshot";
-import { loadRecordings, recordedModelEnv, startRecordedModel, type RecordedModel } from "./recorded-model";
+import {
+  loadRecordings,
+  recordedModelEnv,
+  startRecordedModel,
+  type RecordedModel,
+} from "./recorded-model";
 import {
   api,
   requiredEnv,
@@ -68,6 +73,8 @@ let dishId: string;
 let planMealId: string;
 let proposalId: string;
 let conversationId = "";
+/** Stops what the tests started, last first. */
+const cleanup: (() => Promise<void>)[] = [];
 const snapshot = () => snapshotDatabase(database.pool, EXCLUDED);
 /** Every table but SPEC-Q-4's, to see which tables a turn writes outside its change set. */
 const fullSnapshot = () => snapshotDatabase(database.pool, NOT_COMPARED);
@@ -124,7 +131,11 @@ async function changeLog(): Promise<
   return (r.json as { entries: [] }).entries;
 }
 
-async function waitFor<T>(what: string, fn: () => Promise<T | undefined>, ms = 180_000): Promise<T> {
+async function waitFor<T>(
+  what: string,
+  fn: () => Promise<T | undefined>,
+  ms = 180_000,
+): Promise<T> {
   const deadline = Date.now() + ms;
   for (;;) {
     const v = await fn();
@@ -146,22 +157,28 @@ async function storedInverse(changeSetId: string): Promise<unknown[]> {
 async function agentChangeSet(before: ReadonlySet<string>) {
   const entries = await changeLog();
   const fresh = entries.filter(
-    (e) => e.type === "change_set" && !before.has(e.id) && e.actor === "agent" && e.source === "agent_apply",
+    (e) =>
+      e.type === "change_set" &&
+      !before.has(e.id) &&
+      e.actor === "agent" &&
+      e.source === "agent_apply",
   );
   expect(fresh.length, JSON.stringify(entries.slice(0, 5))).toBe(1);
   return fresh[0];
 }
 
 beforeAll(async () => {
-  database = { url: requiredEnv("NODE_DB_URL"), pool: new pg.Pool({ connectionString: requiredEnv("NODE_DB_URL"), max: 4 }) };
+  database = {
+    url: requiredEnv("NODE_DB_URL"),
+    pool: new pg.Pool({ connectionString: requiredEnv("NODE_DB_URL"), max: 4 }),
+  };
+  cleanup.push(() => database.pool.end());
   model = await startRecordedModel([]);
+  cleanup.push(() => model.close());
 });
 
 afterAll(async () => {
-  await app?.stop();
-  await worker?.stop();
-  await model?.close();
-  await database?.pool.end();
+  for (const stop of cleanup.reverse()) await stop();
 });
 
 describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
@@ -176,7 +193,9 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
     memberId = f1.members.adult_b ?? "";
     expect(memberId).not.toBe("");
     worker = await startWorker(database.url, recordedModelEnv(model));
+    cleanup.push(() => worker.stop());
     app = await startBuiltApp(database.url, recordedModelEnv(model));
+    cleanup.push(() => app.stop());
     adminLogin = await signIn(app, database.url, ADMIN);
     adminApi = api(app, adminLogin);
     memberApi = api(app, await signIn(app, database.url, MEMBER));
@@ -199,7 +218,13 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
     expect(meals.length).toBe(1);
     planMealId = meals[0]?.id ?? "";
     dishId = meals[0]?.dish_id ?? "";
-    model.add(loadRecordings("intelligence", { MEMBER_ID: memberId, CHILD_ID: f1.members.c1 ?? "", DISH_ID: dishId }));
+    model.add(
+      loadRecordings("intelligence", {
+        MEMBER_ID: memberId,
+        CHILD_ID: f1.members.c1 ?? "",
+        DISH_ID: dishId,
+      }),
+    );
     measure({ check: "setup", planMealId, dishId, memberId });
   });
 
@@ -229,7 +254,8 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
     await runInsights();
     const pending = await pendingProposals();
     const mine = pending.filter((p) => {
-      const ops = (p.payload as { ops?: { kind: string; payload: Record<string, unknown> }[] }).ops ?? [];
+      const ops =
+        (p.payload as { ops?: { kind: string; payload: Record<string, unknown> }[] }).ops ?? [];
       return ops.some(
         (o) =>
           o.kind === "preference.set" &&
@@ -285,7 +311,12 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
       "SELECT count(*)::int AS n FROM job WHERE kind = 'kg.sync' AND status = 'succeeded' AND household_id = $1",
       [ctx.householdId],
     );
-    measure({ check: "kg", weight: Number(edge.weight), locked: edge.locked, syncJobs: jobs[0]?.n });
+    measure({
+      check: "kg",
+      weight: Number(edge.weight),
+      locked: edge.locked,
+      syncJobs: jobs[0]?.n,
+    });
     expect(jobs[0]?.n).toBeGreaterThan(0);
   });
 
@@ -372,7 +403,12 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
   });
 
   it("N3 the recorded model answered every request from its recordings, and no live call was made", () => {
-    measure({ check: "model", requests: model.requests.length, failures: model.failures, remaining: model.remaining() });
+    measure({
+      check: "model",
+      requests: model.requests.length,
+      failures: model.failures,
+      remaining: model.remaining(),
+    });
     expect(model.failures, model.failures.join("\n")).toEqual([]);
     expect(model.remaining()).toEqual([]);
     expect(model.requests.length).toBe(8);

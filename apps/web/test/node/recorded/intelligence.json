@@ -5,9 +5,7 @@
       "name": "insights.run after one review: synthesis keeps the rule candidates as they are",
       "expect": {
         "stream": false,
-        "systemContains": [
-          "You are the insights engine of a family meal planner"
-        ]
+        "systemContains": ["You are the insights engine of a family meal planner"]
       },
       "response": {
         "content": [
@@ -23,9 +21,7 @@
       "name": "insights.run after two reviews: synthesis keeps the rule candidates as they are",
       "expect": {
         "stream": false,
-        "systemContains": [
-          "You are the insights engine of a family meal planner"
-        ]
+        "systemContains": ["You are the insights engine of a family meal planner"]
       },
       "response": {
         "content": [
@@ -41,12 +37,8 @@
       "name": "turn 1: read Adult B's preferences",
       "expect": {
         "stream": true,
-        "lastUserText": [
-          "What does Adult B think of"
-        ],
-        "systemContains": [
-          "You are this household's meal-planning assistant"
-        ]
+        "lastUserText": ["What does Adult B think of"],
+        "systemContains": ["You are this household's meal-planning assistant"]
       },
       "response": {
         "content": [
@@ -70,13 +62,8 @@
       "expect": {
         "stream": true,
         "toolResultOf": "get_preferences",
-        "toolResultContains": [
-          "{{DISH_ID}}",
-          "-0.8"
-        ],
-        "systemContains": [
-          "You are this household's meal-planning assistant"
-        ]
+        "toolResultContains": ["{{DISH_ID}}", "-0.8"],
+        "systemContains": ["You are this household's meal-planning assistant"]
       },
       "response": {
         "content": [
@@ -92,12 +79,8 @@
       "name": "turn 2: apply the change the admin asked for",
       "expect": {
         "stream": true,
-        "lastUserText": [
-          "Weigh appeal higher"
-        ],
-        "systemContains": [
-          "You are this household's meal-planning assistant"
-        ]
+        "lastUserText": ["Weigh appeal higher"],
+        "systemContains": ["You are this household's meal-planning assistant"]
       },
       "response": {
         "content": [
@@ -125,12 +108,8 @@
       "expect": {
         "stream": true,
         "toolResultOf": "apply_change",
-        "toolResultContains": [
-          "applied"
-        ],
-        "systemContains": [
-          "You are this household's meal-planning assistant"
-        ]
+        "toolResultContains": ["applied"],
+        "systemContains": ["You are this household's meal-planning assistant"]
       },
       "response": {
         "content": [
@@ -146,12 +125,8 @@
       "name": "turn 3 (negative control): apply a second change",
       "expect": {
         "stream": true,
-        "lastUserText": [
-          "Rename Child C1"
-        ],
-        "systemContains": [
-          "You are this household's meal-planning assistant"
-        ]
+        "lastUserText": ["Rename Child C1"],
+        "systemContains": ["You are this household's meal-planning assistant"]
       },
       "response": {
         "content": [
@@ -180,12 +155,8 @@
       "expect": {
         "stream": true,
         "toolResultOf": "apply_change",
-        "toolResultContains": [
-          "applied"
-        ],
-        "systemContains": [
-          "You are this household's meal-planning assistant"
-        ]
+        "toolResultContains": ["applied"],
+        "systemContains": ["You are this household's meal-planning assistant"]
       },
       "response": {
         "content": [
