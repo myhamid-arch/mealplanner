@@ -1,6 +1,6 @@
 # Gates: leaf-1.3.6 Live-model fixes (W-11)
 
-OWNS: docs/decisions/leaf-1.3.6-*.md, packages/ai/src/recipes/**, packages/ai/src/client/**, packages/ai/src/agent/prompt*.ts, packages/ai/src/agent/tools/**, packages/ai/src/agent/loop*.ts, packages/ai/test/recipes/**, packages/ai/test/agent/*.test.ts, evals/agent/**, docs/build/live/leaf-1.3.6-*.log, scripts/verify/leaf-1.3.6.mjs
+OWNS: docs/decisions/leaf-1.3.6-*.md, packages/ai/src/recipes/**, packages/ai/src/client/**, packages/ai/src/agent/prompt*.ts, packages/ai/src/agent/tools/**, packages/ai/src/agent/loop*.ts, packages/ai/test/recipes/**, packages/ai/test/agent/*.test.ts, evals/agent/**, apps/web/test/api/agent-household.int.test.ts, docs/build/live/leaf-1.3.6-*.log, scripts/verify/leaf-1.3.6.mjs
 
 Scope: Fix the two live-model failures of 2026-09-27 (W-11, R-64): recipe generation that hit max_tokens on a 3-dish request, and the agent eval at 26/29 (89.7 %) against 90 %, as specified in docs/spec (see 05 §1, 07, 11-build-plan.md §5 and §8 W-11, R-64).
 
