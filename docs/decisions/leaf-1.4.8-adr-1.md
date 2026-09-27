@@ -12,11 +12,11 @@ UX-4 and WeekPlan ("Drag to another day") ask for drag to move on the Plan week 
 Option 3, in `apps/web/components/plan/drag.ts` (a small hook) used by `week-plan.tsx`:
 - mouse and pen: a drag starts after the pointer moves 6 px with the button held; a shorter press is a click (opens the meal sheet as today);
 - touch: a drag starts after a 400 ms press without movement (so scrolling the day list still works); from then on `touchmove` is prevented;
-- while dragging, the cells of the same slot row on other draft days are marked as drop targets (outline plus an sr-only "drop here" text), the source cell is dimmed, and Escape cancels;
+- while dragging, the cells of the same slot row on other draft days are marked as drop targets (outline plus an sr-only "drop here" text), the source cell gets a dashed outline, and Escape cancels;
 - a drop calls `POST /plan-meals/{id}/move` and announces the result in the page's status line (`role="status"`);
 - the keyboard path is the meal sheet's "Move to…" menu (SPEC-Q-7), which calls the same endpoint.
 
-`prefers-reduced-motion` turns off the lift animation of the dragged cell.
+`prefers-reduced-motion` turns off the lift (scale) of the drag ghost.
 
 ## Consequences
 No new dependency. Playwright drives the drag with `page.mouse` (down, move in steps, up) at both widths; the Move menu is driven by keyboard only.
