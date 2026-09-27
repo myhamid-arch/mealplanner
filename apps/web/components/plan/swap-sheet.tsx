@@ -59,6 +59,9 @@ function ScoreBars({ s }: { readonly s: ScoreBreakdown }) {
   );
 }
 
+/** Planner reasons end with a full stop so several read as sentences. */
+const sentence = (text: string) => (/[.!?]$/.test(text.trim()) ? text.trim() : `${text.trim()}.`);
+
 const two = (n: number) => n.toFixed(2).replace(/^0/, "");
 
 function fitLine(
@@ -96,6 +99,8 @@ export function SwapSheet({
     open ? meal.id : "",
   );
   const [busy, setBusy] = useState<string | null>(null);
+  // SwapDialog: the best alternative is open; the others are rows that open on demand.
+  const [expanded, setExpanded] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [picked, setPicked] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<null | {
@@ -203,46 +208,71 @@ export function SwapSheet({
               </p>
             ) : (
               <ul className="m-0 flex list-none flex-col gap-2.5 p-0" aria-label="Alternatives">
-                {alts.data.alternatives.map((a, i) => (
-                  <li
-                    key={a.dishId}
-                    data-testid="alternative"
-                    className={`flex flex-col gap-2 rounded-2xl bg-card p-3.5 ${i === 0 ? "border-[2.5px] border-basil" : "shadow-card"}`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span className="grow font-extrabold" data-testid="alternative-name">
-                        {a.dishName}
+                {alts.data.alternatives.map((a, i) =>
+                  i === expanded ? (
+                    <li
+                      key={a.dishId}
+                      data-testid="alternative"
+                      className={`flex flex-col gap-2 rounded-2xl bg-card p-3.5 ${i === 0 ? "border-[2.5px] border-basil" : "border-[2.5px] border-line-strong"}`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span className="grow font-extrabold" data-testid="alternative-name">
+                          {a.dishName}
+                        </span>
+                        <span
+                          className={`tabular font-mono font-extrabold ${i === 0 ? "text-basil-text" : ""}`}
+                        >
+                          {two(a.scoreBreakdown.total)}
+                        </span>
+                      </div>
+                      <ScoreBars s={a.scoreBreakdown} />
+                      <span className="text-[13px] text-ink-soft">
+                        {[...a.scoreBreakdown.reasons.slice(0, 2), fitLine(a.plates, names)]
+                          .map(sentence)
+                          .join(" ")}
                       </span>
-                      <span
-                        className={`tabular font-mono font-extrabold ${i === 0 ? "text-basil-text" : ""}`}
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          loading={busy === a.dishId}
+                          disabled={busy !== null}
+                          onClick={() => void use(a.dishId)}
+                          aria-label={`Use ${a.dishName}`}
+                        >
+                          Use this
+                        </Button>
+                        <Link
+                          href={`/recipes/${a.dishId}`}
+                          className="inline-flex min-h-11 items-center rounded-md border-[1.5px] border-ink px-3.5 font-extrabold text-ink no-underline hover:text-ink"
+                        >
+                          See recipe
+                        </Link>
+                      </div>
+                    </li>
+                  ) : (
+                    <li key={a.dishId} data-testid="alternative">
+                      <button
+                        type="button"
+                        aria-expanded={false}
+                        onClick={() => {
+                          setExpanded(i);
+                        }}
+                        className="flex w-full items-center gap-2.5 rounded-2xl bg-card p-3.5 text-left text-ink shadow-card hover:bg-flour"
                       >
-                        {two(a.scoreBreakdown.total)}
-                      </span>
-                    </div>
-                    <ScoreBars s={a.scoreBreakdown} />
-                    <span className="text-[13px] text-ink-soft">
-                      {[...a.scoreBreakdown.reasons.slice(0, 2), fitLine(a.plates, names)].join(
-                        " ",
-                      )}
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      <Button
-                        loading={busy === a.dishId}
-                        disabled={busy !== null}
-                        onClick={() => void use(a.dishId)}
-                        aria-label={`Use ${a.dishName}`}
-                      >
-                        Use this
-                      </Button>
-                      <Link
-                        href={`/recipes/${a.dishId}`}
-                        className="inline-flex min-h-11 items-center rounded-md border-[1.5px] border-ink px-3.5 font-extrabold text-ink no-underline hover:text-ink"
-                      >
-                        See recipe
-                      </Link>
-                    </div>
-                  </li>
-                ))}
+                        <span className="flex grow flex-col">
+                          <span className="font-extrabold" data-testid="alternative-name">
+                            {a.dishName}
+                          </span>
+                          <span className="text-[13px] text-ink-soft">
+                            {sentence(fitLine(a.plates, names))}
+                          </span>
+                        </span>
+                        <span className="tabular font-mono font-extrabold">
+                          {two(a.scoreBreakdown.total)}
+                        </span>
+                      </button>
+                    </li>
+                  ),
+                )}
               </ul>
             )}
           </>

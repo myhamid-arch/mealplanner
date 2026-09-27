@@ -1117,7 +1117,10 @@ async function outcomeVisible(page: Page, flag: FlagView): Promise<string[]> {
   const text = (await card.count()) === 0 ? "" : ((await card.first().textContent()) ?? "");
   const missing: string[] = [];
   if (!text.includes("Flag from Priya")) missing.push("author");
-  if (flag.ingredientName !== null && !text.includes(`No ${flag.ingredientName} today`))
+  if (
+    flag.ingredientName !== null &&
+    !text.toLowerCase().includes(`no ${flag.ingredientName.toLowerCase()} today`)
+  )
     missing.push("ingredient");
   if (flag.note !== null && !text.includes(flag.note)) missing.push("note");
   const sub = flag.result?.substituteName;

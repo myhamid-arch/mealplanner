@@ -8,6 +8,11 @@ import { hhmm, dayMonth } from "./logic";
 import type { KitchenFlagView, PlanMeal } from "./api";
 import { ExtraIconSvg, FitText } from "./common";
 
+/** "Olive oil" → "olive oil" inside a sentence. */
+export function lowerFirst(text: string): string {
+  return text.charAt(0).toLowerCase() + text.slice(1);
+}
+
 function when(iso: string, timeZone: string): string {
   try {
     return new Intl.DateTimeFormat("en-GB", {
@@ -35,7 +40,7 @@ export function FlagOutcome({
 }) {
   const what =
     flag.kind === "unavailable"
-      ? `No ${flag.ingredientName ?? "ingredient"} today`
+      ? `No ${lowerFirst(flag.ingredientName ?? "ingredient")} today`
       : "Recipe unclear";
   const note = flag.note === null ? "" : ` “${flag.note}”`;
   const result = flag.result;

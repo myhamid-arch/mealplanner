@@ -517,7 +517,7 @@ function variantMix(meal: PlanMeal, dish: Dish): string | null {
 
 function PersonGrid({ data, cols }: { readonly data: TodayData; readonly cols: SlotColumn[] }) {
   const members = data.basics.members;
-  const template = `150px repeat(${String(cols.length)}, minmax(0, 1fr)) 160px`;
+  const template = `128px repeat(${String(cols.length)}, minmax(0, 1fr)) 128px`;
   const cell = (memberId: string, col: SlotColumn) => {
     const meal = col.meals.find((m) => m.plates.some((p) => p.memberId === memberId));
     const plate = meal?.plates.find((p) => p.memberId === memberId);
@@ -540,7 +540,7 @@ function PersonGrid({ data, cols }: { readonly data: TodayData; readonly cols: S
       className="overflow-x-auto rounded-[20px] bg-card text-sm shadow-card"
     >
       <div role="table" aria-label="Everyone's day">
-        <div role="rowgroup" className="min-w-[760px]">
+        <div role="rowgroup" className="min-w-[620px]">
           <div
             role="row"
             className="grid gap-2.5 rounded-t-[20px] bg-flour px-[18px] py-3 text-xs font-extrabold tracking-[0.06em] text-ink-muted uppercase"
@@ -555,7 +555,7 @@ function PersonGrid({ data, cols }: { readonly data: TodayData; readonly cols: S
             <span role="columnheader">Day vs target</span>
           </div>
         </div>
-        <div role="rowgroup" className="min-w-[760px]">
+        <div role="rowgroup" className="min-w-[620px]">
           {members.map((m) => {
             const d = myDay(data.day, m.id);
             return (

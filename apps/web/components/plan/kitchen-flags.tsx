@@ -7,6 +7,7 @@ import { useId, useState } from "react";
 import { Button, Dialog } from "../ui";
 import { api, c, problemText, type CookSheetMeal, type KitchenFlagView } from "./api";
 import { ExtraIconSvg } from "./common";
+import { lowerFirst } from "./flag-results";
 
 export interface FlagChoice {
   id: string;
@@ -186,7 +187,7 @@ export function OwnFlags({ flags }: { readonly flags: readonly KitchenFlagView[]
             <span>
               <strong>
                 {f.kind === "unavailable"
-                  ? `No ${f.ingredientName ?? "ingredient"}`
+                  ? `No ${lowerFirst(f.ingredientName ?? "ingredient")}`
                   : "Recipe unclear"}
               </strong>{" "}
               {outcome}

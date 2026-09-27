@@ -88,11 +88,7 @@ function MealBlock({
       )}
       {admin && editable && (
         <div className="flex flex-wrap gap-2">
-          <Button
-            variant="secondary"
-            loading={busy}
-            onClick={() => void toggleLock()}
-          >
+          <Button variant="secondary" loading={busy} onClick={() => void toggleLock()}>
             {meal.locked ? (
               <ExtraIconSvg name="unlock" size={18} />
             ) : (
