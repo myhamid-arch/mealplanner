@@ -94,6 +94,7 @@ const INT_DIGEST = [
 const INT_PLAN = [
   "G2 a plan the admin generated from the plan screen is announced to every admin",
   "G2 a plan an agent turn started posts only into that conversation, as before",
+  "G2 a recipe draft asked for a named day and slot carries them for the card's Use for link (R-66)",
   "G2 negative control: the routing check fails when an agent-started job also reaches Updates, or a plan job reaches no admin",
 ];
 const PHRASINGS = 12;

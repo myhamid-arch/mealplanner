@@ -306,6 +306,8 @@ export function agentPorts(rt: Runtime, caller: CallerContext, conversationId: s
         conversationId,
         request: i.request,
         slot: i.slot ?? null,
+        // 1.4.9 (R-61, R-66): the day the admin named, for the card's "Use for" link.
+        date: i.date ?? null,
         count: i.count,
       }),
 

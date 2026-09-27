@@ -14,6 +14,7 @@ import {
   type OnboardingAnswers,
 } from "@mealplanner/core/onboarding";
 import { chatMessage, conversation, job, newId } from "@mealplanner/db/schema";
+import { fileURLToPath } from "node:url";
 import { enqueueJob } from "../../lib/server/jobs";
 import { callJson, startTestApp, type TestApp } from "./support/app";
 import { createTestDatabase, type TestDatabase } from "./support/db";
@@ -250,6 +251,42 @@ describe("G2 plan ready in Updates (W-9b)", () => {
         { type: "job_progress", jobId: agentJob, kind: "plan.generate", status: "succeeded" },
       ],
     });
+  }, 300_000);
+
+  it("G2 a recipe draft asked for a named day and slot carries them for the card's Use for link (R-66)", async () => {
+    // The built worker's own function (a real `recipe.draft` needs a model; its result is given).
+    const file = fileURLToPath(
+      new URL("../../../worker/dist/src/jobs/chat-events.js", import.meta.url),
+    );
+    const events = (await import(file)) as {
+      postJobCompletion: (
+        rt: unknown,
+        job: unknown,
+        outcome: { ok: true; result: unknown },
+      ) => Promise<string[]>;
+    };
+    const draft = (payload: Record<string, unknown>) => ({
+      id: newId(),
+      householdId: omar.householdId,
+      kind: "recipe.draft",
+      payload: { conversationId: omarChat, request: "Something Italian", count: 1, ...payload },
+      createdByUserId: omar.userId,
+    });
+    const result = { slotKey: "dinner", date: "2026-11-04", dishes: [], rejected: [] };
+    const named = draft({ slot: "Dinner", date: "2026-11-04" });
+    const unnamed = draft({ slot: "Dinner", date: null });
+    for (const j of [named, unnamed])
+      expect(
+        await events.postJobCompletion({ db: app.rt.db }, j, { ok: true, result }),
+      ).toHaveLength(1);
+    const recipeCard = async (id: string) =>
+      (await eventsFor(id))[0]?.content.cards.find((card) => card.type === "recipe");
+    expect((await recipeCard(named.id))?.use).toEqual({
+      date: "2026-11-04",
+      slotKey: "dinner",
+      slotLabel: "Dinner",
+    });
+    expect(await recipeCard(unnamed.id)).not.toHaveProperty("use");
   }, 300_000);
 
   it("G2 negative control: the routing check fails when an agent-started job also reaches Updates, or a plan job reaches no admin", async () => {
