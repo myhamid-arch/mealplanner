@@ -197,6 +197,61 @@ describe("GET /cook-sheets/{date}/flags (R-52, R2-UX-1)", () => {
     expect(log.find((e) => e.id === result?.changeSetId)?.actor).toBe("system");
   });
 
+  // Leaf 1.4.8 G2 (W-6, R-58/R-60): the substituted copy's cook sheet names the substitute.
+  it("the substituted cook sheet names the substitute in steps, labels and component names", async () => {
+    const f = (await flags(a)).find((x) => x.reviewId === unavailableId);
+    const result = f?.result;
+    const sub = result?.substituteName ?? "";
+    expect(sub).not.toBe("");
+    const [row] = (
+      await app.rt.db.execute<{ name: string; aliases: string[] }>(
+        sql`SELECT name, aliases FROM ingredient WHERE id = ${target.id}`,
+      )
+    ).rows;
+    const names = [row?.name ?? target.name, ...(row?.aliases ?? [])];
+    const escape = (n: string) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const mentions = new RegExp(
+      `(?<![\\p{L}\\p{N}])(?:${names.map(escape).join("|")})(?![\\p{L}\\p{N}])`,
+      "iu",
+    );
+    const lower = (x: string) => x.charAt(0).toLowerCase() + x.slice(1);
+    const note = `Use ${lower(sub)} wherever ${lower(target.name)} is mentioned.`;
+    let checked = 0;
+    for (const date of new Set((result?.meals ?? []).map((m) => m.date))) {
+      const sheet = ok<{
+        meals: Array<{
+          planMealId: string;
+          batches: Array<{
+            componentName: string;
+            variantLabel: string;
+            raw: Array<{ ingredientId: string }>;
+            steps: string[];
+          }>;
+        }>;
+      }>(await callJson(c.cookSheetsGet, { params: { date } }, kitchen), "cook sheet");
+      for (const m of sheet.meals.filter((x) =>
+        result?.meals.some((r) => r.planMealId === x.planMealId),
+      ))
+        for (const batch of m.batches.filter((x) =>
+          x.raw.some((l) => l.ingredientId === result?.substituteId),
+        )) {
+          checked += 1;
+          // Mentions inside the substitute's own name ("onion" in "red onion") do not count.
+          const bare = (x: string) => x.replace(new RegExp(escape(sub), "giu"), "");
+          expect(bare(batch.variantLabel)).not.toMatch(mentions);
+          expect(bare(batch.componentName)).not.toMatch(mentions);
+          for (const step of batch.steps.filter((x) => x !== note))
+            expect(bare(step)).not.toMatch(mentions);
+          // Either a step names the substitute, or the leading note says what replaces what.
+          expect(
+            batch.steps[0] === note ||
+              batch.steps.some((x) => x.toLowerCase().includes(sub.toLowerCase())),
+          ).toBe(true);
+        }
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
   it("the kitchen sees only its own flags; members are refused; another date or household has none", async () => {
     const own = await flags(kitchen);
     expect(own.map((f) => f.reviewId)).toEqual([unavailableId]);

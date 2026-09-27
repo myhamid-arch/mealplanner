@@ -51,25 +51,31 @@ function escapeRegExp(text: string): string {
 /**
  * W-6 (BLD-8 R-58, R-60; leaf-1.4.8 SPEC-Q-6): `text` with every mention of `from` (display name or
  * alias, case-insensitive, whole word, longest first) replaced by `to`'s display name, capitalised
- * when the mention is, otherwise lower case. `matched` says whether anything was replaced.
+ * when the mention is, otherwise lower case. `keep` lists longer names that contain a mention but
+ * are another ingredient ("red onion" when onion is replaced, or the substitute's own name); they
+ * are left as they are. `matched` says whether anything was replaced.
  */
 export function substitutedText(
   text: string,
   from: IngredientNames,
   to: { name: string },
+  keep: readonly string[] = [],
 ): { text: string; matched: boolean } {
-  const names = [...new Set([from.name, ...from.aliases].map((n) => n.trim()))]
-    .filter((n) => n !== "")
-    .sort((a, b) => b.length - a.length);
+  const clean = (list: readonly string[]) =>
+    [...new Set(list.map((n) => n.trim().toLowerCase()))].filter((n) => n !== "");
+  const names = clean([from.name, ...from.aliases]);
   if (names.length === 0) return { text, matched: false };
+  const protectedNames = new Set(clean(keep).filter((k) => !names.includes(k)));
+  const all = [...names, ...protectedNames].sort((a, b) => b.length - a.length);
   const pattern = new RegExp(
-    `(?<![\\p{L}\\p{N}])(?:${names.map(escapeRegExp).join("|")})(?![\\p{L}\\p{N}])`,
+    `(?<![\\p{L}\\p{N}])(?:${all.map(escapeRegExp).join("|")})(?![\\p{L}\\p{N}])`,
     "giu",
   );
   let matched = false;
   const lower = to.name.charAt(0).toLowerCase() + to.name.slice(1);
   const upper = to.name.charAt(0).toUpperCase() + to.name.slice(1);
   const out = text.replace(pattern, (hit: string) => {
+    if (protectedNames.has(hit.toLowerCase())) return hit;
     matched = true;
     const first = hit.charAt(0);
     return first !== first.toLowerCase() ? upper : lower;
@@ -86,8 +92,9 @@ export function substitutedSteps(
   steps: readonly string[],
   from: IngredientNames,
   to: { name: string },
+  keep: readonly string[] = [],
 ): string[] {
-  const rewritten = steps.map((step) => substitutedText(step, from, to));
+  const rewritten = steps.map((step) => substitutedText(step, from, to, keep));
   if (rewritten.some((r) => r.matched)) return rewritten.map((r) => r.text);
   const sub = to.name.charAt(0).toLowerCase() + to.name.slice(1);
   const ing = from.name.charAt(0).toLowerCase() + from.name.slice(1);
@@ -111,6 +118,14 @@ export function replaced(
   if (sub === undefined)
     throw new PlanServiceError("invalid", `ingredient ${to} is not in the catalogue`);
   const toNames = { name: sub.name };
+  // Names of the substitute and of the variant's other ingredients stay as written (W-6).
+  const keepOf = (ingredientIds: readonly string[]) => [
+    sub.name,
+    ...ingredientIds.flatMap((id) => {
+      const row = id === from ? undefined : catalogue.ingredients.get(id);
+      return row === undefined ? [] : [row.name];
+    }),
+  ];
   return {
     ...dish,
     id: newId(),
@@ -120,10 +135,16 @@ export function replaced(
       ...c,
       id: newId(),
       name: c.variants.some((v) => v.input.ingredients.some((l) => l.ingredientId === from))
-        ? substitutedText(c.name, fromNames, toNames).text
+        ? substitutedText(
+            c.name,
+            fromNames,
+            toNames,
+            keepOf(c.variants.flatMap((v) => v.input.ingredients.map((l) => l.ingredientId))),
+          ).text
         : c.name,
       variants: c.variants.map((v) => {
         const has = v.input.ingredients.some((l) => l.ingredientId === from);
+        const keep = keepOf(v.input.ingredients.map((l) => l.ingredientId));
         const input = {
           ...v.input,
           ingredients: v.input.ingredients.map((l) =>
@@ -134,8 +155,8 @@ export function replaced(
         return {
           ...v,
           id: newId(),
-          label: has ? substitutedText(v.label, fromNames, toNames).text : v.label,
-          steps: has ? substitutedSteps(v.steps, fromNames, toNames) : v.steps,
+          label: has ? substitutedText(v.label, fromNames, toNames, keep).text : v.label,
+          steps: has ? substitutedSteps(v.steps, fromNames, toNames, keep) : v.steps,
           input,
           per100g: variantNutritionPer100gCooked(input, catalogue.context).per100g,
           ingredients: ids.map((id) => {

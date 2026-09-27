@@ -133,6 +133,20 @@ describe("substitutedText (W-6 rule)", () => {
     });
     expect(substitutedText("unolive oil", names, to).matched).toBe(false);
   });
+  it("leaves longer names of other ingredients, and the substitute's own name, as written", () => {
+    const onion = { name: "Onion", aliases: [] };
+    expect(
+      substitutedText("Fry the onion, then add the red onion.", onion, { name: "Red onion" }, [
+        "Red onion",
+      ]).text,
+    ).toBe("Fry the red onion, then add the red onion.");
+    expect(
+      substitutedText("Add the spring onion and the onion.", onion, { name: "Shallot" }, [
+        "Spring onion",
+        "Shallot",
+      ]).text,
+    ).toBe("Add the spring onion and the shallot.");
+  });
   it("adds the leading note when no step names the ingredient", () => {
     expect(substitutedSteps(["Toss the salad.", "Serve."], names, to)).toEqual([
       "Use canola oil wherever olive oil is mentioned.",
