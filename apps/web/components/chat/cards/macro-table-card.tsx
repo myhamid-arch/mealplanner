@@ -13,7 +13,12 @@ export function MacroTableCardView({ card }: { readonly card: Card }) {
   return (
     <div className="flex flex-col gap-2 rounded-xl bg-card p-4 shadow-card" data-card="macro_table">
       <span className="font-extrabold">Targets and actuals · {dayTitle(card.date)}</span>
-      <div className="max-w-full overflow-x-auto">
+      <div
+        className="max-w-full overflow-x-auto"
+        role="region"
+        aria-label="Targets and actuals table"
+        tabIndex={0}
+      >
         <table className="w-full border-collapse text-sm">
           <caption className="sr-only">Targets against actuals per person and meal</caption>
           <thead>

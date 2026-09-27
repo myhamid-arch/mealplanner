@@ -189,6 +189,9 @@ export function Markdown({ source }: { readonly source: string }) {
               <pre
                 key={k}
                 className="m-0 overflow-x-auto rounded-md bg-flour p-3 font-mono text-[13px]"
+                role="region"
+                aria-label="Code"
+                tabIndex={0}
               >
                 {b.text}
               </pre>
@@ -211,7 +214,13 @@ export function Markdown({ source }: { readonly source: string }) {
             );
           case "table":
             return (
-              <div key={k} className="max-w-full overflow-x-auto">
+              <div
+                key={k}
+                className="max-w-full overflow-x-auto"
+                role="region"
+                aria-label="Table"
+                tabIndex={0}
+              >
                 <table className="border-collapse text-sm">
                   <thead>
                     <tr>

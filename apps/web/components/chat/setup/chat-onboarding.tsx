@@ -283,7 +283,12 @@ function SetupProposal({
         </span>
       </div>
       {people.length > 0 && (
-        <div className="max-w-full overflow-x-auto">
+        <div
+          className="max-w-full overflow-x-auto"
+          role="region"
+          aria-label="Set-up table"
+          tabIndex={0}
+        >
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="text-left text-xs font-extrabold text-ink-soft">
