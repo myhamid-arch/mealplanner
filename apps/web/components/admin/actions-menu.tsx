@@ -15,6 +15,8 @@ export interface MenuAction {
 /**
  * The "More actions" menu of a login (PeopleAccess.dc.html): Radix DropdownMenu, so it opens
  * with Enter/Space/arrow keys, moves with arrows, closes on Escape and returns focus (UX-6).
+ * Non-modal: a modal menu marks the rest of the page `aria-hidden` while focusable elements in it
+ * stay reachable (axe `aria-hidden-focus`); outside clicks and Escape still close it.
  */
 export function ActionsMenu({
   label,
@@ -25,7 +27,7 @@ export function ActionsMenu({
   readonly actions: readonly MenuAction[];
 }) {
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger
         aria-label={label}
         className="flex size-11 items-center justify-center rounded-[10px] text-ink hover:bg-flour data-[state=open]:border-2 data-[state=open]:border-action data-[state=open]:bg-tomato-tint"

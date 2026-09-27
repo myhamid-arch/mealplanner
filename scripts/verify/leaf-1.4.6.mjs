@@ -17,6 +17,7 @@
 // 5. G1: re-checks the outcomes in the gate's database with its own queries, each of which is
 //    also run on a known-bad record that must fail; G2: runs 1.4.2's shell e2e (@G2) against its
 //    own server without a database (BLD-8 W-1), printing the full output on any failure.
+import { Buffer } from "node:buffer";
 import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import {

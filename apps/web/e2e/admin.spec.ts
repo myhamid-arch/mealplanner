@@ -78,9 +78,13 @@ async function mailedLink(to: string, subject: RegExp, since: number): Promise<s
   return link;
 }
 
+const browserContexts: BrowserContext[] = [];
+
 async function newContext(browser: Browser, viewport: { width: number; height: number } = DESKTOP) {
   const baseURL = `http://localhost:${process.env.PLAYWRIGHT_PORT ?? "3142"}`;
-  return browser.newContext({ baseURL, viewport });
+  const context = await browser.newContext({ baseURL, viewport });
+  browserContexts.push(context);
+  return context;
 }
 
 /**
@@ -222,15 +226,17 @@ test.describe("@G1 sign-in, people and access, change log", () => {
     newPassword: "anewpassword-2026",
   };
   const priya = { name: "Priya", email: `priya-${run}@example.com`, password: "kitchentablet-1" };
-  let adminCtx: BrowserContext;
+  // Set by the first tests; possibly unset when an earlier test failed.
+  let adminCtx: BrowserContext | undefined;
   let adminPage: Page;
   let laylaCtx: BrowserContext;
-  let priyaCtx: BrowserContext;
+  let priyaCtx: BrowserContext | undefined;
   let priyaPage: Page;
   let blockChangeSet = "";
 
   test.afterAll(async () => {
-    await Promise.all([adminCtx?.close(), laylaCtx?.close(), priyaCtx?.close()]);
+    // Every context the tests opened, even when an earlier test failed.
+    await Promise.all(browserContexts.splice(0).map((c) => c.close()));
   });
 
   test("@G1 create a household: the new admin lands on set-up, signed in as its admin", async ({
@@ -543,7 +549,8 @@ async function seriousViolations(page: Page) {
 type Screen = { name: string; open: (page: Page) => Promise<void> };
 
 test.describe("@G2 axe-core on every screen of the leaf", () => {
-  test.describe.configure({ mode: "serial" });
+  // In order (the set-up runs first), but one screen's failure does not skip the others.
+  test.describe.configure({ mode: "default" });
   const run = `a11y${Date.now().toString(36)}`;
   const admin = {
     name: "Sara",

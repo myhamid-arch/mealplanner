@@ -3,6 +3,7 @@
 // The typed contract client for the screens of this leaf (ARC-5: one contract; leaf-1.4.6 ADR-1)
 // and plain-language messages for its problems (UX-7).
 import { ApiProblem, createApiClient } from "@mealplanner/api-contract/client";
+import { AuthError } from "./auth-client";
 
 export const api = createApiClient({ baseUrl: "" });
 
@@ -47,9 +48,9 @@ export function problemMessage(error: unknown): string {
   return error instanceof Error && error.message !== "" ? error.message : "Something went wrong.";
 }
 
-/** True for a 401: the session is gone (signed out, blocked or removed). */
+/** True for a 401 from either API: the session is gone (signed out, blocked or removed). */
 export function isSignedOut(error: unknown): boolean {
-  return error instanceof ApiProblem && error.status === 401;
+  return (error instanceof ApiProblem || error instanceof AuthError) && error.status === 401;
 }
 
 /** Sends the browser to sign-in, coming back here afterwards. */
