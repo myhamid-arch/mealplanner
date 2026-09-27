@@ -44,6 +44,9 @@ const VIEWPORTS = [
 interface World {
   state: string;
   plateId: string;
+  dinnerId: string;
+  /** Omar, the admin's member: the plate the test opens. */
+  memberId: string;
   /** The replaced ingredient as recipes say it: its name, its head word and its aliases. */
   replaced: string[];
   replacedSlug: string;
@@ -347,23 +350,37 @@ test.describe.serial("@G4 plain reasons and change-log subjects", () => {
     );
     await priya.ctx.dispose();
     await waitForJob(a, flagged.jobId);
+    // The substitution's follow-ups (graph sync, plate re-solves) re-create plates: let them end.
+    const [{ household_id: householdId } = { household_id: "" }] = await sql<{
+      household_id: string;
+    }>("SELECT household_id FROM plan_meal WHERE id = $1", [dinner.id]);
+    await expect
+      .poll(
+        async () =>
+          (
+            await sql<{ n: number }>(
+              "SELECT count(*)::int AS n FROM job WHERE household_id = $1 AND status IN ('queued', 'running')",
+              [householdId],
+            )
+          )[0]?.n,
+        { timeout: 300_000, intervals: [500, 1000, 2000] },
+      )
+      .toBe(0);
     const after = (await mealsOf()).find((m) => m.id === dinner.id);
     expect(after?.dishName, "the dinner is the substituted copy").toMatch(/ \(with .+\)$/);
     const plate = after?.plates.find((p) => p.memberId === memberId("Omar"));
     if (plate === undefined) throw new Error("Omar has no plate at the dinner");
     const substitute = /\(with (.+)\)$/.exec(after?.dishName ?? "")?.[1] ?? "";
     const head = (pick.name.split(",")[0] ?? pick.name).trim();
-    const [hh] = await sql<{ household_id: string }>(
-      "SELECT household_id FROM plan_meal WHERE id = $1",
-      [dinner.id],
-    );
     const w: World = {
       state: JSON.stringify(await ctx.storageState()),
       plateId: plate.id,
       replaced: [...new Set([pick.name, head, ...pick.aliases])],
       replacedSlug: pick.slug,
       substitute,
-      householdId: hh?.household_id ?? "",
+      householdId,
+      dinnerId: dinner.id,
+      memberId: memberId("Omar"),
     };
     writeFileSync(WORLD_FILE, JSON.stringify(w));
     await ctx.close();
@@ -376,7 +393,20 @@ test.describe.serial("@G4 plain reasons and change-log subjects", () => {
       const w = world();
       const ctx = await contextFor(browser, w.state, v);
       const page = await ctx.newPage();
-      await page.goto(`/today/plates/${w.plateId}`);
+      // The plate as it is now (a later re-solve gives it a new id).
+      const days = await json<{ days: Array<{ meals: PlanMeal[] }> }>(
+        await page.request.get(`/api/v1/plan-meals/${w.dinnerId}`).then(async (r) => {
+          const meal = (await r.json()) as { date: string };
+          return page.request.get(`/api/v1/plans?from=${meal.date}&to=${meal.date}`);
+        }),
+        "plans",
+      );
+      const plateId =
+        days.days
+          .flatMap((d) => d.meals)
+          .find((m) => m.id === w.dinnerId)
+          ?.plates.find((p) => p.memberId === w.memberId)?.id ?? w.plateId;
+      await page.goto(`/today/plates/${plateId}`);
       const why = page.getByRole("region", { name: "Why this dinner" });
       await expect(why).toBeVisible({ timeout: 120_000 });
       await expect(page.getByRole("heading", { level: 1 })).toContainText(`(with ${w.substitute})`);
