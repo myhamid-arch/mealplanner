@@ -29,5 +29,5 @@ Scope: Plan follow-ups (R-58): drag and keyboard move of a meal between days (UX
   EXPECT: VERIFY leaf-1.4.8 G5 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=ac2b5a9ad65d36784e5685891783fc08f4a8fa3813b1cb994ed93648b13fce01; exit=0; EXPECT=matched; output-sha256=ee8c7feaa8cd6167a3915633853f84631e6071afcd96de8370e81b47acb0ebb4; output-bytes=1575; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G6: architect visual review against the Plan mockups and the substituted cook sheet
-  EVIDENCE: pending
+- [x] G6: architect visual review against the Plan mockups and the substituted cook sheet
+  EVIDENCE: architect review 2026-09-27 at 1a75f88 merged onto dc61783 (builder's 390/1280 px captures: week grid mid-drag, meal sheet with Move to... and 'of N kcal today', PlatePhone with the day-kind calorie note, RecipePage Use for Wed dinner, cook sheet with the canola oil copy): matches WeekPlan, PlatePhone, RecipePage and CookSheet with the SPEC-Q-2/5/7 additions; the pre-check race (lock landing mid-move gives 422 instead of 409, nothing written) accepted; G1-G5 met twice (DATABASE_URL unset and set, --timeout 1800); mutations caught: substitutedSteps returning steps unchanged (G2, 6 assertions), occupant check removed (G1, locked occupant 409 test). Seen and recorded outside this leaf: W-12
