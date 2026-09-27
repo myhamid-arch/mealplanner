@@ -32,4 +32,4 @@ Reading, as 1.2.3 G4 (SPEC-Q-16 there): CPU is main-thread CPU (`process.threadC
 
 ## SPEC-Q-8: gate run times
 
-Measured on the base (1.2.2 and 1.2.3 gates) and estimated for the rest on the builder's container: G1 ≈ 3 min, G2 ≈ 1.5 min, G3 ≈ 5 min, G4 ≈ 10 min. All exceed gate-check's default 120 s. Request: run the ledger with `--timeout 1200` (the CP2 PR states the measured times).
+Measured on the base (1.2.2 and 1.2.3 gates) and estimated for the rest on the builder's container: G1 ≈ 3 min, G2 ≈ 1.5–2 min (days measured at 3.0–3.7 s CPU each on the base), G3 ≈ 5 min, G4 ≈ 6–7 min (its sub-gates took 355 s in total on the base). All exceed gate-check's default 120 s. Request: run the ledger with `--timeout 1200` (the CP2 PR states the measured times).
