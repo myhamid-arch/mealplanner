@@ -1895,7 +1895,6 @@ for (const v of VIEWPORTS)
     const monday = await moveWeek(v);
     const date = addDays(monday, 2);
     const dinner = await mealOf(world.admin, date, "dinner");
-    const omar = dinner.plates.find((p) => p.memberId === world.members.omar);
     const alts = (
       await json<{ alternatives: Array<{ dishId: string }> }>(
         await world.admin.get(`/api/v1/plan-meals/${dinner.id}/alternatives`),
@@ -1934,8 +1933,16 @@ for (const v of VIEWPORTS)
       await expect(page.getByRole("dialog").getByRole("list", { name: /^Move / })).toBeVisible();
       await axe(page, `meal sheet with Move menu and day targets ${v.name} ${theme}`);
       await page.keyboard.press("Escape");
-      await page.goto(`/today/plates/${omar?.id ?? ""}`);
-      await expect(page.getByText(/kcal day/)).toBeVisible({ timeout: 60_000 });
+      // The plate as it is now (plates get new ids whenever the meal is re-solved).
+      const omarNow = (await mealOf(world.admin, date, "dinner")).plates.find(
+        (p) => p.memberId === world.members.omar,
+      );
+      await page.goto(`/today/plates/${omarNow?.id ?? ""}`);
+      await loaded(page);
+      await expect(
+        page.getByText(/kcal day/),
+        `plate page for ${omarNow?.id ?? "?"}: ${(await page.locator("main").textContent()) ?? ""}`,
+      ).toBeVisible({ timeout: 60_000 });
       await axe(page, `plate with day target ${v.name} ${theme}`);
       await page.goto(`/recipes/${alts[0]?.dishId ?? dinner.dishId}?date=${date}&slot=dinner`);
       await expect(page.getByTestId("use-for").getByRole("button")).toBeEnabled({
