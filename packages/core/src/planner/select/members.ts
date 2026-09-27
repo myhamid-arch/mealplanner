@@ -31,11 +31,19 @@ export class Household {
     return m;
   }
 
-  /** The member's own and household-level exclusions (R-34, R-36). */
-  exclusionsOf(memberId: string): Exclusions {
-    const cached = this.exclusions.get(memberId);
+  /**
+   * The member's own and household-level exclusions (R-34, R-36) that apply at the slot: unscoped
+   * rows everywhere, slot-scoped rows only in their slots (1.2.6 (R-62), OQ-9, PLN-9 §6.3).
+   */
+  exclusionsOf(memberId: string, slotKey: string): Exclusions {
+    const cacheKey = `${memberId}|${slotKey}`;
+    const cached = this.exclusions.get(cacheKey);
     if (cached !== undefined) return cached;
-    const rows = this.cfg.exclusions.filter((e) => e.memberId === null || e.memberId === memberId);
+    const rows = this.cfg.exclusions.filter(
+      (e) =>
+        (e.memberId === null || e.memberId === memberId) &&
+        (e.slotKeys == null || e.slotKeys.includes(slotKey)),
+    );
     const ingredientIds = new Set<string>();
     for (const e of rows.filter((r) => r.kind === "ingredient")) {
       const id = this.pool.idBySlug.get(e.key);
@@ -46,7 +54,7 @@ export class Household {
       categories: [...new Set(rows.filter((r) => r.kind === "category").map((r) => r.key))],
       dietaryFlags: [...new Set(rows.filter((r) => r.kind === "dietary_flag").map((r) => r.key))],
     };
-    this.exclusions.set(memberId, result);
+    this.exclusions.set(cacheKey, result);
     return result;
   }
 
@@ -77,7 +85,7 @@ export class Household {
       roleBias,
       variantAppeal,
       dishAppeal,
-      exclusions: this.exclusionsOf(memberId),
+      exclusions: this.exclusionsOf(memberId, slot.key),
       slot: { key: slot.key, isPacked: slot.isPacked, reheatAvailable: slot.reheatAvailable },
     };
   }

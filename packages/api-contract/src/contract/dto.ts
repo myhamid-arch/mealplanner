@@ -370,6 +370,8 @@ export const ExclusionDto = z.object({
   key: z.string(),
   reason: z.enum(EXCLUSION_REASONS),
   hard: z.boolean(),
+  // 1.2.6 (R-62), OQ-9: null = every slot; otherwise only meals of these slot keys.
+  slotKeys: z.array(z.string()).nullable(),
 });
 
 export const FrequencyRuleDto = z.object({
