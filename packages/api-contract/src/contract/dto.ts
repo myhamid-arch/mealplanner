@@ -13,6 +13,7 @@ import {
   COMPONENT_ROLES,
   DAY_KINDS,
   DAY_OVERRIDE_KINDS,
+  DETAIL_LEVELS,
   DISH_SOURCES,
   DISH_STATUSES,
   EXCLUSION_KINDS,
@@ -955,3 +956,18 @@ export const SupportSummaryDto = z.object({
   planDays: z.number().int(),
   pendingProposals: z.number().int(),
 });
+
+// Detail levels (R2-DL-1; leaf 1.4.3, BLD-8 R-47) ------------------------------------------------
+
+/** A section key: `targets`, `meal_split`, `taste` (per member); `slots`, `planning`, `taste` (household). */
+export const DetailSection = z.string().regex(/^[a-z][a-z_]{0,39}$/);
+
+export const DetailLevelDto = z.object({
+  memberId: Id.nullable(),
+  section: DetailSection,
+  level: z.enum(DETAIL_LEVELS),
+});
+
+export const DetailLevelSetBody = z
+  .object({ memberId: Id.nullable(), section: DetailSection, level: z.enum(DETAIL_LEVELS) })
+  .strict();

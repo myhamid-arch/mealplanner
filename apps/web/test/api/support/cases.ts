@@ -417,6 +417,17 @@ export const CASES: Record<string, Case> = {
     return { caller, input: { body: preference(w, who) } };
   },
 
+  // Detail levels (1.4.3, R-47)
+  "detailLevels.list": () => ({ input: {} }),
+  "detailLevels.set": ({ w, who }) => ({
+    input: {
+      body:
+        who === "admin"
+          ? { memberId: w.a.childId, section: "targets", level: "detailed" }
+          : { memberId: w.a.adultId, section: "taste", level: "detailed" },
+    },
+  }),
+
   // Changes, proposals, insights
   "proposals.list": () => ({ input: {} }),
   "proposals.accept": async ({ app, w }) => ({
