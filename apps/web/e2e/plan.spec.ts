@@ -1393,16 +1393,15 @@ async function drag(
   // The phone list can put the target below the fold: scroll with the wheel mid-drag, as a user would.
   const vh = page.viewportSize()?.height ?? 0;
   let b = await to.boundingBox();
-  // (the phone tab bar covers the bottom of the screen, so aim for the upper part).
-  for (let i = 0; i < 12 && b !== null && b.y + b.height / 2 > vh * 0.6; i += 1) {
-    await page.mouse.wheel(0, 200);
+  // Clear of the phone tab bar and of the edge zones where the page scrolls itself (ADR-1).
+  const clear = (y: number) => y > 110 && y < vh - 120;
+  for (let i = 0; i < 12 && b !== null && !clear(b.y + b.height / 2); i += 1) {
+    await page.mouse.wheel(0, b.y + b.height / 2 > vh / 2 ? 200 : -200);
     await page.waitForTimeout(100);
     b = await to.boundingBox();
   }
   if (b === null) throw new Error("drop target is not visible");
-  expect(b.y + b.height / 2, "drop target in the upper part of the viewport").toBeLessThan(
-    vh * 0.6,
-  );
+  expect(clear(b.y + b.height / 2), `drop target clear of the edges (y ${String(b.y)})`).toBe(true);
   await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 12 });
   await page.mouse.up();
 }
