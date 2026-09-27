@@ -54,12 +54,34 @@ export interface MacroTableCard {
   rows: Json[];
 }
 
+/** A finished plan announced in Updates (W-9b, leaf-1.4.9 SPEC-Q-5): ChatPhoneDigest's row. */
+export interface PlanReady {
+  title: string;
+  /** Short facts, shown joined by " · " ("All meals on target", "3 packed school lunches"). */
+  facts: string[];
+  href: string;
+  action: string;
+}
+
 export interface JobProgressCard {
   type: "job_progress";
   jobId: string;
   kind: string;
   status: "queued" | "running" | "succeeded" | "failed" | "cancelled";
   error?: string;
+  /** Optional (W-9b): a succeeded plan job no agent turn started. */
+  ready?: PlanReady;
+}
+
+/** A `learning` change set applied without a proposal (FBK-5; W-9a, leaf-1.4.9 SPEC-Q-1). */
+export interface AutomaticChange {
+  changeSetId: string;
+  title: string;
+  /** The change set's summary ("Learned from Zayd's review of …"). */
+  detail: string;
+  appliedAt: string;
+  /** Undone when the digest was posted (the card reads the live state from the change log). */
+  undone: boolean;
 }
 
 export interface InsightDigestCard {
@@ -68,6 +90,8 @@ export interface InsightDigestCard {
   proposals: { id: string; kind: string; title: string; rationale: string }[];
   dropped: { title: string; reason: string }[];
   notes: Json[];
+  /** Optional (W-9a): "Done automatically" since the previous digest. Older digests lack it. */
+  automatic?: AutomaticChange[];
 }
 
 export interface IterationLimitCard {
