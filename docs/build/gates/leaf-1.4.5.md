@@ -19,5 +19,5 @@ Scope: Reviews, Insights, Chat UI, as specified in docs/spec (see 11-build-plan.
   EXPECT: VERIFY leaf-1.4.5 G3 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=3bb7db561b3e18814a5bf115d1f4e4ef144defb78850b6e37890a77be5c81aad; exit=0; EXPECT=matched; output-sha256=434cb6eb97c984ea22f71db52cca73c71552e36a97c13e8150f525d68cdce5ae; output-bytes=1928; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G4: architect visual review against QuickRatePhone, ReviewComposePhone, ReviewsFeed, Insights, Chat* mockups
-  EVIDENCE: pending
+- [x] G4: architect visual review against QuickRatePhone, ReviewComposePhone, ReviewsFeed, Insights, Chat* mockups
+  EVIDENCE: architect review 2026-09-27 at 819eaa6 (ChatDesktop, ChatPhoneDigest rendered from docs/mockups beside the builder's 390/1280 px captures, screenshot page version 3): layouts match with the accepted deviations (Portions copy, whole-meal chips, Rating for, no Use-for button -> 1.4.8, floating button, SPEC-Q-16/17/18) and W-9 (digest auto-applied block and plan-ready row in Updates, outside this leaf); findings (raw enum values and no Now/Proposed rows on proposal/applied cards; phone suggestion chips in three rows) fixed and re-checked (Before 0.20 -> After 0.50 capture; label mapping mutated back to raw values fails 4 describe tests); G1-G3 met twice on the merge with base b79c0c3 (DATABASE_URL unset and set); mutations caught: undo call removed (G1), macro_table card dropped (G3)
