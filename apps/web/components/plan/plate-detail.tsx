@@ -9,7 +9,7 @@ import { Card, Chip, EmptyState, Icon, LinkButton, MacroBar } from "../ui";
 import { DishArt } from "../recipe/dish-art";
 import { api, c, useLoad, type CookSheet, type Dish, type PlanMeal, type Plate } from "./api";
 import { FitBadge, LoadError, Loading, cuisineLabel, loadBasics, type Basics } from "./common";
-import { carbsOn, num, weekdayName } from "./logic";
+import { carbsOn, dayTarget, num, weekdayName } from "./logic";
 import { plateLines } from "./plate-summary";
 
 interface PlateData {
@@ -20,6 +20,8 @@ interface PlateData {
   sheet: CookSheet | null;
   /** The member's daily kcal band (R-28), when the viewer may read targets. */
   tolerance: number | null;
+  /** The member's day target from the day kind's profile (W-7), when the viewer may read it. */
+  day: { kcal: number; label: string } | null;
 }
 
 async function loadPlate(id: string): Promise<PlateData> {
@@ -28,21 +30,42 @@ async function loadPlate(id: string): Promise<PlateData> {
     api.call(c.platesGet, { params: { id } }),
   ]);
   const meal = await api.call(c.planMealsGet, { params: { id: plate.planMealId } });
-  const [dish, sheet, targets] = await Promise.all([
+  const targeted = plate.target !== null;
+  const [dish, sheet, targets, schedules, dayPlan] = await Promise.all([
     api.call(c.dishesGet, { params: { id: meal.dishId } }),
     api.call(c.cookSheetsGet, { params: { date: meal.date } }).catch(() => null),
-    plate.target === null ? Promise.resolve(null) : api.call(c.targetsList, {}).catch(() => null),
+    targeted ? api.call(c.targetsList, {}).catch(() => null) : Promise.resolve(null),
+    targeted && basics.role === "admin"
+      ? api.call(c.schedulesGet, {}).catch(() => null)
+      : Promise.resolve(null),
+    targeted
+      ? api.call(c.plansList, { query: { from: meal.date, to: meal.date } }).catch(() => null)
+      : Promise.resolve(null),
   ]);
   const tolerance = targets?.tolerances.find((t) => t.memberId === plate.memberId)?.kcal ?? null;
-  return { basics, plate, meal, dish, sheet, tolerance };
+  const day =
+    targets === null
+      ? null
+      : dayTarget(
+          targets.targets,
+          plate.memberId,
+          meal.date,
+          schedules,
+          (dayPlan?.days[0]?.meals ?? []).flatMap((m) => m.plates),
+        );
+  return { basics, plate, meal, dish, sheet, tolerance, day };
 }
 
 function Bars({
   plate,
   dayKcalBand,
+  day,
+  own,
 }: {
   readonly plate: Plate;
   readonly dayKcalBand: number | null;
+  readonly day: PlateData["day"];
+  readonly own: boolean;
 }) {
   const t = plate.target;
   const a = plate.actual;
@@ -81,7 +104,7 @@ function Bars({
       <span className="text-xs text-ink-muted">
         {dayKcalBand === null
           ? "The calorie band is this meal's share of the day's band; protein, carbs and fat are per meal."
-          : `The calorie band (±${num(t.tolerance.kcal)}) is this meal's share of your ±${num(dayKcalBand)} a day; protein, carbs and fat are per meal.`}
+          : `The calorie band (±${num(t.tolerance.kcal)}) is this meal's share of ${own ? "your" : "their"} ±${num(dayKcalBand)} ${day === null ? "a day" : `on a ${num(day.kcal)} kcal day (${day.label})`}; protein, carbs and fat are per meal.`}
       </span>
       <span className="tabular font-mono text-[13px] text-ink-soft">
         Sat fat {num(a.satFat)} g · Fibre {num(a.fibre)} g · Soluble fibre{" "}
@@ -176,7 +199,7 @@ function PlateScreenBody({ data }: { readonly data: PlateData }) {
           portion sized for appetite.
         </p>
       ) : (
-        <Bars plate={plate} dayKcalBand={data.tolerance} />
+        <Bars plate={plate} dayKcalBand={data.tolerance} day={data.day} own={own} />
       )}
       {reasons.length > 0 && (
         <section
