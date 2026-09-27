@@ -109,3 +109,9 @@ The op reference in the same prompt does include `role.set (protected)`, so the 
 - an admin gets every login, equal to People & access without emails;
 - `role.set` with that userId through `apply_change` becomes a pending proposal;
 - members and kitchen staff get 403 before any model call, and another household's admin sees only their own logins.
+
+**Full runs after the fix (G3).** Two consecutive full runs at commit 6d5153e:
+- `docs/build/live/leaf-1.3.6-eval-full-3.log` (13:52:36Z, exit 0): 29/29 = 100 %.
+- `docs/build/live/leaf-1.3.6-eval-full-4.log` (14:00:59Z, exit 0): 29/29 = 100 %.
+
+No case failed, so none turned into a consistent failure.
