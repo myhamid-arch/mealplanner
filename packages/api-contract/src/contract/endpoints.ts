@@ -947,6 +947,31 @@ export const preferencesReset = endpoint({
   errors: [422],
 });
 
+// Detail levels (R2-DL-1; leaf 1.4.3, BLD-8 R-47) -----------------------------------------------
+
+export const detailLevelsList = endpoint({
+  id: "detailLevels.list",
+  method: "GET",
+  path: `${V}/detail-levels`,
+  summary: "Detail level per (member, section) (a member sees only their own)",
+  tag: "config",
+  auth: "household",
+  roles: ADMIN_MEMBER,
+  response: list("levels", d.DetailLevelDto),
+});
+
+export const detailLevelsSet = endpoint({
+  id: "detailLevels.set",
+  method: "PUT",
+  path: `${V}/detail-levels`,
+  summary: "Set the detail level of one section (a member: only their own taste section)",
+  tag: "config",
+  auth: "household",
+  roles: ADMIN_MEMBER,
+  body: d.DetailLevelSetBody,
+  response: d.DetailLevelDto,
+});
+
 // Proposals, change log, insights ----------------------------------------------------------------
 
 export const proposalsList = endpoint({
@@ -1404,6 +1429,8 @@ export const ENDPOINTS = [
   preferencesList,
   preferencesSet,
   preferencesReset,
+  detailLevelsList,
+  detailLevelsSet,
   proposalsList,
   proposalsAccept,
   proposalsReject,

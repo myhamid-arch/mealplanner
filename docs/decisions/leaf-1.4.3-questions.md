@@ -1,0 +1,120 @@
+# leaf-1.4.3 spec questions
+
+Each question states the reading this leaf builds on. Rulings: BLD-8 R-45, R-47 (CP1 APPROVED, PR #16).
+
+## SPEC-Q-1: `inferSetup(answers)` needs household and catalogue context
+R2-ONB-3 gives the signature `inferSetup(answers) → { changeOps, explanations }`. The ops must name the household's existing slot ids (`slot.update`, `slot_schedule.set` take ids), resolve never-eat words to ingredient slugs (R-36) and allergens to `dietary_flags`, check cuisine keys, turn ages into `birth_year`, and give new members ids that later ops in the same change set can reference (`member.create` accepts `id`).
+- Reading taken: `inferSetup(answers, ctx)` with `ctx = { referenceYear, slots, cuisines, ingredients, newId }`. It stays pure (no I/O, no clock, no randomness: the caller passes the year and the id generator). The web page fills `ctx` from `GET /slots`, `GET /cuisines`, `GET /ingredients?limit=500` (363 catalogue rows today).
+
+Ruling: accepted as recorded (R-47).
+
+## SPEC-Q-2: what "the F1 configuration" is compared on (G4)
+Three of F1's values cannot come out of the five answers under R2-ONB-3 and 13-revision precedence:
+1. **Colour.** F1 uses sea, saffron, basil, aubergine, tomato. Onboarding assigns `AVATAR_COLORS` in order (sea, aubergine, pomegranate, saffron, basil), as the Onboarding mockup shows. Colour is cosmetic.
+2. **Appetite of targeted adults.** R2-ONB-3: ≥ 14 → large, so Adult B (37) is `large`; F1 says `medium`. Appetite is used only for untargeted portions (02 §2).
+3. **`packed_work_lunch.is_shared`.** R2-ONB-3 says work lunch is **individual**; F1 loads the PLN-2 default (shared). 13 overrides 04.
+
+- Reading taken: G4 compares every other field exactly (members' names, birth years, sex, targeted flag, children's appetite, both target profiles, tolerances, training days and times, active slots, every schedule row, cuisine preferences, exclusions), by applying the inferred ops with the real registry to an in-memory `ChangeTx` and diffing against F1 expanded the way `loadFixture` expands it. The three fields above are asserted against their R2 values instead, and the test names each one.
+
+Ruling: accepted as recorded (R-47). Built: `packages/core/test/onboarding/infer-f1.test.ts`.
+
+## SPEC-Q-3: carb bias around training
+R2-ONB-3: "keep the same daily totals and bias carbs to the pre/post slots". No factor is given, and F1 (which G4 must reproduce) has no `meal_distribution` or `slot_target_override` rows.
+- Reading taken: onboarding writes no bias rows and the explanation does not claim a bias ("Pre- and post-workout meals on training days. Same daily totals."). A carb bias needs a number from the owner; the member page's Expert level already lets the admin set exact pre/post macros.
+
+Ruling: accepted as a listed deviation (R-47). No carb-bias rows; the explanation claims none (tested in `stub-parser.test.ts`).
+
+## SPEC-Q-4: sat-fat default in the onboarding copy
+The Onboarding mockup says "capped at 10 % of calories". R-28 (OQ-4) makes it 6 %, read from `household.sat_fat_default_pct`.
+- Reading taken: onboarding writes no `sat_fat_max_g` unless the answer gives one, and the explanation reads the household's percentage ("at most 6 % of energy: 14 g for Omar"). Copy deviation from the mockup, listed.
+
+Ruling: accepted as recorded (R-47).
+
+## SPEC-Q-5: kcal tolerance wording
+MemberSimple/MemberDetailed/DetailLevels say "each meal is held to … calories ±50". R-28: kcal is ±50 **per day**; P/C/F stay per meal.
+- Reading taken: the copy reads "Each meal is held to protein ±5 g, carbs ±5 g, fat ±2 g; calories stay within ±50 per day". Carbs are labelled "Carbs g (total)" wherever a target is shown (R-20, R-28 OQ-7). Copy deviations, listed.
+
+Ruling: accepted as recorded (R-47).
+
+## SPEC-Q-6: onboarding outside the shell
+The Onboarding mockup has no rail or tab bar, and leaf-1.4.2 SPEC-Q-1 says onboarding must not show the rail. OWNS puts it at `apps/web/app/(app)/onboarding/**`, and `(app)/layout.tsx` (1.4.2) wraps everything under `(app)` in the shell; a child route cannot opt out of a parent layout.
+- Proposal: OWNS `apps/web/app/(setup)/onboarding/**` instead (a route group with no layout of its own, so the root layout only). The URL stays `/onboarding`.
+- Until ruled: built under `(app)/onboarding` as OWNS says, shell visible; listed as a deviation.
+
+Ruling: granted (R-47). Built at `apps/web/app/(setup)/onboarding/page.tsx`, outside the shell, with its own server-side session and admin check.
+
+## SPEC-Q-7: Adjust links before and after confirmation (SC-7, R2-ONB-4)
+R2-ONB-4: nothing is saved until the user confirms. Before confirmation the members the links would point to do not exist, so a link to `/family/<id>` cannot resolve.
+- Reading taken: every explanation carries (a) the answer that produced it and (b) the screen where it lives after saving (`/family/<memberId>#targets`, `/settings/schedule?slot=packed_school_lunch`, `/family/tastes#never-serve`, …; member ids are generated by `inferSetup`, so they are known before saving). Before confirmation, *Adjust* returns to that answer (always resolves, nothing is saved). After "Looks right: plan tomorrow" the same list stays visible with *Adjust* links to the saved screens. G5 follows every one of those after confirmation and requires each to render its target section (not a 404, not an empty state).
+
+Ruling: accepted as recorded (R-47).
+
+## SPEC-Q-8: where onboarding lands after the first plan
+The mockup links "Looks right: plan tomorrow" to TodayDesktop. `/today` and `/plan` are 1.4.4's and are not merged.
+- Reading taken: confirm → one change set → `POST /plans/generate` for tomorrow (household time zone) → job progress over SSE on the onboarding page → a "Tomorrow is planned" state with the Adjust list and a link to `/plan`. G1/G5 check the plan through `GET /plans`, not through 1.4.4's screens.
+
+Ruling: accepted as recorded (R-47).
+
+## SPEC-Q-9: default when question 1 is skipped
+Every question can be skipped (R2-ONB-2), but a plan needs at least one member.
+- Reading taken: skipping question 1 creates one adult member named after the signed-in user (untargeted, medium appetite). The login is not linked to it (`access.link_member` is protected and belongs to People & access).
+
+Ruling: accepted as recorded (R-47).
+
+## SPEC-Q-10: adult or child
+R2-ONB-3 says adult/child from age without a threshold. The mockup counts Layla (18) as a child ("2 adults, 3 children"; "Kids go to school: Layla, Adam, Zayd").
+- Reading taken: 18 and under is a child. It only affects the explanation text and which people the week cards pre-select as school children; nothing is stored for it (02 has no such column).
+
+Ruling: accepted as recorded (R-47).
+
+## SPEC-Q-11: free-text parsing (R2-ONB-3) — **blocks nothing, but is an ARCHITECT QUESTION**
+"Free text is parsed with Claude using structured output." There is no endpoint for it, and `packages/ai` and `app/api/**` are outside OWNS.
+- Reading taken: `packages/core/src/onboarding` holds deterministic parsers for the three free-text answers (people line, target numbers in the formats R2-ONB-3 lists, never-eat text against the catalogue's names, aliases and allergen words) and a `FreeTextParser` port with the same output types. `inferSetup` consumes confirmed, structured answers only, so the model never decides the expansion. The page uses the deterministic parse and shows it for confirmation until a model endpoint exists. G4 stubs the port.
+- Requested route (other leaf): `POST /api/v1/onboarding/parse`, admin, body `{ field: "people" | "targets" | "never_eat", text: string (≤ 2000), people?: string[] }`, response `{ people: PersonAnswer[] } | { targets: TargetNumbers } | { neverEat: NeverEatItem[] }` (types in `@mealplanner/core/onboarding`), 503 when no credential.
+
+Ruling: deferred (W-5, R-47). The page ships the deterministic parse with confirmation; listed as a deviation.
+
+## SPEC-Q-12: detail levels have no endpoint — **blocks G3's persistence (R2-DL-1)**
+`detail_level` exists (1.1.2) and R-24 says it is written directly through its repository, outside DM-6, but no API route reads or writes it.
+- Requested route (other leaf): `GET /api/v1/detail-levels` → `{ levels: { memberId: uuid | null, section: string, level: "basic" | "detailed" | "expert" }[] }` (admin: all; member: own rows); `PUT /api/v1/detail-levels` body `{ memberId: uuid | null, section: string (≤ 40), level }` → the row (admin; a member only for their own `taste` section).
+- Until then the control works per page view only and G3 cannot assert persistence.
+
+Ruling: granted to this leaf (R-47). Built: `apps/web/app/api/v1/detail-levels/route.ts`, `apps/web/lib/server/detail-levels.ts`, contract entries `detailLevelsList` / `detailLevelsSet`, `apps/web/test/api/detail-levels.int.test.ts`.
+
+## SPEC-Q-13: "Next week, if you save" (PlanningBalance)
+The preview panel (distinct ingredients, meals on target, meals that would change) needs a what-if plan run; no endpoint exists (UX-4: "with these weights, tomorrow would change 2 meals").
+- Requested route (other leaf): `POST /api/v1/plans/preview`, admin, body `{ dates: IsoDate[] (1–7), weights: Partial<Weights> }` → 202 `JobRef`; job result `{ current: { distinctIngredients, inTolerancePct }, proposed: { … }, changes: { date, slotKey, memberId | null, before: string, after: string }[] }`. It must not write plans.
+- Until then: the panel is not built (deviation listed); Save applies `weights.set` and offers "Replan next week" (`POST /plans/generate`).
+
+Ruling: deferred (W-5, R-47). The panel is omitted (listed deviation); Planning balance offers "Replan next week" after saving.
+
+## SPEC-Q-14: mockups with no owner
+- **TastePhone** (My tastes, Me tab): the Me route `/family/me` is this leaf's (R-21 Q-3), so this leaf builds it: taste swipe (Not for me / It's fine / Love it → `PUT /preferences` for the viewer's own member, dish, −0.5 / 0 / +0.5), "Learned from your reviews", and, for admins on phones, links to Family, Insights, Settings, People & access and Account (leaf-1.4.2 SPEC-Q-2). "Send taste swipe" on TastesDesktop has no delivery mechanism (no notification endpoint); it is built as a copyable link to `/family/me`.
+- **FirstDaysPhone** (R2-ONB-6 follow-up questions and the "Getting set up" checklist): needs stored follow-up state (answered/dismissed, one per day), which no table or endpoint holds. Reading taken: not built in this leaf; please assign.
+- **ChatOnboarding** (R2-ONB-5): read as 1.4.5 (its G4 covers `Chat*`); it can call `inferSetup` from `@mealplanner/core/onboarding`.
+- **HouseholdSettings** is 1.4.6's (its G3), but `/settings/**` is this leaf's OWNS and 1.4.6 owns no settings route. Reading taken: `/settings` (this leaf) links to `/settings/household`; please grant that path to 1.4.6 or to this leaf.
+
+Ruling: TastePhone at `/family/me` accepted; ChatOnboarding is 1.4.5's; `/settings/household` is 1.4.6's (R-45); FirstDaysPhone deferred (W-5).
+
+## SPEC-Q-15: which meal-split values are "yours" (R2-DL-4)
+`meal_distribution` stores one share per slot and no marker of which ones the user set; R2-DL-4 rebalances siblings, so after one edit every row differs from automatic.
+- Reading taken: siblings are rebalanced in proportion to their automatic shares, which makes the user-set values recoverable: the siblings are exactly the slots whose `share / autoShare` ratio is common; the rest are "yours". When that is ambiguous (as many user-set slots as siblings with different ratios, or all slots set), every row is shown as "yours". Back to auto on the last "yours" slot clears the split (`distribution.set` with `shares: null`).
+- Alternative: a boolean `meal_distribution.is_override` column (R-9 procedure).
+
+Ruling: accepted, no schema change (R-47). The unit tests include the ambiguous case (`components/detail-level/logic.test.ts`).
+
+## SPEC-Q-16: "tell the assistant" (R2-DL-6)
+The chat is 1.4.5's. Reading taken: each section links to `/chat?prompt=<text>` with a prefilled sentence naming the member and section; 1.4.5 decides whether to honour `prompt`.
+
+Ruling: accepted as recorded (R-47).
+
+## SPEC-Q-17: invites on the Family screen
+UX-4 Family: "Invite links / QR per member". The invite dialog is 1.4.6's (`components/admin/**`). Reading taken: each member card links to `/access?invite=<memberId>`.
+
+Ruling: accepted as recorded (R-47).
+
+## SPEC-Q-18: the numbers behind the Planning balance presets
+PlanningBalance.dc.html names four presets (Macros first, Balanced, Crowd-pleaser, Fewest ingredients) without numbers. PRD-2 keeps macro tolerances hard whatever the weights, so every preset keeps macro precision at 1.0.
+- Reading taken (`apps/web/components/config/planning-screen.tsx`, `PRESETS`): Balanced = the 02 §6 defaults (1.0 / 0.6 / 0.4, variety 0.3, fairness 0.5); Macros first = appeal 0.4, economy 0.3; Crowd-pleaser = appeal 0.9, economy 0.2, variety 0.2; Fewest ingredients = appeal 0.4, economy 0.8, variety 0.2 (fairness 0.5 throughout). The owner may tune them; they are four constants.
+
+Ruling: accepted at CP3 as four tunable constants.
