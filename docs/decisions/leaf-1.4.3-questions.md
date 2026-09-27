@@ -116,3 +116,5 @@ Ruling: accepted as recorded (R-47).
 ## SPEC-Q-18: the numbers behind the Planning balance presets
 PlanningBalance.dc.html names four presets (Macros first, Balanced, Crowd-pleaser, Fewest ingredients) without numbers. PRD-2 keeps macro tolerances hard whatever the weights, so every preset keeps macro precision at 1.0.
 - Reading taken (`apps/web/components/config/planning-screen.tsx`, `PRESETS`): Balanced = the 02 §6 defaults (1.0 / 0.6 / 0.4, variety 0.3, fairness 0.5); Macros first = appeal 0.4, economy 0.3; Crowd-pleaser = appeal 0.9, economy 0.2, variety 0.2; Fewest ingredients = appeal 0.4, economy 0.8, variety 0.2 (fairness 0.5 throughout). The owner may tune them; they are four constants.
+
+Ruling: accepted at CP3 as four tunable constants.
