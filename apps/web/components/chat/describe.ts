@@ -61,6 +61,8 @@ const FIELD_LABELS: Readonly<Record<string, string>> = {
   status: "Status",
   name: "Name",
   share: "Share",
+  // 1.2.6 (R-62), OQ-9: an exclusion's slot scope.
+  slotKeys: "Only in",
 };
 
 /** Readable labels of stored enum values, per field. */
@@ -200,7 +202,18 @@ export function describeTitle(d: Description, names: ReadonlyMap<string, string>
     const who = d.changes.find((c) => c.entity === "exclusion" && c.field === "memberId");
     const what = typeof row?.after === "string" ? slugName(row.after, names) : null;
     const whom = typeof who?.after === "string" ? (names.get(who.after) ?? "one person") : "anyone";
-    if (what !== null) return `Never serve ${lower(what)} to ${whom}`;
+    // 1.2.6 (R-62), OQ-9: "… to Layla in the packed school lunch".
+    const scope = d.changes.find((c) => c.entity === "exclusion" && c.field === "slotKeys");
+    const slots = Array.isArray(scope?.after)
+      ? scope.after
+          .filter((k): k is string => typeof k === "string")
+          .map((k) => words(k).toLowerCase())
+      : [];
+    const where =
+      slots.length === 0
+        ? ""
+        : ` in the ${slots.length === 1 ? (slots[0] ?? "") : `${slots.slice(0, -1).join(", ")} and ${slots.at(-1) ?? ""}`}`;
+    if (what !== null) return `Never serve ${lower(what)} to ${whom}${where}`;
   }
   // Quoted slugs in registry titles ("Set cuisine preference \"italian\" to 0.50") by name.
   return humanize(d.title, names).replace(/"([a-z0-9]+(?:[_-][a-z0-9]+)*)"/g, (_, slug: string) =>

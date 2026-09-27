@@ -1,8 +1,8 @@
 // PLN-9 §6.3 hard filters, applied before solving: plannable status, slot suitability, exclusions
-// (SPEC-Q-6, R-34), `hard = never` preferences, and frequency (SPEC-Q-5).
+// (SPEC-Q-6, R-34), `hard = never` preferences, and frequency (SPEC-Q-5, OQ-8).
 import { weekdayOf, type FrequencyRuleRow, type SlotTypeRow } from "../../types/index.js";
 import { variantAllowed, type MemberCtx } from "../solver/index.js";
-import { DEFAULT_MIN_GAP_DAYS } from "./config.js";
+import { MAIN_MIN_GAP_DAYS, SHORT_GAP_SLOT_KEYS, SHORT_MIN_GAP_DAYS } from "./config.js";
 import type { Household } from "./members.js";
 import type { Pool } from "./pool.js";
 import type { PlanDish } from "./types.js";
@@ -13,6 +13,8 @@ export type Served = {
   /** `dayNumber(date)`. */
   day: number;
   mealKey: string;
+  /** The meal's slot key: its repeat gap (OQ-8). */
+  slotKey: string;
   dishId: string;
   memberIds: readonly string[];
   cuisineKey: string;
@@ -140,17 +142,33 @@ function candidateMatches(rule: FrequencyRuleRow, dish: PlanDish, pool: Pool): b
   }
 }
 
+/** OQ-8: the default day difference a repeat of a dish needs in a slot (custom slots are main). */
+export function repeatGap(slotKey: string): number {
+  return SHORT_GAP_SLOT_KEYS.includes(slotKey) ? SHORT_MIN_GAP_DAYS : MAIN_MIN_GAP_DAYS;
+}
+
 /**
- * Frequency (PLN-9 §6.3, SPEC-Q-5). `history` holds every other served meal (planned, locked and
- * context). Returns the reason the dish is blocked, or null.
- * - The same dish for an attendee fewer than `min_gap_days` days away, in either direction. The
- *   default is 6; a household-level `frequency_rule` on the dish replaces it for that dish.
+ * OQ-8, R-63: two servings of one dish need the larger gap of their two slots. Symmetric, so the
+ * answer does not depend on which of the two meals was planned first.
+ */
+export function pairGap(a: string, b: string): number {
+  return Math.max(repeatGap(a), repeatGap(b));
+}
+
+/**
+ * Frequency (PLN-9 §6.3, SPEC-Q-5, OQ-8). `history` holds every other served meal (planned, locked
+ * and context). Returns the reason the dish is blocked, or null. `slotKey` is the slot being
+ * planned.
+ * - The same dish for an attendee at a day difference below the gap, in either direction. The
+ *   default gap is `pairGap` of the two meals' slots (7 main, 4 snack and workout); a
+ *   household-level `frequency_rule` on the dish replaces it in every slot, as days apart.
  * - Each applicable `frequency_rule` (member-level for an attending member, household-level for
  *   everyone): `min_gap_days` as above, and `max_per_week` over the ISO week of the date.
  */
 export function frequencyReason(
   dish: PlanDish,
   date: string,
+  slotKey: string,
   attendees: readonly string[],
   history: readonly Served[],
   rules: readonly FrequencyRuleRow[],
@@ -165,11 +183,13 @@ export function frequencyReason(
       r.entityKey === dish.id &&
       r.minGapDays !== null,
   );
-  const gap = householdDishRule?.minGapDays ?? DEFAULT_MIN_GAP_DAYS;
   const day = dayNumber(date);
-  for (const s of history)
-    if (s.dishId === dish.id && shares(s) && Math.abs(s.day - day) < gap)
+  for (const s of history) {
+    if (s.dishId !== dish.id || !shares(s)) continue;
+    const gap = householdDishRule?.minGapDays ?? pairGap(slotKey, s.slotKey);
+    if (Math.abs(s.day - day) < gap)
       return `${dish.name} was served ${s.date} (min gap ${String(gap)} days)`;
+  }
 
   const week = weekStart(date);
   for (const rule of rules) {

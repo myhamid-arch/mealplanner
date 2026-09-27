@@ -149,6 +149,8 @@ export class Run {
       frequencyReason(
         dish,
         meal.date,
+        // 1.2.6 (R-62): the repeat gap follows the slot (OQ-8).
+        meal.slot.key,
         meal.attendees,
         history,
         this.cfg.frequencyRules,
@@ -387,6 +389,8 @@ export class Run {
       date,
       day: dayNumber(date),
       mealKey: mealKey(date, slotTypeId, memberScope),
+      // 1.2.6 (R-62): the slot of the meal, for its repeat gap (OQ-8).
+      slotKey: this.cfg.slotTypes.find((s) => s.id === slotTypeId)?.key ?? "",
       dishId,
       memberIds: plates.map((p) => p.memberId),
       cuisineKey: dish?.cuisineKey ?? "",

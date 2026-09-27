@@ -20,6 +20,7 @@ export function f1Exclusions(): ExclusionRow[] {
     key: e.key,
     reason: e.reason,
     hard: true,
+    slotKeys: null, // 1.2.6 (R-62): every slot (OQ-9)
   }));
 }
 
