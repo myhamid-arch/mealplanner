@@ -19,7 +19,7 @@ export type MoveOf = (meal: PlanMeal) => { options: MoveOption[]; blocked: strin
 export type DayTargetOf = (
   memberId: string,
   date: string,
-) => { kcal: number; label: string } | null;
+) => { kcal: number; label: string | null } | null;
 
 function MealBlock({
   meal,

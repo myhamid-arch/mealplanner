@@ -21,7 +21,7 @@ interface PlateData {
   /** The member's daily kcal band (R-28), when the viewer may read targets. */
   tolerance: number | null;
   /** The member's day target from the day kind's profile (W-7), when the viewer may read it. */
-  day: { kcal: number; label: string } | null;
+  day: { kcal: number; label: string | null } | null;
 }
 
 async function loadPlate(id: string): Promise<PlateData> {
@@ -104,7 +104,7 @@ function Bars({
       <span className="text-xs text-ink-muted">
         {dayKcalBand === null
           ? "The calorie band is this meal's share of the day's band; protein, carbs and fat are per meal."
-          : `The calorie band (±${num(t.tolerance.kcal)}) is this meal's share of ${own ? "your" : "their"} ±${num(dayKcalBand)} ${day === null ? "a day" : `on a ${num(day.kcal)} kcal day (${day.label})`}; protein, carbs and fat are per meal.`}
+          : `The calorie band (±${num(t.tolerance.kcal)}) is this meal's share of ${own ? "your" : "their"} ±${num(dayKcalBand)} ${day === null ? "a day" : `on a ${num(day.kcal)} kcal day${day.label === null ? "" : ` (${day.label})`}`}; protein, carbs and fat are per meal.`}
       </span>
       <span className="tabular font-mono text-[13px] text-ink-soft">
         Sat fat {num(a.satFat)} g · Fibre {num(a.fibre)} g · Soluble fibre{" "}

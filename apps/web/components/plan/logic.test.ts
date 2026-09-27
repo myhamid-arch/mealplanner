@@ -278,6 +278,15 @@ describe("W-7: the day target on Plan and Plate", () => {
       label: "rest day",
     });
     expect(dayTarget(profiles, "omar", "2026-10-04", null, sunday)?.kcal).toBe(2150);
+    // Without schedules a default profile does not tell the day kind.
+    expect(dayTarget(profiles, "omar", "2026-10-04", null, sunday)?.label).toBeNull();
+    // Sara-like: one profile, training by schedule: the kind comes from the schedule.
+    const one = [{ ...profile("default", 1655, 160), memberId: "sara" }];
+    const s = { training: [{ memberId: "sara", weekday: 1 }], dayOverrides: [] };
+    expect(dayTarget(one, "sara", "2026-09-29", s, [])).toMatchObject({
+      kcal: 1655,
+      label: "training day",
+    });
     expect(dayTarget(profiles, "omar", "2026-10-05", f1, sunday)?.label).toBe("training day");
     expect(dayTarget(profiles, "sara", "2026-10-04", f1, sunday)).toBeNull();
   });

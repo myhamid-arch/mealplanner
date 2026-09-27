@@ -462,15 +462,22 @@ export function dayTarget(
   date: string,
   schedules: ScheduleFacts | null,
   dayPlates: readonly PlateTargetLike[],
-): { kcal: number; kind: string; label: string } | null {
+): { kcal: number; kind: string; label: string | null } | null {
   const own = dayPlates.filter((p) => p.memberId === memberId && p.target !== null);
   const slotSum = own.length === 0 ? null : sumMacros(own.map((p) => p.target ?? macrosZero()));
   const profile = dayProfile(profiles, memberId, date, schedules, slotSum);
   if (profile === null) return null;
+  // The day kind is known with the schedules (admins); otherwise only a training profile says it.
+  const kind =
+    schedules !== null
+      ? dayKindOf(schedules, memberId, date)
+      : profile.kind === "training"
+        ? "training"
+        : null;
   return {
     kcal: profile.kcal,
     kind: profile.kind,
-    label: profile.kind === "training" ? "training day" : "rest day",
+    label: kind === null ? null : kind === "training" ? "training day" : "rest day",
   };
 }
 
