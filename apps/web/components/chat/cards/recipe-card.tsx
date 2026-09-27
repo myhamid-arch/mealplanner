@@ -212,8 +212,7 @@ function DraftView({
           </div>
         ) : already ? (
           <span className="text-sm font-bold text-basil-text">
-            Saved to recipes.{" "}
-            <Link href={`/recipes/${dishId}`}>Open recipe</Link>
+            Saved to recipes. <Link href={`/recipes/${dishId}`}>Open recipe</Link>
           </span>
         ) : (
           <div className="flex flex-wrap gap-2">

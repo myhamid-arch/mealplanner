@@ -58,7 +58,8 @@ export function ChatCards({ cards }: { readonly cards: readonly Json[] }) {
 function cardKey(c: Json, i: number): string {
   if (typeof c === "object" && c !== null && !Array.isArray(c)) {
     const id = c.proposalId ?? c.changeSetId ?? c.jobId ?? c.date ?? c.runAt;
-    if (typeof id === "string") return `${typeof c.type === "string" ? c.type : "card"}-${id}-${String(i)}`;
+    if (typeof id === "string")
+      return `${typeof c.type === "string" ? c.type : "card"}-${id}-${String(i)}`;
   }
   return `card-${String(i)}`;
 }

@@ -13,7 +13,7 @@ const WHEN = new Intl.DateTimeFormat("en-GB", {
 
 /** AGT-7 `insight_digest` (ChatPhoneDigest): the run's new proposals, each with Accept / Reject. */
 export function InsightDigestCardView({ card }: { readonly card: Card }) {
-  const { proposals, refresh } = useChatData();
+  const { proposals, changes, refresh } = useChatData();
   return (
     <div className="flex flex-col gap-3" data-card="insight_digest">
       <span className="self-center text-xs font-extrabold text-ink-soft">
@@ -25,7 +25,9 @@ export function InsightDigestCardView({ card }: { readonly card: Card }) {
           stored === undefined || stored.status === "pending"
             ? { state: "pending" }
             : stored.status === "accepted" && stored.changeSetId !== null
-              ? { state: "accepted", changeSetId: stored.changeSetId }
+              ? changes.get(stored.changeSetId)?.undone === true
+                ? { state: "undone" }
+                : { state: "accepted", changeSetId: stored.changeSetId }
               : stored.status === "rejected"
                 ? { state: "rejected", note: stored.decisionNote }
                 : "closed";

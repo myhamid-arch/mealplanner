@@ -151,9 +151,11 @@ test.describe.serial("@G1 reviews to proposals", () => {
     await expect(never.getByText("Accepted", { exact: true })).toBeVisible();
     await never.getByRole("button", { name: /^Undo/ }).click();
     await expect(never.getByText("Accepted, then undone")).toBeVisible();
-    // After a reload the stored card shows the decision, not the buttons.
+    // After a reload the stored card shows the decision (accepted, then undone), not the buttons.
     await page.reload();
-    await expect(page.locator("[data-card=insight_digest] [data-proposal-id]", { hasText: "Zayd" }).getByRole("button", { name: /^Undo/ })).toBeVisible();
+    const again = page.locator("[data-card=insight_digest] [data-proposal-id]", { hasText: "Zayd" });
+    await expect(again.getByText("Accepted, then undone")).toBeVisible();
+    await expect(again.getByRole("button")).toHaveCount(0);
     await ctx.close();
   });
 

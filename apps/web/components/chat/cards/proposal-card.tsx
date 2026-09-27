@@ -29,8 +29,10 @@ function decisionOf(
   status: string | undefined,
   changeSetId: string | null,
   note: string | null,
+  undone: boolean,
 ): Decision | "closed" {
-  if (status === "accepted" && changeSetId !== null) return { state: "accepted", changeSetId };
+  if (status === "accepted" && changeSetId !== null)
+    return undone ? { state: "undone" } : { state: "accepted", changeSetId };
   if (status === "rejected") return { state: "rejected", note };
   if (status === "expired" || status === "superseded") return "closed";
   return { state: "pending" };
@@ -199,12 +201,13 @@ function EditOps({
 
 /** AGT-7 `proposal`: title, rationale, before → after, evidence, Accept / Reject… / Edit. */
 export function ProposalCardView({ card }: { readonly card: Card }) {
-  const { names, proposals, refresh } = useChatData();
+  const { names, proposals, changes, refresh } = useChatData();
   const stored = proposals.get(card.proposalId);
   const initial = decisionOf(
     stored?.status,
     stored?.changeSetId ?? null,
     stored?.decisionNote ?? null,
+    stored?.changeSetId != null && changes.get(stored.changeSetId)?.undone === true,
   );
   const [editing, setEditing] = useState(false);
   const [edited, setEdited] = useState<{ changeSetId: string; descriptions: Description[] } | null>(

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   accessList,
+  changeSetsList,
   changeSetsPreview,
   cuisinesList,
   dishesGet,
@@ -75,6 +76,8 @@ interface Data {
   /** Preference entity key → readable name. */
   entityNames: Map<string, string>;
   userNames: Map<string, string>;
+  /** Change sets that were undone (an accepted proposal later undone). */
+  undone: Set<string>;
 }
 
 function words(s: string): string {
@@ -246,7 +249,7 @@ function PreferenceTable({
                       score(p.score)
                     )}
                   </td>
-                  <td className="py-1 pr-2">
+                  <td className="py-1 pr-2 whitespace-nowrap">
                     <Link
                       href={`/reviews${p.memberId === null ? "" : `?member=${p.memberId}`}`}
                       className="font-extrabold"
@@ -255,7 +258,7 @@ function PreferenceTable({
                       evidence {p.evidenceWeight.toFixed(1)}
                     </Link>
                   </td>
-                  <td className="py-1">
+                  <td className="py-1 whitespace-nowrap">
                     {canChange && (
                       <div className="flex flex-wrap justify-end gap-1">
                         {editing === key ? (
@@ -419,13 +422,16 @@ function PendingProposal({
   );
 }
 
+/** Learned values closer to 0 than this are noise from one review's spread; not listed. */
+const SHOWN_MIN = 0.05;
+
 const WHEN = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" });
 
 export function InsightsScreen() {
   const load = useLoad<Data>(async () => {
     const viewer = await loadViewer();
     const admin = viewer.role === "admin";
-    const [prefs, biases, proposals, reviews, names, access] = await Promise.all([
+    const [prefs, biases, proposals, reviews, names, access, log] = await Promise.all([
       api.call(preferencesList, { query: {} }).then((r) => r.preferences ?? []),
       api.call(portionBiasesList, { query: {} }).then((r) => r.biases ?? []),
       admin
@@ -436,6 +442,9 @@ export function InsightsScreen() {
       admin
         ? api.call(accessList, {}).then((r) => r.logins)
         : Promise.resolve([] as { userId: string; name: string }[]),
+      admin
+        ? api.call(changeSetsList, { query: { limit: 200 } }).then((r) => r.entries ?? [])
+        : Promise.resolve([]),
     ]);
     const firstReviewAt = reviews.reduce<string | null>(
       (min, r) => (min === null || r.createdAt < min ? r.createdAt : min),
@@ -451,6 +460,9 @@ export function InsightsScreen() {
       names,
       entityNames: await entityNamesOf(prefs, names),
       userNames: new Map(access.map((l) => [l.userId, l.name])),
+      undone: new Set(
+        log.flatMap((e) => (e.type === "change_set" && e.undoneAt !== null ? [e.id] : [])),
+      ),
     };
   });
   const [chosen, setChosen] = useState<string | null>(null);
@@ -473,8 +485,8 @@ export function InsightsScreen() {
   const theirs = d.preferences
     .filter((p) => p.memberId === memberId)
     .sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
-  const likes = theirs.filter((p) => p.score > 0).slice(0, 8);
-  const dislikes = theirs.filter((p) => p.score < 0).slice(0, 8);
+  const likes = theirs.filter((p) => p.score >= SHOWN_MIN).slice(0, 8);
+  const dislikes = theirs.filter((p) => p.score <= -SHOWN_MIN).slice(0, 8);
   const biases = d.biases.filter((b) => b.memberId === memberId);
   const pending = d.proposals.filter((p) => p.status === "pending");
   const decided = d.proposals
@@ -541,7 +553,7 @@ export function InsightsScreen() {
         />
       ) : (
         <>
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid items-start gap-4 lg:grid-cols-2">
             <PreferenceTable
               title={`${member.displayName} likes`}
               tone="like"
@@ -640,7 +652,11 @@ export function InsightsScreen() {
                           : "text-ink-soft"
                     }
                   >
-                    {words(p.status)}
+                    {p.status === "accepted" &&
+                    p.changeSetId !== null &&
+                    d.undone.has(p.changeSetId)
+                      ? "Accepted, then undone"
+                      : words(p.status)}
                   </strong>{" "}
                   · {proposalTitle(p)}
                   {by !== null && ` — ${by}`}
