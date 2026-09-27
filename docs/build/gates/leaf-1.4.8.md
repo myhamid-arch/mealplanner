@@ -24,10 +24,10 @@ Scope: Plan follow-ups (R-58): drag and keyboard move of a meal between days (UX
   EXPECT: VERIFY leaf-1.4.8 G4 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=9fd6c12cfae4a7223d2c2996525d0f14536904e2fac9baf1b36bc984319ac044; exit=0; EXPECT=matched; output-sha256=b34d33b945734cd353535a1ec2e802d3612f4181438ce3d2b2ab552ade4b67d2; output-bytes=1357; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G5: Playwright at 390 px and 1280 px plus axe-core (no serious/critical) for drag, Move menu, substituted cook sheet and the Use-for action; 1.4.4 G1-G3 still pass
+- [x] G5: Playwright at 390 px and 1280 px plus axe-core (no serious/critical) for drag, Move menu, substituted cook sheet and the Use-for action; 1.4.4 G1-G3 still pass
   CHECK: node scripts/verify/leaf-1.4.8.mjs --gate G5
   EXPECT: VERIFY leaf-1.4.8 G5 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=ac2b5a9ad65d36784e5685891783fc08f4a8fa3813b1cb994ed93648b13fce01; exit=0; EXPECT=matched; output-sha256=7710027905cbe4d860ccde8676a91c947e2fb50c1032ee6e5e3934c4435f3991; output-bytes=1573; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G6: architect visual review against the Plan mockups and the substituted cook sheet
   EVIDENCE: pending
