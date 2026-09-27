@@ -158,6 +158,7 @@ function reasonProblems(reasons: string[], w: World): string[] {
     if (/\b[a-z0-9]+(?:-[a-z0-9]+){1,}\b/.test(r) && /\b[a-z]+-[a-z]+-/.test(r))
       out.push(`slug-like: ${r}`);
     if (/\b[a-z0-9]+_[a-z0-9_]+\b/.test(r)) out.push(`snake_case: ${r}`);
+    if (/\b\d+\.\d+\b/.test(r)) out.push(`score: ${r}`);
   }
   return out;
 }

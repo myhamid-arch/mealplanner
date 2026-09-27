@@ -96,3 +96,48 @@ fails. Both cannot hold without editing that spec.
 Reading: the entry's title, its Undo button's accessible name ("Undo: <title>") and the undone status
 use the resolved title. The four assertions in `admin.spec.ts` change to the new titles
 (single-entry request). The change-set row lookups by stored `summary` in that file stay as they are.
+
+## SPEC-Q-4, superseded at CP3 (finding 3)
+
+The architect's CP3 ruling replaces the ", " joiner. Ingredient lists are plain English: "a", "a and
+b", "a, b and c", and, when any name has a comma of its own ("Chicken breast, skinless"), semicolons
+between items ("lemon juice; chicken breast, skinless; and garlic"). Names are lower-cased
+mid-sentence, except where the first word is a demonym or a place name in the catalogue (Greek,
+French, Swiss, Egyptian, English, Arabic, Atlantic, Brazil, Brussels, Worcestershire, Akkawi,
+Nabulsi: `PROPER_FIRST_WORDS` in `score.ts`). 1.2.3's merged `score.test.ts` pins "Reuses x, y" for a
+call without display names (raw ids), so the prose list applies when names are supplied (every
+production path through `run.ts`); a structural call without names keeps the raw id list.
+
+## SPEC-Q-9: CP3 finding 1, 1.4.1 G2 under the concurrent reverify
+
+In the architect's `--reverify --jobs 4` run, 1.4.1 G2 (run from this ledger's G3) received 0 of 18
+events live (done after 23 s; about 9 s alone). What was tried here, on this container:
+
+| Experiment | Setting | 1.4.1 G2 result |
+|---|---|---|
+| A | alone, with 6 busy CPU processes on 4 CPUs; `dist` checksummed before and after | 19/19 live, done after 21.8 s; `dist` unchanged |
+| B | this ledger's G2 alone, sampling `pg_stat_activity` every second | (G2 passed) peak 59 of 100 connections; no "too many clients" in the server log for this session, both concurrent reverifies included |
+| C | beside 1.4.1 G1, with a planted old file in `packages/db/dist` (1.4.1's own staleness rule is "oldest dist file") | 18/19 live, 10.1 s; 1.4.1 did not rebuild |
+| D | beside a full `next build` of apps/web | 18/19 live, 14.9 s |
+
+1.2.6 G2's in-place rebuild (1.2.2's gates) cannot overlap it: 1.2.6 G2 runs only after every other
+gate of the ledger has ended (the exclusive lock; G3 ended at about 210 s in each run here).
+
+Reading: the failure is real and was not reproduced here, so no single concurrent process is named as
+its cause. 1.4.1 G2's check is a wall-clock measurement of live delivery, like 1.2.5's idle
+measurement, so G3 now runs it last, alone (the ledger's exclusive lock), where nothing else of the
+ledger competes with it. The ledger-wide regression slots (two at a time) stay for the rest.
+
+## SPEC-Q-10: "close to" a target (CP3 finding 2)
+
+The plate fit is the solver's 0–1 score (1 = dead centre). Reasons say it in words: every targeted
+plate with fit ≥ 0.75 (`CLOSE_FIT`) reads "Close to Omar's and Sara's targets"; otherwise the member
+furthest off is named ("Furthest from Omar's target; close to Sara's"). No number appears in a reason;
+G1 rejects a bare decimal in any reason.
+
+## SPEC-Q-11: dates in the change log (CP3 finding 4)
+
+Every ISO date in an entry's title (resolved or stored summary), subject and undo reason reads as the
+ChangeLog mockup writes dates ("Mon 28 Sep"), with the year added when it is not the current year in
+the household's time zone. Plan dates are calendar dates and are not shifted between time zones. The
+stored summaries are unchanged; the API returns the readable text.

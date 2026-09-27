@@ -52,16 +52,23 @@ async function meals(): Promise<Meal[]> {
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-/** Names joined with ", " (names may contain ", "): true when every piece is a catalogue name. */
-function tiled(list: string): boolean {
-  const parts = list.split(", ");
-  const ok2: boolean[] = [true];
-  for (let end = 1; end <= parts.length; end++) {
-    ok2[end] = false;
-    for (let start = 0; start < end && !ok2[end]; start++)
-      ok2[end] = ok2[start] === true && catalogue.names.has(parts.slice(start, end).join(", "));
+/**
+ * True when `list` is a plain-English list of catalogue display names ("a", "a and b",
+ * "a, b and c", or semicolons when a name has a comma), each name read mid-sentence (its first
+ * letter may be lower-cased).
+ */
+function isNameList(list: string): boolean {
+  let items: string[];
+  if (list.includes("; ")) {
+    items = list.split("; ");
+    items.push((items.pop() ?? "").replace(/^and /, ""));
+  } else {
+    const at = list.lastIndexOf(" and ");
+    items = at === -1 ? [list] : [...list.slice(0, at).split(", "), list.slice(at + 5)];
   }
-  return ok2[parts.length] === true;
+  const known = (item: string) =>
+    catalogue.names.has(item) || catalogue.names.has(item.charAt(0).toUpperCase() + item.slice(1));
+  return items.length > 0 && items.every(known);
 }
 
 function problemsOf(reason: string): string[] {
@@ -74,7 +81,8 @@ function problemsOf(reason: string): string[] {
   const list =
     /^Reuses (.+) from other meals (?:this week|in these \d+ days)$/.exec(reason) ??
     /^New (?:this week|in these \d+ days): (.+)$/.exec(reason);
-  if (list !== null && !tiled(list[1] ?? "")) out.push("not display names");
+  if (list !== null && !isNameList(list[1] ?? "")) out.push("not display names");
+  if (/\b\d+\.\d+\b/.test(reason)) out.push("a bare decimal score");
   return out;
 }
 
@@ -160,6 +168,8 @@ describe("W-12 plain reasons through the database loader", () => {
   it("negative control: a reason with today's slug labels fails the same check", () => {
     const slug = [...catalogue.slugs].find((s) => s.includes("-")) ?? "";
     expect(problemsOf(`Reuses ${slug} from other meals this week`).length).toBeGreaterThan(0);
+    // And the pre-fix score wording (CP3 finding 2).
+    expect(problemsOf("Macro fit Omar 0.91, Sara 0.90")).toContain("a bare decimal score");
   });
 
   it("after the kitchen flags it unavailable and plates.substitute runs, no reason names it", async () => {

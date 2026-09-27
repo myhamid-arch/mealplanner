@@ -6,7 +6,13 @@
 // that named the previous meal by its dish name.
 import { beforeAll, describe, expect, it } from "vitest";
 import { planDays, type PlanDish, type PlanResult } from "../../../src/planner/select/index.js";
-import { varietyOf } from "../../../src/planner/select/score.js";
+import {
+  CLOSE_FIT,
+  listOf,
+  midSentence,
+  scoreDish,
+  varietyOf,
+} from "../../../src/planner/select/score.js";
 import { F1_WEEK, f1PlanConfig } from "./f1.js";
 import { ingredientId, type SeedLibrary } from "./library.js";
 import { seedLibrary } from "./support.js";
@@ -125,7 +131,7 @@ const SNAKE = /\b[a-z0-9]+_[a-z0-9_]+\b/;
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 /**
- * Every problem with one reason: an ingredient slug or dish id (hyphenated), an `ing:` id, a uuid, a snake_case
+ * Every problem with one reason: a bare decimal score, an ingredient slug or dish id, an `ing:` id, a uuid, a snake_case
  * key, a lower-case cuisine key used as a word, an ingredient list that is not made of catalogue
  * display names, or a cuisine sentence without a cuisines.json label.
  */
@@ -148,8 +154,10 @@ function problemsOf(reason: string, lib: SeedLibrary): string[] {
     /^(?:Reuses (.+) from other meals (?:this week|in these \d+ days)|New (?:this week|in these \d+ days): (.+))$/.exec(
       reason,
     );
-  if (list !== null && !tiledByNames(list[1] ?? list[2] ?? ""))
-    out.push("ingredient list is not made of catalogue display names");
+  if (list !== null && !isNameList(list[1] ?? list[2] ?? ""))
+    out.push("ingredient list is not a plain list of catalogue display names");
+  // UX-7 (CP3 finding 2): no score in the words; no catalogue name has a decimal.
+  if (/\b\d+\.\d+\b/.test(reason)) out.push(`a bare decimal score in "${reason}"`);
   const cuisine =
     /^(.+) food is already on \d+ other days? /.exec(reason) ??
     /^Also (.+), like the [a-z -]+ before it$/.exec(reason);
@@ -158,17 +166,23 @@ function problemsOf(reason: string, lib: SeedLibrary): string[] {
   return out;
 }
 
-const NAMES = new Set(NAME_BY_ID.values());
-/** True when `text` is catalogue display names joined with ", " (names may contain ", "). */
-function tiledByNames(text: string): boolean {
-  const parts = text.split(", ");
-  const ok: boolean[] = [true];
-  for (let end = 1; end <= parts.length; end++) {
-    ok[end] = false;
-    for (let start = 0; start < end && !ok[end]; start++)
-      ok[end] = ok[start] === true && NAMES.has(parts.slice(start, end).join(", "));
+const MID_NAMES = new Set([...NAME_BY_ID.values()].map(midSentence));
+/**
+ * True when `text` is a plain-English list of catalogue display names as read mid-sentence:
+ * "a", "a and b", "a, b and c", or with semicolons when a name has a comma of its own.
+ */
+function isNameList(text: string): boolean {
+  let items: string[];
+  if (text.includes("; ")) {
+    items = text.split("; ");
+    const last = items.pop() ?? "";
+    items.push(last.replace(/^and /, ""));
+  } else {
+    const at = text.lastIndexOf(" and ");
+    items =
+      at === -1 ? [text] : [...text.slice(0, at).split(", "), text.slice(at + " and ".length)];
   }
-  return ok[parts.length] === true;
+  return items.every((i) => MID_NAMES.has(i)) && listOf(items) === text;
 }
 
 function problems(plan: PlanResult, lib: SeedLibrary): string[] {
@@ -275,5 +289,75 @@ describe("W-12 after a substitution, no reason names the replaced ingredient", (
     const fixed = varietyOf({ ...base, previous: { ...previous, mealLabel: "lunch" } });
     expect(fixed.penalties.length).toBe(preFix.penalties.length);
     expect(fixed.penalties.some((p) => /tahini/i.test(p))).toBe(false);
+  });
+});
+
+describe("W-12 wording units (CP3 findings 2 and 3)", () => {
+  const plates = (fits: Array<[string, number]>) =>
+    fits.map(([memberId, fit]) => ({ memberId, targeted: true, fit, appeal: 0 }));
+  const base = (fits: Array<[string, number]>, ingredients: string[], window: string[]) =>
+    scoreDish({
+      dish: seedLibrary().dishes[0] as PlanDish,
+      plates: plates(fits),
+      ingredients,
+      variantsPerComponent: {},
+      mainProtein: null,
+      window: { ingredients: new Set(window), cuisineMealDays: 0, days: 7 },
+      previous: null,
+      weights: { macroPrecision: 1, appeal: 1, ingredientEconomy: 1, variety: 1, fairness: 0.5 },
+      label: {
+        ingredient: (id) => NAME_BY_ID.get(id) ?? id,
+        member: (id) => id,
+        cuisine: CATALOGUE.cuisine,
+      },
+    }).reasons;
+
+  it("fit reads in words: close to everyone, or who is furthest off", () => {
+    expect(
+      base(
+        [
+          ["Omar", 0.91],
+          ["Sara", 0.9],
+        ],
+        [],
+        [],
+      ),
+    ).toContain("Close to Omar's and Sara's targets");
+    expect(
+      base(
+        [
+          ["Omar", CLOSE_FIT - 0.2],
+          ["Sara", 0.9],
+        ],
+        [],
+        [],
+      ),
+    ).toContain("Furthest from Omar's target; close to Sara's");
+    expect(base([["Omar", 0.3]], [], [])).toContain("Furthest from Omar's target");
+  });
+
+  it("a comma-bearing name never reads as two: semicolons, lower case mid-sentence", () => {
+    const ids = ["lemon-juice", "chicken-breast", "garlic"].map(ingredientId);
+    expect(NAME_BY_ID.get(ingredientId("chicken-breast"))).toContain(",");
+    const reasons = base([["Omar", 0.9]], ids, ids);
+    expect(reasons).toContain(
+      `Reuses lemon juice; ${midSentence(NAME_BY_ID.get(ingredientId("chicken-breast")) ?? "")}; and garlic from other meals this week`,
+    );
+    expect(listOf(["rice", "cucumber"])).toBe("rice and cucumber");
+    expect(listOf(["rice", "cucumber", "garlic"])).toBe("rice, cucumber and garlic");
+  });
+
+  it("proper first words keep their capital mid-sentence", () => {
+    expect(midSentence("Greek yogurt, plain, low fat")).toBe("Greek yogurt, plain, low fat");
+    expect(midSentence("Basmati rice, white")).toBe("basmati rice, white");
+  });
+
+  it("negative control: the pre-fix score wording and a comma-joined list fail the check", () => {
+    const lib = seedLibrary();
+    expect(problemsOf("Macro fit Omar 0.91, Sara 0.90", lib)).toContain(
+      'a bare decimal score in "Macro fit Omar 0.91, Sara 0.90"',
+    );
+    const joined = `Reuses ${["Lemon juice", "Chicken breast, skinless", "Garlic"].join(", ")} from other meals this week`;
+    expect(problemsOf(joined, lib).some((p) => p.includes("plain list"))).toBe(true);
   });
 });

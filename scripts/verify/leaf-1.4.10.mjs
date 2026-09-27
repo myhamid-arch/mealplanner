@@ -38,10 +38,11 @@
 // cleared (R-50). Regression gates run as child processes, at most LEAF1410_REGRESSION_JOBS at a
 // time across the whole ledger (default 2); a failure prints their output. 1.4.2's regression gates always run with
 // DATABASE_URL cleared (R-50). G4 captures for the architect (G5) go to $SCREENSHOT_DIR when set.
-// One regression runs alone: 1.2.6 G2 runs 1.2.5 G1–G4 (they need an idle machine, R-54) and
-// 1.2.2 G1–G5 (they delete and rebuild packages/core/dist/src/planner in place). G1 runs it last,
-// under a lock the ledger's gates share: it waits until G2–G4 have finished, and a gate started
-// meanwhile waits for it. With gates in parallel, G1 therefore ends after the others.
+// Two regressions run alone, each last in its gate, under a lock the ledger's gates share (it
+// waits until the other gates have finished, and a gate started meanwhile waits for it): 1.2.6 G2
+// (G1) runs 1.2.5 G1–G4, which need an idle machine (R-54), and 1.2.2 G1–G5, which delete and
+// rebuild packages/core/dist/src/planner in place; 1.4.1 G2 (G3) measures live SSE delivery in
+// wall-clock time (CP3 finding 1). With gates in parallel, G1 and G3 therefore end after G2 and G4.
 import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import {
@@ -83,6 +84,10 @@ const REASONS_UNIT = [
   "olive-oil → canola-oil: the week's reasons never name it",
   "tahini → peanut-butter: the week's reasons never name it",
   "negative control: naming the previous meal by its dish name (pre-fix) names the replaced ingredient",
+  "fit reads in words: close to everyone, or who is furthest off",
+  "a comma-bearing name never reads as two: semicolons, lower case mid-sentence",
+  "proper first words keep their capital mid-sentence",
+  "negative control: the pre-fix score wording and a comma-joined list fail the check",
 ];
 const REASONS_INT = [
   "the generated plan's reasons use display names: no slug, snake_case key or id",
@@ -113,6 +118,8 @@ const CHANGE_LOG = [
   "the settings change and the undo carry before → after (the undo reversed)",
   "a change set stored as raw rows resolves from its JSON alone (no migration)",
   "an undo blocked by a later change names that change by its resolved title",
+  'dates read as the mockup writes them: "Mon 28 Sep", with the year only when not this one',
+  "negative control: the stored summary, as the log showed it before, has an ISO date",
   "a vanished subject renders with the stored title and no detail",
   "multi-subject change sets keep their stored summary",
   "negative control: two blocks of different logins have the same stored summary",
@@ -144,9 +151,18 @@ const REGRESSIONS = {
    * packages/core/dist/src/planner in place (a test importing it at that moment fails).
    */
   G1_EXCLUSIVE: [["leaf-1.2.6", "G2"]],
+  /**
+   * Alone as well (CP3 finding 1): 1.4.1 G2 measures that a plan job's events reach an SSE client
+   * live, in wall-clock time. In the architect's concurrent reverify it received 0 of 18 events
+   * live (done after 23 s, against about 9 s alone); the cause could not be attributed to a single
+   * concurrent process (docs/decisions/leaf-1.4.10-questions.md SPEC-Q-9), so the measurement runs
+   * with nothing else of this ledger beside it.
+   */
+  G3_EXCLUSIVE: [["leaf-1.4.1", "G2"]],
   G2: ["G1", "G2", "G3"].map((g) => ["leaf-1.3.4", g]),
   G3: [
-    ...["G1", "G2", "G3"].map((g) => ["leaf-1.4.1", g]),
+    ["leaf-1.4.1", "G1"],
+    ["leaf-1.4.1", "G3"],
     ["leaf-1.4.6", "G1"],
     ["leaf-1.4.6", "G2"],
   ],
@@ -726,15 +742,19 @@ async function gateG1(report) {
   const picked = /W-12 substitution: (.+)/.exec(int.output)?.[1];
   report.check(picked !== undefined, `the substitution replaced: ${picked ?? "(not reported)"}`);
   await regressions(report, REGRESSIONS.G1);
-  // Last, with nothing else of this ledger running (see REGRESSIONS.G1_EXCLUSIVE).
+  await alone(report, REGRESSIONS.G1_EXCLUSIVE);
+}
+
+/** Regression gates run last, with nothing else of this ledger running (the exclusive lock). */
+async function alone(report, list) {
   releaseShared();
   const waited = Date.now();
   const release = await acquireExclusive();
   console.log(
-    `info - waited ${String(Math.round((Date.now() - waited) / 1000))} s for this ledger's other gates to finish`,
+    `info - waited ${String(Math.round((Date.now() - waited) / 1000))} s for this ledger's other gates to finish (${list.map((x) => x.join(" ")).join(", ")})`,
   );
   try {
-    await regressions(report, REGRESSIONS.G1_EXCLUSIVE);
+    await regressions(report, list);
   } finally {
     release();
   }
@@ -779,6 +799,7 @@ async function gateG3(report) {
   const kinds = /described op kinds: (.+)/.exec(r.output)?.[1];
   console.log(`info - op kinds with a resolved title: ${kinds ?? "?"}`);
   await regressions(report, REGRESSIONS.G3);
+  await alone(report, REGRESSIONS.G3_EXCLUSIVE);
 }
 
 async function gateG4(report) {

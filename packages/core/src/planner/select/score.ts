@@ -54,6 +54,64 @@ type Labels = {
   cuisine?: (key: string) => string;
 };
 
+/**
+ * First words of catalogue names that stay capitalised mid-sentence (demonyms and place names in
+ * data/ingredients.v1.json): "Greek yogurt", but "chicken breast" (W-12, CP3 finding 3).
+ */
+export const PROPER_FIRST_WORDS: ReadonlySet<string> = new Set([
+  "Akkawi",
+  "Arabic",
+  "Atlantic",
+  "Brazil",
+  "Brussels",
+  "Egyptian",
+  "English",
+  "French",
+  "Greek",
+  "Nabulsi",
+  "Swiss",
+  "Worcestershire",
+]);
+
+/** A display name as it reads inside a sentence: "Lemon juice" → "lemon juice", "Greek yogurt" kept. */
+export function midSentence(name: string): string {
+  const first = /^[^\s,(]+/.exec(name)?.[0] ?? "";
+  return PROPER_FIRST_WORDS.has(first) ? name : name.charAt(0).toLowerCase() + name.slice(1);
+}
+
+/**
+ * A list in plain English: "a", "a and b", "a, b and c"; when an item has a comma of its own
+ * ("chicken breast, skinless"), items are separated by semicolons so none reads as two (CP3
+ * finding 3): "lemon juice; chicken breast, skinless; and garlic".
+ */
+export function listOf(items: readonly string[]): string {
+  if (items.length <= 1) return items.join("");
+  if (items.length === 2 && !items.some((i) => i.includes(","))) return items.join(" and ");
+  const sep = items.some((i) => i.includes(",")) ? "; " : ", ";
+  return `${items.slice(0, -1).join(sep)}${sep === "; " ? "; and " : " and "}${items.at(-1) ?? ""}`;
+}
+
+/** A plate counts as close to its target from this fit (1 = dead centre; CP3 finding 2). */
+export const CLOSE_FIT = 0.75;
+
+const possessive = (name: string) => (name.endsWith("s") ? `${name}'` : `${name}'s`);
+
+/**
+ * How close the targeted plates are, in words, never as a score (UX-7, CP3 finding 2):
+ * "Close to Omar's and Sara's targets", or "Furthest from Omar's target; close to Sara's".
+ */
+function fitReason(
+  targeted: ReadonlyArray<{ memberId: string; fit: number }>,
+  memberName: (id: string) => string,
+): string {
+  const close = targeted.filter((p) => p.fit >= CLOSE_FIT).map((p) => memberName(p.memberId));
+  if (close.length === targeted.length)
+    return `Close to ${listOf(close.map(possessive))} target${close.length === 1 ? "" : "s"}`;
+  const worst = [...targeted].sort((a, b) => a.fit - b.fit)[0];
+  const furthest = `Furthest from ${possessive(memberName(worst?.memberId ?? ""))} target`;
+  return close.length === 0 ? furthest : `${furthest}; close to ${listOf(close.map(possessive))}`;
+}
+
 /** "this week" for the default 7-day window, else "in these N days" (1.4.10 SPEC-Q-3). */
 function windowPhrase(days: number | undefined): string {
   return days === undefined || days === 7 ? "this week" : `in these ${String(days)} days`;
@@ -162,21 +220,21 @@ export function scoreDish(input: ScoreInput): ScoreBreakdown {
 
   const reasons: string[] = [];
   const targeted = input.plates.filter((p) => p.targeted);
-  if (targeted.length > 0)
-    reasons.push(
-      `Macro fit ${targeted.map((p) => `${memberName(p.memberId)} ${p.fit.toFixed(2)}`).join(", ")}`,
-    );
+  if (targeted.length > 0) reasons.push(fitReason(targeted, memberName));
   const liked = input.plates.filter((p) => p.appeal >= 0.25);
   const disliked = input.plates.filter((p) => p.appeal <= -0.25);
   if (liked.length > 0)
-    reasons.push(`Liked by ${liked.map((p) => memberName(p.memberId)).join(", ")}`);
+    reasons.push(`Liked by ${listOf(liked.map((p) => memberName(p.memberId)))}`);
   if (disliked.length > 0)
-    reasons.push(`Less liked by ${disliked.map((p) => memberName(p.memberId)).join(", ")}`);
+    reasons.push(`Less liked by ${listOf(disliked.map((p) => memberName(p.memberId)))}`);
   const when = windowPhrase(input.window.days);
+  // Display names read as prose; structural callers without names get the raw ids as a list.
+  const named = input.label?.ingredient !== undefined;
+  const ingredients = (ids: readonly string[]) =>
+    named ? listOf(ids.map((id) => midSentence(ingredientName(id)))) : ids.join(", ");
   if (econ.reused.length > 0)
-    reasons.push(`Reuses ${econ.reused.map(ingredientName).join(", ")} from other meals ${when}`);
-  if (econ.added.length > 0)
-    reasons.push(`New ${when}: ${econ.added.map(ingredientName).join(", ")}`);
+    reasons.push(`Reuses ${ingredients(econ.reused)} from other meals ${when}`);
+  if (econ.added.length > 0) reasons.push(`New ${when}: ${ingredients(econ.added)}`);
   if (econ.kitchenPenalty > 0)
     reasons.push(
       `Kitchen cooks more than ${String(KITCHEN_FREE_VARIANTS)} variants of a component`,

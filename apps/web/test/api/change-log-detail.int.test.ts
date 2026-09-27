@@ -101,6 +101,21 @@ beforeAll(async () => {
   ok(await callJson(c.changeSetsUndo, { params: { id: ids.weights } }, admin), "undo");
   ids.undo = await latestChangeSet();
 
+  // Dates (CP3 finding 4): a resolved title with a date, and a stored summary with two.
+  ids.override = await apply("Training day", [
+    {
+      kind: "day_override.set",
+      payload: { memberId: sara, date: `${String(YEAR)}-12-14`, kind: "training", active: true },
+    },
+  ]);
+  ids.dated = newId();
+  await app.rt.db.execute(
+    sql`INSERT INTO change_set (id, household_id, actor, actor_user_id, source, summary, forward, inverse, applied_at)
+        VALUES (${ids.dated}, ${admin.householdId}, 'system', NULL, 'learning',
+                ${`Re-solve plates from ${String(YEAR)}-09-27 to ${String(YEAR + 1)}-01-03`},
+                '[]'::jsonb, '[]'::jsonb, '2026-01-03T00:00:00Z')`,
+  );
+
   // A member added and then taken away again: its subject no longer exists.
   const temp = newId();
   ids.vanished = await apply("Add Temp", [
@@ -152,6 +167,17 @@ afterAll(async () => {
 // ------------------------------------------------------------------------------------------------
 // The checks, run on a rendering of the entries (as the change-log screen renders the title)
 // ------------------------------------------------------------------------------------------------
+
+/** The household's current year: signup keeps the default time zone, where it is this year. */
+const YEAR = new Date().getUTCFullYear();
+const readable = (iso: string, withYear = false) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  }) + (withYear ? ` ${iso.slice(0, 4)}` : "");
+const ISO_DATE = /\b\d{4}-\d{2}-\d{2}\b/;
 
 type Render = (e: Entry) => string;
 /** The change-log screen's title: the resolved title, or the stored summary. */
@@ -226,6 +252,32 @@ describe("W-14 change-log subjects", () => {
     expect(raw?.undo.available).toBe(false);
     expect(raw?.undo.reason).toContain('"Blocked Priya (kitchen)"');
     expect(raw?.undo.reason).not.toContain('"Block login"');
+  });
+
+  it('dates read as the mockup writes them: "Mon 28 Sep", with the year only when not this one', () => {
+    const override = entries.find((x) => x.id === ids.override);
+    expect(override?.detail?.title).toBe(
+      `Sara: a training day on ${readable(`${String(YEAR)}-12-14`)}`,
+    );
+    const dated = entries.find((x) => x.id === ids.dated);
+    expect(dated?.detail).toBeUndefined();
+    expect(dated?.summary).toBe(
+      `Re-solve plates from ${readable(`${String(YEAR)}-09-27`)} to ${readable(`${String(YEAR + 1)}-01-03`, true)}`,
+    );
+    const shown = entries.flatMap((e) => [
+      SCREEN(e),
+      e.detail?.subject ?? "",
+      e.undo.reason ?? "",
+      ...(e.detail?.changes ?? []).flatMap((c) => [c.before ?? "", c.after ?? ""]),
+    ]);
+    expect(shown.filter((t) => ISO_DATE.test(t))).toEqual([]);
+  });
+
+  it("negative control: the stored summary, as the log showed it before, has an ISO date", async () => {
+    const rows = await app.rt.db.execute(
+      sql`SELECT summary FROM change_set WHERE id = ${ids.dated ?? ""}`,
+    );
+    expect(ISO_DATE.test((rows.rows[0] as { summary: string }).summary)).toBe(true);
   });
 
   it("a vanished subject renders with the stored title and no detail", () => {

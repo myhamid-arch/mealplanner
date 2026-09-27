@@ -10,6 +10,7 @@ import {
   chatMessage,
   conversation,
   dish,
+  household,
   member,
   newId,
   planDay,
@@ -37,10 +38,16 @@ import type { Runtime } from "./runtime";
 import { iso, plain } from "./serialize";
 
 /** Undo availability; a conflicting change is named by its resolved title when it has one (W-14). */
-function undoDto(u: UndoAvailability, titles: ReadonlyMap<string, EntryDetail> = new Map()) {
+function undoDto(
+  u: UndoAvailability,
+  titles: ReadonlyMap<string, EntryDetail> = new Map(),
+  year = new Date().getUTCFullYear(),
+) {
   if (u.ok) return { available: true, reason: null };
   if (u.reason === "already_undone") return { available: false, reason: "Already undone" };
-  const named = u.conflicts.map((c) => `"${titles.get(c.changeSetId)?.title ?? c.summary}"`);
+  const named = u.conflicts.map(
+    (c) => `"${titles.get(c.changeSetId)?.title ?? withReadableDates(c.summary, year)}"`,
+  );
   return {
     available: false,
     reason: `A later change touched the same settings: ${named.join(", ")}`,
@@ -66,6 +73,13 @@ export async function changeLog(
           ...entries.map((e) => e.changeSet),
           ...(await conflictRows(rt, ctx, entries)),
         ]);
+  const year = await householdYear(rt, ctx);
+  for (const [id, d] of details)
+    details.set(id, {
+      ...d,
+      title: withReadableDates(d.title, year),
+      subject: withReadableDates(d.subject, year),
+    });
   const changes =
     q.area === "support"
       ? []
@@ -75,12 +89,12 @@ export async function changeLog(
           actor: e.changeSet.actor,
           actorUserId: e.changeSet.actorUserId,
           source: e.changeSet.source,
-          summary: e.changeSet.summary,
+          summary: withReadableDates(e.changeSet.summary, year),
           areas: e.areas,
           appliedAt: e.changeSet.appliedAt.toISOString(),
           undoneAt: iso(e.changeSet.undoneAt),
           undoneByChangeSetId: e.changeSet.undoneByChangeSetId,
-          undo: undoDto(e.undo, details),
+          undo: undoDto(e.undo, details, year),
           ...(details.has(e.changeSet.id) ? { detail: details.get(e.changeSet.id) } : {}),
           at: e.changeSet.appliedAt,
         }));
@@ -193,14 +207,22 @@ const num = (v: unknown) =>
 const onOff = (v: unknown) => (v === true ? "on" : v === false ? "off" : (str(v) ?? "none"));
 const WEEKDAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-function shortDate(iso: string): string {
-  const d = new Date(`${iso}T00:00:00Z`);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-GB", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
+/**
+ * CP3 finding 4: ISO dates in an entry's title or summary read as "Mon 28 Sep" (ChangeLog mockup),
+ * with the year only when it is not the household's current year. Calendar dates (plan dates)
+ * are not shifted between time zones; `year` is the current year in the household's time zone.
+ */
+export function withReadableDates(text: string, year: number): string {
+  return text.replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g, (iso, y: string) => {
+    const d = new Date(`${iso}T00:00:00Z`);
+    if (Number.isNaN(d.getTime())) return iso;
+    const day = d.toLocaleDateString("en-GB", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      timeZone: "UTC",
+    });
+    return Number(y) === year ? day : `${day} ${y}`;
   });
 }
 
@@ -543,7 +565,7 @@ const DESCRIBERS: Record<string, Describer> = {
     return {
       key: `member:${id}`,
       subject: name,
-      title: `${name}: ${op.payload.active === true ? "" : "no longer "}${thing} on ${shortDate(date)}`,
+      title: `${name}: ${op.payload.active === true ? "" : "no longer "}${thing} on ${date}`,
       changes: [],
     };
   },
@@ -646,7 +668,7 @@ const DESCRIBERS: Record<string, Describer> = {
   "plan.lock": (op, _images, names) => {
     const meal = names.meals.get(str(op.payload.planMealId) ?? "");
     if (meal === undefined) return null;
-    const subject = `${meal.slot} on ${shortDate(meal.date)}`;
+    const subject = `${meal.slot} on ${meal.date}`;
     return {
       key: `meal:${String(op.payload.planMealId)}`,
       subject,
@@ -657,7 +679,7 @@ const DESCRIBERS: Record<string, Describer> = {
   "plan.unlock": (op, _images, names) => {
     const meal = names.meals.get(str(op.payload.planMealId) ?? "");
     if (meal === undefined) return null;
-    const subject = `${meal.slot} on ${shortDate(meal.date)}`;
+    const subject = `${meal.slot} on ${meal.date}`;
     return {
       key: `meal:${String(op.payload.planMealId)}`,
       subject,
@@ -670,7 +692,7 @@ const DESCRIBERS: Record<string, Describer> = {
     const meal = names.meals.get(id ?? "");
     if (id === null || meal === undefined) return null;
     const { before } = beforeOf(images, "plan_meal", (k) => k.id === id);
-    const subject = `${meal.slot} on ${shortDate(meal.date)}`;
+    const subject = `${meal.slot} on ${meal.date}`;
     const now = words(str(op.payload.status) ?? "");
     const was = str(before?.status);
     return {
@@ -852,6 +874,21 @@ export async function describeChangeSets(
     if (d !== null) out.set(row.id, d);
   }
   return out;
+}
+
+/** The current year in the household's time zone (for the dates in titles). */
+async function householdYear(rt: Runtime, ctx: HouseholdContext): Promise<number> {
+  const [row] = await rt.db
+    .select({ timezone: household.timezone })
+    .from(household)
+    .where(eq(household.id, ctx.householdId));
+  let timeZone = row?.timezone ?? "UTC";
+  try {
+    new Intl.DateTimeFormat("en-GB", { timeZone });
+  } catch {
+    timeZone = "UTC";
+  }
+  return Number(new Intl.DateTimeFormat("en-GB", { timeZone, year: "numeric" }).format(new Date()));
 }
 
 /** The change sets that block an entry's undo and are not themselves on this page. */
