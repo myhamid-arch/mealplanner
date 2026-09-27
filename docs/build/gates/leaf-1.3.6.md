@@ -12,7 +12,7 @@ Scope: Fix the two live-model failures of 2026-09-27 (W-11, R-64): recipe genera
 - [x] G2: agent eval failures diagnosed from live transcripts with root causes recorded; fixes in prompt, tool descriptions or behaviour; eval expectations change only after an architect ruling; 1.3.5 G1-G3 pass
   CHECK: node scripts/verify/leaf-1.3.6.mjs --gate G2
   EXPECT: VERIFY leaf-1.3.6 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=e0b5a8ff686bcd4529e4560432ded16c22983f60ee004f21616dcb58bec2a7fd; exit=0; EXPECT=matched; output-sha256=eac2aaa03df34b9d9f44109ad2a9e0f450cb058e7180a00ac5dfb7d2507b0d23; output-bytes=1749; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=e0b5a8ff686bcd4529e4560432ded16c22983f60ee004f21616dcb58bec2a7fd; exit=0; EXPECT=matched; output-sha256=c29bdfdc51913ea632320621d076c337f3458298e050c71301dacdcf518c3b5a; output-bytes=1769; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G3: live: 1.3.1 G4 generates 3 valid F1 dinner dishes and the agent eval scores at least 90 % on two consecutive full runs, logged under docs/build/live with no key in any log or commit
   EVIDENCE: pending
