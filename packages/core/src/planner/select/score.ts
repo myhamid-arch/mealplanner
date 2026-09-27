@@ -26,16 +26,38 @@ export type ScoreInput = {
     ingredients: ReadonlySet<string>;
     /** Other meal-days in the window, sharing an attendee, with the same cuisine. */
     cuisineMealDays: number;
+    /** The window's length in days (`economy_window_days`), for the reasons' wording (W-12). */
+    days?: number;
   };
-  /** The previous meal of the day sharing an attendee (SPEC-Q-9); null if none. */
-  previous: { cuisineKey: string; mainProtein: string | null; dishName: string } | null;
+  /**
+   * The previous meal of the day sharing an attendee (SPEC-Q-9); null if none. Reasons name it by
+   * its slot (`mealLabel`, "lunch") when given, not by its dish name: dish names often name their
+   * ingredients, and a substituted copy keeps the original name (W-12).
+   */
+  previous: {
+    cuisineKey: string;
+    mainProtein: string | null;
+    dishName: string;
+    mealLabel?: string;
+  } | null;
   weights: Pick<
     PlanWeights,
     "macroPrecision" | "appeal" | "ingredientEconomy" | "variety" | "fairness"
   >;
-  /** Display names for reasons. */
-  label?: { ingredient?: (id: string) => string; member?: (id: string) => string };
+  /** Display names for reasons: ingredient ids, member ids and cuisine keys (W-12). */
+  label?: Labels;
 };
+
+type Labels = {
+  ingredient?: (id: string) => string;
+  member?: (id: string) => string;
+  cuisine?: (key: string) => string;
+};
+
+/** "this week" for the default 7-day window, else "in these N days" (1.4.10 SPEC-Q-3). */
+function windowPhrase(days: number | undefined): string {
+  return days === undefined || days === 7 ? "this week" : `in these ${String(days)} days`;
+}
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 const round3 = (x: number) => Math.round(x * 1000) / 1000;
@@ -81,7 +103,7 @@ export function economyOf(
 }
 
 export function varietyOf(
-  input: Pick<ScoreInput, "dish" | "mainProtein" | "window" | "previous">,
+  input: Pick<ScoreInput, "dish" | "mainProtein" | "window" | "previous" | "label">,
 ): {
   value: number;
   penalties: string[];
@@ -89,14 +111,23 @@ export function varietyOf(
   const penalties: string[] = [];
   let v = 1;
   const { dish, previous } = input;
+  const cuisine = (input.label?.cuisine ?? ((key: string) => key))(dish.cuisineKey);
+  // The previous meal as the reasons name it: "the lunch", or its dish name in structural tests.
+  const earlier =
+    previous === null
+      ? ""
+      : previous.mealLabel === undefined
+        ? previous.dishName
+        : `the ${previous.mealLabel}`;
   if (previous !== null && previous.cuisineKey === dish.cuisineKey) {
     v -= VARIETY_SAME_CUISINE_AS_PREVIOUS;
-    penalties.push(`Same cuisine (${dish.cuisineKey}) as ${previous.dishName} before it`);
+    penalties.push(`Also ${cuisine}, like ${earlier} before it`);
   }
   if (input.window.cuisineMealDays >= VARIETY_CUISINE_REPEAT_LIMIT) {
     v -= VARIETY_CUISINE_THIRD_TIME;
+    const n = input.window.cuisineMealDays;
     penalties.push(
-      `${dish.cuisineKey} already on ${String(input.window.cuisineMealDays)} other days in the window`,
+      `${cuisine} food is already on ${String(n)} other ${n === 1 ? "day" : "days"} ${windowPhrase(input.window.days)}`,
     );
   }
   if (
@@ -105,7 +136,7 @@ export function varietyOf(
     previous.mainProtein === input.mainProtein
   ) {
     v -= VARIETY_SAME_MAIN_PROTEIN;
-    penalties.push(`Same main protein as ${previous.dishName}`);
+    penalties.push(`Same main protein as ${earlier} before it`);
   }
   return { value: Math.max(0, v), penalties };
 }
@@ -141,10 +172,11 @@ export function scoreDish(input: ScoreInput): ScoreBreakdown {
     reasons.push(`Liked by ${liked.map((p) => memberName(p.memberId)).join(", ")}`);
   if (disliked.length > 0)
     reasons.push(`Less liked by ${disliked.map((p) => memberName(p.memberId)).join(", ")}`);
+  const when = windowPhrase(input.window.days);
   if (econ.reused.length > 0)
-    reasons.push(`Reuses ${econ.reused.map(ingredientName).join(", ")} from the window`);
+    reasons.push(`Reuses ${econ.reused.map(ingredientName).join(", ")} from other meals ${when}`);
   if (econ.added.length > 0)
-    reasons.push(`New this window: ${econ.added.map(ingredientName).join(", ")}`);
+    reasons.push(`New ${when}: ${econ.added.map(ingredientName).join(", ")}`);
   if (econ.kitchenPenalty > 0)
     reasons.push(
       `Kitchen cooks more than ${String(KITCHEN_FREE_VARIANTS)} variants of a component`,

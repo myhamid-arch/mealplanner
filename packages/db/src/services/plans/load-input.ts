@@ -187,6 +187,8 @@ export async function toPlanDishes(
                     slug: row.slug,
                     category: row.category,
                     dietaryFlags: row.dietaryFlags,
+                    // 1.4.10 (R-68): the display name for the planner's plain reasons (W-12).
+                    name: row.name,
                   };
                 }),
               },
@@ -199,6 +201,8 @@ export async function toPlanDishes(
       version: d.version,
       name: d.name,
       cuisineKey,
+      // 1.4.10 (R-68): the cuisine label for the planner's plain reasons (W-12).
+      cuisineLabel: catalog.cuisineLabelByKey.get(cuisineKey),
       slotKeys: d.slotKeys,
       status: d.status,
       isPackable: d.isPackable,

@@ -820,6 +820,21 @@ export const ChangeLogEntryDto = z.discriminatedUnion("type", [
     undoneAt: Timestamp.nullable(),
     undoneByChangeSetId: Id.nullable(),
     undo: z.object({ available: z.boolean(), reason: z.string().nullable() }),
+    // 1.4.10 (R-68, W-14): what the entry changed, resolved when the log is read from the ops and
+    // their before-images; absent when the subject no longer exists or spans several subjects.
+    detail: z
+      .object({
+        title: z.string(),
+        subject: z.string(),
+        changes: z.array(
+          z.object({
+            label: z.string(),
+            before: z.string().nullable(),
+            after: z.string().nullable(),
+          }),
+        ),
+      })
+      .optional(),
   }),
   z.object({
     type: z.literal("support_view"),

@@ -34,6 +34,8 @@ export interface DbCatalog {
   methodIdByKey: Map<string, string>;
   cuisineKeyById: Map<string, string>;
   cuisineIdByKey: Map<string, string>;
+  /** 1.4.10 (R-68): cuisine key → label, for the planner's plain reasons (W-12). */
+  cuisineLabelByKey: Map<string, string>;
   methodYields: MethodYield[];
 }
 
@@ -116,6 +118,8 @@ export async function loadDbCatalog(db: Executor, householdId: string | null): P
     methodIdByKey: new Map(methods.map((m) => [m.key, m.id])),
     cuisineKeyById: new Map(cuisines.map((c) => [c.id, c.key])),
     cuisineIdByKey: new Map(cuisines.map((c) => [c.key, c.id])),
+    // 1.4.10 (R-68): cuisine labels for the planner's plain reasons (W-12).
+    cuisineLabelByKey: new Map(cuisines.map((c) => [c.key, c.label])),
     methodYields,
   };
 }
