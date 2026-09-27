@@ -1,0 +1,9 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" node scripts/verify/leaf-1.3.1.mjs --gate G4 | utc: 2026-09-27T09:13:25Z | exit: 1 | commit: 61c3b5bea9f890f461e81dd76f67c4764451a548
+ok   - @mealplanner/core builds with tsc
+ok   - @mealplanner/ai builds with tsc
+ok   - an Anthropic credential is configured (ANTHROPIC_API_KEY)
+model: claude-fable-5-1
+FAIL - live generation completed
+       RecipeGenerationError: recipe generation failed: the response reached max_tokens (20000) before it was complete
+       cause: ClaudeCallError: the response reached max_tokens (20000) before it was complete
+VERIFY leaf-1.3.1 G4 FAILED (1 failed assertion(s))

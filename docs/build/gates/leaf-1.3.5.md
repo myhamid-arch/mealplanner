@@ -20,6 +20,5 @@ Scope: Admin agent loop and tools, as specified in docs/spec (see 11-build-plan.
   EVIDENCE: automatic-evidence=v1; definition-sha256=a86e0a56cb07fc9e0ce45297dcbbf0d1e71d061cc749f557e742b08a04b0f65c; exit=0; EXPECT=matched; output-sha256=7bc1142a175b64e3411ba39f224af9cb9093c2d7c55b0f347cbad6782f77238a; output-bytes=1090; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G4: agent eval set passes at least 90% (HANDOFF if no credentials) (AGT-9)
-  EVIDENCE: pending
+  EVIDENCE: pending (live run 2026-09-27T09:17Z at 61c3b5b, claude-fable-5-1: 26/29 = 89.7 % against 90 %; failed allergy-sesame, weekend-appeal, make-sara-admin; docs/build/live/leaf-1.3.5-G4.log; W-11)
 
-ABANDON: G4 needs a live model: no Anthropic credential exists in the build environment (architect note; 1.3.1 G4 precedent). Owner handoff: `pnpm -r build && RUN_LLM_EVALS=1 ANTHROPIC_API_KEY=… node evals/agent/run.ts` must print ≥ 90 % (29 cases in evals/agent/*.yaml).

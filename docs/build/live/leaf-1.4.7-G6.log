@@ -1,0 +1,10 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" node scripts/verify/leaf-1.4.7.mjs --live | utc: 2026-09-27T09:17:13Z | exit: 0 | commit: 61c3b5bea9f890f461e81dd76f67c4764451a548
+full output: /tmp/leaf-1.4.7-verify/LIVE-2026-09-27T09-17-13.256Z-1092.log
+# G6: live parse of the F1 answers through the real model (owner handoff)
+ok   - workspace packages and the worker are built
+ok   - live people (model claude-fable-5-1) equals the deterministic parse
+ok   - live targets of Adult A (model claude-fable-5-1) equals the deterministic parse
+ok   - live targets of Adult B (model claude-fable-5-1) equals the deterministic parse
+ok   - live never-eat (model claude-fable-5-1) equals the deterministic parse
+       4 calls, 624 tokens, served by claude-fable-5-1
+VERIFY leaf-1.4.7 LIVE PASSED
