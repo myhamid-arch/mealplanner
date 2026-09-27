@@ -11,4 +11,5 @@ export * from "./agent.js";
 export * from "./graph.js";
 export * from "./audit.js";
 export * from "./jobs.js";
+export * from "./setup.js";
 export { newId } from "./ids.js";

@@ -63,6 +63,8 @@ export const TABLES = {
   invite: household(s.invite, ["id"], { memberId: "member" }),
   support_grant: household(s.supportGrant, ["id"]),
   detail_level: household(s.detailLevel, ["id"], { memberId: "member" }),
+  // R-56 (leaf-1.4.7): first-days follow-up answers and dismissals (R2-ONB-6).
+  setup_followup: household(s.setupFollowup, ["id"], { changeSetId: "change_set" }),
   member: household(s.member, ["id"]),
   target_profile: household(s.targetProfile, ["id"], { memberId: "member" }),
   tolerance: household(s.tolerance, ["memberId"], { memberId: "member" }),
@@ -158,6 +160,7 @@ export interface TableRows {
   invite: typeof s.invite.$inferSelect;
   support_grant: typeof s.supportGrant.$inferSelect;
   detail_level: typeof s.detailLevel.$inferSelect;
+  setup_followup: typeof s.setupFollowup.$inferSelect;
   member: typeof s.member.$inferSelect;
   target_profile: typeof s.targetProfile.$inferSelect;
   tolerance: typeof s.tolerance.$inferSelect;

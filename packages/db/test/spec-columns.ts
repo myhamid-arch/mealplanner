@@ -130,6 +130,17 @@ export const SPEC_COLUMNS: Record<string, readonly string[]> = {
   // R-9 e, f
   portion_bias: ["household_id", "member_id", "component_role", "bias"],
   detail_level: ["household_id", "member_id", "section", "level"],
+  // R-56 (leaf-1.4.7 SPEC-Q-11)
+  setup_followup: [
+    "id",
+    "household_id",
+    "key",
+    "status",
+    "choice",
+    "change_set_id",
+    "resolved_by_user_id",
+    "resolved_at",
+  ],
   // 02 §3 + R-9 b, l
   ingredient: [
     "id",
