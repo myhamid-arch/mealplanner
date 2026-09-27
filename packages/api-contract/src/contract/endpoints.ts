@@ -1484,4 +1484,3 @@ export const ENDPOINTS = [
 export const ENDPOINTS_BY_ID: ReadonlyMap<string, (typeof ENDPOINTS)[number]> = new Map(
   ENDPOINTS.map((e) => [e.id, e]),
 );
-
