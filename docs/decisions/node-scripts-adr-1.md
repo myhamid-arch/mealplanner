@@ -76,3 +76,26 @@ Each `node-1.<n>.mjs` holds its node's N2 negative control and its N3.
 ### 7. Output
 
 Every gate writes its full output to a temp log as well, because gate-check keeps a bounded transcript. It prints its elapsed time as its last `ok` line (R-70).
+
+### 8. Sharing the machine (added while gathering evidence)
+
+Twelve gates run at once used all 16 GB of this container and stalled it. The heavy steps now take machine-wide slots: lock directories named like the build locks, and a dead holder's slot is taken over.
+
+| Slot      | Default              | What holds it                                                                                          |
+| --------- | -------------------- | ------------------------------------------------------------------------------------------------------ |
+| `suite`   | 1                    | N2's consumer typechecks and contract tests; N4's format, lint, typecheck, build, unit and integration |
+| `copy`    | 2                    | Every disposable workspace copy (install, build, the control's run)                                    |
+| `e2e-run` | 2 (`NODE_E2E_SLOTS`) | Every Playwright run of any gate                                                                       |
+
+Within one N4, the e2e runs go one at a time (`NODE_E2E_JOBS`, default 1). With two in parallel on this 4-core container, `chat.spec.ts @G1` missed its 5-second wait for a job card once. That is the timing of 1.4.5's spec, not a defect the node gate should hide.
+
+Measured on this container, one gate at a time:
+
+- N4 takes about 25 minutes with two e2e runs in parallel. The e2e runs alone add up to 1749 s sequentially.
+- The suite part (format through integration) takes about 8 minutes.
+
+### 9. Heap size
+
+This environment sets `NODE_OPTIONS=--max-old-space-size=8192`. `eslint .` needs more than the default heap: it ran out of memory at 2 GB.
+
+Children therefore keep the caller's `--max-old-space-size` and nothing else from `NODE_OPTIONS`, so no preload is inherited.
