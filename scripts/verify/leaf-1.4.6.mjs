@@ -574,7 +574,9 @@ async function main() {
     const distDir = `.next/verify-1.4.6-${gate}`;
     const build = await runAsync("pnpm", ["exec", "next", "build"], {
       cwd: WEB_DIR,
-      env: { MISE_NEXT_DIST_DIR: distDir, NEXT_TELEMETRY_DISABLED: "1" },
+      // DATABASE_URL is cleared for the build: with it set, prerendering /offline builds the
+      // runtime, which also needs AUTH_SECRET (architect follow-up, R-50).
+      env: { MISE_NEXT_DIST_DIR: distDir, NEXT_TELEMETRY_DISABLED: "1", DATABASE_URL: "" },
       timeoutMs: 1_200_000,
     });
     if (
