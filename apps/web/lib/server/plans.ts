@@ -500,3 +500,32 @@ export async function kitchenFlag(
     });
   return { reviewId: review.review.id, jobId };
 }
+
+/** BLD-8 R-52: send a day's plan to the kitchen (`plan.publish`, logged and undoable). */
+export async function publishDay(rt: Runtime, caller: CallerContext, date: string) {
+  const applied = await applyChangeSet(rt.db, caller.ctx, {
+    actor: "user",
+    source: "ui",
+    summary: `Send the plan for ${date} to the kitchen`,
+    ops: [{ kind: "plan.publish", payload: { date } }],
+  });
+  return { changeSetId: applied.changeSetId };
+}
+
+/** BLD-8 R-52: mark a meal cooked, skipped or planned (`plan_meal.status`, logged and undoable). */
+export async function setMealStatus(
+  rt: Runtime,
+  caller: CallerContext,
+  planMealId: string,
+  status: "planned" | "cooked" | "skipped",
+) {
+  const m = await createRepos(rt.db, caller.ctx).plan_meal.get({ id: planMealId });
+  if (m === null) throw notFound("plan meal");
+  const applied = await applyChangeSet(rt.db, caller.ctx, {
+    actor: "user",
+    source: "ui",
+    summary: status === "planned" ? "Mark meal as not cooked yet" : `Mark meal ${status}`,
+    ops: [{ kind: "plan_meal.status", payload: { planMealId, status } }],
+  });
+  return { changeSetId: applied.changeSetId, meal: await mealDto(rt, caller, planMealId) };
+}
