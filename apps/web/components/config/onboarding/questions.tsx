@@ -87,7 +87,8 @@ export function PeopleQuestion({
           className="min-h-14 w-full rounded-xl border-2 border-action bg-card px-4 text-lg font-bold sm:text-xl"
         />
       </label>
-      <div className="flex flex-wrap gap-2" aria-live="polite" aria-label="Read as">
+      {/* node-scripts (R-69, R-71): a labelled group; aria-label is prohibited on a div with no role. */}
+      <div className="flex flex-wrap gap-2" role="group" aria-live="polite" aria-label="Read as">
         {people.map((p, i) => (
           <PersonChip key={`${p.name}-${String(i)}`} person={p} index={i} />
         ))}
