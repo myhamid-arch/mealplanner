@@ -182,3 +182,27 @@ describe("jobCompletionEvent", () => {
     });
   });
 });
+
+describe('jobCompletionEvent: recipe drafts (R-61 "Use for")', () => {
+  const job = {
+    id: "job-2",
+    kind: "recipe.draft",
+    status: "succeeded" as const,
+    result: { dishes: [], rejected: [] },
+  };
+  it("carries the requested day and slot on the recipe card", () => {
+    const use = { date: "2026-09-30", slotKey: "dinner", slotLabel: "Dinner" };
+    const content = jobCompletionEvent({ ...job, use }) as { cards: Record<string, unknown>[] };
+    expect(content.cards[1]).toEqual({
+      type: "recipe",
+      jobId: "job-2",
+      dishes: [],
+      rejected: [],
+      use,
+    });
+  });
+  it("without them the recipe card is as before", () => {
+    const content = jobCompletionEvent(job) as { cards: Record<string, unknown>[] };
+    expect(content.cards[1]).toEqual({ type: "recipe", jobId: "job-2", dishes: [], rejected: [] });
+  });
+});

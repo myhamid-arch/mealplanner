@@ -77,16 +77,38 @@ export function remapOps(ops: readonly Op[], created: ReadonlyMap<string, string
 
 const words = (s: string) => s.replace(/_/g, " ");
 
+const WEEKDAY = new Intl.DateTimeFormat("en-GB", { weekday: "short", timeZone: "UTC" });
+
+/**
+ * "Use for Wed dinner" (ChatSidePanel; leaf 1.4.9, R-61): a saved draft's link to its recipe page
+ * with the day and slot the request named (1.4.8's `?date=&slot=`, SPEC-Q-5). Null without both.
+ */
+export function recipeUseLink(
+  dishId: string | null,
+  use: Card["use"],
+): { href: string; label: string } | null {
+  if (dishId === null || use === undefined) return null;
+  const day = new Date(`${use.date}T00:00:00Z`);
+  if (Number.isNaN(day.getTime())) return null;
+  const query = new URLSearchParams({ date: use.date, slot: use.slotKey });
+  return {
+    href: `/recipes/${dishId}?${query.toString()}`,
+    label: `Use for ${WEEKDAY.format(day)} ${use.slotLabel.toLowerCase()}`,
+  };
+}
+
 function DraftView({
   draft,
   draftKey,
   created,
   onCreated,
+  use,
 }: {
   readonly draft: DraftDish;
   readonly draftKey: string;
   readonly created: ReadonlyMap<string, string>;
   readonly onCreated: (slugs: [string, string][]) => void;
+  readonly use: Card["use"];
 }) {
   const { dishIds, refresh, prefill } = useChatData();
   const dishId = draftDishId(draft.ops);
@@ -98,6 +120,7 @@ function DraftView({
   const [error, setError] = useState<string | null>(null);
   const d = draft.dish;
   const already = saved === null && dishId !== null && dishIds.has(dishId);
+  const useFor = recipeUseLink(dishId, use);
 
   useEffect(() => {
     setDiscarded(readDiscarded().has(draftKey));
@@ -205,14 +228,28 @@ function DraftView({
               badge="SAVED TO RECIPES"
             />
             {dishId !== null && (
-              <Link href={`/recipes/${dishId}`} className="text-sm font-extrabold">
-                Open recipe
-              </Link>
+              <div className="flex flex-wrap gap-x-4 gap-y-1">
+                {useFor !== null && (
+                  <Link href={useFor.href} className="text-sm font-extrabold">
+                    {useFor.label}
+                  </Link>
+                )}
+                <Link href={`/recipes/${dishId}`} className="text-sm font-extrabold">
+                  Open recipe
+                </Link>
+              </div>
             )}
           </div>
         ) : already ? (
-          <span className="text-sm font-bold text-basil-text">
-            Saved to recipes. <Link href={`/recipes/${dishId}`}>Open recipe</Link>
+          <span className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-bold text-basil-text">
+            <span>
+              Saved to recipes. <Link href={`/recipes/${dishId}`}>Open recipe</Link>
+            </span>
+            {useFor !== null && (
+              <Link href={useFor.href} className="font-extrabold">
+                {useFor.label}
+              </Link>
+            )}
           </span>
         ) : (
           <div className="flex flex-wrap gap-2">
@@ -269,6 +306,7 @@ export function RecipeCardView({ card }: { readonly card: Card }) {
           onCreated={(pairs) => {
             setCreated((m) => new Map([...m, ...pairs]));
           }}
+          use={card.use}
         />
       ))}
       {card.dishes.length === 0 && card.rejected.length === 0 && (

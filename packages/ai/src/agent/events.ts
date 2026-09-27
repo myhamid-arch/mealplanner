@@ -124,6 +124,8 @@ export interface JobLike {
   status: "succeeded" | "failed" | "cancelled";
   /** The job's result (`done` payload) or error. */
   result: Json;
+  /** `recipe.draft`: the day and slot the request named (both), for the card's "Use for" link. */
+  use?: { date: string; slotKey: string; slotLabel: string };
 }
 
 const JOB_NAMES: Record<string, string> = {
@@ -235,7 +237,13 @@ export function jobCompletionEvent(job: JobLike, plan?: PlanReadyLike): Json {
     const r = (job.result ?? {}) as { dishes?: unknown; rejected?: unknown };
     const dishes = Array.isArray(r.dishes) ? (r.dishes as Json[]) : [];
     const rejected = Array.isArray(r.rejected) ? (r.rejected as Json[]) : [];
-    cards.push({ type: "recipe", jobId: job.id, dishes, rejected });
+    cards.push({
+      type: "recipe",
+      jobId: job.id,
+      dishes,
+      rejected,
+      ...(job.use === undefined ? {} : { use: job.use }),
+    });
     text =
       dishes.length === 0
         ? "No recipe passed the checks this time; the reasons are listed."

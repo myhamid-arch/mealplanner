@@ -147,6 +147,33 @@ async function floatingButtonShown(page: Page): Promise<boolean> {
 }
 
 /**
+ * Waits for the content a check measures (CP3 finding 1): the given element visible, the network
+ * idle, fonts loaded, and the page's layout unchanged over three samples 250 ms apart. Under
+ * concurrent gate load a page can otherwise be measured before it has rendered or hydrated.
+ */
+async function contentSettled(page: Page, selector: string): Promise<void> {
+  await expect(page.locator(selector).first()).toBeVisible({ timeout: 120_000 });
+  await page.waitForLoadState("networkidle");
+  await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  const layout = () =>
+    page.evaluate(() => {
+      const main = document.querySelector("main");
+      const r = main?.getBoundingClientRect();
+      return `${String(document.documentElement.scrollHeight)}/${String(r?.width)}/${String(r?.height)}/${String(main?.querySelectorAll("*").length)}`;
+    });
+  let last = await layout();
+  let same = 0;
+  const deadline = Date.now() + 60_000;
+  while (same < 2) {
+    if (Date.now() > deadline) throw new Error(`layout did not settle (${last})`);
+    await page.waitForTimeout(250);
+    const now = await layout();
+    same = now === last ? same + 1 : 0;
+    last = now;
+  }
+}
+
+/**
  * Elements inside `main` whose box overlaps the side panel's opener, at the top, the middle and
  * the bottom of the page (W-10b). Empty when there is no opener.
  */
@@ -424,7 +451,7 @@ test.describe.serial("@G4 Updates conversation and shell", () => {
       const page = await ctx.newPage();
       for (const path of ["/today", `/plan?week=${w.monday}`, "/settings/planning"]) {
         await page.goto(path);
-        await expect(page.locator("main h1").first()).toBeVisible();
+        await contentSettled(page, "main h1");
         expect(await floatingButtonShown(page), `${path} at ${String(size.width)} px`).toBe(shown);
       }
       if (!shown)
@@ -450,21 +477,23 @@ test.describe.serial("@G4 Updates conversation and shell", () => {
     await expect(panel).toHaveAttribute("data-preview", "ready", { timeout: 300_000 });
     const opener = page.getByRole("button", { name: "Open the assistant panel" });
     await expect(opener).toBeVisible();
+    await contentSettled(page, "[data-preview=ready]");
     expect(await underTheOpener(page), "Planning balance").toEqual([]);
     await shot(page, "planning-balance-1280");
     await page.goto(`/plan?week=${w.monday}`);
-    await expect(page.locator("main h1").first()).toBeVisible();
+    await contentSettled(page, "[data-testid=week-stats]");
     await expect(opener).toBeVisible();
     expect(await underTheOpener(page), "Plan").toEqual([]);
     await shot(page, "plan-1280");
     // On the assistant's own page the panel (and its opener) is not shown.
     await page.goto(`/chat/${w.updatesId}`);
-    await expect(page.locator("[data-plan-ready]")).toBeVisible();
+    await contentSettled(page, "[data-plan-ready]");
     await expect(opener).toHaveCount(0);
     expect(await underTheOpener(page), "Chat").toEqual([]);
     expect(await floatingButtonShown(page)).toBe(false);
     // With the panel open there is no opener, and the page is not narrowed for one.
     await page.goto(`/plan?week=${w.monday}`);
+    await contentSettled(page, "[data-testid=week-stats]");
     await opener.click();
     await expect(page.getByRole("complementary", { name: "Assistant" })).toBeVisible();
     const pad = await page.evaluate(
@@ -488,19 +517,38 @@ test.describe.serial("@G4 Updates conversation and shell", () => {
     const ctx = await contextFor(browser, w.state, DESKTOP);
     const page = await ctx.newPage();
     await page.goto(`/plan?week=${w.monday}`);
+    await contentSettled(page, "[data-testid=week-stats]");
     await expect(page.getByRole("button", { name: "Open the assistant panel" })).toBeVisible();
-    // 1.4.2's padding (before R-63), and content running to the bottom-right corner.
-    await page.addStyleTag({
-      content: "main#main { padding: 28px 32px !important; }",
-    });
-    await page.evaluate(() => {
-      const p = document.createElement("p");
-      p.textContent = "Last line of the page, right-aligned";
-      p.style.textAlign = "right";
-      p.style.marginTop = "400px";
-      document.querySelector("main")?.appendChild(p);
-    });
-    expect((await underTheOpener(page)).length).toBeGreaterThan(0);
+    // 1.4.2's padding (before R-63), and content running to the bottom-right corner. Inserted
+    // idempotently and measured until it is in place: a late hydration can re-render the page and
+    // drop nodes added from outside React.
+    const unreserve = () =>
+      page.evaluate(() => {
+        if (document.getElementById("leaf149-unreserved") === null) {
+          const style = document.createElement("style");
+          style.id = "leaf149-unreserved";
+          style.textContent = "main#main { padding: 28px 32px !important; }";
+          document.head.appendChild(style);
+        }
+        if (document.getElementById("leaf149-last-line") === null) {
+          const p = document.createElement("p");
+          p.id = "leaf149-last-line";
+          p.textContent = "Last line of the page, right-aligned";
+          p.style.textAlign = "right";
+          p.style.marginTop = "400px";
+          document.querySelector("main")?.appendChild(p);
+        }
+      });
+    await expect
+      .poll(
+        async () => {
+          await unreserve();
+          await expect(page.locator("#leaf149-last-line")).toBeVisible();
+          return (await underTheOpener(page)).length;
+        },
+        { timeout: 60_000, intervals: [500, 1000, 2000] },
+      )
+      .toBeGreaterThan(0);
     await ctx.close();
   });
 
@@ -511,10 +559,24 @@ test.describe.serial("@G4 Updates conversation and shell", () => {
     const ctx = await contextFor(browser, w.state, DESKTOP);
     const page = await ctx.newPage();
     await page.goto("/today");
-    await expect(page.locator("main h1").first()).toBeVisible();
+    await contentSettled(page, "main h1");
     expect(await floatingButtonShown(page)).toBe(false);
-    await page.addStyleTag({ content: ".lg\\:hidden { display: block !important; }" });
-    expect(await floatingButtonShown(page)).toBe(true);
+    // Inserted idempotently and re-checked until in place (see the overlap control).
+    await expect
+      .poll(
+        async () => {
+          await page.evaluate(() => {
+            if (document.getElementById("leaf149-forced") !== null) return;
+            const style = document.createElement("style");
+            style.id = "leaf149-forced";
+            style.textContent = ".lg\\:hidden { display: block !important; }";
+            document.head.appendChild(style);
+          });
+          return floatingButtonShown(page);
+        },
+        { timeout: 60_000, intervals: [500, 1000, 2000] },
+      )
+      .toBe(true);
     await ctx.close();
   });
 });

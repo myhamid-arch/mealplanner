@@ -328,6 +328,27 @@ async function planReadyInput(
   };
 }
 
+/**
+ * The day and slot a `recipe.draft` request named, with the slot's label, when it named both and
+ * the slot exists (leaf 1.4.9, R-61): the recipe card's "Use for <Day> <slot>" link.
+ */
+async function requestedUse(
+  rt: WorkerRuntime,
+  householdId: string,
+  job: JobRow,
+): Promise<{ date: string; slotKey: string; slotLabel: string } | undefined> {
+  const p = (job.payload ?? {}) as { date?: unknown; slot?: unknown };
+  if (typeof p.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(p.date)) return undefined;
+  if (typeof p.slot !== "string" || p.slot === "") return undefined;
+  const [slot] = await rt.db
+    .select({ key: slotType.key, label: slotType.label })
+    .from(slotType)
+    .where(and(eq(slotType.householdId, householdId), eq(slotType.key, p.slot)));
+  return slot === undefined
+    ? undefined
+    : { date: p.date, slotKey: slot.key, slotLabel: slot.label };
+}
+
 /** True when an agent turn started the job (its payload names the conversation; R-46, R-49). */
 function agentStarted(job: JobRow): boolean {
   const p = (job.payload ?? {}) as { conversationId?: unknown; source?: unknown };
@@ -364,11 +385,13 @@ export async function postJobCompletion(
   }
   const conversationId = await startingConversation(rt, job);
   if (conversationId === null) return [];
+  const use = job.kind === "recipe.draft" ? await requestedUse(rt, householdId, job) : undefined;
   const content = jobCompletionEvent({
     id: job.id,
     kind: job.kind,
     status: outcome.ok ? "succeeded" : "failed",
     result: outcome.ok ? outcome.result : outcome.error,
+    ...(use === undefined ? {} : { use }),
   });
   return [await insertEvent(rt, householdId, conversationId, content)];
 }

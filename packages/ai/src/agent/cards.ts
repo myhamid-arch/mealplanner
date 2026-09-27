@@ -46,6 +46,11 @@ export interface RecipeCard {
   /** Draft dishes (not saved; Save applies `dish.create`, REC-6) with per-attendee example plates. */
   dishes: Json[];
   rejected: Json[];
+  /**
+   * Optional (leaf 1.4.9, R-61; 1.4.8 SPEC-Q-5): the day and slot the admin asked for, so a saved
+   * draft links to "Use for <Day> <slot>" on its recipe page. Only when the request named both.
+   */
+  use?: { date: string; slotKey: string; slotLabel: string };
 }
 
 export interface MacroTableCard {

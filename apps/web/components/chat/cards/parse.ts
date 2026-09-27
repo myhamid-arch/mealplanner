@@ -80,6 +80,14 @@ export const RecipeCardSchema = z.object({
   jobId: z.string(),
   dishes: z.array(DraftDishSchema),
   rejected: z.array(z.object({ dishName: z.string(), reasons: z.array(Reason) })).default([]),
+  /** leaf 1.4.9 (R-61): the day and slot the request named, for "Use for <Day> <slot>". */
+  use: z
+    .object({
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      slotKey: z.string().min(1),
+      slotLabel: z.string().min(1),
+    })
+    .optional(),
 });
 
 export const MacroRowSchema = z.object({
