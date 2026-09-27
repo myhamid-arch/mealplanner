@@ -94,6 +94,15 @@ describe("relation and possessive phrases (W-10a)", () => {
     expect(parsePeople(text)).toEqual(expected);
   });
 
+  it("the architect's line gives five plain names", () => {
+    // One string, so a failure message shows what the parse named (the negative control reads it).
+    expect(
+      parsePeople("me (41), my wife Sara 39 and our three kids Layla 18, Adam 15 and Zayd 10")
+        .map((x) => x.name)
+        .join(", "),
+    ).toBe("me, Sara, Layla, Adam, Zayd");
+  });
+
   it("a bare singular relation word stays a name when nothing else is given", () => {
     expect(parsePeople("Grandpa, Child C1 18")).toEqual([p("Grandpa", null), p("Child C1", 18)]);
   });

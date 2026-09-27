@@ -103,6 +103,7 @@ const PARSE_NAMES = [
   "F1 written with relation words",
   ...Array.from({ length: PHRASINGS }, (_, i) => `phrasing ${String(i + 1)}: `),
   "a bare singular relation word stays a name when nothing else is given",
+  "the architect's line gives five plain names",
   "gives the viewer, Sara, Layla, Adam and Zayd with their ages",
 ];
 const E2E = [
@@ -665,7 +666,7 @@ async function gateG3(report) {
       const failedPhrasings = pre.tests.filter(
         (t) => /^phrasing \d+: /.test(t.title) && t.status === "failed",
       );
-      const architectLine = byTitle("phrasing 1: ")[0];
+      const architectLine = byTitle("the architect's line gives five plain names")[0];
       report.check(
         pre.code !== 0 &&
           architectLine?.status === "failed" &&
