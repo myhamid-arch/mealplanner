@@ -1,0 +1,83 @@
+# Node verify scripts (R-69): questions and requests
+
+Raised at CP1 of the node-scripts builder. Each entry names the conservative reading the scripts follow until the architect rules.
+
+## SPEC-Q-1: what N4's "web e2e suite" runs
+
+§6 N4 lists "the web e2e suite". No single command runs it today:
+
+- `pnpm --filter @mealplanner/web test:e2e` (`playwright test`) runs `apps/web/e2e/*.spec.ts` with none of the environment the specs need. Only `shell.spec.ts` can pass without a database, a worker, `AUTH_SECRET`, the chat agent stub (`e2e/chat/agent-stub.mjs`), `WORLD_FILE`, the SMTP stub and `MAIL_DIR` (admin), or the graph rebuild (plan G3, 1.4.8 G5).
+- `apps/web/test/chat/updates.e2e.ts` has its own config and lies outside `testDir`.
+- CI runs no Playwright.
+
+Each spec is written to run one gate tag at a time (`--grep @Gn`), each with its own fresh world.
+
+**Reading used.** `lib/node.mjs` runs every Playwright spec file of `apps/web` once per tag group. It uses the environment its leaf scripts give that tag: a fresh database, the built app (its own dist directory and port), the worker, and the stubs the tag needs. It covers:
+
+- `e2e/*.spec.ts`: every `@…` tag found in the file;
+- `test/chat/updates.e2e.ts`: its own config;
+- the node-1.4 specs: their own config.
+
+It takes the counts from each run's JSON report. It fails when:
+
+- any test fails or is skipped;
+- any test in a spec file is left outside every tag group, so an untagged test is never silently not run.
+
+It does not run the leaves' non-e2e assertions; N1 reruns those.
+
+**Alternative.** N4 calls the e2e-owning leaves' own gates (1.4.2 G1/G2, 1.4.3 G1–G3/G5, 1.4.4 G1–G3, 1.4.5 G1–G3, 1.4.6 G1/G2, 1.4.7 G1/G4, 1.4.8 G1/G3–G5, 1.4.9 G4). That reuses their harnesses exactly, but it repeats most of N1 and roughly triples N4's time.
+
+## SPEC-Q-2: N4 is the same for all four nodes
+
+§6 defines N4 identically for every node: "the full suite on the integration tree". Each `node-1.<n>.mjs --gate N4` runs it in full, with no shared result cache, because a cache would be a shared temp file. Running the four N4 gates at the same time therefore runs the full suite four times over. The package builds and `next build` are serialised by the existing cross-process locks. Everything else runs in parallel on its own databases, ports and dist directories.
+
+## SPEC-Q-3: how an F1 admin signs in over HTTP
+
+`loadFixture` (`packages/db/src/services/config/fixtures.ts`) creates F1's users without a credential account, so no F1 login can sign in to the built app.
+
+**Reading used.** The N3 setup (in `packages/db/test/node/**` / `apps/web/test/node/**`) gives F1's admin a password through Better Auth's own API on an in-process runtime (`createRuntime`) for the gate's database. The built app is then reached with the token from `POST /api/auth/sign-in/email`. No production code changes.
+
+## SPEC-Q-4: "every touched table equals its pre-apply snapshot"
+
+Applying a change set through the API also writes rows that are not part of the change and that undo does not restore by design:
+
+- the `change_set` log itself;
+- follow-up `job` rows (`afterChangeSet`);
+- the pg-boss schema;
+- Better Auth `session` rows.
+
+**Reading used.** The comparison covers every public table except `change_set`, `job`, and the auth tables (`session`, `account`, `verification`, `user`). The script asserts that none of the excluded tables is among the tables the change set's own before-images name. The excluded list is printed with the result.
+
+## SPEC-Q-5: SC-2 through the job path, one database per run
+
+The planner's repeat gaps and economy window look back at earlier plan days. Twenty plans (seeds 1–10 × economy weight 0.4 and 0) in one household would therefore influence each other.
+
+**Reading used.**
+
+- Each run uses its own copy of the F1-seeded database (`CREATE DATABASE … TEMPLATE`), with its own worker process.
+- The economy weight is set by a `weights.set` change set through the API before `POST /plans/generate` with the seed.
+- Distinct core ingredients are counted from the persisted plates with 1.2.3's definition: category ≠ `herb_spice`, slug ≠ `water`, over every plate item and adjuster of the week.
+
+## SPEC-Q-6: "recorded model responses"
+
+1.3.5, 1.3.6 and 1.4.9 use scripted, hand-written model responses. None of them captures a live transcript.
+
+**Reading used.** The node N3 gates do the same:
+
+- A local HTTP server answers the Messages API from response files under `apps/web/test/node/recorded/**`:
+  - streamed SSE for the agent (`beta.messages.stream`);
+  - JSON for the worker's structured calls.
+- The built web app and the worker reach it through `ANTHROPIC_BASE_URL` and a placeholder `ANTHROPIC_AUTH_TOKEN`. The model code paths are therefore the production ones, not the `agent-stub.mjs` preload.
+- The server fails the gate on any request it has no recording for.
+- No `ANTHROPIC_API_KEY` is passed to any child process.
+
+## Requests
+
+- **R-1 (none blocking).**
+  - The node tests use file suffixes that the default `vitest` include and Playwright `testMatch` do not collect: `*.node.ts` for vitest and `*.e2e.ts` for Playwright.
+  - Each directory has its own config inside OWNS (`packages/db/test/node/vitest.config.ts`, `apps/web/test/node/vitest.config.ts`, `apps/web/e2e/node-1.4/playwright.config.ts`).
+  - As a result, `test:unit`, `test:integration`, CI and the default Playwright run do not pick them up. They need a running app and worker, which only the node scripts provide.
+  - No test config outside OWNS changes. If the architect wants them in the default suites, that is a request against 1.1.1's manifests.
+- **R-2.**
+  - No `package.json` script is added.
+  - The ledgers call the scripts directly.
