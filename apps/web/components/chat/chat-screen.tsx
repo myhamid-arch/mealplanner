@@ -100,11 +100,13 @@ export function ChatScreen({
   const [badges, setBadges] = useState<Record<string, number>>({});
   const [listOpen, setListOpen] = useState(false);
 
+  // `load.data` keeps its identity between renders (the hook's state), unlike `load` itself.
+  const data = load.status === "ready" ? load.data : null;
   const list = useMemo(() => {
-    const base = load.status === "ready" && load.data.admin ? load.data.list : [];
+    const base = data !== null && data.admin ? data.list : [];
     const seen = new Set(base.map((c) => c.id));
     return [...extra.filter((c) => !seen.has(c.id)), ...base];
-  }, [load, extra]);
+  }, [data, extra]);
 
   // `/chat` without an id: the most recent conversation (chosen once, at the first load), unless
   // a prompt or "New conversation" starts a new one.
@@ -184,10 +186,11 @@ export function ChatScreen({
   const title = list.find((c) => c.id === activeId)?.title ?? "New conversation";
 
   return (
-    <div className="-mx-4 -mt-5 -mb-[calc(100px+env(safe-area-inset-bottom))] flex h-[calc(100dvh-100px)] min-h-0 lg:-mx-8 lg:-my-7 lg:h-dvh">
+    // Phones: a full-screen sheet over the tab bar (AGT-7); desktop: beside the rail.
+    <div className="fixed inset-0 z-40 flex min-h-0 bg-paper lg:relative lg:inset-auto lg:z-auto lg:-mx-8 lg:-my-7 lg:h-dvh">
       <aside
         aria-label="Conversations"
-        className={`${listOpen ? "flex" : "hidden"} absolute inset-0 z-20 w-full flex-col gap-2 overflow-y-auto border-r border-line bg-paper px-3.5 py-[22px] lg:static lg:flex lg:w-[230px] lg:shrink-0`}
+        className={`${listOpen ? "flex" : "hidden"} absolute inset-x-0 top-[68px] bottom-0 z-20 w-full flex-col gap-2 overflow-y-auto border-r border-line bg-paper px-3.5 py-[22px] lg:static lg:flex lg:w-[230px] lg:shrink-0`}
       >
         <Link
           href="/chat?new=1"
@@ -246,21 +249,27 @@ export function ChatScreen({
       </aside>
       <section aria-label="Assistant" className="relative flex min-w-0 grow flex-col px-4 lg:px-0">
         <div className="-mx-4 flex items-center gap-2.5 bg-agent px-3.5 py-3 text-on-agent lg:hidden">
+          <Link
+            href="/today"
+            aria-label="Back"
+            className="flex size-11 items-center justify-center rounded-md text-on-agent hover:text-on-agent"
+          >
+            <Icon name="chevronLeft" strokeWidth={2.5} />
+          </Link>
+          <span aria-hidden className="flex min-w-0 grow flex-col">
+            <span className="text-base font-extrabold">Assistant</span>
+            <span className="truncate text-xs">{title}</span>
+          </span>
           <button
             type="button"
             aria-expanded={listOpen}
             onClick={() => {
               setListOpen((o) => !o);
             }}
-            className="flex size-11 items-center justify-center rounded-md text-on-agent"
-            aria-label="Conversations"
+            className="flex min-h-11 items-center rounded-md px-2 text-sm font-extrabold text-on-agent"
           >
-            <Icon name="chevronLeft" strokeWidth={2.5} />
+            {listOpen ? "Close list" : "Conversations"}
           </button>
-          <span aria-hidden className="flex min-w-0 flex-col">
-            <span className="text-base font-extrabold">Assistant</span>
-            <span className="truncate text-xs">{title}</span>
-          </span>
         </div>
         <h1 className="sr-only">Assistant · {title}</h1>
         {openId === undefined ? null : (

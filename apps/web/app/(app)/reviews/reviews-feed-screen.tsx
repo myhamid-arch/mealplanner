@@ -83,23 +83,23 @@ export function ReviewsFeedScreen({ initialMember }: { readonly initialMember: s
   const [low, setLow] = useState(false);
   const [unanswered, setUnanswered] = useState(false);
 
+  const data = load.status === "ready" ? load.data : null;
   const groups = useMemo(() => {
-    if (load.status !== "ready") return [];
-    const { reviews, resolver } = load.data;
-    return groupReviews(reviews, (r) => resolver.describe(r).title);
-  }, [load]);
+    if (data === null) return [];
+    return groupReviews(data.reviews, (r) => data.resolver.describe(r).title);
+  }, [data]);
 
   const notes = useMemo(() => {
     const out = new Map<string, ProposalNote[]>();
-    if (load.status !== "ready") return out;
-    for (const p of load.data.proposals)
+    if (data === null) return out;
+    for (const p of data.proposals)
       for (const id of evidenceReviewIds(p.evidence))
         out.set(id, [
           ...(out.get(id) ?? []),
           { id: p.id, title: proposalTitle(p), status: p.status },
         ]);
     return out;
-  }, [load]);
+  }, [data]);
 
   const shown = groups.filter((g) => {
     if (who === "kitchen") {
