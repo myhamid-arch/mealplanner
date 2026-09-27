@@ -539,7 +539,7 @@ function Setup({ ctx, adminName }: { readonly ctx: Context; readonly adminName: 
   const asking = step < 5 && phase === "asking";
   const textQuestion = step === 0 || step === 1 || step === 4;
   return (
-    <div className="mx-auto flex w-full max-w-[860px] flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-[860px] flex-col gap-4 pb-[74px] lg:pb-0">
       <div className="flex items-center gap-3">
         <span className="flex size-10 items-center justify-center rounded-md bg-agent text-on-agent">
           <Icon name="assistant" size={22} />
