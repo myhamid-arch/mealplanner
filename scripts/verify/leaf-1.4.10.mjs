@@ -35,14 +35,17 @@
 // on DATABASE_URL's server, else localhost:5432, else a throwaway PostgreSQL 16 cluster), Next.js
 // build directory (.next/verify-1.4.10-<gate>), port, worker and temp directories. Package builds
 // run under a lock shared with the other leaves' scripts; `next build` runs with DATABASE_URL
-// cleared (R-50). Regression gates run as child processes, at most LEAF1410_REGRESSION_JOBS at a
-// time across the whole ledger (default 2); a failure prints their output. 1.4.2's regression gates always run with
-// DATABASE_URL cleared (R-50). G4 captures for the architect (G5) go to $SCREENSHOT_DIR when set.
-// Two regressions run alone, each last in its gate, under a lock the ledger's gates share (it
-// waits until the other gates have finished, and a gate started meanwhile waits for it): 1.2.6 G2
-// (G1) runs 1.2.5 G1–G4, which need an idle machine (R-54), and 1.2.2 G1–G5, which delete and
-// rebuild packages/core/dist/src/planner in place; 1.4.1 G2 (G3) measures live SSE delivery in
-// wall-clock time (CP3 finding 1). With gates in parallel, G1 and G3 therefore end after G2 and G4.
+// cleared (R-50). 1.4.2's regression gates always run with DATABASE_URL cleared (R-50). G4
+// captures for the architect (G5) go to $SCREENSHOT_DIR when set.
+//
+// Regression gates (other leaves' verify scripts, run as child processes) run after the gate's
+// own checks, under a lock the ledger's gates share: a gate's regressions start only when every
+// other gate has finished its own checks, and one gate's regressions run at a time, two in
+// parallel. Other leaves' tests carry fixed 5 s and 10 s budgets that concurrent load breaks (CP3
+// finding 1). Within that phase two run by themselves, last: 1.2.6 G2 (G1) runs 1.2.5 G1–G4, which
+// need an idle machine (R-54), and 1.2.2 G1–G5, which delete and rebuild
+// packages/core/dist/src/planner in place; 1.4.1 G2 (G3) measures live SSE delivery in wall-clock
+// time. With the gates in parallel, the gate whose regressions run last ends last.
 import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import {
@@ -247,32 +250,6 @@ async function acquireExclusive() {
     });
   while (others().length > 0) await pause(2000);
   return () => rmSync(EXCLUSIVE, { recursive: true, force: true });
-}
-
-/**
- * One of the ledger's regression slots (LEAF1410_REGRESSION_JOBS, default 2), shared by every gate
- * of this ledger: with the gates in parallel, at most that many other leaves' gates run at once.
- * Their tests carry fixed timeouts (5 s, 10 s hooks) that more load than that breaks.
- */
-async function acquireSlot() {
-  const slots = Math.max(1, Number(process.env.LEAF1410_REGRESSION_JOBS ?? "2") || 2);
-  for (;;) {
-    for (let i = 0; i < slots; i += 1) {
-      const dir = join(tmpdir(), `mealplanner-leaf1410-slot-${LEDGER_LOCK}-${String(i)}`);
-      try {
-        mkdirSync(dir);
-        writeFileSync(join(dir, "pid"), String(process.pid));
-        return () => rmSync(dir, { recursive: true, force: true });
-      } catch (error) {
-        if (error.code !== "EEXIST") throw error;
-        const file = join(dir, "pid");
-        const pid = existsSync(file) ? Number(readFileSync(file, "utf8")) : NaN;
-        if (Number.isInteger(pid) && pid > 0 && !processAlive(pid))
-          rmSync(dir, { recursive: true, force: true });
-      }
-    }
-    await pause(1000);
-  }
 }
 
 /** A cross-process lock (atomic mkdir); a lock left by a dead process is taken over. */
@@ -661,14 +638,12 @@ function findFiles(dir, name) {
 }
 
 /** Other leaves' gates as child processes, `jobs` at a time; each must print its PASSED marker. */
-async function regressions(report, list) {
-  const jobs = Math.max(1, Number(process.env.LEAF1410_REGRESSION_JOBS ?? "2") || 2);
+async function regressions(report, list, jobs = 2) {
   const queue = [...list];
   const results = new Map();
   const workers = Array.from({ length: Math.min(jobs, queue.length) }, async () => {
     for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
       const [leaf, gate] = next;
-      const releaseSlot = await acquireSlot();
       const started = Date.now();
       const r = await runAsync(
         process.execPath,
@@ -682,7 +657,6 @@ async function regressions(report, list) {
           timeoutMs: 1_700_000,
         },
       );
-      releaseSlot();
       results.set(`${leaf} ${gate}`, { ...r, seconds: Math.round((Date.now() - started) / 1000) });
     }
   });
@@ -741,20 +715,24 @@ async function gateG1(report) {
   );
   const picked = /W-12 substitution: (.+)/.exec(int.output)?.[1];
   report.check(picked !== undefined, `the substitution replaced: ${picked ?? "(not reported)"}`);
-  await regressions(report, REGRESSIONS.G1);
-  await alone(report, REGRESSIONS.G1_EXCLUSIVE);
+  await alone(report, [REGRESSIONS.G1, 2], [REGRESSIONS.G1_EXCLUSIVE, 1]);
 }
 
-/** Regression gates run last, with nothing else of this ledger running (the exclusive lock). */
-async function alone(report, list) {
+/**
+ * A gate's regression gates, after its own checks, with nothing else of this ledger running: the
+ * exclusive lock waits until every other gate has finished its own checks, and one gate's
+ * regressions run at a time (CP3 finding 1: other leaves' tests carry fixed 5 s and 10 s budgets
+ * that concurrent load breaks). Each [list, jobs] runs in turn, `jobs` at a time.
+ */
+async function alone(report, ...lists) {
   releaseShared();
   const waited = Date.now();
   const release = await acquireExclusive();
   console.log(
-    `info - waited ${String(Math.round((Date.now() - waited) / 1000))} s for this ledger's other gates to finish (${list.map((x) => x.join(" ")).join(", ")})`,
+    `info - waited ${String(Math.round((Date.now() - waited) / 1000))} s for this ledger's other gates`,
   );
   try {
-    await regressions(report, list);
+    for (const [list, jobs] of lists) await regressions(report, list, jobs);
   } finally {
     release();
   }
@@ -784,7 +762,7 @@ async function gateG2(report) {
       readFileSync(record, "utf8").includes("edge(s) name a node that does not exist"),
     "the W-13 reproduction is recorded (docs/decisions/leaf-1.4.10-w13.md)",
   );
-  await regressions(report, REGRESSIONS.G2);
+  await alone(report, [REGRESSIONS.G2, 2]);
 }
 
 async function gateG3(report) {
@@ -798,8 +776,7 @@ async function gateG3(report) {
   );
   const kinds = /described op kinds: (.+)/.exec(r.output)?.[1];
   console.log(`info - op kinds with a resolved title: ${kinds ?? "?"}`);
-  await regressions(report, REGRESSIONS.G3);
-  await alone(report, REGRESSIONS.G3_EXCLUSIVE);
+  await alone(report, [REGRESSIONS.G3, 2], [REGRESSIONS.G3_EXCLUSIVE, 1]);
 }
 
 async function gateG4(report) {
@@ -885,7 +862,7 @@ async function gateG4(report) {
     server.stop();
     rmSync(outDir, { recursive: true, force: true });
   }
-  await regressions(report, REGRESSIONS.G4);
+  await alone(report, [REGRESSIONS.G4, 2]);
 }
 
 const GATES = { G1: gateG1, G2: gateG2, G3: gateG3, G4: gateG4 };

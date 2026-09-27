@@ -124,9 +124,17 @@ events live (done after 23 s; about 9 s alone). What was tried here, on this con
 gate of the ledger has ended (the exclusive lock; G3 ended at about 210 s in each run here).
 
 Reading: the failure is real and was not reproduced here, so no single concurrent process is named as
-its cause. 1.4.1 G2's check is a wall-clock measurement of live delivery, like 1.2.5's idle
-measurement, so G3 now runs it last, alone (the ledger's exclusive lock), where nothing else of the
-ledger competes with it. The ledger-wide regression slots (two at a time) stay for the rest.
+its cause. The first concurrent reverify after the fix above (1.4.1 G2 alone) failed elsewhere in
+the same way: 1.4.8 G1's "undo through the change log puts both days back exactly" hit its 5 s
+vitest budget while two regression gates ran beside the other gates' own checks (a `next build`,
+Playwright, several worker runtimes). Other leaves' tests carry fixed 5 s and 10 s budgets, so any
+nested regression is exposed to whatever else the ledger runs.
+
+The fix is structural: each gate runs its own checks concurrently, as before, and all its
+regression gates afterwards, in the exclusive phase. That phase starts only when every other gate has
+finished its own checks, and one gate's regressions run at a time, two in parallel. 1.2.6 G2 and
+1.4.1 G2 run by themselves at the end of their lists. With the gates in parallel, the gate whose
+regressions run last ends last (measured in the PR).
 
 ## SPEC-Q-10: "close to" a target (CP3 finding 2)
 
