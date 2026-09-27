@@ -18,7 +18,7 @@ import type { Cuisine } from "../data";
 
 export const MON_FRI = [0, 1, 2, 3, 4];
 
-function Heading({
+export function Heading({
   n,
   title,
   lead,

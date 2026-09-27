@@ -105,6 +105,8 @@ function Schedule({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  /** On/off switches show the new state at once; the stored state replaces it after the reload. */
+  const [switching, setSwitching] = useState<Readonly<Record<string, boolean>>>({});
   const selectedKey =
     params.get("slot") ?? data.slots.find((s) => s.active)?.key ?? data.slots[0]?.key;
   const selected = data.slots.find((s) => s.key === selectedKey) ?? data.slots[0];
@@ -176,13 +178,19 @@ function Schedule({
         >
           <input
             type="checkbox"
-            checked={slot.active}
+            checked={switching[slot.id] ?? slot.active}
             aria-label={`${slot.label} on`}
-            onChange={() =>
-              void run(`${slot.active ? "Turn off" : "Turn on"} ${slot.label}`, [
-                { kind: "slot.update", payload: { slotTypeId: slot.id, active: !slot.active } },
-              ])
-            }
+            onChange={() => {
+              const next = !(switching[slot.id] ?? slot.active);
+              setSwitching({ ...switching, [slot.id]: next });
+              void run(`${next ? "Turn on" : "Turn off"} ${slot.label}`, [
+                { kind: "slot.update", payload: { slotTypeId: slot.id, active: next } },
+              ]).finally(() => {
+                setSwitching((s) =>
+                  Object.fromEntries(Object.entries(s).filter(([k]) => k !== slot.id)),
+                );
+              });
+            }}
             className="size-5 shrink-0 accent-[var(--action)]"
           />
           <button

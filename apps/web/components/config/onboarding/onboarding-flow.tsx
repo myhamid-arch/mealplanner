@@ -25,6 +25,7 @@ import { ErrorBlock, LoadingBlock } from "../parts";
 import {
   CuisineQuestion,
   defaultWeek,
+  Heading,
   NeverQuestion,
   PeopleQuestion,
   TargetsQuestion,
@@ -338,10 +339,17 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
               )}
               {step === 1 &&
                 (people.length === 0 ? (
-                  <p className="m-0 text-ink-soft">
-                    Nobody is listed in question 1, so there is no one to give targets to. Skip, or
-                    go back.
-                  </p>
+                  <>
+                    <Heading
+                      n={2}
+                      title="Who follows macro targets?"
+                      lead="Tap the people who do. Type their numbers in any format, or paste them from a coach."
+                    />
+                    <p className="m-0 text-ink-soft">
+                      Nobody is listed in question 1, so there is no one to give targets to. Skip,
+                      or go back.
+                    </p>
+                  </>
                 ) : (
                   <TargetsQuestion
                     people={people}

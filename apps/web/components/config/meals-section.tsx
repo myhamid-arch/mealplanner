@@ -215,7 +215,10 @@ export function MealsSection({
           />
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4" data-split="detailed">
+        <div
+          className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2.5"
+          data-split="detailed"
+        >
           {split.slots.map((slot) => {
             const share = split.shares[slot.id] ?? 0;
             const isYours = split.yours.has(slot.id);
@@ -234,7 +237,7 @@ export function MealsSection({
                 </span>
                 {editing === slot.id ? (
                   <form
-                    className="flex items-center gap-1.5"
+                    className="flex flex-wrap items-center gap-1.5"
                     onSubmit={(e) => {
                       e.preventDefault();
                       const n = readNumber(draft);
