@@ -401,8 +401,12 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
     const head = group[0];
     if (head === undefined) continue;
     const terms = [...new Set(group.map((r) => r.term))];
+    // Allergies and medical rules name what the flag covers (R2-ONB-3: "sesame → tahini, hummus,
+    // za'atar"); a household rule says it covers sauces and marinades instead.
     const including = group
-      .filter((r) => r.kind === "dietary_flag")
+      .filter(
+        (r) => r.kind === "dietary_flag" && (r.reason === "allergy" || r.reason === "medical"),
+      )
       .flatMap((r) => r.covers)
       .map((slug) => names.get(slug) ?? slug)
       .filter((name) => !terms.some((t) => normalise(name).includes(normalise(t))));

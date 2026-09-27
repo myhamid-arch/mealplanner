@@ -11,12 +11,13 @@ import { idFactory, MemoryTx, newHousehold } from "./memory-tx.js";
 // test/planner/select/seed-files.ts.
 declare global {
   interface ImportMeta {
-    glob<T>(pattern: string, options: { eager: true; import: "default" }): Record<string, T>;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- T names the JSON shape at the call site
+    glob<T>(pattern: string, options: { eager: true }): Record<string, { default: T }>;
   }
 }
 
-function dataFile<T>(files: Record<string, T>, name: string): T {
-  const [value] = Object.values(files);
+function dataFile<T>(files: Record<string, { default: T }>, name: string): T {
+  const value = Object.values(files)[0]?.default;
   if (value === undefined) throw new Error(`data file ${name} not found`);
   return value;
 }
@@ -34,7 +35,6 @@ export function catalogueIngredients(): CatalogueIngredient[] {
   const file = dataFile(
     import.meta.glob<{ ingredients: IngredientFileRow[] }>("../../../../data/ingredients.v1.json", {
       eager: true,
-      import: "default",
     }),
     "ingredients.v1.json",
   );
@@ -50,7 +50,6 @@ export function catalogueCuisines(): { key: string; label: string }[] {
   return dataFile(
     import.meta.glob<{ key: string; label: string }[]>("../../../../data/cuisines.json", {
       eager: true,
-      import: "default",
     }),
     "cuisines.json",
   ).map((c) => ({ key: c.key, label: c.label }));

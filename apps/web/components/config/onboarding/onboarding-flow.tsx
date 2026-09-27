@@ -18,6 +18,7 @@ import {
   type TargetParse,
 } from "@mealplanner/core/onboarding";
 import { api, applyChanges, c, problemText, useLoad } from "../api";
+import { newId } from "../ids";
 import type { Cuisine, Ingredient, Slot } from "../data";
 import { FLAG_LABEL } from "../never-serve";
 import { ErrorBlock, LoadingBlock } from "../parts";
@@ -190,7 +191,7 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
       ingredients: ctx.ingredients,
       satFatDefaultPct: ctx.satFatDefaultPct,
       newId: () => {
-        ids.current[i] ??= crypto.randomUUID();
+        ids.current[i] ??= newId();
         const id = ids.current[i] as string;
         i += 1;
         return id;

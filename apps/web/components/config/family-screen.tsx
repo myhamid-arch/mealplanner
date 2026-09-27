@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { MEMBER_COLOR_ORDER, weekdayText } from "@mealplanner/core/onboarding";
 import { isAvatarColor } from "@mealplanner/ui-tokens/tokens";
 import { api, applyChanges, c, problemText } from "./api";
+import { newId } from "./ids";
 import { hhmm, memberAge, useHousehold, type HouseholdData, type Member } from "./data";
 import { MealsSection } from "./meals-section";
 import { FLAG_LABEL, NeverServeList } from "./never-serve";
@@ -123,7 +124,7 @@ function AddPerson({
           setError("Age is a number of years.");
           return;
         }
-        const id = crypto.randomUUID();
+        const id = newId();
         const appetite =
           years === null ? "medium" : years >= 14 ? "large" : years >= 8 ? "medium" : "small";
         void applyChanges(`Add ${name.trim()}`, [
