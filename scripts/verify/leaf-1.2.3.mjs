@@ -575,6 +575,9 @@ async function gateG2() {
       );
     }
     const agg = sc2Aggregate(reductions);
+    console.log(
+      `info - reduction over seeds 1–${G2_SEEDS}: min ${pct(agg.min)}, median ${pct(agg.median)}, max ${pct(agg.max)}`,
+    );
     report.check(
       reductions.length === G2_SEEDS && agg.pass,
       `SC-2: distinct core ingredients over the F1 week, economy 0.4 against 0, seeds 1–${G2_SEEDS}: median ${pct(agg.median)} fewer (>= ${pct(SC2_MEDIAN)}), min ${pct(agg.min)} (>= ${pct(SC2_MIN)}), max ${pct(agg.max)}`,
