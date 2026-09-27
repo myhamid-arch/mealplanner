@@ -157,7 +157,10 @@ export const insightsRun: JobHandler = async (ctx) => {
   const hh = systemCtx(ctx.household().householdId);
   const expired = await expireProposals(ctx.rt.db, hh);
   const digest = await runInsights(ctx.rt.db, hh, { synthesize: synthesizeFor(ctx.rt, hh) });
-  await postInsightDigest(ctx.rt, ctx.job, digest);
+  // The proposals are committed: a failed chat post is logged, and does not fail the run (CP3).
+  await postInsightDigest(ctx.rt, ctx.job, digest).catch((error: unknown) => {
+    ctx.log.error({ err: error }, "the insights digest could not be posted to chat");
+  });
   return toJson({
     expired,
     runAt: digest.runAt,

@@ -54,3 +54,45 @@ export function assertAppendOnly(wire: readonly string[]): void {
     if (prefix !== wire[i - 1]) throw new Error(`request ${String(i)} changed earlier messages`);
   }
 }
+
+interface Row {
+  role: string;
+  content: unknown;
+}
+
+/**
+ * AGT-8, written independently of `history.ts` (CP3 finding 1): what the stored rows say was sent.
+ * User and assistant rows are their content verbatim, a tool row's `results` are one user message,
+ * event rows are not sent.
+ */
+export function storedAsSent(rows: readonly Row[]): unknown[] {
+  return rows.flatMap((r) => {
+    if (r.role === "user" || r.role === "assistant") return [{ role: r.role, content: r.content }];
+    if (r.role === "tool")
+      return [{ role: "user", content: (r.content as { results: unknown }).results }];
+    return [];
+  });
+}
+
+/**
+ * Every request sent is, byte for byte, the stored rows up to that point; and each request's last
+ * user turn (a message with text blocks) ends with the digest `digestOf` expects for it.
+ */
+export function assertSentMatchesStored(
+  wire: readonly string[],
+  rows: readonly Row[],
+  digestOk: (text: string) => boolean,
+): void {
+  const stored = storedAsSent(rows);
+  wire.forEach((sent, i) => {
+    const n = (JSON.parse(sent) as unknown[]).length;
+    if (sent !== JSON.stringify(stored.slice(0, n)))
+      throw new Error(`request ${String(i)} is not the stored rows as sent`);
+    const turns = (
+      JSON.parse(sent) as { role: string; content: { type: string; text?: string }[] }[]
+    ).filter((m) => m.role === "user" && m.content.some((b) => b.type === "text"));
+    const last = turns.at(-1)?.content.at(-1);
+    if (last?.type !== "text" || !digestOk(last.text ?? ""))
+      throw new Error(`request ${String(i)} does not end its user turn with the digest`);
+  });
+}

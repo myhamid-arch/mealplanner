@@ -108,6 +108,7 @@ const GATES = {
       "G3 three turns: each request replays the stored rows byte-for-byte; GET returns the stored blocks",
     ],
     negative: [
+      "G3 negative control: requests without the digest, or unlike the stored rows, fail the check",
       "G3 negative control: an edited earlier message breaks the append-only check",
       "G3 negative control: an edited stored row no longer replays the bytes that were sent",
     ],

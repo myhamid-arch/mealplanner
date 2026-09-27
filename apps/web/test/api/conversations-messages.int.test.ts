@@ -15,7 +15,6 @@ import * as c from "@mealplanner/api-contract/contract";
 import { ChatStreamEventDto } from "@mealplanner/api-contract/contract";
 import {
   AgentAbortedError,
-  replay,
   type AgentModel,
   type AgentRequest,
   type AgentStreamEvent,
@@ -508,6 +507,43 @@ function assertReplayed(wire: readonly string[]): void {
   }
 }
 
+/**
+ * AGT-8, written in this test and independent of the agent's `history.ts` (CP3 finding 1): what
+ * the stored rows say was sent. User and assistant rows are their content verbatim, a tool row's
+ * `results` are one user message, event rows are not sent.
+ */
+function storedAsSent(rows: readonly { role: string; content: unknown }[]): unknown[] {
+  return rows.flatMap((r) => {
+    if (r.role === "user" || r.role === "assistant") return [{ role: r.role, content: r.content }];
+    if (r.role === "tool")
+      return [{ role: "user", content: (r.content as { results: unknown }).results }];
+    return [];
+  });
+}
+
+/** Each request sent is the stored rows up to that point, byte for byte, and its user turn ends
+ * with the household digest (AGT-3). */
+function assertSentMatchesStored(
+  wire: readonly string[],
+  rows: readonly { role: string; content: unknown }[],
+): void {
+  const stored = storedAsSent(rows);
+  wire.forEach((sent, i) => {
+    const messages = JSON.parse(sent) as {
+      role: string;
+      content: { type: string; text?: string }[];
+    }[];
+    if (sent !== JSON.stringify(stored.slice(0, messages.length)))
+      throw new Error(`request ${String(i)} is not the stored rows as sent`);
+    const turn = messages
+      .filter((m) => m.role === "user" && m.content.some((b) => b.type === "text"))
+      .at(-1);
+    const last = turn?.content.at(-1);
+    if (last?.type !== "text" || !(last.text ?? "").startsWith("Household digest ("))
+      throw new Error(`request ${String(i)} does not end its user turn with the digest`);
+  });
+}
+
 describe("G3 history is append-only and replayed verbatim", () => {
   it("G3 three turns: each request replays the stored rows byte-for-byte; GET returns the stored blocks", async () => {
     const id = await newConversation(w.a.admin);
@@ -528,9 +564,8 @@ describe("G3 history is append-only and replayed verbatim", () => {
     expect(stub.wire).toHaveLength(5);
     assertReplayed(stub.wire);
     const rows = await conversationRows(rt, w.a.id, id);
-    // The next request would be exactly the replay of the stored rows; it extends the last one.
-    const next = JSON.stringify(replay(rows));
-    assertReplayed([...stub.wire, next]);
+    // Every request is the stored rows as sent (independent mapping), each ending with the digest.
+    assertSentMatchesStored(stub.wire, rows);
     // The stored assistant blocks are the response blocks (thinking signature kept).
     const firstAssistant = rows.find((x) => x.role === "assistant");
     expect(firstAssistant?.content).toEqual([
@@ -559,10 +594,18 @@ describe("G3 history is append-only and replayed verbatim", () => {
       .update(chatMessage)
       .set({ content: [{ type: "text", text: "Hi (edited)" }] })
       .where(eq(chatMessage.id, first.id));
-    const edited = JSON.stringify(replay(await conversationRows(rt, w.a.id, id)));
+    const edited = await conversationRows(rt, w.a.id, id);
     expect(() => {
-      assertReplayed([...stub.wire, edited]);
-    }).toThrow(/not an append-only extension/);
+      assertSentMatchesStored(stub.wire, edited);
+    }).toThrow(/not the stored rows as sent/);
+    // And a request that lost its digest (CP3 mutation M3) fails too.
+    const sent = JSON.parse(stub.wire[0] ?? "[]") as { content: unknown[] }[];
+    const withoutDigest = JSON.stringify(
+      sent.map((m) => ({ ...m, content: m.content.slice(0, -1) })),
+    );
+    expect(() => {
+      assertSentMatchesStored([withoutDigest], rows);
+    }).toThrow(/not the stored rows as sent|does not end its user turn/);
   });
 });
 

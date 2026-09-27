@@ -2,8 +2,8 @@
 // turns, the replayed prefix is byte-identical to what was sent before. The database-level proof
 // (real jsonb storage and the POST route) is in apps/web/test/api/conversations-messages.int.test.ts.
 import { describe, expect, it } from "vitest";
-import { replay, runAgentTurn, type StoredMessage } from "../../src/agent/index.js";
-import { assertAppendOnly } from "./assertions.js";
+import { runAgentTurn, type StoredMessage } from "../../src/agent/index.js";
+import { assertAppendOnly, assertSentMatchesStored } from "./assertions.js";
 import { DIGEST, MemoryStore, ScriptedModel, message, text, thinking, toolUse } from "./support.js";
 
 async function turnOn(store: MemoryStore, model: ScriptedModel, userText: string) {
@@ -40,9 +40,9 @@ describe("G3 history replay", () => {
     await turnOn(store, model, "Any proposals?");
     expect(model.calls).toBe(5);
     assertAppendOnly(model.wire);
-    // The final replay is exactly the last request plus the final assistant row.
-    const final = JSON.stringify(replay(store.rows));
-    expect(final.startsWith((model.wire.at(-1) ?? "").slice(0, -1))).toBe(true);
+    // Each request is the stored rows as sent, mapped independently of history.ts (CP3 finding 1),
+    // and each user turn ends with that turn's digest (AGT-3).
+    assertSentMatchesStored(model.wire, store.rows, (t) => t === DIGEST);
     // The stored user rows carry the screen context and the digest, last.
     const user = store.rows.find((r) => r.role === "user")?.content as { text: string }[];
     expect(user.map((b) => b.text)).toEqual([
@@ -50,6 +50,23 @@ describe("G3 history replay", () => {
       "Recipe: Chicken shawarma bowl",
       DIGEST,
     ]);
+  });
+
+  it("G3 negative control: requests without the digest, or unlike the stored rows, fail the check", async () => {
+    const store = new MemoryStore();
+    const model = new ScriptedModel([message([text("Hi.")], "end_turn")]);
+    await turnOn(store, model, "Hello");
+    // A sender that drops the digest block (the defect of CP3 mutation M3).
+    const sent = JSON.parse(model.wire[0] ?? "[]") as { content: unknown[] }[];
+    const withoutDigest = JSON.stringify(
+      sent.map((m) => ({ ...m, content: m.content.slice(0, -1) })),
+    );
+    expect(() => {
+      assertSentMatchesStored([withoutDigest], store.rows, (t) => t === DIGEST);
+    }).toThrow(/not the stored rows as sent/);
+    expect(() => {
+      assertSentMatchesStored(model.wire, store.rows, (t) => t === "another digest");
+    }).toThrow(/does not end its user turn with the digest/);
   });
 
   it("G3 negative control: an edited earlier message breaks the append-only check", () => {
