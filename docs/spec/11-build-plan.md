@@ -60,6 +60,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
     1.2.2 Target resolver + portion solver ................ gates/leaf-1.2.2.md
     1.2.3 Dish scoring, plan search, cook sheet ........... gates/leaf-1.2.3.md
     1.2.4 Seed dish library ............................... gates/leaf-1.2.4.md
+    1.2.5 Deterministic solver limit (W-4) ................ gates/leaf-1.2.5.md
   1.3 Intelligence ....................................... gates/node-1.3.md
     1.3.1 Claude client + recipe generator ................ gates/leaf-1.3.1.md
     1.3.2 Reviews + preference learning ................... gates/leaf-1.3.2.md
@@ -86,6 +87,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 | 1.4.2 | `packages/ui-tokens/**`, `apps/web/app/layout.tsx`, `apps/web/app/globals.css`, `apps/web/app/(shell)/**`, `apps/web/app/(app)/layout.tsx`, `apps/web/components/ui/**`, `apps/web/public/**`, `apps/web/next.config.*`, `apps/web/playwright.config.ts`, `apps/web/postcss.config.mjs`, `apps/web/e2e/shell.spec.ts`, `scripts/verify/leaf-1.4.2.mjs` | 1.1.1 | judgment | 2 |
 | 1.2.2 | `packages/core/src/planner/targets/**`, `packages/core/src/planner/solver/**`, `packages/core/test/planner/solver/**`, `packages/core/test/planner/targets/**`, `scripts/verify/leaf-1.2.2.mjs` | 1.1.2, 1.2.1 | judgment | 3 |
 | 1.2.4 | `data/seed-dishes/**`, `data/adjusters.json`, `scripts/verify/leaf-1.2.4.mjs`, `packages/core/src/nutrition/atwater.ts`, `packages/core/src/nutrition/index.ts` (export only), `packages/core/test/nutrition/atwater.test.ts` (R-30) | 1.1.3, 1.2.2 | judgment | 4 |
+| 1.2.5 | `packages/core/src/planner/solver/**`, `packages/core/test/planner/solver/**`, `scripts/verify/leaf-1.2.5.mjs` | 1.2.3 | measured | 4 |
 | 1.3.2 | `packages/core/src/learning/preferences/**`, `packages/core/src/learning/portions/**`, `packages/core/test/learning/prefs/**`, `packages/db/src/services/reviews/**`, `packages/db/test/reviews/**`, `packages/db/src/schema/review-revision.ts`, `packages/db/src/migrations/0002_*`, `packages/db/src/migrations/meta/**`, `scripts/verify/leaf-1.3.2.mjs` (plus the single-entry edits granted in R-26) | 1.1.2 | judgment | 3 |
 | 1.2.3 | `packages/core/src/planner/select/**`, `packages/core/src/planner/cooksheet/**`, `packages/core/src/planner/solver/**` (R-38, performance only), `packages/core/test/planner/solver/**` (R-38), `packages/core/src/planner/index.ts`, `packages/core/test/planner/select/**`, `scripts/verify/leaf-1.2.3.mjs` | 1.2.2, 1.2.4 | judgment | 5 |
 | 1.3.1 | `packages/ai/src/client/**`, `packages/ai/src/recipes/**`, `packages/ai/test/recipes/**`, `scripts/verify/leaf-1.3.1.mjs` | 1.1.2, 1.2.2 | judgment | 4 |
@@ -151,6 +153,12 @@ Each gate below becomes a ledger entry. Runnable gates use `CHECK: node scripts/
 - G3 Every variant passes nutrition validation. ≥ 15 adjuster dishes exist.
 - G4 For F1 targets, ≥ 80 % of dishes are feasible for both targeted adults at their dinner target.
 - G5 (manual) Architect review of 10 random recipes for culinary plausibility, UAE availability and step clarity.
+
+**1.2.5 Deterministic solver limit (W-4)**
+- G1 Determinism under load: F1 week plans for seeds 1–3 are identical across 3 idle runs and 3 runs with every CPU saturated by busy processes. Negative control: the same comparison reports a plan that differs in one dish.
+- G2 Budget (R-38, PLN-11): worst day ≤ 4.0 s CPU and week ≤ 30 s wall on an idle machine, measured and printed.
+- G3 Quality: over seeds 1–10 of the F1 week, the median plan objective is within 0.5 % of the 0.25 s wall-clock baseline measured idle on the same machine, and SC-1's in-tolerance rate is not lower. Both measured, baseline included.
+- G4 No regression: 1.2.3 G1, G3, G4, G5 and 1.2.2 G1–G5 pass; 1.2.3 G2 is reported (W-3 open).
 
 **1.3.1 Claude client + recipe generator**
 - G1 With a recorded-response stub, the pipeline accepts a valid batch and rejects one of each defect class from REC-5 (bad slug, exclusion violation, variant drift, Atwater failure, duplicate, infeasible). Each rejection reason is surfaced.
@@ -419,3 +427,4 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   3. `packages/core/src/learning/rules/satisfied.ts`, `exclusion.add`: already satisfied only when a covering row exists **and** the member's own row for that key, if any, has the same `reason` and `hard`. Reason: guardrails check "protected" before "satisfied", so an admin's protected relaxing request through chat (`agent_chat`) was dropped as satisfied and lost; engine drafts are unaffected because they are dropped as `protected` first. Unit tests: the agent relaxing case becomes a pending proposal; an engine duplicate with the same reason and `hard` stays satisfied; an engine dislike over an existing allergy row is still dropped (1.3.3 G1–G3).
   4. SPEC-Q-18: `apps/worker/src/jobs/handlers.ts` `planGenerate` attributes a plan to `{ actor: "agent", source: "agent_apply" }` when the job payload says `source: "agent"` (R2-ADM-7). Condition: `source` is set only server-side by the agent adapter; `POST /plans/generate` must not accept it from a client body (a test sends it and shows it ignored or rejected). SPEC-Q-17 accepted.
 - **R-50 (1.4.6 CP3, architect follow-up).** `scripts/verify/leaf-1.4.6.mjs` inherited the caller's `DATABASE_URL` into `next build`; with it set (ADR-3's own first choice), prerendering `/offline` builds the runtime, which also requires `AUTH_SECRET`, and G1/G2 failed at the build step (reproduced at `50abdc1`; both passed with `DATABASE_URL` unset). Fix on the base branch: the build step clears `DATABASE_URL`. 1.4.6 SPEC-Q-16 … 20 accepted as recorded. G3 (visual review): PeopleAccess, HouseholdSettings compared with their mockups; passed with the listed deviations.
+- **R-51 (W-4 follow-up leaf).** Leaf 1.2.5 "Deterministic solver limit" is added under node 1.2 (§1, §4, §5; `gates/leaf-1.2.5.md`; node-1.2 now integrates it). With 1.2.3 merged, `packages/core/src/planner/solver/**` and its tests pass to 1.2.5. The per-combination wall-clock `time_limit` is replaced by a deterministic HiGHS work limit (node / iteration / leaf limits as available in the installed `highs` build) calibrated to the same budget; any remaining wall-clock guard may only cut off a run as a failure, never change which plan is chosen. PLN-5's text in 04 is updated by the architect once the calibration is measured.
