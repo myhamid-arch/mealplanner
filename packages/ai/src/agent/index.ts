@@ -74,3 +74,14 @@ export {
   type ToolCall,
   type ToolOutput,
 } from "./types.js";
+export {
+  EVAL_PASS_THRESHOLD,
+  EvalCaseSchema,
+  EvalFileSchema,
+  contains,
+  gradeCase,
+  passRate,
+  type EvalCase,
+  type Grade,
+  type RecordedCall,
+} from "./evals.js";

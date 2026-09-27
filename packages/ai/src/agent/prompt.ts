@@ -90,7 +90,7 @@ export interface DigestSnapshot {
   };
   pendingProposals: number;
   agentMayApply: boolean;
-  today: { date: string; status: "planned" | "partly planned" | "not planned"; meals: number };
+  today: { date: string; status: "planned" | "not planned"; meals: number };
 }
 
 /** The digest text block (AGT-3): appended last in each user turn. */

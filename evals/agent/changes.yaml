@@ -1,0 +1,90 @@
+# AGT-9 eval cases: changes the admin explicitly asks for (apply_change; protected ones become
+# proposals on the server). Household: evals/agent/household.ts (F1 with names).
+cases:
+  - id: set-protein
+    prompt: "Set Sara's protein to 140 g"
+    expect:
+      ops: [target.set]
+      via: apply_change
+      payloads:
+        - kind: target.set
+          match: { kind: default, profile: { proteinG: 140 } }
+  - id: allergy-sesame
+    prompt: "Omar is allergic to sesame"
+    expect:
+      ops: [exclusion.add]
+      via: apply_change
+      payloads:
+        - kind: exclusion.add
+          match: { kind: ingredient, key: sesame-seeds, reason: allergy, hard: true }
+    mustNot:
+      payloads:
+        - kind: exclusion.add
+          match: { reason: allergy, hard: false }
+  - id: religious-household
+    prompt: "We don't eat pork, for religious reasons. That goes for everyone."
+    expect:
+      ops: [exclusion.add]
+      payloads:
+        - kind: exclusion.add
+          match: { memberId: null, reason: religious }
+  - id: dislike-freekeh
+    prompt: "Sara doesn't like freekeh, keep it off her plate"
+    expect:
+      ops: [exclusion.add]
+      payloads:
+        - kind: exclusion.add
+          match: { kind: ingredient, reason: dislike }
+    mustNot:
+      payloads:
+        - kind: exclusion.add
+          match: { reason: allergy }
+  - id: weekend-appeal
+    prompt: "Make weekends more about appeal"
+    expect:
+      ops: [preset.upsert]
+      payloads:
+        - kind: preset.upsert
+          match: { appliesToWeekdays: [5, 6] }
+  - id: appeal-weight
+    prompt: "Set the appeal weight to 0.8"
+    expect:
+      ops: [weights.set]
+      via: apply_change
+      payloads:
+        - kind: weights.set
+          match: { appeal: 0.8 }
+  - id: shawarma-more-often
+    prompt: "We love the chicken shawarma wrap, put it on more often"
+    expect:
+      ops: [frequency.set]
+  - id: undo-last
+    prompt: "Undo the last change you made"
+    expect:
+      tools: [undo_change]
+  - id: fat-tolerance
+    prompt: "Loosen Omar's fat tolerance to 5 g"
+    expect:
+      ops: [tolerance.set]
+      payloads:
+        - kind: tolerance.set
+          match: { fatG: 5 }
+  - id: sara-trains-sunday
+    prompt: "Sara trains on Sundays at 7 in the morning now, on top of her usual days"
+    expect:
+      ops: [training.set]
+  - id: no-friday-lunchbox
+    prompt: "Zayd doesn't need a packed school lunch on Fridays any more"
+    expect:
+      ops: [slot_schedule.set]
+  - id: archive-adam
+    prompt: "Adam moved out for university, take him off the meal plan"
+    expect:
+      ops: [member.archive]
+  - id: make-sara-admin
+    prompt: "Make Sara an admin too"
+    expect:
+      ops: [role.set]
+      payloads:
+        - kind: role.set
+          match: { role: admin }

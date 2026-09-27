@@ -1,0 +1,26 @@
+# AGT-9 eval cases: background jobs and things the agent must leave to the app.
+cases:
+  - id: plan-next-week
+    prompt: "Plan next week"
+    expect:
+      tools: [generate_plan]
+    mustNot:
+      tools: [apply_change]
+  - id: plan-tomorrow
+    prompt: "Plan tomorrow"
+    expect:
+      tools: [generate_plan]
+  - id: new-breakfast
+    prompt: "Give me a new high-protein breakfast recipe"
+    expect:
+      tools: [create_recipe]
+    mustNot:
+      tools: [apply_change]
+  - id: swap-for-fish
+    prompt: "Swap Monday's dinner for something with fish"
+    expect:
+      anyOf: [suggest_alternatives, search_dishes]
+  - id: block-kitchen
+    prompt: "Block the kitchen login"
+    mustNot:
+      ops: [access.block]
