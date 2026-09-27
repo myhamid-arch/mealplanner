@@ -158,16 +158,15 @@ function planDiffs(x: readonly PlannedMeal[], y: readonly PlannedMeal[]): string
         .map((p) => ({
           member: p.memberId,
           fit: p.fitStatus,
-          items: p.solution.items.map((i) => [
-            i.componentId,
-            i.variantId,
-            Math.round(i.cookedG * 10) / 10,
-          ]),
-          adjusters: p.solution.adjusters.map((i) => [
-            i.dishId,
-            i.variantId,
-            Math.round(i.cookedG * 10) / 10,
-          ]),
+          // Order-free: stored plate items come back in storage order, not dish order.
+          items: p.solution.items
+            .map((i) => [i.componentId, i.variantId, Math.round(i.cookedG * 10) / 10])
+            .sort((u, v) => String(u[0]).localeCompare(String(v[0]))),
+          adjusters: p.solution.adjusters
+            .map((i) => [i.dishId, i.variantId, Math.round(i.cookedG * 10) / 10])
+            .sort((u, v) =>
+              `${String(u[0])}${String(u[1])}`.localeCompare(`${String(v[0])}${String(v[1])}`),
+            ),
         })),
     });
   const ym = new Map(y.map((m) => [key(m), m]));
@@ -175,7 +174,10 @@ function planDiffs(x: readonly PlannedMeal[], y: readonly PlannedMeal[]): string
   for (const m of x) {
     const n = ym.get(key(m));
     if (n === undefined) diffs.push(`${key(m)} only in the first plan`);
-    else if (shape(m) !== shape(n)) diffs.push(`${key(m)} differs`);
+    else if (shape(m) !== shape(n)) {
+      diffs.push(`${key(m)} differs`);
+      console.log(`G2 detail: ${key(m)}\n  first  ${shape(m)}\n  second ${shape(n)}`);
+    }
   }
   for (const m of y)
     if (!x.some((n) => key(n) === key(m))) diffs.push(`${key(m)} only in the second plan`);

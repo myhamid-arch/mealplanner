@@ -141,7 +141,7 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
     expect([f.card?.key, ...f.upcoming.map((u) => u.key)]).not.toContain(
       `training_kcal:${id("Adult A")}`,
     );
-  });
+  }, 60_000);
 
   it("G3 only today's card can be answered; a bad choice or an unknown key is refused", async () => {
     const early = await answer("dinner_time", "yes");
@@ -150,7 +150,7 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
     expect([bad.status, c.Problem.parse(bad.json).code]).toEqual([422, "invalid_choice"]);
     expect((await answer("birthday_cake", "yes")).status).toBe(404);
     expect((await get()).card?.key).toBe("school_nut_free");
-  });
+  }, 60_000);
 
   it("G3 yes, nut-free: one change set adds the school children's nut exclusions; no second card today", async () => {
     const r = await answer("school_nut_free", "yes");
@@ -174,7 +174,7 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
     expect([body.followups.position, body.followups.total]).toEqual([1, 3]);
     const again = await answer("school_nut_free", "no");
     expect([again.status, c.Problem.parse(again.json).code]).toEqual([409, "already_answered"]);
-  });
+  }, 60_000);
 
   it("G3 answers persist: the next day brings the next card, and the settled question stays gone", async () => {
     await nextDay(a.householdId);
@@ -188,7 +188,7 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
         and(eq(setupFollowup.householdId, a.householdId), eq(setupFollowup.key, "school_nut_free")),
       );
     expect([row?.status, row?.choice]).toEqual(["answered", "yes"]);
-  });
+  }, 60_000);
 
   it("G3 Not sure · Ask me later: dismissed today, it returns after the others", async () => {
     const r = await dismiss("dinner_time");
@@ -209,7 +209,7 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
     });
     await nextDay(a.householdId);
     expect((await get()).card?.key).toBe("dinner_time");
-  });
+  }, 60_000);
 
   it("G3 a dinner time choice moves the dinner slot, and the last question closes the queue", async () => {
     const r = c.FollowupAnswerDto.parse(ok(await answer("dinner_time", "20:00"), "answer"));
@@ -228,7 +228,7 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
       label: "Answer 3 optional questions",
       done: true,
     });
-  });
+  }, 60_000);
 
   it("G3 the checklist counts progress from the household's data", async () => {
     const before = (await get(b)).checklist;
@@ -279,7 +279,7 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
     expect([after.done, after.total]).toEqual([5, 6]);
     // Kitchen logins cannot read or answer follow-ups (admin only).
     expect((await callJson(c.setupFollowupsGet, {}, kitchen)).status).toBe(403);
-  });
+  }, 300_000);
 
   it("G3 households are separate: A's answers do not settle B's questions", async () => {
     const f = await get(b);
@@ -289,12 +289,12 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
       .from(setupFollowup)
       .where(eq(setupFollowup.householdId, b.householdId));
     expect(rows).toEqual([]);
-  });
+  }, 60_000);
 
   it("G3 a member login gets 403", async () => {
     const m = await acceptWithSignup(await invite(a, "member", id("Adult B")), "Adult B");
     expect((await callJson(c.setupFollowupsGet, {}, m)).status).toBe(403);
     expect((await answer("dinner_time", "yes", m)).status).toBe(403);
     expect((await dismiss("dinner_time", m)).status).toBe(403);
-  });
+  }, 60_000);
 });

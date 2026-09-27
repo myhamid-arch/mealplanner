@@ -121,16 +121,24 @@ export function metricsOf(meals: readonly PlannedMeal[], dishes: Dishes): Previe
 
 const mealKey = (m: PlannedMeal) => `${m.date}|${m.slotKey}|${m.memberScope}`;
 
-/** A plate's variant per component: component id → "Fried eggs". */
+/**
+ * A plate's variant per component, in the dish's component order: component id → "Fried eggs".
+ * (Stored plate items come back in storage order, so the order is taken from the dish.)
+ */
 function plateVariants(meal: PlannedMeal, memberId: string, dishes: Dishes): Map<string, string> {
-  const out = new Map<string, string>();
+  const labels = new Map<string, string>();
   const plate = meal.plates.find((p) => p.memberId === memberId);
   for (const item of plate?.solution.items ?? []) {
     const found = variantOf(dishes, meal.dishId, item.variantId);
     if (found !== null)
-      out.set(item.componentId, `${found.variant.label} ${found.component.name.toLowerCase()}`);
+      labels.set(item.componentId, `${found.variant.label} ${found.component.name.toLowerCase()}`);
   }
-  return out;
+  const order = dishes.get(meal.dishId)?.components.map((c) => c.id) ?? [];
+  const rank = (id: string) => {
+    const i = order.indexOf(id);
+    return i === -1 ? order.length : i;
+  };
+  return new Map([...labels].sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b)));
 }
 
 function side(meal: PlannedMeal, dishes: Dishes, variants: string[] = []): PreviewSide {
