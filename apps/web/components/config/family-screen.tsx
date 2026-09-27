@@ -453,19 +453,19 @@ export function FamilyScreen({ selectedId }: { readonly selectedId: string | nul
             member={selected}
             onChanged={reload}
           />
+          <MealsSection data={data} member={selected} onChanged={reload} />
           <div className="grid gap-4 xl:grid-cols-2">
-            <MealsSection data={data} member={selected} onChanged={reload} />
             <TrainingSection
               key={`tr-${JSON.stringify(data.schedules.training.filter((t) => t.memberId === selected.id))}`}
               data={data}
               member={selected}
               onChanged={reload}
             />
-            <TastesSection data={data} member={selected} onChanged={reload} />
             <Section id="never-serve" title="Allergies & never-serve">
               <NeverServeList data={data} member={selected} onChanged={reload} />
             </Section>
           </div>
+          <TastesSection data={data} member={selected} onChanged={reload} />
         </div>
       )}
     </div>

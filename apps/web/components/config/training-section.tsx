@@ -70,7 +70,7 @@ export function TrainingSection({
       ) : (
         <>
           <p className="m-0 text-sm text-ink-soft">One-off change? Tap a day in the week plan.</p>
-          <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0 sm:grid-cols-4 lg:grid-cols-7">
+          <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(88px,1fr))] gap-2 p-0">
             {WEEKDAY_SHORT.map((label, weekday) => {
               const day = shown.find((d) => d.weekday === weekday);
               const on = day !== undefined;

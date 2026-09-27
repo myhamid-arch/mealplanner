@@ -216,7 +216,7 @@ function CuisineChoices({
   ];
   return (
     <ul
-      className="m-0 grid list-none grid-cols-1 gap-1.5 p-0 sm:grid-cols-2"
+      className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(min(300px,100%),1fr))] gap-1.5 p-0"
       data-tastes="detailed"
     >
       {keys.map((key) => {
@@ -279,7 +279,7 @@ function CuisineChoices({
             <div
               role="radiogroup"
               aria-label={`${member.displayName} and ${cuisineLabel(data, key)}`}
-              className="flex gap-1"
+              className="flex flex-wrap gap-1"
             >
               {(
                 [
