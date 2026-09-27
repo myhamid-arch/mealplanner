@@ -17,7 +17,7 @@ Scope: Catalogue data, as specified in docs/spec (see 11-build-plan.md §5 and 1
 - [x] G3: method-yield rows exist with a source for every (method, category) used by the seed library (NUT-5)
   CHECK: node scripts/verify/leaf-1.1.3.mjs --gate G3
   EXPECT: VERIFY leaf-1.1.3 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=92316b3950a73cdb1db8302465b58c33d6dbc1f41f0e5849142a33e7001e1bd6; exit=0; EXPECT=matched; output-sha256=3842f89693a23cd177986eb24d564f80e255da95518d99ffd5a242eb4fc7cbee; output-bytes=1141; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=92316b3950a73cdb1db8302465b58c33d6dbc1f41f0e5849142a33e7001e1bd6; exit=0; EXPECT=matched; output-sha256=3b7a2f316e8dd2a58c7b6250aed7ac8a3d05beb20492dc4dea8855aa51b9539a; output-bytes=1118; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: soluble-fibre values carry citations; unknowns are null, not 0 (NUT-8)
   CHECK: node scripts/verify/leaf-1.1.3.mjs --gate G4
