@@ -112,6 +112,15 @@ describe("G3 follow-ups proposed from the F1 answers (R2-ONB-6)", () => {
     for (const f of proposed) expect(f.choices.length).toBeLessThanOrEqual(4);
   });
 
+  it("G3 the questions do not depend on the order the rows are stored in", async () => {
+    const { tx } = await household();
+    const cfg = configOf(tx);
+    const reversed = { ...cfg, members: [...cfg.members].reverse() };
+    expect(proposeFollowups(reversed).map((f) => f.question)).toEqual(
+      proposeFollowups(cfg).map((f) => f.question),
+    );
+  });
+
   it("G3 the viewer's own training question says your", async () => {
     const { tx, id } = await household();
     const [, , training] = proposeFollowups(configOf(tx), { viewerMemberId: id("Adult B") });

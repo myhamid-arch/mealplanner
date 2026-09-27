@@ -1,7 +1,8 @@
 "use client";
 // Today's follow-up question (R2-ONB-6; FirstDaysPhone.dc.html "QUICK QUESTION · 1 OF 3"): one-tap
 // choices and "Not sure · Ask me later". Shown on /getting-started; the Today page shows the same
-// card once 1.4.4 carries it (R-56, R-15).
+// card once 1.4.4 carries it (R-56, R-15). Only agent-surface tokens are used on the card: the
+// agent colour stays dark in both themes, while tints and `card` invert in dark (UX-5 contrast).
 import Link from "next/link";
 import type { SetupFollowups } from "./types";
 
@@ -28,7 +29,7 @@ export function FollowupCard({
       data-followup={card.key}
       className="flex flex-col gap-3 rounded-[20px] bg-agent p-4 text-on-agent"
     >
-      <span className="text-xs font-extrabold tracking-[0.08em] text-aubergine-tint">
+      <span className="text-xs font-extrabold tracking-[0.08em] text-on-agent">
         QUICK QUESTION · {position} OF {total}
       </span>
       <h2 id="followup-question" className="m-0 font-body text-lg leading-snug font-extrabold">
@@ -44,7 +45,7 @@ export function FollowupCard({
               onAnswer(choice.id);
             }}
             className={`min-h-12 rounded-xl px-3 font-extrabold disabled:opacity-60 ${
-              i === 0 ? "bg-card text-agent" : "bg-agent-raised text-on-agent"
+              i === 0 ? "bg-on-agent text-agent" : "bg-agent-raised text-on-agent"
             }`}
           >
             {choice.label}
@@ -56,7 +57,7 @@ export function FollowupCard({
           type="button"
           disabled={busy}
           onClick={onLater}
-          className="min-h-11 self-start py-1 text-sm font-extrabold text-aubergine-tint disabled:opacity-60"
+          className="min-h-11 self-start py-1 text-sm font-extrabold text-on-agent disabled:opacity-60"
         >
           Not sure · Ask me later
         </button>

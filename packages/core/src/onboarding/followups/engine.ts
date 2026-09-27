@@ -70,8 +70,15 @@ export const DINNER_TIMES = ["19:00:00", "20:00:00", "20:30:00"] as const;
 
 const hhmm = (time: string) => time.slice(0, 5);
 
+/** Active members, oldest first, then by name (a stable order whatever order the rows come in). */
 function activeMembers(cfg: FollowupConfig) {
-  return cfg.members.filter((m) => m.archivedAt === null);
+  return cfg.members
+    .filter((m) => m.archivedAt === null)
+    .sort(
+      (a, b) =>
+        (a.birthYear ?? Number.MAX_SAFE_INTEGER) - (b.birthYear ?? Number.MAX_SAFE_INTEGER) ||
+        a.displayName.localeCompare(b.displayName),
+    );
 }
 
 /** Active members who attend the school lunch box on at least one weekday. */
