@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState, type SyntheticEvent } from "react";
+import { useEffect, useId, useRef, useState, type SyntheticEvent } from "react";
 import type { z } from "zod";
 import {
   changeSetsApply,
@@ -67,9 +67,13 @@ export function InviteDialog({
   const [created, setCreated] = useState<{ invite: Invite; emailedTo: string | null } | null>(null);
   const roleName = useId();
 
-  // Each opening starts a fresh invite, seated at the member it was opened for.
+  // Each opening starts a fresh invite, seated at the member it was opened for. Only the
+  // opening resets the form (the member list is recomputed by the parent on every render).
+  const wasOpen = useRef(false);
   useEffect(() => {
-    if (!open) return;
+    const opening = open && !wasOpen.current;
+    wasOpen.current = open;
+    if (!opening) return;
     const first = members[0];
     setSeat(
       initialMemberId !== null
