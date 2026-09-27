@@ -619,7 +619,7 @@ const FLOWS: readonly Flow[] = [
     session: "admin",
     run: async (p, scan) => {
       await p.goto("/insights");
-      const open = p.getByRole("button", { name: "Open the assistant beside this page" });
+      const open = p.getByRole("button", { name: "Open the assistant panel" });
       if (!(await open.isVisible())) return; // phones: the chat is a full-screen page instead
       await open.click();
       await expect(p.getByRole("complementary", { name: "Assistant" })).toBeVisible();

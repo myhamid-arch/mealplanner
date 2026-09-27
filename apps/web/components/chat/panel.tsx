@@ -94,7 +94,7 @@ export function ChatPanel({ labels }: { readonly labels: Readonly<Record<string,
         onClick={() => {
           toggle(true);
         }}
-        aria-label="Open the assistant beside this page"
+        aria-label="Open the assistant panel"
         className="fixed right-6 bottom-6 z-30 flex size-[58px] items-center justify-center rounded-full bg-agent text-on-agent shadow-raised hover:bg-agent-raised"
       >
         <Icon name="assistant" size={26} />
