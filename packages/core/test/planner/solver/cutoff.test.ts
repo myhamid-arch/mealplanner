@@ -3,7 +3,7 @@
 // optimum.
 import { beforeAll, describe, expect, it } from "vitest";
 import { loadPortionSolver } from "../../../src/planner/solver/index.js";
-import { solveMilp } from "../../../src/planner/solver/highs.js";
+import { solveMilp, type WorkLimit } from "../../../src/planner/solver/highs.js";
 import {
   buildPlateModel,
   gridOf,
@@ -12,6 +12,9 @@ import {
 } from "../../../src/planner/solver/milp.js";
 import type { SolverCase } from "./fixtures/cases.js";
 import { adjusterCases, feasibleCases } from "./fixtures/cases.js";
+
+/** HiGHS's largest node and iteration limits: every model is solved to proven optimality. */
+const UNLIMITED: WorkLimit = { mipNodes: 2_147_483_647, lpIterations: 2_147_483_647 };
 
 beforeAll(async () => {
   await loadPortionSolver();
@@ -63,7 +66,7 @@ describe("solveMilp cutoff", () => {
     let notCut = 0;
     for (const { c, adj } of cases) {
       const milp = modelOf(c, adj);
-      const plain = solveMilp(milp, 5);
+      const plain = solveMilp(milp, UNLIMITED);
       if (plain.status !== "solved") continue;
       solved++;
       // solvePlate reads only the rounded integer columns and recomputes the rest in TypeScript;
@@ -71,7 +74,7 @@ describe("solveMilp cutoff", () => {
       const ints = (x: readonly number[]) =>
         x.flatMap((v, i) => (milp.integrality[i] === 0 ? [] : [Math.round(v) + 0]));
       for (const cutoff of [plain.objective + 1e-4, plain.objective + 10]) {
-        const cut = solveMilp(milp, 5, cutoff);
+        const cut = solveMilp(milp, UNLIMITED, cutoff);
         expect(cut.status).toBe("solved");
         if (cut.status !== "solved") continue;
         expect(ints(cut.x)).toEqual(ints(plain.x));
@@ -80,7 +83,7 @@ describe("solveMilp cutoff", () => {
       // Below the optimum, HiGHS stops early: no solution, or a feasible point that is never
       // better than the optimum (so it can never win the comparison in runStage).
       if (plain.objective > 0.05) {
-        const below = solveMilp(milp, 5, plain.objective - 0.05);
+        const below = solveMilp(milp, UNLIMITED, plain.objective - 0.05);
         if (below.status === "solved") {
           expect(below.objective).toBeGreaterThanOrEqual(plain.objective - 1e-9);
           notCut++;
