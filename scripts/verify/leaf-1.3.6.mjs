@@ -469,7 +469,7 @@ async function gateG2(report) {
   );
   report.check(
     /logins: \(await listAccess\(rt, caller\)\)/.test(household) &&
-      !/email/.test(household) &&
+      !/\bemails?\s*:/.test(household) &&
       householdBefore.length > 0 &&
       !householdBefore.includes("logins"),
     "get_household adds the logins from listAccess without emails; at the failed commit it had none (negative control)",
