@@ -103,6 +103,15 @@ export const JobProgressCardSchema = z.object({
   kind: z.string(),
   status: z.enum(["queued", "running", "succeeded", "failed", "cancelled"]),
   error: z.string().optional(),
+  /** leaf 1.4.9 (W-9b): a plan no agent turn started, announced in Updates. */
+  ready: z
+    .object({
+      title: z.string(),
+      facts: z.array(z.string()),
+      href: z.string(),
+      action: z.string(),
+    })
+    .optional(),
 });
 
 export const InsightDigestCardSchema = z.object({
@@ -113,6 +122,18 @@ export const InsightDigestCardSchema = z.object({
   ),
   dropped: z.array(z.object({ title: z.string(), reason: z.string() })),
   notes: z.array(z.object({ title: z.string(), rationale: z.string() }).loose()),
+  /** leaf 1.4.9 (W-9a): changes made automatically since the previous digest; older digests lack it. */
+  automatic: z
+    .array(
+      z.object({
+        changeSetId: z.string(),
+        title: z.string(),
+        detail: z.string(),
+        appliedAt: z.string(),
+        undone: z.boolean(),
+      }),
+    )
+    .default([]),
 });
 
 export const IterationLimitCardSchema = z.object({
