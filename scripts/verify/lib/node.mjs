@@ -791,9 +791,10 @@ async function listTests(webDir, config, file) {
       { cwd: webDir, env: { PLAYWRIGHT_JSON_OUTPUT_NAME: reportFile }, timeoutMs: 300_000 },
     );
     if (r.code !== 0) throw new Error(`playwright --list ${config} ${file ?? ""}:\n${tail(r, 30)}`);
-    const configDir = dirname(join(webDir, config));
+    // Spec paths in the report are relative to the config's test directory (config.rootDir).
+    const rootDir = JSON.parse(readFileSync(reportFile, "utf8")).config?.rootDir ?? webDir;
     return playwrightResults(reportFile).map((t) => ({
-      file: relative(webDir, join(configDir, t.file)),
+      file: relative(webDir, join(rootDir, t.file)),
       title: t.title,
     }));
   } finally {
