@@ -112,6 +112,33 @@ describe("G2 role changes (make-sara-admin, AGT-5, AGT-6)", () => {
   });
 });
 
+describe("G2 repeat frequency (shawarma-more-often, OQ-8)", () => {
+  const line = SYSTEM_PROMPT.split("\n").find((l) => l.startsWith("- How often a dish")) ?? "";
+
+  it("sends 'more often' / 'less often' to frequency.set, whose fields it names", () => {
+    const frequency = registry.get("frequency.set");
+    expect(frequency).toBeDefined();
+    expect(line).toMatch(/"more often" or "less often" is a frequency rule/);
+    expect(line).toContain("frequency.set");
+    for (const field of ["minGapDays", "maxPerWeek"]) {
+      expect(line, field).toContain(field);
+      expect(opReference()).toContain(`"${field}"`);
+    }
+  });
+
+  it("says a liking (preference.set) does not change how often a dish repeats", () => {
+    expect(registry.has("preference.set")).toBe(true);
+    expect(line).toMatch(/preference\.set only changes how much a dish is liked/);
+  });
+
+  it("negative control: the prompt before the fix had no frequency line", () => {
+    const before = SYSTEM_PROMPT.split("\n")
+      .filter((l) => !l.startsWith("- How often a dish"))
+      .join("\n");
+    expect(before).not.toMatch(/frequency\.set/);
+  });
+});
+
 describe("G2 the cached prefix stays byte-stable", () => {
   it("builds identical system blocks twice, with the breakpoint on the op reference", () => {
     expect(JSON.stringify(systemBlocks())).toBe(JSON.stringify(systemBlocks()));

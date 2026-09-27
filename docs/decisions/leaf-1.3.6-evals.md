@@ -85,13 +85,25 @@ The op reference in the same prompt does include `role.set (protected)`, so the 
 - Full run 1: 28/29 = 96.6 % (`docs/build/live/leaf-1.3.6-eval-full-1.log`, 12:37:05Z, commit 20de36f, exit 0).
 - Full run 2: 28/29 = 96.6 % (`docs/build/live/leaf-1.3.6-eval-full-2.log`, 12:45:21Z, same commit, exit 0).
 
-**Observed, not fixed: shawarma-more-often ("We love the chicken shawarma wrap, put it on more often").** It failed in both full runs and passed in the 09:17 run before the fixes. In both runs the model sent `preference.set` (a household dish liking of 0.8, locked) instead of `frequency.set`, and offered a frequency rule as a follow-up (`docs/build/live/leaf-1.3.6-eval-full-1-shawarma-more-often.log`, `…-full-2-…`). The eval's expectation is sound: under OQ-8 (04 §6.3; R-62) a main-meal dish is blocked below a 7-day gap unless a `frequency_rule` replaces the default, so a liking alone cannot put it on "more often" than weekly.
+**shawarma-more-often ("We love the chicken shawarma wrap, put it on more often"): a CP2 finding, now fixed.** It failed in both full runs. Each time the model sent `preference.set` (a household liking) instead of `frequency.set` (`docs/build/live/leaf-1.3.6-eval-full-1-shawarma-more-often.log`, `docs/build/live/leaf-1.3.6-eval-full-2-shawarma-more-often.log`). The expectation is sound: a liking cannot beat the planner's default repeat gap (OQ-8, 04 §6.3), so only a `frequency_rule` puts a dish on "more often".
 
-Whether the prompt changes caused the flip is not established:
-- None of the added lines mentions preferences or frequency.
-- There are 1 pre-fix sample and 2 post-fix samples.
+*Which prompt change caused it: the measurement does not single one out.* The case alone, 3 runs per prompt, same model:
 
-A grounded fix would be one prompt line: "how often a dish may repeat is frequency.set (main meals default to at least 7 days apart); preference.set only changes how much it is liked". That fix is outside the three diagnosed cases, so it waits for the architect.
+| Prompt | Runs | Passed | Ops sent in the failing runs | Log |
+|---|---|---|---|---|
+| before this leaf (61c3b5b), checked out temporarily | 3 | 2 | `preference.set` only | `docs/build/live/leaf-1.3.6-shawarma-baseline.log` |
+| this leaf, no frequency line (02655af) | 3 | 2 | `preference.set` only | `docs/build/live/leaf-1.3.6-shawarma-current.log` |
+| this leaf + frequency line | 3 | 3 | none | `docs/build/live/leaf-1.3.6-shawarma-fixed.log` |
+
+- The pre-leaf prompt fails this case in 1 of 3 runs, the same way. In the passing runs both prompts send `preference.set` **and** `frequency.set`, so the model often reaches for the liking first either way.
+- Counted over every run: before this leaf 3 of 4 passed (the owner's 09:17 run plus 2 of 3 above); with this leaf's prompt 2 of 5 (0 of 2 full runs plus 2 of 3 above). The difference is within what 4 and 5 samples of a case that already failed 1 time in 3 can show.
+- So none of this leaf's four prompt additions is identified as the cause (allergen flags, weekday numbering, presets, `role.set`). No ablation was run: with the unfixed prompt passing 2 of 3, removing one line at a time could not have separated a cause from this noise without far more runs.
+- What the data do show: the case was flaky before this leaf, and the prompt never said that "more often" is a frequency rule.
+
+*Fix (prompt, requested by the architect).* One line after the preset line: "How often a dish may repeat is frequency.set: without a rule the planner keeps a default gap between servings of the same dish, so "more often" or "less often" is a frequency rule (minGapDays, maxPerWeek). preference.set only changes how much a dish is liked."
+- The line names no number. The default gap is 6 days in the code at this base and 7 in the R-62 spec (leaf 1.2.6, not yet merged).
+- With it, the case passed 3 of 3, each run sending `frequency.set` alone.
+- G2's `test/agent/prompt.test.ts` asserts the line against the registry and the op reference.
 
 **Production gap closed (R-67).** `get_household` in the app now returns `logins` (userId, name, role, status, member; no emails) from `listAccess` (`apps/web/lib/server/agent.ts`, `1.3.6 (R-64, R-67)` block). `apps/web/test/api/agent-household.int.test.ts` proves three things through the real route:
 - an admin gets every login, equal to People & access without emails;

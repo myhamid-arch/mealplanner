@@ -1,0 +1,11 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" RUN_LLM_EVALS=1 node evals/agent/run.ts shawarma-more-often (x3) | utc: 2026-09-27T13:47:15Z | exit: 1 failing run(s) | commit: 02655af6775c42139ed4dd94dcd1f2142c88754f | prompt: packages/ai/src/agent/prompt.ts as at 61c3b5b (before this leaf), checked out temporarily
+PASS shawarma-more-often (end_turn, 4 calls; tools: search_dishes, get_household, get_preferences, apply_change)
+AGENT EVAL 1/1 passed (100.0 %, threshold 90 %) with claude-fable-5-1
+   ops: ["preference.set","frequency.set"]
+PASS shawarma-more-often (end_turn, 6 calls; tools: search_dishes, get_preferences, get_household, get_dish, apply_change)
+AGENT EVAL 1/1 passed (100.0 %, threshold 90 %) with claude-fable-5-1
+   ops: ["preference.set","frequency.set"]
+FAIL shawarma-more-often (end_turn, 4 calls; tools: search_dishes, get_household, get_preferences, apply_change)
+     expected a frequency.set op
+AGENT EVAL 0/1 passed (0.0 %, threshold 90 %) with claude-fable-5-1
+   ops: ["preference.set"]

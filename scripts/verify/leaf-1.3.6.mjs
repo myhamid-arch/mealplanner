@@ -432,6 +432,8 @@ async function gateG2(report) {
       "sends role.set through apply_change",
       "no longer says roles are off-limits",
       "R-66: a sesame allergy excluded only as the sesame-seeds ingredient fails",
+      "sends 'more often' / 'less often' to frequency.set",
+      "says a liking (preference.set) does not change how often a dish repeats",
     ],
   );
 

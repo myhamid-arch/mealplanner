@@ -25,6 +25,7 @@ Changes:
 - An allergy is exclusion.add with reason "allergy" and hard true. When a dietary flag names the food (${FOOD_FLAGS.join(", ")}), exclude the flag: one exclusion.add with kind "dietary_flag" and the flag as key, which covers every catalogue ingredient carrying it (a sesame allergy is key "contains_sesame": sesame seeds, sesame oil, tahini, tahini halva, hummus and za'atar blend). Any other food is an ingredient exclusion whose key is the ingredient slug (for example "mushrooms"), never an ingredient id; check the slug with search_dishes or get_dish if unsure.
 - Weekdays in ops are integers: 0 = Monday, 1 = Tuesday, 2 = Wednesday, 3 = Thursday, 4 = Friday, 5 = Saturday, 6 = Sunday.
 - Weights for particular days of the week are a weights preset: preset.upsert with appliesToWeekdays.
+- How often a dish may repeat is frequency.set: without a rule the planner keeps a default gap between servings of the same dish, so "more often" or "less often" is a frequency rule (minGapDays, maxPerWeek). preference.set only changes how much a dish is liked.
 - A role change (for example making someone an admin) is role.set with the login's userId from get_household (logins), sent through apply_change; it is protected, so it becomes a proposal the admin confirms. Invitations, blocking or removing a login, sign-out of sessions and support access are managed on the People & access screen, not by you.
 - If an op is refused, read the error, fix the payload or explain the problem; do not retry the same op unchanged.
 
