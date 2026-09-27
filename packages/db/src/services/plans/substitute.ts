@@ -6,12 +6,15 @@
 // sides with the ingredient are left out of every re-solve, so meals that carried one are re-solved
 // with their own dish. The copies
 // and the swaps are one change set, so an admin sees and can undo the whole result. The graph is
-// injected (`db` does not import `graph`, ARC-3).
+// injected (`db` does not import `graph`, ARC-3). The copy's component names, variant labels and
+// steps name the substitute (W-6, BLD-8 R-58/R-60).
 import { variantNutritionPer100gCooked } from "@mealplanner/core/nutrition";
 import type { ChangeOp } from "@mealplanner/core/changes";
 import type { PlanDish } from "@mealplanner/core/planner";
 import type { HouseholdContext } from "@mealplanner/core/types";
+import { eq } from "drizzle-orm";
 import { createRepos, type Executor } from "../../repos/index.js";
+import { ingredient } from "../../schema/index.js";
 import { copyPayload, dishTree, freeSlug, type TreeComponent } from "./dish-tree.js";
 import { newId } from "../../schema/ids.js";
 import { addDays, loadPlanInput } from "./load-input.js";
@@ -35,15 +38,79 @@ export interface SubstituteReport extends ResolveReport {
   unresolved: string[];
 }
 
-function replaced(
+/** An ingredient's names as a text may mention it: display name and aliases (W-6). */
+export interface IngredientNames {
+  name: string;
+  aliases: readonly string[];
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * W-6 (BLD-8 R-58, R-60; leaf-1.4.8 SPEC-Q-6): `text` with every mention of `from` (display name or
+ * alias, case-insensitive, whole word, longest first) replaced by `to`'s display name, capitalised
+ * when the mention is, otherwise lower case. `matched` says whether anything was replaced.
+ */
+export function substitutedText(
+  text: string,
+  from: IngredientNames,
+  to: { name: string },
+): { text: string; matched: boolean } {
+  const names = [...new Set([from.name, ...from.aliases].map((n) => n.trim()))]
+    .filter((n) => n !== "")
+    .sort((a, b) => b.length - a.length);
+  if (names.length === 0) return { text, matched: false };
+  const pattern = new RegExp(
+    `(?<![\\p{L}\\p{N}])(?:${names.map(escapeRegExp).join("|")})(?![\\p{L}\\p{N}])`,
+    "giu",
+  );
+  let matched = false;
+  const lower = to.name.charAt(0).toLowerCase() + to.name.slice(1);
+  const upper = to.name.charAt(0).toUpperCase() + to.name.slice(1);
+  const out = text.replace(pattern, (hit: string) => {
+    matched = true;
+    const first = hit.charAt(0);
+    return first !== first.toLowerCase() ? upper : lower;
+  });
+  return { text: out, matched };
+}
+
+/**
+ * W-6: a variant's steps naming the substitute. When no step names the ingredient, a leading step
+ * "Use <substitute> wherever <ingredient> is mentioned." is added, so the cook never reads the
+ * unavailable ingredient without being told what replaces it.
+ */
+export function substitutedSteps(
+  steps: readonly string[],
+  from: IngredientNames,
+  to: { name: string },
+): string[] {
+  const rewritten = steps.map((step) => substitutedText(step, from, to));
+  if (rewritten.some((r) => r.matched)) return rewritten.map((r) => r.text);
+  const sub = to.name.charAt(0).toLowerCase() + to.name.slice(1);
+  const ing = from.name.charAt(0).toLowerCase() + from.name.slice(1);
+  return [`Use ${sub} wherever ${ing} is mentioned.`, ...steps];
+}
+
+/**
+ * The household copy of `dish` with ingredient `from` replaced by `to`: same raw grams, nutrition
+ * recomputed, and (W-6) the component names, variant labels and steps of the variants that
+ * contain it naming the substitute. The dish description is left as it is (R-60); the copy's
+ * name says "(with <substitute>)".
+ */
+export function replaced(
   dish: PlanDish,
   from: string,
   to: string,
   catalogue: MealState["pool"]["catalog"],
+  fromNames: IngredientNames,
 ): PlanDish {
   const sub = catalogue.ingredients.get(to);
   if (sub === undefined)
     throw new PlanServiceError("invalid", `ingredient ${to} is not in the catalogue`);
+  const toNames = { name: sub.name };
   return {
     ...dish,
     id: newId(),
@@ -52,7 +119,11 @@ function replaced(
     components: dish.components.map((c) => ({
       ...c,
       id: newId(),
+      name: c.variants.some((v) => v.input.ingredients.some((l) => l.ingredientId === from))
+        ? substitutedText(c.name, fromNames, toNames).text
+        : c.name,
       variants: c.variants.map((v) => {
+        const has = v.input.ingredients.some((l) => l.ingredientId === from);
         const input = {
           ...v.input,
           ingredients: v.input.ingredients.map((l) =>
@@ -63,6 +134,8 @@ function replaced(
         return {
           ...v,
           id: newId(),
+          label: has ? substitutedText(v.label, fromNames, toNames).text : v.label,
+          steps: has ? substitutedSteps(v.steps, fromNames, toNames) : v.steps,
           input,
           per100g: variantNutritionPer100gCooked(input, catalogue.context).per100g,
           ingredients: ids.map((id) => {
@@ -153,6 +226,14 @@ export async function substituteUnavailable(
   );
   if (affected.length === 0 && sideOnly.length === 0) return report;
 
+  const [fromRow] = await db
+    .select({ name: ingredient.name, aliases: ingredient.aliases })
+    .from(ingredient)
+    .where(eq(ingredient.id, args.ingredientId));
+  const fromNames: IngredientNames = {
+    name: fromRow?.name ?? pool.catalog.ingredients.get(args.ingredientId)?.name ?? "",
+    aliases: fromRow?.aliases ?? [],
+  };
   const candidates = (await args.substitutes(args.ingredientId)).filter((c) =>
     pool.catalog.ingredients.has(c.ingredientId),
   );
@@ -168,7 +249,7 @@ export async function substituteUnavailable(
       const key = `${original.id}|${candidate.ingredientId}`;
       const copy =
         copies.get(key) ??
-        replaced(original, args.ingredientId, candidate.ingredientId, pool.catalog);
+        replaced(original, args.ingredientId, candidate.ingredientId, pool.catalog, fromNames);
       if ((await solveMealWith(state, meal, copy)) === null) continue;
       copies.set(key, copy);
       originals.set(copy.id, original);
@@ -226,12 +307,15 @@ async function copyOp(
     return {
       ...c,
       id: cc.id,
+      name: cc.name,
       variants: c.variants.map((v, vi) => {
         const cv = cc.variants[vi];
         if (cv === undefined) throw new PlanServiceError("invalid", "copy does not match its dish");
         return {
           ...v,
           id: cv.id,
+          label: cv.label,
+          steps: [...cv.steps],
           ingredients: v.ingredients.map((l, li) => ({
             ...l,
             ingredientId: cv.input.ingredients[li]?.ingredientId ?? l.ingredientId,

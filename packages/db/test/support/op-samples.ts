@@ -2,6 +2,7 @@
 // household with a seeded PRNG (the G3 property test). Each sample is a real change of that state.
 import type { ChangeOp, ChangeOpKind } from "@mealplanner/core/changes";
 import { createRepos, type Executor } from "../../src/repos/index.js";
+import { applyChangeSet } from "../../src/services/changes/index.js";
 import { readCatalogIds } from "../../src/services/config/index.js";
 import type { FixtureHousehold } from "./fixtures.js";
 import { must } from "./must.js";
@@ -438,6 +439,47 @@ export function opGenerators(
       kind: "plan_meal.status",
       payload: { planMealId: populated.planMealId, status: r() < 0.5 ? "cooked" : "skipped" },
     }),
+    // 1.4.8 (R-58): two fresh draft days, a movable meal on the first; the move goes to the second.
+    "plan_meal.move": async (r) => {
+      const dinner = must((await slots()).find((s) => s.key === "dinner"));
+      const month = 1 + Math.floor(r() * 12);
+      const from = `2028-${String(month).padStart(2, "0")}-1${String(Math.floor(r() * 5))}`;
+      const to = `2028-${String(month).padStart(2, "0")}-2${String(Math.floor(r() * 5))}`;
+      const day = (date: string, meals: unknown[]) => ({
+        date,
+        weightsSnapshot: {},
+        generatedAt: new Date().toISOString(),
+        generatorVersion: "g3",
+        meals,
+      });
+      await applyChangeSet(db, ctx, {
+        actor: "user",
+        source: "ui",
+        summary: "plan_meal.move sample days",
+        ops: [
+          {
+            kind: "plan.save_days",
+            payload: {
+              days: [
+                day(from, [
+                  {
+                    slotTypeId: dinner.id,
+                    dishId: populated.dishId,
+                    memberScope: "shared",
+                    scoreBreakdown: { total: round2(r()) },
+                    plates: [],
+                  },
+                ]),
+                day(to, []),
+              ],
+            },
+          },
+        ],
+      });
+      const fromDay = must((await repos().plan_day.list()).find((d) => d.date === from));
+      const meal = must((await repos().plan_meal.list({ planDayId: fromDay.id }))[0]);
+      return { kind: "plan_meal.move", payload: { planMealId: meal.id, toDate: to } };
+    },
     "plan.unlock": () => ({
       kind: "plan.unlock",
       payload: { planMealId: populated.lockedMealId },

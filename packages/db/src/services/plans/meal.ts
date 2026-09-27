@@ -162,6 +162,37 @@ export async function swapOp(
   };
 }
 
+// 1.4.8 (R-58, R-60) ------------------------------------------------------------------------------
+/**
+ * PLN-8 / UX-7: the first targeted plate of a member in strict mode that is infeasible, as
+ * "Omar's dinner would miss protein by 12 g"; null when there is none. Members in flexible mode
+ * keep the least-bad plate.
+ */
+export function strictMiss(config: HouseholdConfig, meal: PlannedMeal): string | null {
+  for (const p of meal.plates) {
+    const t = p.target;
+    if (!p.targeted || t === null || t.mode !== "strict" || p.fitStatus !== "infeasible") continue;
+    const who = config.members.find((m) => m.id === p.memberId)?.displayName ?? "Someone";
+    const what = `${who}'s ${meal.slotLabel.toLowerCase()} would`;
+    const keys = ["protein", "carbs", "fat", "kcal"] as const;
+    const over = keys
+      .map((k) => ({ k, off: Math.abs(p.solution.deviation[k]) - t.tol[k] }))
+      .filter((x) => x.off > 1e-6)
+      .sort((a, b) => b.off - a.off)[0];
+    if (over !== undefined) {
+      const dev = p.solution.deviation[over.k];
+      const unit = over.k === "kcal" ? " kcal" : " g";
+      const label = over.k === "kcal" ? "calories" : over.k;
+      return `${what} miss ${label} by ${String(Math.round(Math.abs(dev)))}${unit} (${dev > 0 ? "over" : "under"}; ±${String(t.tol[over.k])} allowed)`;
+    }
+    if (t.satFatMax !== undefined && p.solution.actual.satFat > t.satFatMax)
+      return `${what} exceed the saturated-fat limit by ${String(Math.round((p.solution.actual.satFat - t.satFatMax) * 10) / 10)} g`;
+    return `${what} miss the targets`;
+  }
+  return null;
+}
+// end 1.4.8 (R-58) --------------------------------------------------------------------------------
+
 /** PLN-13: swaps a meal's dish; the plates are re-solved. */
 export async function swapMeal(
   db: Executor,
@@ -178,6 +209,11 @@ export async function swapMeal(
       "refused",
       `${dish.name} is not allowed for this meal (exclusions, never-preferences or slot)`,
     );
+  // 1.4.8 (R-58, R-60): PLN-8 strict eligibility for an explicit swap.
+  const miss = strictMiss(state.config, swap.solved);
+  if (miss !== null)
+    throw new PlanServiceError("refused", `${dish.name} does not fit: ${miss} (strict targets)`);
+  // end 1.4.8 (R-58)
   const applied = await applyChangeSet(db, ctx, {
     actor: args.by.actor,
     source: args.by.source,
