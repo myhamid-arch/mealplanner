@@ -343,6 +343,64 @@ describe("protected ops are never proposed (FBK-8, AGT-5, R-10)", () => {
   });
 });
 
+describe("exclusion.add satisfaction (R-49)", () => {
+  const SESAME = "sesame-seeds";
+  function exclusionAdd(reason: "allergy" | "dislike", hard: boolean) {
+    return {
+      kind: "exclusion.add" as const,
+      payload: { memberId: M.a, kind: "ingredient" as const, key: SESAME, reason, hard },
+    };
+  }
+  function withAllergy() {
+    const cfg = config();
+    const row = {
+      id: uuid(),
+      householdId: cfg.household.id,
+      memberId: M.a,
+      kind: "ingredient" as const,
+      key: SESAME,
+      reason: "allergy" as const,
+      hard: true,
+    };
+    return { config: { ...cfg, exclusions: [row] }, verifiedIngredientIds: new Set<string>() };
+  }
+  // As the db service decides it: relaxing the member's allergy row is protected (AGT-5).
+  const relaxing = (op: ParsedChangeOp) =>
+    Promise.resolve(op.kind === "exclusion.add" && op.payload.reason !== "allergy");
+
+  it("G2 an admin's relaxing request from chat becomes a pending proposal (R-49)", async () => {
+    const r = await select(
+      [draft([exclusionAdd("dislike", false)], { origin: "agent_chat" })],
+      [],
+      {
+        state: withAllergy(),
+        isProtected: relaxing,
+      },
+    );
+    expect(r.dropped).toEqual([]);
+    expect(r.kept).toHaveLength(1);
+  });
+
+  it("G2 an engine duplicate with the same reason and hardness stays satisfied (R-49)", async () => {
+    const r = await select([draft([exclusionAdd("allergy", true)], { origin: "rule" })], [], {
+      state: withAllergy(),
+      isProtected: relaxing,
+    });
+    expect(reasons(r)).toEqual(["satisfied"]);
+  });
+
+  it("G2 an engine dislike over an existing allergy row is still dropped (R-49)", async () => {
+    for (const origin of ["rule", "insights"] as const) {
+      const r = await select([draft([exclusionAdd("dislike", false)], { origin })], [], {
+        state: withAllergy(),
+        isProtected: relaxing,
+      });
+      expect(r.kept).toEqual([]);
+      expect(reasons(r)).toEqual(["protected"]);
+    }
+  });
+});
+
 describe("expiry (FBK-8)", () => {
   it("G2 pending proposals expire after 14 days", () => {
     const created = new Date("2026-09-01T00:00:00Z");

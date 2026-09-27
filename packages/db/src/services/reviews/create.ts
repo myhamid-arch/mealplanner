@@ -242,6 +242,8 @@ export async function createReview(
       createdAt: options.now ?? new Date(),
       editedAt: null,
       processedAt: null,
+      extractedTags: [],
+      extractedAt: null,
     });
     return { review, learningChangeSetId: await learnFromReview(trx, ctx, review) };
   });
@@ -276,6 +278,8 @@ export async function replyToReview(
       createdAt: options.now ?? new Date(),
       editedAt: null,
       processedAt: null,
+      extractedTags: [],
+      extractedAt: null,
     });
   });
 }

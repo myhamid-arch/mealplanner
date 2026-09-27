@@ -58,6 +58,12 @@ export const review = pgTable(
     createdAt: tstz("created_at").notNull(),
     editedAt: tstz("edited_at"),
     processedAt: tstz("processed_at"),
+    /** `reviews.extract` (ARC-7, R-46): FBK-3 tags implied by the comment, beside the author's. */
+    extractedTags: text("extracted_tags")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    extractedAt: tstz("extracted_at"),
   },
   (t) => [
     index("review_household_id_idx").on(t.householdId),

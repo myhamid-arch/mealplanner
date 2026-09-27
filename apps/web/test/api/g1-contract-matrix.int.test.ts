@@ -77,8 +77,6 @@ describe("G1 completeness", () => {
     expect(withoutCase).toEqual([]);
     expect(staleCases).toEqual([]);
     expect(routes.length).toBe(ENDPOINTS.length);
-    // R-40 (SPEC-Q-9): the chat POST route is 1.3.5's; no placeholder exists here.
-    expect(routes).not.toContain("POST /api/v1/conversations/{id}/messages");
   });
 });
 
@@ -301,8 +299,8 @@ describe("G1 ARC-6 projections that depend on household settings", () => {
 describe("G1 negative controls", () => {
   it("G1 negative control: an unregistered route file and a missing route are both reported", () => {
     const routes = routeInventory(API_DIR);
-    const extra = completeness([...routes, "POST /api/v1/conversations/{id}/messages"], ENDPOINTS);
-    expect(extra.unregistered).toEqual(["POST /api/v1/conversations/{id}/messages"]);
+    const extra = completeness([...routes, "DELETE /api/v1/weights"], ENDPOINTS);
+    expect(extra.unregistered).toEqual(["DELETE /api/v1/weights"]);
     const missing = completeness(
       routes.filter((r) => r !== "GET /api/v1/weights"),
       ENDPOINTS,

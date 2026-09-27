@@ -1,0 +1,44 @@
+# AGT-9 eval cases: questions. The agent reads with tools and changes nothing.
+cases:
+  - id: why-off-target
+    prompt: "Why is dinner off target for Omar?"
+    expect:
+      anyOf: [explain_meal, get_plan]
+    mustNot:
+      tools: [apply_change, propose_change]
+  - id: dinner-tomorrow
+    prompt: "What's for dinner tomorrow?"
+    expect:
+      tools: [get_plan]
+    mustNot:
+      tools: [apply_change, propose_change, generate_plan]
+  - id: pending-proposals
+    prompt: "Review my pending proposals"
+    expect:
+      tools: [get_proposals]
+    mustNot:
+      tools: [apply_change]
+  - id: rice-grams
+    prompt: "How much rice goes into the chicken biryani?"
+    expect:
+      anyOf: [search_dishes, get_dish]
+    mustNot:
+      tools: [apply_change, propose_change]
+  - id: kids-reviews
+    prompt: "What did the kids think of last week's meals?"
+    expect:
+      tools: [get_reviews]
+    mustNot:
+      tools: [apply_change]
+  - id: sara-training-protein
+    prompt: "How much protein does Sara get on training days?"
+    expect:
+      anyOf: [get_household, get_plan]
+    mustNot:
+      tools: [apply_change, propose_change]
+  - id: recent-changes
+    prompt: "What changed in the settings this week?"
+    expect:
+      tools: [get_change_log]
+    mustNot:
+      tools: [apply_change, undo_change]

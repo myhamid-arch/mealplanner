@@ -863,6 +863,41 @@ export const ChatMessageDto = z.object({
   createdAt: Timestamp,
 });
 
+/** `POST /conversations/{id}/messages` (AGT-7): the admin's message and the panel's screen. */
+export const ChatSendBody = z
+  .object({
+    text: z.string().trim().min(1).max(4000),
+    /** What the side panel is showing, e.g. "Recipe: Chicken shawarma bowl" (07 §5). */
+    screen: z.string().trim().min(1).max(300).optional(),
+  })
+  .strict();
+
+/** One Server-Sent Event of a chat turn (`event:` = type, `data:` = this object; SPEC-Q-12). */
+export const ChatStreamEventDto = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("message"), message: ChatMessageDto }),
+  z.object({ type: z.literal("text_delta"), text: z.string() }),
+  z.object({ type: z.literal("thinking") }),
+  z.object({
+    type: z.literal("tool_start"),
+    toolUseId: z.string(),
+    name: z.string(),
+    label: z.string(),
+  }),
+  z.object({
+    type: z.literal("tool_done"),
+    toolUseId: z.string(),
+    name: z.string(),
+    ok: z.boolean(),
+    cards: z.array(JsonValue),
+  }),
+  z.object({ type: z.literal("error"), code: z.string(), message: z.string() }),
+  z.object({
+    type: z.literal("done"),
+    stopReason: z.string(),
+    modelCalls: z.number().int(),
+  }),
+]);
+
 export const JobDto = z.object({
   id: Id,
   kind: z.string(),

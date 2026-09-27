@@ -23,6 +23,9 @@ import { toJson, type JobContext, type JobHandler } from "../runner.js";
 import type { WorkerRuntime } from "../runtime.js";
 import { reviseRecipe } from "./revise.js";
 import { purgeDueHouseholds } from "./purge.js";
+import { postInsightDigest } from "./chat-events.js";
+import { recipeDraft } from "./recipe-draft.js";
+import { reviewsExtract } from "./reviews-extract.js";
 
 const SYSTEM: ChangeActorInput = { actor: "system", source: "learning" };
 
@@ -72,9 +75,16 @@ function progressPayload(e: PlanProgress): Json {
 }
 
 export const planGenerate: JobHandler = async (ctx) => {
-  const p = payload(ctx) as { dates: string[]; seed?: number };
+  const p = payload(ctx) as { dates: string[]; seed?: number; source?: string };
   const hh = ctx.household();
-  const by: ChangeActorInput = hh.userId === null ? SYSTEM : { actor: "user", source: "ui" };
+  // R-49: a plan the admin asked the assistant for is the agent's (the agent adapter alone sets
+  // `source: "agent"`; POST /plans/generate's body cannot carry it).
+  const by: ChangeActorInput =
+    hh.userId === null
+      ? SYSTEM
+      : p.source === "agent"
+        ? { actor: "agent", source: "agent_apply" }
+        : { actor: "user", source: "ui" };
   const config = await loadHouseholdConfig(ctx.rt.db, hh);
   const result = await generatePlan(ctx.rt.db, hh, {
     dates: p.dates,
@@ -147,6 +157,10 @@ export const insightsRun: JobHandler = async (ctx) => {
   const hh = systemCtx(ctx.household().householdId);
   const expired = await expireProposals(ctx.rt.db, hh);
   const digest = await runInsights(ctx.rt.db, hh, { synthesize: synthesizeFor(ctx.rt, hh) });
+  // The proposals are committed: a failed chat post is logged, and does not fail the run (CP3).
+  await postInsightDigest(ctx.rt, ctx.job, digest).catch((error: unknown) => {
+    ctx.log.error({ err: error }, "the insights digest could not be posted to chat");
+  });
   return toJson({
     expired,
     runAt: digest.runAt,
@@ -311,4 +325,6 @@ export const HANDLERS: Record<string, JobHandler> = {
   "recipe.generate": recipeGenerate,
   "recipe.revise": recipeRevise,
   "household.purge": householdPurge,
+  "reviews.extract": reviewsExtract,
+  "recipe.draft": recipeDraft,
 };
