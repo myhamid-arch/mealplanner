@@ -15,12 +15,15 @@ function MealBlock({
   meal,
   members,
   admin,
+  editable,
   onChanged,
   onSwap,
 }: {
   readonly meal: PlanMeal;
   readonly members: readonly Member[];
   readonly admin: boolean;
+  /** Past meals are history: no lock or swap. */
+  readonly editable: boolean;
   readonly onChanged: () => void;
   readonly onSwap: (meal: PlanMeal) => void;
 }) {
@@ -83,7 +86,7 @@ function MealBlock({
           {error}
         </p>
       )}
-      {admin && (
+      {admin && editable && (
         <div className="flex flex-wrap gap-2">
           <Button
             variant="secondary"
@@ -123,6 +126,7 @@ export function MealSheet({
   meals,
   members,
   admin,
+  editable,
   overrideFor,
   open,
   onOpenChange,
@@ -132,6 +136,7 @@ export function MealSheet({
   readonly meals: readonly PlanMeal[];
   readonly members: readonly Member[];
   readonly admin: boolean;
+  readonly editable: (meal: PlanMeal) => boolean;
   readonly overrideFor: (meal: PlanMeal) => MealOverride | null;
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
@@ -165,11 +170,12 @@ export function MealSheet({
             meal={m}
             members={members}
             admin={admin}
+            editable={editable(m)}
             onChanged={onChanged}
             onSwap={setSwapping}
           />
         ))}
-        {admin && shared === undefined && meals.length > 0 && overrideFor(first) !== null && (
+        {admin && editable(first) && shared === undefined && overrideFor(first) !== null && (
           <Button
             variant="ghost"
             onClick={() => {

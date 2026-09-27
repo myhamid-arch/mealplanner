@@ -20,15 +20,11 @@ interface LibraryData {
 }
 
 async function loadLibrary(): Promise<LibraryData> {
-  const [basics, dishes, cuisines] = await Promise.all([
-    loadBasics(),
-    api.call(c.dishesList, { query: {} }),
-    api.call(c.cuisinesList, {}),
-  ]);
+  const [basics, dishes] = await Promise.all([loadBasics(), api.call(c.dishesList, { query: {} })]);
   return {
     basics,
     dishes: (dishes.dishes ?? []).filter((d) => !d.isAdjuster && d.status !== "draft"),
-    cuisines: new Map((cuisines.cuisines ?? []).map((x) => [x.key, x.label])),
+    cuisines: basics.cuisines,
   };
 }
 

@@ -4,6 +4,7 @@
 // cooked grams and variant), one card per batch with raw quantities (discarded frying oil apart)
 // and steps to tick off, large text for tablets, print (A4, one meal per page), "Mark cooked"
 // (R-52) and the kitchen flags (R2-UX-1). Admins also see every flag and its outcome.
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Button, Chip, EmptyState, Icon } from "../ui";
 import {
@@ -534,6 +535,7 @@ export function CookSheetScreen({
   readonly date: string | null;
   readonly mealId: string | null;
 }) {
+  const router = useRouter();
   const loaded = useLoad(() => loadKitchen(date), date ?? "");
   const [large, setLarge] = useState(false);
   const [picked, setPicked] = useState<string | null>(mealId);
@@ -559,13 +561,14 @@ export function CookSheetScreen({
       f.kind === "unavailable" &&
       (f.job === null || f.job.status === "queued" || f.job.status === "running"),
   );
+  const reload = loaded.reload;
   useEffect(() => {
     if (running !== true) return;
-    const t = setInterval(() => void loaded.reload(), 4000);
+    const t = setInterval(() => void reload(), 4000);
     return () => {
       clearInterval(t);
     };
-  }, [running, loaded]);
+  }, [running, reload]);
   // The picker groups a slot's meals (a shared dish, or one dish per person in an individual
   // slot); the selected slot's meals are shown, every meal prints on its own page.
   const current = useMemo(() => {
@@ -597,7 +600,7 @@ export function CookSheetScreen({
     }
   };
   const go = (d: string) => {
-    window.location.assign(d === data.basics.today ? "/kitchen" : `/kitchen?date=${d}`);
+    router.push(d === data.basics.today ? "/kitchen" : `/kitchen?date=${d}`);
   };
   return (
     <div className="flex flex-col gap-4">

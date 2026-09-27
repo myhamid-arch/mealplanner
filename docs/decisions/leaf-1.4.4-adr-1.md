@@ -1,6 +1,6 @@
 # leaf-1.4.4 ADR-1: how G1–G3 are verified
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, BLD-8 R-52); built for CP2
 Requirement: BLD-5 1.4.4 G1–G3; UX-4; UX-6; R2-MEAL-2; R2-UX-1; PLN-13; PLN-14
 
 `scripts/verify/leaf-1.4.4.mjs --gate G1|G2|G3` prints `VERIFY leaf-1.4.4 <gate> PASSED` only after every assertion, negative controls included, holds; otherwise it exits non-zero. It imports only `scripts/verify/lib/*` (unchanged) and Node built-ins; it uses no library that `apps/web` does not already declare (`@playwright/test` 1.63.0, `@axe-core/playwright` 4.13.0, `pg` 8.23.0).
@@ -46,10 +46,18 @@ Negative controls: (1) the horizontal-scroll check fails on a page with an injec
 2. The worker runs `plates.substitute`. Independently of the UI, the test checks through the API that: the flag review exists with tag `ingredient_unavailable`; a change set "Substitute an unavailable ingredient …" was applied; every affected meal in the window now serves a dish whose variants (on its plates) no longer contain the ingredient, and its plates were re-solved (new plate ids, fit status present).
 3. Admin login, `/today` at 1280 and 390 and `/kitchen`: the Kitchen card lists the flag (who, ingredient, note) and its result: the substitute, each changed meal "<slot>: <old dish> → <new dish>", and "macros re-checked" with the re-solved plates' fit (e.g. "all on target" or which member missed). The member login does not see the flag card.
 
-Negative controls: (1) with the worker stopped, the admin view for a second flag shows it as pending and the "result visible" assertion fails; (2) the API check in step 2 fails on a meal that still uses the flagged ingredient (the flagged ingredient checked against an unaffected day's meal that uses it outside the window).
+Negative controls: (1) the same admin page, served a flag listing whose job has not produced a result yet (the response is rewritten in the browser), and a day without the flag, must both fail the "outcome visible" check; (2) the API check of step 2 run on the plan as it was before the flag must report the flagged dinner as still serving the ingredient.
 
-Step 3's data source depends on the ruling on SPEC-Q-1.
+Step 3 reads `GET /cook-sheets/{date}/flags` (R-52).
 
 ## Timeouts
 
 Each e2e gate builds the app, migrates a database, generates a week of plans and runs Playwright at two widths: several minutes, well over gate-check's default 120 s. Request: the architect runs this ledger with `--timeout 1800`. Coverage is not cut to fit 120 s.
+
+## As built (CP2)
+
+- Setup is one household per Playwright run, built through the API in `beforeAll`: sign-up, F1's members, targets and sesame allergy (R-34/R-36: a `dietary_flag` exclusion), invites accepted for Sara (member) and a kitchen login, a household copy of a seed dish (for the Edit sheet; created before any plan, so its `plates.resolve` follow-up cannot re-solve the plates the tests read), and plans for the rest of the current week and two further weeks. Two more weeks stay free for "plan a week" at each width.
+- G1 also runs `apps/web/components/plan/logic.test.ts` (dates, total carbs, R-28 goals, fit, week stats, ratings) and `apps/web/test/api/plan-status.int.test.ts` (R-52 publish and meal status).
+- G3 also runs `apps/web/test/api/cook-sheet-flags.int.test.ts` (R-52 flag listing, on the real `plates.substitute` handler) and rebuilds the knowledge graph on the gate's database with `scripts/kg-rebuild.ts` before the worker starts.
+- G1's swap negative control answers the swap request in the browser with the unchanged meal; the "swap took effect" check must then fail.
+- Package builds and `next build` share the lock names of 1.4.3's script, so screen leaves' gates never build the same output at once. `next build` runs with `DATABASE_URL` cleared (R-50).

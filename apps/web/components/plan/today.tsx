@@ -5,7 +5,7 @@
 // what needs them (proposals, a plan to send, kitchen flags and their outcome, R2-UX-1).
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { isAvatarColor } from "@mealplanner/ui-tokens/tokens";
 import { Avatar, Card, Chip, EmptyState, Icon, LinkButton, MacroRing } from "../ui";
 import { DishArt } from "../recipe/dish-art";
@@ -757,17 +757,14 @@ export function TodayScreen({ date }: { readonly date: string | null }) {
       f.kind === "unavailable" &&
       (f.job === null || f.job.status === "queued" || f.job.status === "running"),
   );
-  const [, setTick] = useState(0);
+  const reload = loaded.reload;
   useEffect(() => {
     if (running !== true) return;
-    const t = setInterval(() => {
-      setTick((n) => n + 1);
-      void loaded.reload();
-    }, 4000);
+    const t = setInterval(() => void reload(), 4000);
     return () => {
       clearInterval(t);
     };
-  }, [running, loaded]);
+  }, [running, reload]);
   if (loaded.data === null)
     return loaded.error !== null ? (
       <LoadError message={loaded.error} onRetry={() => void loaded.reload()} />

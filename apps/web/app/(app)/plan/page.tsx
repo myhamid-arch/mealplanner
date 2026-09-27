@@ -12,10 +12,13 @@ export default async function PlanPage({
 }: {
   readonly searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { week } = await searchParams;
+  const { week, meal } = await searchParams;
   return (
     <SignedOut what="The plan">
-      <WeekPlanScreen week={typeof week === "string" && isIsoDate(week) ? week : null} />
+      <WeekPlanScreen
+        week={typeof week === "string" && isIsoDate(week) ? week : null}
+        meal={typeof meal === "string" && meal !== "" ? meal : null}
+      />
     </SignedOut>
   );
 }

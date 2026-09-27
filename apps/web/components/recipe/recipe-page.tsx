@@ -31,16 +31,15 @@ interface RecipeData {
 }
 
 async function loadRecipe(id: string): Promise<RecipeData> {
-  const [basics, dish, cuisines] = await Promise.all([
+  const [basics, dish] = await Promise.all([
     loadBasics(),
     api.call(c.dishesGet, { params: { id } }),
-    api.call(c.cuisinesList, {}),
   ]);
   const usage = await loadUsage(basics.today, new Map([[dish.id, dish]]));
   return {
     basics,
     dish,
-    cuisines: new Map((cuisines.cuisines ?? []).map((x) => [x.key, x.label])),
+    cuisines: basics.cuisines,
     usage,
   };
 }

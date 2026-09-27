@@ -6,7 +6,7 @@
 // days to the kitchen (R-52), and open a meal to swap, lock or change it for one day.
 // Drag to move is out of v1 (R-52, W-5).
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Chip, EmptyState, Icon } from "../ui";
 import {
   api,
@@ -415,20 +415,39 @@ function Legend({ data }: { readonly data: WeekData }) {
   );
 }
 
-export function WeekPlanScreen({ week }: { readonly week: string | null }) {
+/** A new seed per run: "Regenerate" must be able to give a different plan (PLN-11 is seeded). */
+function freshSeed(): number {
+  return Math.floor(Math.random() * 2_147_483_647);
+}
+
+export function WeekPlanScreen({
+  week,
+  meal,
+}: {
+  readonly week: string | null;
+  /** A meal to open on load (Today's "Needs you" links). */
+  readonly meal: string | null;
+}) {
   const loaded = useLoad(() => loadWeek(week), week ?? "");
+  const [opened, setOpened] = useState(false);
   const wide = useWide();
   const [open, setOpen] = useState<PlanMeal[] | null>(null);
   const [job, setJob] = useState<{ line: string } | null>(null);
   const [message, setMessage] = useState<{ text: string; error: boolean } | null>(null);
   const reload = loaded.reload;
+  useEffect(() => {
+    if (opened || meal === null || loaded.data === null) return;
+    setOpened(true);
+    const m = [...loaded.data.days.values()].flatMap((d) => d.meals).find((x) => x.id === meal);
+    if (m !== undefined) setOpen(mealsAt(loaded.data, m.date, m.slotTypeId));
+  }, [opened, meal, loaded.data]);
 
   const runPlan = useCallback(
     async (dates: string[], summary: string) => {
       setMessage(null);
       setJob({ line: summary });
       try {
-        const { jobId } = await api.call(c.plansGenerate, { body: { dates, seed: 1 } });
+        const { jobId } = await api.call(c.plansGenerate, { body: { dates, seed: freshSeed() } });
         const end = await followJob(jobId, (line) => {
           setJob({ line });
         });
@@ -569,6 +588,7 @@ export function WeekPlanScreen({ week }: { readonly week: string | null }) {
           meals={open.map((m) => data.days.get(m.date)?.meals.find((x) => x.id === m.id) ?? m)}
           members={data.basics.members}
           admin={admin}
+          editable={(m) => m.date >= data.basics.today}
           overrideFor={overrideFor}
           open
           onOpenChange={(o) => {

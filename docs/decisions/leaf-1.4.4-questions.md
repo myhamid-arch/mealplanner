@@ -80,7 +80,7 @@ Reading: `/today` (`?date=`), `/today/plates/{plateId}` (PlatePhone), `/plan` (`
 
 TodayPhone "Rate", PlatePhone "Rate this meal", RecipeLibrary "Ask for a new recipe", RecipePage "Ask assistant to revise" and the SwapDialog "None of these? Ask for something" box lead to 1.4.5's quick-rate / review-compose and chat screens, whose routes are not fixed yet.
 
-Reading: links use `/reviews/new?planMealId=<id>` (rate) and `/chat?draft=<text>` (assistant; the swap box passes the typed text, the recipe buttons a sentence naming the dish). The architect is asked to fix these two URL shapes for 1.4.5, or give the ones 1.4.5 uses.
+Ruled (R-52, R-53): Rate → `/reviews/rate?planMealId=<id>` (Today), detailed review → `/reviews/new?planMealId=<id>` (plate page), assistant → `/chat?prompt=<text>` (the swap box passes the typed text, the recipe buttons a sentence naming the dish).
 
 ## SPEC-Q-10: recipe Edit and Retire (UX-4 "Admin: edit, retire")
 
@@ -95,3 +95,15 @@ No endpoint aggregates ratings per dish. Reading: the rating is the mean of 1–
 ## SPEC-Q-12: what the kitchen sees
 
 `GET /plans` returns no plates for kitchen (ARC-6); the cook sheet is their view. Reading: kitchen users land on `/kitchen` (R-2); `/plan` shows them the week grid read-only (dish names, no plates, no actions); `/recipes` read-only; `/today` redirects them to `/kitchen`.
+
+## SPEC-Q-10 as built: Edit covers the dish's own fields only (narrower than the accepted reading)
+
+The accepted reading included each variant's steps and notes in the Edit sheet. `dish.update` replaces steps only as part of a whole component tree (`components`), and `VariantDto` does not return every stored variant field: `variant_ingredient.yield_override` is not in the contract. A tree written back from the page would therefore reset stored yield overrides to null and change nutrition silently. As built, Edit changes name, description, flavour tags, the meals the dish suits (`slotKeys`), packable and served-cold, as one `dish.update` without `components`; the sheet says that ingredients and steps are changed through "Ask assistant to revise". Listed under Deviations in the PR.
+
+## SPEC-Q-13: the meal picker on the cook sheet groups by slot
+
+An individual slot (snacks) has one cook-sheet meal per person. The picker shows one button per slot ("Snack 16:00 · 5 dishes"); choosing it shows that slot's meals one after another. Print still gives every meal its own A4 page (PLN-14).
+
+## SPEC-Q-14: "Regenerate unlocked" uses a new seed
+
+PLN-11 makes a plan deterministic for a fixed seed, so re-planning with the same seed returns the same plan for the unlocked meals. The Plan screen sends a fresh random seed for "Plan this week", "Regenerate unlocked" and the re-plan after a one-off override. The planner stays deterministic for a given seed; the UI does not show or reuse seeds.
