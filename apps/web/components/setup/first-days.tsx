@@ -50,7 +50,7 @@ export function FirstDays({ name }: { readonly name: string }) {
   const first = name.trim().split(/\s+/)[0] ?? name;
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-3">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-3 pb-24 lg:pb-0">
       <span className="text-[13px] font-extrabold text-ink-soft">
         {weekdayOf(data.today)} · day {data.day}
       </span>

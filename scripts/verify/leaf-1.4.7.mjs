@@ -649,7 +649,7 @@ export function writeProblems(source) {
     [/\bsavePlan\b/, "saves a plan (savePlan)"],
     [/\bgeneratePlan\b/, "runs plan.generate (generatePlan)"],
     [/\bapplyChangeSet\b/, "applies a change set"],
-    [/\brequestDishes\s*:/, "passes requestDishes (AI recipe generation writes dishes)"],
+    [/\bgenerateDishes\b|\brequestDishesFor\b/, "runs the AI recipe generator (it saves dishes)"],
     [/\.insert\(|\.update\(|\.delete\(/, "writes rows directly"],
   ])
     if (pattern.test(source)) problems.push(what);

@@ -7,22 +7,22 @@ Scope: The W-5 deferred scope (R-55): model-backed onboarding free-text parse (R
 - [x] G1: onboarding parse: typed results from recorded model responses; schema-failing answers refused; 503 without credential with deterministic fallback in the page; admin only
   CHECK: node scripts/verify/leaf-1.4.7.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.7 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=b4f510006542ca7b16d8501173b7d96e3d7992977e7df20be79deb6c7d31b9ec; exit=0; EXPECT=matched; output-sha256=d86da0069bc5ce2f574062d6ee49d4a99000fd12ac3664fe0317b1f53d465fd6; output-bytes=3754; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=b4f510006542ca7b16d8501173b7d96e3d7992977e7df20be79deb6c7d31b9ec; exit=0; EXPECT=matched; output-sha256=26b0ef534a29c05792d941ff13f0fb3e797d99d73b60553c329b46f107a69c28; output-bytes=3756; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G2: planning preview: current vs proposed without writing plan rows; proposed equals the real replan with the same weights and seed
+- [x] G2: planning preview: current vs proposed without writing plan rows; proposed equals the real replan with the same weights and seed
   CHECK: node scripts/verify/leaf-1.4.7.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.7 G2 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=f741468ce7c54b99dc156a1af44368c93e265cd84ec4a0cb8e80393604e6270b; exit=0; EXPECT=matched; output-sha256=afec0fbdd1627c9cae7d89b0049d4577fda4bbbee4fe36115e7f74f724131f70; output-bytes=1821; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G3: first days: only unsettled items proposed (F1 expected list), one card per day, dismiss and answers persist, checklist progress; negative control
+- [x] G3: first days: only unsettled items proposed (F1 expected list), one card per day, dismiss and answers persist, checklist progress; negative control
   CHECK: node scripts/verify/leaf-1.4.7.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.7 G3 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=6bf98da7abc7a9028fb04dca05b05a33fe76da5eda19b83fe1739954619eebb3; exit=0; EXPECT=matched; output-sha256=fa73a8997b0ce026ce43a4640e38ad21987349bbba88e63e9428727dd3a63aff; output-bytes=1834; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: Playwright 390/1280 and axe-core (no serious or critical) on the preview panel, parse confirmation, follow-up card and checklist
   CHECK: node scripts/verify/leaf-1.4.7.mjs --gate G4
   EXPECT: VERIFY leaf-1.4.7 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=f07620ac575a2018e3996bd5d7084727c22eba702a08375cea5bb10fc3026624; exit=0; EXPECT=matched; output-sha256=25f931204532fb624dce7ba7ee6695b4a9690527992bb80ae581af289fae451f; output-bytes=2762; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=f07620ac575a2018e3996bd5d7084727c22eba702a08375cea5bb10fc3026624; exit=0; EXPECT=matched; output-sha256=bf11f453dfb25c62fd7466792776949d358b9af3b72b23db42344e68a36e8a20; output-bytes=2764; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G5: architect visual review against PlanningBalance (preview panel) and FirstDaysPhone mockups
   MANUAL: architect compares screenshots at 390 and 1280 px with the mockups

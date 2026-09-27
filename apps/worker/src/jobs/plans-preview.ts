@@ -3,7 +3,8 @@
 // the planner runs on exactly the input `plan.generate` would load after `weights.set` with these
 // weights (the same loader and seed, the weights row overlaid the way the op merges it), so the
 // proposed side equals the real replan (PLN-11, deterministic since R-51). No recipe generation
-// runs in a preview (it would write dishes); the replan's generation requests are counted instead.
+// runs in a preview (it would write dishes): the planner's requests for new recipes (PLN-12) are
+// recorded and answered with none, as `plan.generate` is answered without a credential, and counted.
 // Current = the saved plan when every date has one, else a run with the current weights.
 import {
   coreIngredients,
@@ -12,6 +13,7 @@ import {
 import {
   planDays,
   type PlanDish,
+  type PlanGenerationRequest,
   type PlanInput,
   type PlannedMeal,
   type PlanProgress,
@@ -236,8 +238,13 @@ export async function previewPlan(
 ): Promise<PreviewResult> {
   const { input, pool, stored } = await loadPlanInput(db, ctx, { dates: args.dates });
   const dishes = new Map(pool.byId);
+  const requested: PlanGenerationRequest[] = [];
   const proposed = await planDays(withWeights(input, args.weights), {
     seed: args.seed,
+    requestDishes: (request) => {
+      requested.push(request);
+      return Promise.resolve([]);
+    },
     ...(args.onProgress === undefined
       ? {}
       : { onProgress: (e: PlanProgress) => args.onProgress?.("proposed", e) }),
@@ -251,6 +258,7 @@ export async function previewPlan(
   else {
     const current = await planDays(input, {
       seed: args.seed,
+      requestDishes: () => Promise.resolve([]),
       ...(args.onProgress === undefined
         ? {}
         : { onProgress: (e: PlanProgress) => args.onProgress?.("current", e) }),
@@ -266,7 +274,8 @@ export async function previewPlan(
     current: metricsOf(currentMeals, dishes),
     proposed: metricsOf(proposedMeals, dishes),
     changes: mealChanges(currentMeals, proposedMeals, dishes),
-    generationRequests: proposed.generationRequests.length,
+    // `auto`: recorded here; `ask`: listed by the planner (proposals after a real replan).
+    generationRequests: requested.length + proposed.generationRequests.length,
     proposedMeals,
   };
 }

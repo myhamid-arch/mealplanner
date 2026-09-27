@@ -51,3 +51,13 @@ Derived from existing data, nothing stored for it: **Family added** (≥ 1 activ
 
 ## SPEC-Q-12: live-model accuracy
 The §5 text of G1 says live accuracy is a credential handoff (ABANDON with the owner command), but the ledger has no gate for it, and G1 itself (recorded responses) is achievable. ARCHITECT QUESTION: add a gate (e.g. G6 "live parse of the F1 answers matches the deterministic parse") that this leaf then abandons with the owner command, or keep the handoff in the PR only. Until ruled, the owner command is in the PR and `node scripts/verify/leaf-1.4.7.mjs --live` implements it (it refuses to run without a credential).
+
+## Rulings and build notes
+
+Rulings: BLD-8 R-56 (CP1 APPROVED, PR #20). SPEC-Q-1 … 7 and 9 … 11 accepted; SPEC-Q-8 accepted with its copy (W-8 records slot-scoped exclusions for the owner); SPEC-Q-12: gate G6 added and abandoned as the owner's credential handoff.
+
+- **SPEC-Q-3, correction.** The deterministic target parser's range is 800–6000 kcal and 0–800 g per macro (`parse-targets.ts`), not 500 kcal as written above; the model's reading is checked against that range. The energy-agreement check (kcal within 12 % of 4P + 4C + 9F) is this leaf's own addition: `parseTargets` does not apply it. It refuses a reading with swapped or misassigned numbers.
+- **DM-7 audit rows.** `recordAiGeneration` (`packages/db/src/services/plans/generation.ts`, 1.4.1) types `purpose` as the four r1 values, so the parse route writes its `onboarding_parse` row through the `ai_generation` repository with the same fields. Widening that type to `AiPurpose` would be a one-line follow-up in 1.4.1's file. It is not done here because the file is not in this leaf's grants.
+- **Stored plate items are not in dish order.** `loadPlannedMeals` (`packages/db/src/services/plans/load-input.ts`) returns a stored plate's items in storage order, while `PlateSolution.items` is documented as "in dish order". G2's plan comparison is therefore order-free, and the preview orders variant labels by the dish's components. Planner behaviour is unaffected. The architect may want the loader to sort items by component order.
+- **Preview and recipe generation.** The preview answers the planner's PLN-12 requests for new recipes with none, the way `plan.generate` is answered without a credential, and it counts them (`generationRequests`). With a credential in `auto` mode, a real replan can add AI dishes that the preview does not show.
+- **Follow-up member order.** Names in a question (school children) and the order of per-member questions are oldest first, then by name, so the text does not depend on row order.
