@@ -30,7 +30,8 @@
 // build directory (.next/verify-1.4.9-<gate>), port, worker and temp directories. Package builds
 // run under a lock; `next build` runs with DATABASE_URL cleared (R-50). Regression gates run as
 // child processes, LEAF149_REGRESSION_JOBS at a time (default 2); a failure prints their output.
-// G4 captures for the architect (G5) go to $SCREENSHOT_DIR when set.
+// 1.4.2's regression gates always run with DATABASE_URL cleared (R-50). G4 captures for the
+// architect (G5) go to $SCREENSHOT_DIR when set.
 import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import {
@@ -558,7 +559,10 @@ async function regressions(report, list) {
         [join(ROOT, `scripts/verify/${leaf}.mjs`), "--gate", gate],
         {
           cwd: ROOT,
-          env: { NODE_OPTIONS: "" },
+          // R-50: 1.4.2's gates build and serve without a database; with DATABASE_URL set, its
+          // `next build` prerenders /offline through the runtime, which then needs AUTH_SECRET.
+          // The other leaves' gates use DATABASE_URL's server when it is set.
+          env: { NODE_OPTIONS: "", ...(leaf === "leaf-1.4.2" ? { DATABASE_URL: "" } : {}) },
           timeoutMs: 1_700_000,
         },
       );
