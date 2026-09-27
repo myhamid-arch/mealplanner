@@ -107,3 +107,7 @@ An individual slot (snacks) has one cook-sheet meal per person. The picker shows
 ## SPEC-Q-14: "Regenerate unlocked" uses a new seed
 
 PLN-11 makes a plan deterministic for a fixed seed, so re-planning with the same seed returns the same plan for the unlocked meals. The Plan screen sends a fresh random seed for "Plan this week", "Regenerate unlocked" and the re-plan after a one-off override. The planner stays deterministic for a given seed; the UI does not show or reuse seeds.
+
+## SPEC-Q-15 (CP3 finding 1): the day target on Today is the member's profile for the day kind
+
+The day ring, P / C / F, "Day vs target" and the R-28 goals use the member's target profile for the day's kind (PLN-4 steps 1–2), not the sum of the slot targets (which can differ by a few kcal; W-7). Admins read `GET /schedules`, so the day kind is resolved exactly as the resolver does (a `training` override, else a `rest` override, else the training schedule's weekday). Members may not read schedules (ARC-6); for them the profile is the one nearest the day's slot targets, which is unambiguous because slot targets are the chosen profile split by share while profiles differ by whole meals (F1: 2150 vs 2390 kcal). A member with only a default profile gets it every day. The week header's "O trains" uses the same rule.

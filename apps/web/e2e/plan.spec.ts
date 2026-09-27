@@ -309,6 +309,30 @@ test.beforeAll(async ({ playwright }) => {
               profile: { kcal: 1655, proteinG: 130, carbsG: 160, fatG: 55, satFatMaxG: 18 },
             },
           },
+          // F1 training (BLD-2): Omar Mon/Wed/Fri 18:00 with a training-day profile; Sara
+          // Tue/Thu/Sat 07:00 on her default profile.
+          {
+            kind: "target.set",
+            payload: {
+              memberId: members.omar,
+              kind: "training",
+              profile: { kcal: 2390, proteinG: 180, carbsG: 260, fatG: 70, satFatMaxG: 22 },
+            },
+          },
+          {
+            kind: "training.set",
+            payload: {
+              memberId: members.omar,
+              days: [0, 2, 4].map((weekday) => ({ weekday, sessionTime: "18:00:00" })),
+            },
+          },
+          {
+            kind: "training.set",
+            payload: {
+              memberId: members.sara,
+              days: [1, 3, 5].map((weekday) => ({ weekday, sessionTime: "07:00:00" })),
+            },
+          },
           {
             kind: "exclusion.add",
             payload: {
@@ -829,6 +853,58 @@ for (const v of VIEWPORTS) {
     }
   });
 }
+
+for (const v of VIEWPORTS)
+  test(`@G1 day targets and the week's training days follow F1 at ${v.name} px`, async ({
+    browser,
+  }) => {
+    test.setTimeout(240_000);
+    const monday = world.weekA[v.name] ?? "";
+    const sunday = addDays(monday, 6);
+    // The week header: Omar trains Mon/Wed/Fri, Sara Tue/Thu/Sat, nobody on Sunday (weekday 0 =
+    // Monday, R-24).
+    {
+      const { ctx, page } = await as(browser, "admin", v);
+      await page.goto(`/plan?week=${monday}`);
+      const expected = [
+        "O trains",
+        "S trains",
+        "O trains",
+        "S trains",
+        "O trains",
+        "S trains",
+        "rest",
+      ];
+      for (const [i, text] of expected.entries())
+        await expect(page.getByTestId(`day-head-${addDays(monday, i)}`)).toContainText(text, {
+          timeout: 60_000,
+        });
+      // The admin's day grid: Omar's day target is his rest-day 2150 and training-day 2390 (R-28).
+      if (v.width >= 1024) {
+        await page.goto(`/today?date=${sunday}`);
+        await expect(page.getByRole("row", { name: /Omar/ })).toContainText("/ 2150 kcal", {
+          timeout: 60_000,
+        });
+        await expect(page.getByRole("row", { name: /Sara/ })).toContainText("/ 1655 kcal");
+        await page.goto(`/today?date=${monday}`);
+        await expect(page.getByRole("row", { name: /Omar/ })).toContainText("/ 2390 kcal", {
+          timeout: 60_000,
+        });
+      }
+      await ctx.close();
+    }
+    // A member without schedule access: Sara's ring shows her day target (default profile only).
+    {
+      const { ctx, page } = await as(browser, "sara", v);
+      for (const date of [sunday, addDays(monday, 1)]) {
+        await page.goto(`/today?date=${date}`);
+        await expect(page.getByRole("img", { name: /^Day total \d+ of 1655 kcal/ })).toBeVisible({
+          timeout: 60_000,
+        });
+      }
+      await ctx.close();
+    }
+  });
 
 test("@G1 negative control: a page wider than the viewport is reported", async ({ browser }) => {
   const { ctx, page } = await as(browser, "admin", VIEWPORTS[0]);

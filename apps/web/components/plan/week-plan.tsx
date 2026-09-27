@@ -25,6 +25,7 @@ import { ExtraIconSvg, LoadError, Loading, loadBasics, type Basics } from "./com
 import {
   addDays,
   cuisineFamily,
+  dayKindOf,
   dayMonth,
   minutesOf,
   mondayOf,
@@ -32,7 +33,6 @@ import {
   weekDates,
   weekStats,
   weekdayName,
-  weekdayOf,
   type FitStatus,
 } from "./logic";
 import { MealSheet } from "./meal-sheet";
@@ -211,13 +211,13 @@ function cellShared(meals: readonly PlanMeal[], row: Row): boolean {
   return meals.length === 0 ? row.shared : meals.some((m) => m.memberScope === "shared");
 }
 
+/** "O · S trains" or "rest": who trains that day, by the resolver's rule (overrides first). */
 function trainingLine(data: WeekData, date: string): string | null {
-  if (data.schedules === null) return null;
-  const wd = weekdayOf(date);
-  const who = data.schedules.training
-    .filter((t) => t.weekday === wd)
-    .map((t) => data.basics.members.find((m) => m.id === t.memberId)?.displayName.charAt(0))
-    .filter((x): x is string => x !== undefined);
+  const s = data.schedules;
+  if (s === null) return null;
+  const who = data.basics.members
+    .filter((m) => dayKindOf(s, m.id, date) === "training")
+    .map((m) => m.displayName.charAt(0));
   return who.length === 0 ? "rest" : `${who.join(" · ")} trains`;
 }
 
@@ -242,7 +242,12 @@ function Grid({
         {data.dates.map((d) => {
           const t = trainingLine(data, d);
           return (
-            <span key={d} role="columnheader" className="p-1.5 font-extrabold">
+            <span
+              key={d}
+              role="columnheader"
+              className="p-1.5 font-extrabold"
+              data-testid={`day-head-${d}`}
+            >
               {shortDay(d)}
               {d === data.basics.today && <span className="sr-only"> (today)</span>}
               {t !== null && (
@@ -308,7 +313,10 @@ function DayList({
         const day = data.days.get(d);
         return (
           <li key={d} className="flex flex-col gap-2 rounded-2xl bg-card p-3 shadow-card">
-            <h2 className="flex items-baseline gap-2 font-body text-base font-extrabold">
+            <h2
+              className="flex items-baseline gap-2 font-body text-base font-extrabold"
+              data-testid={`day-head-${d}`}
+            >
               {weekdayName(d)} {dayMonth(d)}
               {t !== null && (
                 <span className={`text-xs ${t === "rest" ? "text-ink-muted" : "text-sea-text"}`}>

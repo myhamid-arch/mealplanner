@@ -371,3 +371,73 @@ export function ratingsByDish(
     [...sums].map(([id, s]) => [id, { mean: round(s.total / s.count, 1), count: s.count }]),
   );
 }
+
+// The day's target (R-28, CP3 finding 1) ------------------------------------------------------------
+
+export interface ProfileLike {
+  memberId: string;
+  kind: string;
+  kcal: number;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  satFatMaxG: number | null;
+  fibreMinG: number | null;
+  solubleFibreMinG: number | null;
+}
+
+export interface ScheduleFacts {
+  training: ReadonlyArray<{ memberId: string; weekday: number }>;
+  dayOverrides: ReadonlyArray<{ memberId: string; date: string; kind: string }>;
+}
+
+/**
+ * PLN-4 step 1, as the target resolver (core `dayKindOf`) decides it: a `training` override, else
+ * a `rest` override, else the training schedule's weekday.
+ */
+export function dayKindOf(
+  s: ScheduleFacts,
+  memberId: string,
+  date: string,
+): "training" | "default" {
+  const overrides = s.dayOverrides.filter((o) => o.memberId === memberId && o.date === date);
+  if (overrides.some((o) => o.kind === "training")) return "training";
+  if (overrides.some((o) => o.kind === "rest")) return "default";
+  const wd = weekdayOf(date);
+  return s.training.some((t) => t.memberId === memberId && t.weekday === wd)
+    ? "training"
+    : "default";
+}
+
+/**
+ * The member's target profile for the day (PLN-4 step 2: the day kind's profile, else default).
+ * With the schedules (admins) the day kind is resolved exactly. Without them (members may not read
+ * schedules) the profile is the one nearest the day's slot targets: slot targets are the chosen
+ * profile split by share, so they differ from it by rounding only, while default and training
+ * profiles differ by whole meals (F1: 2150 vs 2390 kcal).
+ */
+export function dayProfile<P extends ProfileLike>(
+  profiles: readonly P[],
+  memberId: string,
+  date: string,
+  schedules: ScheduleFacts | null,
+  slotSum: MacroValues | null,
+): P | null {
+  const own = profiles.filter((p) => p.memberId === memberId);
+  const byKind = (kind: string) => own.find((p) => p.kind === kind);
+  const fallback = byKind("default") ?? own[0] ?? null;
+  if (own.length === 0) return null;
+  if (schedules !== null) return byKind(dayKindOf(schedules, memberId, date)) ?? fallback;
+  if (own.length === 1 || slotSum === null) return fallback;
+  const distance = (p: P) =>
+    Math.abs(p.kcal - slotSum.kcal) +
+    Math.abs(p.proteinG - slotSum.protein) +
+    Math.abs(p.carbsG - slotSum.carbs) +
+    Math.abs(p.fatG - slotSum.fat);
+  return [...own].sort((a, b) => distance(a) - distance(b))[0] ?? fallback;
+}
+
+/** A profile's day target as macros (carbs on the profile's own basis, total by R-28). */
+export function profileMacros(p: ProfileLike): MacroValues {
+  return { kcal: p.kcal, protein: p.proteinG, carbs: p.carbsG, fat: p.fatG };
+}

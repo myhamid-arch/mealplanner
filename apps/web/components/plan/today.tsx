@@ -38,7 +38,12 @@ import {
   minutesOf,
   num,
   sumMacros,
+  dayProfile,
+  fibreGoals,
+  profileMacros,
+  satFatCap,
   type FitStatus,
+  type ScheduleFacts,
   type MacroValues,
 } from "./logic";
 import { plateSummary } from "./plate-summary";
@@ -49,6 +54,8 @@ interface TodayData {
   day: PlanDay | null;
   dishes: Map<string, Dish>;
   targets: Targets | null;
+  /** Training schedule and day overrides (admins), to resolve each member's day kind. */
+  schedules: ScheduleFacts | null;
   flags: KitchenFlagView[];
   proposals: Proposal[];
   reviews: Review[];
@@ -60,7 +67,7 @@ async function loadToday(date: string | null): Promise<TodayData> {
   const basics = await loadBasics();
   const on = date ?? basics.today;
   const admin = basics.role === "admin";
-  const [plans, targets, flags, proposals, reviews, next] = await Promise.all([
+  const [plans, targets, flags, proposals, reviews, next, schedules] = await Promise.all([
     api.call(c.plansList, { query: { from: on, to: on } }),
     basics.role === "kitchen" ? Promise.resolve(null) : api.call(c.targetsList, {}),
     admin
@@ -77,6 +84,7 @@ async function loadToday(date: string | null): Promise<TodayData> {
     admin
       ? api.call(c.plansList, { query: { from: addDays(on, 1), to: addDays(on, 1) } })
       : Promise.resolve({ days: [] }),
+    admin ? api.call(c.schedulesGet, {}) : Promise.resolve(null),
   ]);
   const day = plans.days[0] ?? null;
   const dishIds = [...new Set((day?.meals ?? []).map((m) => m.dishId))];
@@ -91,6 +99,7 @@ async function loadToday(date: string | null): Promise<TodayData> {
     day,
     dishes,
     targets,
+    schedules,
     flags,
     proposals,
     reviews,
@@ -103,16 +112,20 @@ function plateMacros(p: Plate): MacroValues | null {
 }
 
 /** The viewer's day: plates in time order, totals, and the day target (sum of slot targets). */
-function myDay(day: PlanDay | null, memberId: string | null) {
+/**
+ * The member's day: plates in time order, totals, and the day target. The target is the member's
+ * profile for the day kind (R-28, PLN-4), not the sum of the slot targets.
+ */
+function myDay(data: TodayData, memberId: string | null, date: string) {
   const rows: Array<{ meal: PlanMeal; plate: Plate }> = [];
-  for (const meal of day?.meals ?? []) {
+  for (const meal of data.day?.meals ?? []) {
     const plate = meal.plates.find((p) => p.memberId === memberId);
     if (plate !== undefined) rows.push({ meal, plate });
   }
   rows.sort((a, b) => minutesOf(a.meal.time) - minutesOf(b.meal.time));
   const actual = sumMacros(rows.map((r) => plateMacros(r.plate)).filter((m) => m !== null));
   const targeted = rows.filter((r) => r.plate.target !== null);
-  const target =
+  const slotSum =
     targeted.length === 0
       ? null
       : sumMacros(
@@ -123,8 +136,13 @@ function myDay(day: PlanDay | null, memberId: string | null) {
             fat: r.plate.target?.fat ?? 0,
           })),
         );
+  const profile =
+    slotSum === null || memberId === null
+      ? null
+      : dayProfile(data.targets?.targets ?? [], memberId, date, data.schedules, slotSum);
+  const target = profile === null ? null : profileMacros(profile);
   const statuses = rows.map((r) => r.plate.fitStatus);
-  return { rows, actual, target, statuses };
+  return { rows, actual, target, profile, statuses };
 }
 
 function dayFit(statuses: readonly FitStatus[]): FitStatus {
@@ -260,7 +278,7 @@ function SlotCard({
 
 function TodayPhone({ data, date }: { readonly data: TodayData; readonly date: string }) {
   const { basics, day } = data;
-  const mine = myDay(day, basics.memberId);
+  const mine = myDay(data, basics.memberId, date);
   const firstName = basics.me.user.name.split(" ")[0] ?? basics.me.user.name;
   const now = date === basics.today ? localMinutes(new Date(), basics.household.timezone) : null;
   const past = date < basics.today;
@@ -362,14 +380,15 @@ function DayGoals({
   readonly data: TodayData;
   readonly actual: ReturnType<typeof myDay>;
 }) {
-  const kcal = actual.target?.kcal ?? 0;
-  const profile = data.targets?.targets.find(
-    (t) => t.memberId === data.basics.memberId && t.kind === "default",
-  );
-  const pct = data.basics.household.satFatDefaultPct;
-  const cap = profile?.satFatMaxG ?? (kcal * pct) / 100 / 9;
-  const fibreGoal = profile?.fibreMinG ?? (kcal / 1000) * 14;
-  const solubleGoal = profile?.solubleFibreMinG ?? fibreGoal * 0.25;
+  const profile = actual.profile;
+  const kcal = profile?.kcal ?? 0;
+  const cap = satFatCap(kcal, profile?.satFatMaxG ?? null, data.basics.household.satFatDefaultPct);
+  const goals = fibreGoals(kcal, {
+    fibreMinG: profile?.fibreMinG ?? null,
+    solubleFibreMinG: profile?.solubleFibreMinG ?? null,
+  });
+  const fibreGoal = goals.fibre;
+  const solubleGoal = goals.soluble;
   const sat = actual.rows.reduce((s, r) => s + (r.plate.actual?.satFat ?? 0), 0);
   const fibre = actual.rows.reduce((s, r) => s + (r.plate.actual?.fibre ?? 0), 0);
   const solubleKnown = actual.rows.every((r) => r.plate.actual?.solubleFibre !== null);
@@ -557,7 +576,7 @@ function PersonGrid({ data, cols }: { readonly data: TodayData; readonly cols: S
         </div>
         <div role="rowgroup" className="min-w-[620px]">
           {members.map((m) => {
-            const d = myDay(data.day, m.id);
+            const d = myDay(data, m.id, data.day?.date ?? "");
             return (
               <div
                 key={m.id}

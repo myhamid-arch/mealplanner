@@ -543,6 +543,10 @@ async function gateG1() {
       "summarises targeted plates only",
       "counts distinct raw ingredients, cuisines and targeted plates on target",
       "averages top-level ratings per dish, skipping replies and unmapped targets",
+      "F1: Omar's rest day is 2150 kcal and his training day 2390, whatever the slot targets sum to",
+      "day overrides win over the schedule, as in the resolver",
+      "without schedules, the profile nearest the slot targets; one profile is used every day",
+      "negative control: summing slot targets is not the day target",
     ],
   );
   await e2eGate(report, "G1", { worker: true }, async (db) => {
@@ -569,6 +573,7 @@ async function gateG1() {
         `@G1 one-off shared / individual override at ${v} px`,
         `@G1 cook sheet print view at ${v} px`,
         `@G1 today, plate, recipes and kitchen at ${v} px`,
+        `@G1 day targets and the week's training days follow F1 at ${v} px`,
       ]),
       "@G1 negative control: a page wider than the viewport is reported",
       "@G1 negative control: the print check fails without the print stylesheet",

@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   addDays,
+  dayKindOf,
+  dayProfile,
+  profileMacros,
   carbLabel,
   carbsOn,
   cuisineFamily,
@@ -163,5 +166,74 @@ describe("ratings (SPEC-Q-11)", () => {
     );
     expect(map.get("d1")).toEqual({ mean: 4.5, count: 2 });
     expect(map.size).toBe(1);
+  });
+});
+
+describe("the day's target (R-28, CP3 finding 1)", () => {
+  const profile = (kind: string, kcal: number, carbsG: number) => ({
+    memberId: "omar",
+    kind,
+    kcal,
+    proteinG: 180,
+    carbsG,
+    fatG: 70,
+    satFatMaxG: 22,
+    fibreMinG: null,
+    solubleFibreMinG: null,
+  });
+  const profiles = [profile("default", 2150, 200), profile("training", 2390, 260)];
+  // F1: Omar trains Mon/Wed/Fri (weekday 0/2/4); 2026-09-28 is a Monday.
+  const f1 = {
+    training: [0, 2, 4].map((weekday) => ({ memberId: "omar", weekday })),
+    dayOverrides: [],
+  };
+  it("F1: Omar's rest day is 2150 kcal and his training day 2390, whatever the slot targets sum to", () => {
+    const slotSum = { kcal: 2146, protein: 179, carbs: 199, fat: 70 };
+    expect(dayProfile(profiles, "omar", "2026-09-27", f1, slotSum)?.kcal).toBe(2150);
+    expect(dayProfile(profiles, "omar", "2026-09-28", f1, slotSum)?.kcal).toBe(2390);
+    expect(dayProfile(profiles, "omar", "2026-09-29", f1, null)?.kcal).toBe(2150);
+    expect(dayProfile(profiles, "omar", "2026-09-30", f1, null)?.kcal).toBe(2390);
+  });
+  it("day overrides win over the schedule, as in the resolver", () => {
+    const s = {
+      training: f1.training,
+      dayOverrides: [
+        { memberId: "omar", date: "2026-09-28", kind: "rest" },
+        { memberId: "omar", date: "2026-09-27", kind: "training" },
+      ],
+    };
+    expect(dayKindOf(s, "omar", "2026-09-28")).toBe("default");
+    expect(dayKindOf(s, "omar", "2026-09-27")).toBe("training");
+  });
+  it("without schedules, the profile nearest the slot targets; one profile is used every day", () => {
+    expect(
+      dayProfile(profiles, "omar", "2026-09-28", null, {
+        kcal: 2386,
+        protein: 179,
+        carbs: 258,
+        fat: 70,
+      })?.kind,
+    ).toBe("training");
+    expect(
+      dayProfile(profiles, "omar", "2026-09-28", null, {
+        kcal: 2146,
+        protein: 179,
+        carbs: 199,
+        fat: 70,
+      })?.kind,
+    ).toBe("default");
+    expect(
+      dayProfile([profile("default", 2150, 200)], "omar", "2026-09-28", null, {
+        kcal: 2390,
+        protein: 1,
+        carbs: 1,
+        fat: 1,
+      })?.kcal,
+    ).toBe(2150);
+    expect(dayProfile(profiles, "sara", "2026-09-28", f1, null)).toBeNull();
+  });
+  it("negative control: summing slot targets is not the day target", () => {
+    const slotSum = { kcal: 2146, protein: 179, carbs: 199, fat: 70 };
+    expect(slotSum.kcal).not.toBe(profileMacros(profiles[0] ?? profile("default", 0, 0)).kcal);
   });
 });
