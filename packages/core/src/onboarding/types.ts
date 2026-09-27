@@ -90,6 +90,7 @@ export interface InferContext {
 
 /** Where an inferred setting is adjusted after saving (SC-7). */
 export type AdjustTarget =
+  | { screen: "family" }
   | {
       screen: "member";
       memberId: string;
@@ -114,4 +115,6 @@ export interface InferredSetup {
   members: { name: string; id: string }[];
   /** Ingredient slugs each dietary-flag exclusion covers, for the confirmation text. */
   coverage: { memberId: string | null; flag: DietaryFlag; slugs: string[] }[];
+  /** Never-eat terms that matched nothing in the catalogue; shown, not saved. */
+  unresolved: NeverEatItem[];
 }
