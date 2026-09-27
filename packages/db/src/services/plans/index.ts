@@ -67,6 +67,8 @@ export {
 export {
   DEFAULT_AI_RECIPE_DAILY_LIMIT,
   aiDishesToday,
+  generatedDishOps,
+  householdDishSlugs,
   localMidnight,
   recordAiGeneration,
   saveGeneratedDishes,
