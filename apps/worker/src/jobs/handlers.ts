@@ -26,6 +26,7 @@ import { purgeDueHouseholds } from "./purge.js";
 import { postInsightDigest } from "./chat-events.js";
 import { recipeDraft } from "./recipe-draft.js";
 import { reviewsExtract } from "./reviews-extract.js";
+import { plansPreview } from "./plans-preview.js";
 
 const SYSTEM: ChangeActorInput = { actor: "system", source: "learning" };
 
@@ -327,4 +328,5 @@ export const HANDLERS: Record<string, JobHandler> = {
   "household.purge": householdPurge,
   "reviews.extract": reviewsExtract,
   "recipe.draft": recipeDraft,
+  "plans.preview": plansPreview,
 };

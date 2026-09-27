@@ -1,0 +1,30 @@
+{
+  "status": 200,
+  "body": {
+    "id": "msg_onb_14",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-fable-5-1",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "sig_wire"
+      },
+      {
+        "type": "text",
+        "text": "{\"rules\":[{\"who\":\"Grandma\",\"term\":\"shellfish\",\"reason\":\"allergy\"}]}",
+        "citations": null
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 420,
+      "output_tokens": 96,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 610
+    }
+  }
+}

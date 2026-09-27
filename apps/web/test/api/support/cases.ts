@@ -8,6 +8,10 @@ import { generatePlan } from "@mealplanner/db/services/plans";
 import type { HouseholdRole } from "@mealplanner/core/types";
 import { ANON, callJson, type CallInput, type Caller, type TestApp } from "./app";
 import { useAgentModel } from "../../../lib/server/agent";
+import { createOnboardingModel } from "@mealplanner/ai/onboarding";
+import { setupFollowup } from "@mealplanner/db/schema";
+import { and, eq } from "drizzle-orm";
+import { useOnboardingParseModel } from "../../../lib/server/onboarding-parse";
 import { secretOf, totpCode } from "./totp";
 import {
   acceptWithSignup,
@@ -44,6 +48,13 @@ export function loginOf(w: World, who: HouseholdRole): Login {
 /** A new login in household A (for block, remove, role and session endpoints). */
 async function freshLogin(w: World, role: HouseholdRole = "member"): Promise<Login> {
   return acceptWithSignup(await invite(w.a.admin, role, null), "Fresh");
+}
+
+/** W-5 (1.4.7): removes household A's stored answer or dismissal of a follow-up. */
+async function reopenFollowup(app: TestApp, w: World, key: string) {
+  await app.rt.db
+    .delete(setupFollowup)
+    .where(and(eq(setupFollowup.householdId, w.a.id), eq(setupFollowup.key, key)));
 }
 
 let dayOffset = 0;
@@ -428,6 +439,48 @@ export const CASES: Record<string, Case> = {
           : { memberId: w.a.adultId, section: "taste", level: "detailed" },
     },
   }),
+
+  // W-5 (1.4.7, R-55): the parse through the real client over a recorded response; the preview is
+  // queued; a follow-up of household A is made open again before it is answered or dismissed.
+  "onboarding.parse": () => {
+    useOnboardingParseModel(
+      createOnboardingModel(
+        { enabled: true, model: "claude-rec" },
+        {
+          apiKey: "test-key-not-real",
+          maxRetries: 0,
+          fetch: () =>
+            Promise.resolve(
+              Response.json({
+                id: "msg_matrix_parse",
+                type: "message",
+                role: "assistant",
+                model: "claude-rec",
+                content: [
+                  { type: "text", text: '{"people":[{"name":"Omar","age":41,"sex":null}]}' },
+                ],
+                stop_reason: "end_turn",
+                stop_sequence: null,
+                usage: { input_tokens: 1, output_tokens: 1 },
+              }),
+            ),
+        },
+      ),
+    );
+    return { input: { body: { field: "people", text: "Omar 41" } } };
+  },
+  "plans.preview": () => ({
+    input: { body: { dates: ["2026-11-04"], weights: { appeal: 0.8 } } },
+  }),
+  "setupFollowups.get": () => ({ input: {} }),
+  "setupFollowups.answer": async ({ app, w }) => {
+    await reopenFollowup(app, w, "dinner_time");
+    return { input: { params: { key: "dinner_time" }, body: { choice: "yes" } } };
+  },
+  "setupFollowups.dismiss": async ({ app, w }) => {
+    await reopenFollowup(app, w, "dinner_time");
+    return { input: { params: { key: "dinner_time" } } };
+  },
 
   // Changes, proposals, insights
   "proposals.list": () => ({ input: {} }),
