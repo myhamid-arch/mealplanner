@@ -7,6 +7,7 @@ import { createProposals } from "@mealplanner/db/services/proposals";
 import { generatePlan } from "@mealplanner/db/services/plans";
 import type { HouseholdRole } from "@mealplanner/core/types";
 import { ANON, callJson, type CallInput, type Caller, type TestApp } from "./app";
+import { useAgentModel } from "../../../lib/server/agent";
 import { secretOf, totpCode } from "./totp";
 import {
   acceptWithSignup,
@@ -445,6 +446,26 @@ export const CASES: Record<string, Case> = {
   "conversations.create": () => ({ input: { body: { title: "Dinner ideas" } } }),
   "conversations.get": ({ w }) => ({ input: { params: { id: w.a.conversationId } } }),
   "conversations.messages": ({ w }) => ({ input: { params: { id: w.a.conversationId } } }),
+  // leaf 1.3.5 (R-46): one turn, answered by a stub model (tests have no credential).
+  "conversations.send": ({ w }) => {
+    useAgentModel({
+      model: "claude-stub",
+      effort: "high",
+      stream: () =>
+        Promise.resolve({
+          id: "msg_matrix",
+          type: "message",
+          role: "assistant",
+          model: "claude-stub",
+          content: [{ type: "text", text: "Hello.", citations: null }],
+          stop_reason: "end_turn",
+          stop_sequence: null,
+          stop_details: null,
+          usage: { input_tokens: 1, output_tokens: 1 },
+        } as never),
+    });
+    return { input: { params: { id: w.a.conversationId }, body: { text: "Hello" } } };
+  },
   "jobs.get": ({ w }) => ({ input: { params: { id: w.a.jobId } } }),
   "jobs.events": ({ w }) => ({ input: { params: { id: w.a.jobId } } }),
   "diagnostics.get": () => ({ input: {} }),

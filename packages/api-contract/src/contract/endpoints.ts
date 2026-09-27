@@ -1117,6 +1117,21 @@ export const conversationMessages = endpoint({
   response: list("messages", d.ChatMessageDto),
 });
 
+export const conversationsSend = endpoint({
+  id: "conversations.send",
+  method: "POST",
+  path: `${V}/conversations/{id}/messages`,
+  summary: "Send a message to the assistant; the turn streams as Server-Sent Events (AGT-2, AGT-7)",
+  tag: "agent",
+  auth: "household",
+  roles: ADMIN,
+  params: byId,
+  body: d.ChatSendBody,
+  format: "sse",
+  response: d.ChatStreamEventDto,
+  errors: [409, 429, 503],
+});
+
 export const jobsGet = endpoint({
   id: "jobs.get",
   method: "GET",
@@ -1402,6 +1417,7 @@ export const ENDPOINTS = [
   conversationsCreate,
   conversationsGet,
   conversationMessages,
+  conversationsSend,
   jobsGet,
   jobsEvents,
   diagnosticsGet,
