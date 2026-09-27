@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { z } from "zod";
 import {
@@ -14,6 +15,7 @@ import {
   invitesList,
   invitesResend,
   invitesRevoke,
+  me,
   membersList,
   type AccessListDto,
   type MemberDto,
@@ -55,6 +57,8 @@ interface Data {
   invites: Invite[];
   members: Member[];
   requireTotp: boolean;
+  /** Whether the viewer has two-step sign-in on (requiring it without having it locks them out). */
+  viewerHasTotp: boolean;
 }
 
 type Filter = "logins" | "invites" | "blocked";
@@ -88,17 +92,19 @@ const GRID =
 
 export function PeopleAccessScreen({ viewerUserId }: { readonly viewerUserId: string }) {
   const load = useLoad<Data>(async () => {
-    const [access, invites, members, household] = await Promise.all([
+    const [access, invites, members, household, who] = await Promise.all([
       api.call(accessList, {}),
       api.call(invitesList, {}),
       api.call(membersList, {}),
       api.call(householdGet, {}),
+      api.call(me, {}),
     ]);
     return {
       access,
       invites: invites.invites ?? [],
       members: members.members ?? [],
       requireTotp: household.requireTotpForAdmins,
+      viewerHasTotp: who.user.twoFactorEnabled,
     };
   });
   const [filter, setFilter] = useState<Filter>("logins");
@@ -126,7 +132,7 @@ export function PeopleAccessScreen({ viewerUserId }: { readonly viewerUserId: st
       </Frame>
     );
 
-  const { access, invites, members, requireTotp } = load.data;
+  const { access, invites, members, requireTotp, viewerHasTotp } = load.data;
   const openInvites = invites.filter((i) => i.status === "open");
   const activeAdmins = access.logins.filter((l) => l.role === "admin" && l.status === "active");
   const blockedCount = access.logins.filter((l) => l.status === "blocked").length;
@@ -540,6 +546,9 @@ export function PeopleAccessScreen({ viewerUserId }: { readonly viewerUserId: st
             <input
               type="checkbox"
               checked={requireTotp}
+              // Turning it on without having it would lock the viewer out of every admin screen.
+              disabled={!requireTotp && !viewerHasTotp}
+              aria-describedby={!requireTotp && !viewerHasTotp ? "totp-first" : undefined}
               onChange={(e) => {
                 const on = e.currentTarget.checked;
                 void run(async () => {
@@ -559,6 +568,15 @@ export function PeopleAccessScreen({ viewerUserId }: { readonly viewerUserId: st
               className="size-5 shrink-0 accent-[var(--action)]"
             />
           </label>
+          {!requireTotp && !viewerHasTotp && (
+            <span id="totp-first" className="text-[13px] text-ink-soft">
+              Turn on two-step sign-in for yourself in{" "}
+              <Link href="/account" className="font-extrabold">
+                My account
+              </Link>{" "}
+              first.
+            </span>
+          )}
           <span className="text-[13px] text-ink-soft">
             {plural(activeAdmins.length, "admin", "admins")}. The last admin can&rsquo;t be removed,
             blocked or demoted.

@@ -76,3 +76,28 @@ R2-ADM-5 names notification preferences; the API stores free keys. Reading: two 
 - SPEC-Q-6: ruled against (R-48). InviteAccept has no "No password — email me a link each time" button; listed as a mockup deviation.
 - SPEC-Q-3 … 5, 7 … 15: accepted as recorded.
 - Dependencies applied on the base branch: `uqr` 0.1.3, dev `@axe-core/playwright` 4.13.0.
+
+## Found while building (recorded at CP2)
+
+### SPEC-Q-16: InviteAccept says who invited you
+
+The mockup's "Omar invited you to" needs the inviter's name; `GET /invites/code/{code}` (`InviteLookupDto`) returns the household, role, member and expiry only. Reading: the card says "You're invited to <household>"; no API change (architect note: no new routes). Listed as a deviation.
+
+### SPEC-Q-17: the invite link and QR code appear after the invite is created
+
+InviteDialog shows the link and QR code inside the form. An invite's code exists only once it is created (`POST /invites`), and a dialog that created an invite on opening would leave an unused open invite each time it is dismissed. Reading: the form creates the invite ("Create invite link", or "Send invite to <name>" with an email), then the same dialog shows its code, link (Copy link) and QR code. Listed as a deviation.
+
+### SPEC-Q-18: change-log titles are the change sets' own summaries
+
+The mockup's "Blocked Ravi (kitchen)" and before → after chips are not in the API: `GET /change-sets` returns the summary 1.4.1 wrote ("Block login", "Change role to member", "Remove login and archive member"). Reading: the entry shows that summary, with the actor badge saying who or what made it and the undo reason when undo is unavailable (SPEC-Q-11). Listed as a deviation.
+
+### SPEC-Q-19: requiring two-step sign-in for admins
+
+With `require_totp_for_admins` on, an admin without two-step sign-in gets `403 totp_required` everywhere but account set-up (1.4.1 SPEC-Q-6). An admin who switched it on without having it would lock themselves out of People & access at once. Reading: the switch is disabled, with "Turn on two-step sign-in for yourself in My account first", until the viewer has it; switching it off is always possible.
+
+### SPEC-Q-20: accessibility changes to the mockups (anti-drift rule 5)
+
+- The login actions menu is non-modal: Radix's modal menu marks the rest of the page `aria-hidden` while its controls stay focusable (axe `aria-hidden-focus`, serious). Keyboard use, Escape and outside clicks work as before.
+- Tables that scroll sideways on a phone (platform console, diagnostics) are focusable, labelled regions (axe `scrollable-region-focusable`).
+- Links on the flour background (mockup "Change" in CreateHousehold's box) are not used: action on flour is 4.16:1 (1.4.2 `TEXT_PAIRS`). The box says "Change any of these later in Settings" instead.
+- People & access rows stack on phones (the mockup is desktop only); the column template is shared by the header and every row.

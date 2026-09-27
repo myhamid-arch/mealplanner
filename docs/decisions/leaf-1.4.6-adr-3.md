@@ -26,3 +26,11 @@ Requirement: BLD-5 1.4.6 G1, G2; BLD-8 W-1
 1. `@axe-core/playwright` (requested, R-e) with tags `wcag2a, wcag2aa, wcag21a, wcag21aa`: no `serious` or `critical` violation on every screen of this leaf — sign-in (with the TOTP step), create household, invite accept, reset password, signed-in notice, account, diagnostics, people & access, invite dialog, block dialog, actions menu, household settings, change log, platform console (each tab) — at 390 × 844 and 1280 × 800, light and dark.
 2. Negative control: the same scan on a page with an injected `<button>` without a name and a `#B8A791`-on-`#FFF8EE` text must report a serious or critical violation.
 3. W-1: runs `apps/web/e2e/shell.spec.ts` (`@G2`) against its own `next start` without `DATABASE_URL`, as 1.4.2 G2 does; on failure the full Playwright output is printed, not a tail.
+
+## As built (CP2)
+
+- **Rate limits.** Better Auth 1.7.6 limits each `/sign-in/*` path to 3 requests per client address, and the count resets only after 10 s without a request to that path (`decideConsume` in its rate limiter). The spec waits for a free slot before each password or email-link sign-in (`authSlot`) instead of meeting a 429; the server is unchanged.
+- **Shared state.** Playwright restarts its worker after a failed test. The G2 set-up's results (run id, admin and operator sessions, the open invite code) and the rate-limit counts are kept in a JSON file next to the gate's mail directory, so one failing screen does not cascade into the others.
+- **G2 flows.** Each flow opens a page once and scans every state it passes through (for example People & access → actions menu → block dialog → invite dialog → invite ready), in light and then dark (`emulateMedia`, after finite colour transitions finish). Diagnostics and the console are scanned with seeded rows (one AI call that hit `max_tokens`, one failed plan job). The scan also fails a page wider than the viewport (`horizontal-scroll`, UX-1); the negative control checks that too.
+- **W-1** runs concurrently with the G2 e2e, on its own port and without a database; on any failure the script prints the full Playwright output and every `error-context.md`.
+- **Timing** (this container, warm build): G1 40 s, G2 84 s; a cold `next build` adds about 20 s. See the ARCHITECT QUESTION on the checker timeout.
