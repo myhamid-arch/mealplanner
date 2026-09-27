@@ -29,6 +29,8 @@ import {
   mealOverrideRemove,
   mealOverrideSet,
   planLock,
+  planMealStatus,
+  planPublish,
   planSaveDays,
   planSwapDish,
   planUnlock,
@@ -107,6 +109,9 @@ export const PUBLIC_OPS = [
   // BLD-8 R-40 (W-2, PLN-12)
   recipeGenerate,
   recipeRevise,
+  // BLD-8 R-52
+  planPublish,
+  planMealStatus,
 ] as const;
 
 type PublicOp = (typeof PUBLIC_OPS)[number];
