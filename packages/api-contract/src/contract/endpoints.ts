@@ -978,7 +978,8 @@ export const onboardingParse = endpoint({
   id: "onboarding.parse",
   method: "POST",
   path: `${V}/onboarding/parse`,
-  summary: "Read one onboarding answer with the assistant (structured output; shown for confirmation)",
+  summary:
+    "Read one onboarding answer with the assistant (structured output; shown for confirmation)",
   tag: "config",
   auth: "household",
   roles: ADMIN,

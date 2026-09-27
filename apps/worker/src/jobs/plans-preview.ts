@@ -5,7 +5,10 @@
 // proposed side equals the real replan (PLN-11, deterministic since R-51). No recipe generation
 // runs in a preview (it would write dishes); the replan's generation requests are counted instead.
 // Current = the saved plan when every date has one, else a run with the current weights.
-import { coreIngredients, type CoreIngredientCandidate } from "@mealplanner/core/learning/preferences";
+import {
+  coreIngredients,
+  type CoreIngredientCandidate,
+} from "@mealplanner/core/learning/preferences";
 import {
   planDays,
   type PlanDish,
@@ -20,7 +23,10 @@ import { toJson, type JobHandler } from "../runner.js";
 
 /** The weights a preview may change: the five numeric weights of `weights.set`. */
 export type PreviewWeights = Partial<
-  Pick<PlanningWeightsRow, "macroPrecision" | "appeal" | "ingredientEconomy" | "variety" | "fairness">
+  Pick<
+    PlanningWeightsRow,
+    "macroPrecision" | "appeal" | "ingredientEconomy" | "variety" | "fairness"
+  >
 >;
 
 export interface PreviewArgs {
@@ -66,14 +72,14 @@ export interface PreviewResult {
   proposedMeals: PlannedMeal[];
 }
 
-/** `weights.set`'s merge (`{ ...row, ...definedFields(p) }`) applied to the loaded config. */
+/**
+ * `weights.set`'s merge (`{ ...row, ...definedFields(p) }`) applied to the loaded config. The
+ * weights come from JSON (the job payload), which carries no undefined fields.
+ */
 export function withWeights(input: PlanInput, weights: PreviewWeights): PlanInput {
-  const defined = Object.fromEntries(
-    Object.entries(weights).filter(([, v]) => v !== undefined),
-  ) as PreviewWeights;
   return {
     ...input,
-    config: { ...input.config, planningWeights: { ...input.config.planningWeights, ...defined } },
+    config: { ...input.config, planningWeights: { ...input.config.planningWeights, ...weights } },
   };
 }
 
@@ -149,31 +155,59 @@ export function mealChanges(
   for (const [key, b] of was) {
     const a = now.get(key);
     if (a === undefined) {
-      changes.push({ ...base(b), kind: "removed", memberId: null, before: side(b, dishes), after: null });
+      changes.push({
+        ...base(b),
+        kind: "removed",
+        memberId: null,
+        before: side(b, dishes),
+        after: null,
+      });
       continue;
     }
     if (a.dishId !== b.dishId) {
-      changes.push({ ...base(b), kind: "dish", memberId: null, before: side(b, dishes), after: side(a, dishes) });
+      changes.push({
+        ...base(b),
+        kind: "dish",
+        memberId: null,
+        before: side(b, dishes),
+        after: side(a, dishes),
+      });
       continue;
     }
     const members = [...new Set([...b.plates, ...a.plates].map((p) => p.memberId))].sort();
     for (const memberId of members) {
       const vb = plateVariants(b, memberId, dishes);
       const va = plateVariants(a, memberId, dishes);
-      const components = [...new Set([...vb.keys(), ...va.keys()])].filter((c) => vb.get(c) !== va.get(c));
+      const components = [...new Set([...vb.keys(), ...va.keys()])].filter(
+        (c) => vb.get(c) !== va.get(c),
+      );
       if (components.length === 0) continue;
       changes.push({
         ...base(b),
         kind: "variant",
         memberId,
-        before: side(b, dishes, components.flatMap((c) => vb.get(c) ?? [])),
-        after: side(a, dishes, components.flatMap((c) => va.get(c) ?? [])),
+        before: side(
+          b,
+          dishes,
+          components.flatMap((c) => vb.get(c) ?? []),
+        ),
+        after: side(
+          a,
+          dishes,
+          components.flatMap((c) => va.get(c) ?? []),
+        ),
       });
     }
   }
   for (const [key, a] of now)
     if (!was.has(key))
-      changes.push({ ...base(a), kind: "added", memberId: null, before: null, after: side(a, dishes) });
+      changes.push({
+        ...base(a),
+        kind: "added",
+        memberId: null,
+        before: null,
+        after: side(a, dishes),
+      });
   const time = new Map([...before, ...after].map((m) => [mealKey(m), m.time]));
   return changes.sort(
     (x, y) =>

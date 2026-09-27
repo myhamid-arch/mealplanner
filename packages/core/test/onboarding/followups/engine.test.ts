@@ -135,7 +135,10 @@ describe("G3 follow-ups proposed from the F1 answers (R2-ONB-6)", () => {
     ).toEqual([`unexpected training_kcal:${id("Adult A")}`]);
 
     // A never-eat answer that keeps nuts from everyone settles the school question.
-    const nutFree = await household({ ...F1_TEXT, neverEat: `${F1_TEXT.neverEat} No nuts for anyone.` });
+    const nutFree = await household({
+      ...F1_TEXT,
+      neverEat: `${F1_TEXT.neverEat} No nuts for anyone.`,
+    });
     expect(proposeFollowups(configOf(nutFree.tx)).map((f) => f.key)).not.toContain(
       "school_nut_free",
     );
@@ -281,7 +284,13 @@ describe("G3 one card per day, dismissals (SPEC-Q-9)", () => {
 });
 
 describe("G3 the Getting set up checklist", () => {
-  const facts = { activeMembers: 5, planDays: 1, kitchenInvited: true, reviews: 0, familyInvited: false };
+  const facts = {
+    activeMembers: 5,
+    planDays: 1,
+    kitchenInvited: true,
+    reviews: 0,
+    familyInvited: false,
+  };
 
   it("G3 the checklist counts progress as FirstDaysPhone shows it (3 / 6)", () => {
     const c = checklist(facts, { answered: 0, total: 3 });
@@ -297,10 +306,7 @@ describe("G3 the Getting set up checklist", () => {
   });
 
   it("G3 the checklist follows the data: ratings, invites and answers", () => {
-    const c = checklist(
-      { ...facts, reviews: 3, familyInvited: true },
-      { answered: 3, total: 3 },
-    );
+    const c = checklist({ ...facts, reviews: 3, familyInvited: true }, { answered: 3, total: 3 });
     expect([c.done, c.total]).toEqual([6, 6]);
     expect(checklist({ ...facts, reviews: 2 }, { answered: 2, total: 3 }).done).toBe(3);
     // Nothing to ask: the questions item is left out.

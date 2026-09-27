@@ -82,7 +82,8 @@ export const ENERGY_AGREEMENT = 0.12;
 function checkPeople(out: PeopleOutput): Checked {
   const issues: string[] = [];
   if (out.people.length === 0) issues.push("no people");
-  if (out.people.length > MAX_PEOPLE) issues.push(`${String(out.people.length)} people (at most ${String(MAX_PEOPLE)})`);
+  if (out.people.length > MAX_PEOPLE)
+    issues.push(`${String(out.people.length)} people (at most ${String(MAX_PEOPLE)})`);
   const seen = new Set<string>();
   for (const p of out.people) {
     const name = p.name.trim();
@@ -110,13 +111,16 @@ function checkPeople(out: PeopleOutput): Checked {
 
 function checkDay(label: string, d: z.output<typeof DaySchema>, issues: string[]): DayTargets {
   if (d.kcal < MIN_KCAL || d.kcal > MAX_KCAL)
-    issues.push(`${label}: ${String(d.kcal)} kcal is outside ${String(MIN_KCAL)}–${String(MAX_KCAL)}`);
+    issues.push(
+      `${label}: ${String(d.kcal)} kcal is outside ${String(MIN_KCAL)}–${String(MAX_KCAL)}`,
+    );
   for (const [name, g] of [
     ["protein", d.proteinG],
     ["carbs", d.carbsG],
     ["fat", d.fatG],
   ] as const)
-    if (g < 0 || g > MAX_MACRO_G) issues.push(`${label}: ${String(g)} g of ${name} is outside 0–${String(MAX_MACRO_G)} g`);
+    if (g < 0 || g > MAX_MACRO_G)
+      issues.push(`${label}: ${String(g)} g of ${name} is outside 0–${String(MAX_MACRO_G)} g`);
   const fromMacros = 4 * d.proteinG + 4 * d.carbsG + 9 * d.fatG;
   if (Math.abs(fromMacros - d.kcal) > ENERGY_AGREEMENT * d.kcal)
     issues.push(
@@ -128,7 +132,8 @@ function checkDay(label: string, d: z.output<typeof DaySchema>, issues: string[]
     ["fibre", d.fibreMinG],
     ["sodium", d.sodiumMaxMg],
   ] as const)
-    if (v !== null && (v < 0 || v > 10_000)) issues.push(`${label}: ${name} ${String(v)} is out of range`);
+    if (v !== null && (v < 0 || v > 10_000))
+      issues.push(`${label}: ${name} ${String(v)} is out of range`);
   const round = (x: number) => Math.round(x * 10) / 10;
   return {
     kcal: Math.round(d.kcal),
@@ -144,19 +149,25 @@ function checkDay(label: string, d: z.output<typeof DaySchema>, issues: string[]
 
 function checkTargets(out: TargetsOutput): Checked {
   if (out.day === null) {
-    if (out.training !== null) return { ok: false, issues: ["training-day numbers without daily numbers"] };
+    if (out.training !== null)
+      return { ok: false, issues: ["training-day numbers without daily numbers"] };
     const reason = out.problem?.trim();
     return {
       ok: true,
       value: {
         field: "targets",
-        targets: { ok: false, reason: reason === undefined || reason === "" ? "No numbers found." : reason.slice(0, 200) },
+        targets: {
+          ok: false,
+          reason:
+            reason === undefined || reason === "" ? "No numbers found." : reason.slice(0, 200),
+        },
       },
     };
   }
   const issues: string[] = [];
   const day = checkDay("daily", out.day, issues);
-  const training = out.training === null ? undefined : checkDay("training days", out.training, issues);
+  const training =
+    out.training === null ? undefined : checkDay("training days", out.training, issues);
   if (issues.length > 0) return { ok: false, issues };
   const value: TargetNumbers = training === undefined ? day : { ...day, training };
   return { ok: true, value: { field: "targets", targets: { ok: true, value } } };
@@ -164,7 +175,8 @@ function checkTargets(out: TargetsOutput): Checked {
 
 function checkNeverEat(out: NeverEatOutput, people: readonly string[]): Checked {
   const issues: string[] = [];
-  if (out.rules.length > MAX_RULES) issues.push(`${String(out.rules.length)} rules (at most ${String(MAX_RULES)})`);
+  if (out.rules.length > MAX_RULES)
+    issues.push(`${String(out.rules.length)} rules (at most ${String(MAX_RULES)})`);
   const names = new Map(people.map((p) => [p.trim().toLowerCase(), p.trim()]));
   const rules: NeverEatItem[] = [];
   for (const r of out.rules) {

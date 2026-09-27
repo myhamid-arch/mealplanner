@@ -17,7 +17,12 @@ export type FollowupKind = (typeof FOLLOWUP_KINDS)[number];
 /** The configuration a follow-up is judged against. */
 export type FollowupConfig = Pick<
   HouseholdConfig,
-  "members" | "targetProfiles" | "slotTypes" | "memberSlotSchedules" | "trainingSchedules" | "exclusions"
+  | "members"
+  | "targetProfiles"
+  | "slotTypes"
+  | "memberSlotSchedules"
+  | "trainingSchedules"
+  | "exclusions"
 >;
 
 export interface FollowupChoice {
@@ -58,7 +63,8 @@ export class FollowupError extends Error {
 export const NUT_FLAG = "contains_nuts";
 const SCHOOL_SLOT = "packed_school_lunch";
 const DINNER_SLOT = "dinner";
-const DINNER_DEFAULT_TIME = DEFAULT_SLOTS.find((s) => s.key === DINNER_SLOT)?.defaultTime ?? "19:30:00";
+const DINNER_DEFAULT_TIME =
+  DEFAULT_SLOTS.find((s) => s.key === DINNER_SLOT)?.defaultTime ?? "19:30:00";
 /** One-tap alternatives to the default dinner time. */
 export const DINNER_TIMES = ["19:00:00", "20:00:00", "20:30:00"] as const;
 
@@ -161,9 +167,11 @@ export function proposeFollowups(
   cfg: FollowupConfig,
   opts: { viewerMemberId?: string | null } = {},
 ): Followup[] {
-  return [schoolNutFree(cfg), dinnerTime(cfg), ...trainingKcal(cfg, opts.viewerMemberId ?? null)].filter(
-    (f): f is Followup => f !== null,
-  );
+  return [
+    schoolNutFree(cfg),
+    dinnerTime(cfg),
+    ...trainingKcal(cfg, opts.viewerMemberId ?? null),
+  ].filter((f): f is Followup => f !== null);
 }
 
 export interface FollowupQueue {
@@ -225,9 +233,12 @@ export function followupOps(
     case "school_nut_free": {
       if (choice !== "yes") return { ops: [], summary: "" };
       const ops: ChangeOp[] = schoolChildren(cfg)
-        .filter((k) => !cfg.exclusions.some(
-          (e) => e.kind === "dietary_flag" && e.key === NUT_FLAG && e.memberId === k.id,
-        ))
+        .filter(
+          (k) =>
+            !cfg.exclusions.some(
+              (e) => e.kind === "dietary_flag" && e.key === NUT_FLAG && e.memberId === k.id,
+            ),
+        )
         .map((k) => ({
           kind: "exclusion.add",
           payload: {
@@ -245,7 +256,9 @@ export function followupOps(
       const slot = cfg.slotTypes.find((s) => s.key === DINNER_SLOT);
       if (slot === undefined) throw new FollowupError("the household has no dinner slot");
       return {
-        ops: [{ kind: "slot.update", payload: { slotTypeId: slot.id, defaultTime: `${choice}:00` } }],
+        ops: [
+          { kind: "slot.update", payload: { slotTypeId: slot.id, defaultTime: `${choice}:00` } },
+        ],
         summary: `Dinner at ${choice}`,
       };
     }

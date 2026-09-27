@@ -184,7 +184,9 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
     const [row] = await app.rt.db
       .select()
       .from(setupFollowup)
-      .where(and(eq(setupFollowup.householdId, a.householdId), eq(setupFollowup.key, "school_nut_free")));
+      .where(
+        and(eq(setupFollowup.householdId, a.householdId), eq(setupFollowup.key, "school_nut_free")),
+      );
     expect([row?.status, row?.choice]).toEqual(["answered", "yes"]);
   });
 
@@ -251,7 +253,10 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
       await callJson(c.plansList, { query: { from: "2026-11-02", to: "2026-11-02" } }, b),
       "plans",
     );
-    const dishes = [...new Set(plans.days.flatMap((d) => d.meals.map((m) => m.dishId)))].slice(0, 3);
+    const dishes = [...new Set(plans.days.flatMap((d) => d.meals.map((m) => m.dishId)))].slice(
+      0,
+      3,
+    );
     expect(dishes).toHaveLength(3);
     for (const dishId of dishes)
       ok(

@@ -54,7 +54,11 @@ export async function parseOnboarding(
         return id;
       },
     },
-    { field: body.field, text: body.text, ...(body.people === undefined ? {} : { people: body.people }) },
+    {
+      field: body.field,
+      text: body.text,
+      ...(body.people === undefined ? {} : { people: body.people }),
+    },
   );
   switch (result.status) {
     case "disabled":
@@ -64,7 +68,9 @@ export async function parseOnboarding(
         502,
         result.code === "model_output_invalid" ? "model_output_invalid" : `model_${result.code}`,
         result.message,
-        result.issues.length === 0 ? undefined : result.issues.map((message) => ({ path: [], message })),
+        result.issues.length === 0
+          ? undefined
+          : result.issues.map((message) => ({ path: [], message })),
       );
   }
   const v = result.value;

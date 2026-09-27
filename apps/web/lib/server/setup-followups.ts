@@ -51,7 +51,7 @@ const followupDto = (f: Followup) => ({
 
 async function countOf(query: Promise<{ n: number }[]>): Promise<number> {
   const [row] = await query;
-  return Number(row?.n ?? 0);
+  return row?.n ?? 0;
 }
 
 /** Whether a login of `role` exists, or an open invite for one (not used, revoked or expired). */
@@ -129,7 +129,10 @@ async function view(rt: Runtime, caller: CallerContext, loaded: Loaded, now: Dat
   );
   return {
     today: loaded.today,
-    day: setupDay(safeLocalDate(caller.household.createdAt, caller.household.timezone), loaded.today),
+    day: setupDay(
+      safeLocalDate(caller.household.createdAt, caller.household.timezone),
+      loaded.today,
+    ),
     card: queue.card === null ? null : followupDto(queue.card),
     position: queue.position,
     total: queue.total,
@@ -145,7 +148,8 @@ export async function getFollowups(rt: Runtime, caller: CallerContext, now = new
 /** Today's card, or the reason the follow-up cannot be resolved now. */
 function todaysCard(loaded: Loaded, key: string): Followup {
   const state = loaded.states.find((s) => s.key === key);
-  if (state?.status === "answered") throw conflict("already_answered", "this question was already answered");
+  if (state?.status === "answered")
+    throw conflict("already_answered", "this question was already answered");
   const item = loaded.proposed.find((f) => f.key === key);
   if (item === undefined) throw notFound("open follow-up");
   const card = followupQueue(loaded.proposed, loaded.states, loaded.today).card;
@@ -178,7 +182,8 @@ async function writeState(
       setWhere: ne(setupFollowup.status, sql`'answered'`),
     })
     .returning({ id: setupFollowup.id });
-  if (written.length === 0) throw conflict("already_answered", "this question was already answered");
+  if (written.length === 0)
+    throw conflict("already_answered", "this question was already answered");
 }
 
 export async function answerFollowup(
@@ -194,7 +199,8 @@ export async function answerFollowup(
   try {
     change = followupOps(item, body.choice, loaded.config);
   } catch (error) {
-    if (error instanceof FollowupError) throw new ProblemError(422, "invalid_choice", error.message);
+    if (error instanceof FollowupError)
+      throw new ProblemError(422, "invalid_choice", error.message);
     throw error;
   }
   const changeSetId = await rt.db.transaction(async (tx) => {
@@ -208,7 +214,13 @@ export async function answerFollowup(
           ops: change.ops,
         })
       ).changeSetId;
-    await writeState(tx, caller, key, { status: "answered", choice: body.choice, changeSetId: id }, now);
+    await writeState(
+      tx,
+      caller,
+      key,
+      { status: "answered", choice: body.choice, changeSetId: id },
+      now,
+    );
     return id;
   });
   if (changeSetId !== null)

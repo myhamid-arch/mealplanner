@@ -11,7 +11,8 @@ export interface SetupFacts {
   familyInvited: boolean;
 }
 
-export type ChecklistKey = "family" | "first_plan" | "kitchen" | "rate" | "invite_family" | "questions";
+export type ChecklistKey =
+  "family" | "first_plan" | "kitchen" | "rate" | "invite_family" | "questions";
 
 export interface ChecklistItem {
   key: ChecklistKey;

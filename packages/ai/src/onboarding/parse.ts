@@ -114,14 +114,18 @@ export interface OnboardingParseDeps {
   recordGeneration(record: OnboardingGenerationRecord): Promise<string>;
 }
 
-export type OnboardingParseFailure =
-  | "model_output_invalid"
-  | ClaudeCallError["code"];
+export type OnboardingParseFailure = "model_output_invalid" | ClaudeCallError["code"];
 
 export type OnboardingParseResult =
   | { status: "parsed"; value: ParsedValue; generationId: string }
   | { status: "disabled"; reason: string }
-  | { status: "failed"; code: OnboardingParseFailure; message: string; issues: string[]; generationId: string };
+  | {
+      status: "failed";
+      code: OnboardingParseFailure;
+      message: string;
+      issues: string[];
+      generationId: string;
+    };
 
 /**
  * The parse model for a configuration (null without a credential), through 1.3.1's client.
@@ -187,7 +191,11 @@ export async function parseOnboardingText(
       purpose: "onboarding_parse",
       model: error.servedModel ?? deps.model.model,
       requestSummary,
-      responseRaw: asJson({ error: error.code, message: error.message, content: error.responseContent ?? null }),
+      responseRaw: asJson({
+        error: error.code,
+        message: error.message,
+        content: error.responseContent ?? null,
+      }),
       inputTokens: error.usage?.inputTokens ?? 0,
       outputTokens: error.usage?.outputTokens ?? 0,
       cacheReadTokens: error.usage?.cacheReadTokens ?? 0,

@@ -36,9 +36,6 @@ export const setupFollowup = pgTable(
     index("setup_followup_household_id_idx").on(t.householdId),
     unique("setup_followup_household_key_key").on(t.householdId, t.key),
     check("setup_followup_key_length", sql`char_length(${t.key}) BETWEEN 1 AND 80`),
-    check(
-      "setup_followup_choice",
-      sql`(${t.status} = 'answered') = (${t.choice} IS NOT NULL)`,
-    ),
+    check("setup_followup_choice", sql`(${t.status} = 'answered') = (${t.choice} IS NOT NULL)`),
   ],
 );

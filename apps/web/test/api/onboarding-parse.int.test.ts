@@ -56,7 +56,10 @@ beforeAll(async () => {
   b = await signupAdmin("Household B");
   const omar = newId();
   await applyOps(a, [
-    { kind: "member.create", payload: { id: omar, displayName: "Omar", color: "sea", isTargeted: true } },
+    {
+      kind: "member.create",
+      payload: { id: omar, displayName: "Omar", color: "sea", isTargeted: true },
+    },
   ]);
   member = await acceptWithSignup(await invite(a, "member", omar), "Omar");
   kitchen = await acceptWithSignup(await invite(a, "kitchen", null), "Kitchen");
@@ -81,7 +84,9 @@ async function audits(householdId: string) {
   return app.rt.db
     .select()
     .from(aiGeneration)
-    .where(and(eq(aiGeneration.householdId, householdId), eq(aiGeneration.purpose, "onboarding_parse")));
+    .where(
+      and(eq(aiGeneration.householdId, householdId), eq(aiGeneration.purpose, "onboarding_parse")),
+    );
 }
 
 describe("G1 POST /onboarding/parse", () => {
@@ -115,7 +120,9 @@ describe("G1 POST /onboarding/parse", () => {
 
   it("G1 a schema-failing answer is refused with 502 and not returned; the audit row keeps why", async () => {
     const before = (await audits(a.householdId)).length;
-    useOnboardingParseModel(recordedModel("schema-targets-string-kcal", "invalid-targets-disagree"));
+    useOnboardingParseModel(
+      recordedModel("schema-targets-string-kcal", "invalid-targets-disagree"),
+    );
     for (const text of ["2150 cal", "2150 cal, 250p 300c 90f"]) {
       const r = await parse(a, { field: "targets", text });
       expect(r.status).toBe(502);
@@ -150,7 +157,8 @@ describe("G1 POST /onboarding/parse", () => {
     // The test process has no credential (the handoff gate G6 runs with one).
     useOnboardingParseModel(undefined);
     const saved = { ...process.env };
-    for (const k of ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_PROFILE"]) Reflect.deleteProperty(process.env, k);
+    for (const k of ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_PROFILE"])
+      Reflect.deleteProperty(process.env, k);
     try {
       expect((await parse(a, { field: "people", text: F1_PEOPLE })).status).toBe(503);
     } finally {

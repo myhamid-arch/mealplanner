@@ -109,12 +109,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -277,12 +273,8 @@
           "name": "household_deletion_requested_by_user_id_user_id_fk",
           "tableFrom": "household",
           "tableTo": "user",
-          "columnsFrom": [
-            "deletion_requested_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["deletion_requested_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -290,12 +282,8 @@
           "name": "household_deletion_confirmed_by_user_id_user_id_fk",
           "tableFrom": "household",
           "tableTo": "user",
-          "columnsFrom": [
-            "deletion_confirmed_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["deletion_confirmed_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -404,12 +392,8 @@
           "name": "household_user_household_id_household_id_fk",
           "tableFrom": "household_user",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -417,12 +401,8 @@
           "name": "household_user_user_id_user_id_fk",
           "tableFrom": "household_user",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -430,14 +410,8 @@
           "name": "household_user_member_fk",
           "tableFrom": "household_user",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -445,10 +419,7 @@
       "compositePrimaryKeys": {
         "household_user_household_id_user_id_pk": {
           "name": "household_user_household_id_user_id_pk",
-          "columns": [
-            "household_id",
-            "user_id"
-          ]
+          "columns": ["household_id", "user_id"]
         }
       },
       "uniqueConstraints": {},
@@ -544,12 +515,8 @@
           "name": "invite_household_id_household_id_fk",
           "tableFrom": "invite",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -557,12 +524,8 @@
           "name": "invite_created_by_user_id_user_id_fk",
           "tableFrom": "invite",
           "tableTo": "user",
-          "columnsFrom": [
-            "created_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -570,14 +533,8 @@
           "name": "invite_member_fk",
           "tableFrom": "invite",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -587,9 +544,7 @@
         "invite_code_unique": {
           "name": "invite_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       },
       "policies": {},
@@ -630,12 +585,8 @@
           "name": "platform_operator_user_id_user_id_fk",
           "tableFrom": "platform_operator",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -643,12 +594,8 @@
           "name": "platform_operator_created_by_user_id_user_id_fk",
           "tableFrom": "platform_operator",
           "tableTo": "user",
-          "columnsFrom": [
-            "created_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -734,12 +681,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -749,9 +692,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -827,12 +768,8 @@
           "name": "support_grant_household_id_household_id_fk",
           "tableFrom": "support_grant",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -840,12 +777,8 @@
           "name": "support_grant_operator_user_id_platform_operator_user_id_fk",
           "tableFrom": "support_grant",
           "tableTo": "platform_operator",
-          "columnsFrom": [
-            "operator_user_id"
-          ],
-          "columnsTo": [
-            "user_id"
-          ],
+          "columnsFrom": ["operator_user_id"],
+          "columnsTo": ["user_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -853,12 +786,8 @@
           "name": "support_grant_granted_by_user_id_user_id_fk",
           "tableFrom": "support_grant",
           "tableTo": "user",
-          "columnsFrom": [
-            "granted_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["granted_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -960,12 +889,8 @@
           "name": "two_factor_user_id_user_id_fk",
           "tableFrom": "two_factor",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1044,9 +969,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -1082,12 +1005,8 @@
           "name": "user_notification_pref_user_id_user_id_fk",
           "tableFrom": "user_notification_pref",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1095,10 +1014,7 @@
       "compositePrimaryKeys": {
         "user_notification_pref_user_id_key_pk": {
           "name": "user_notification_pref_user_id_key_pk",
-          "columns": [
-            "user_id",
-            "key"
-          ]
+          "columns": ["user_id", "key"]
         }
       },
       "uniqueConstraints": {},
@@ -1235,12 +1151,8 @@
           "name": "day_override_household_id_household_id_fk",
           "tableFrom": "day_override",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1248,14 +1160,8 @@
           "name": "day_override_member_fk",
           "tableFrom": "day_override",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1263,14 +1169,8 @@
           "name": "day_override_slot_type_fk",
           "tableFrom": "day_override",
           "tableTo": "slot_type",
-          "columnsFrom": [
-            "household_id",
-            "slot_type_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1280,12 +1180,7 @@
         "day_override_member_date_kind_slot_key": {
           "name": "day_override_member_date_kind_slot_key",
           "nullsNotDistinct": true,
-          "columns": [
-            "member_id",
-            "date",
-            "kind",
-            "slot_type_id"
-          ]
+          "columns": ["member_id", "date", "kind", "slot_type_id"]
         }
       },
       "policies": {},
@@ -1355,12 +1250,8 @@
           "name": "detail_level_household_id_household_id_fk",
           "tableFrom": "detail_level",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1368,14 +1259,8 @@
           "name": "detail_level_member_fk",
           "tableFrom": "detail_level",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1385,11 +1270,7 @@
         "detail_level_household_member_section_key": {
           "name": "detail_level_household_member_section_key",
           "nullsNotDistinct": true,
-          "columns": [
-            "household_id",
-            "member_id",
-            "section"
-          ]
+          "columns": ["household_id", "member_id", "section"]
         }
       },
       "policies": {},
@@ -1454,12 +1335,8 @@
           "name": "meal_distribution_household_id_household_id_fk",
           "tableFrom": "meal_distribution",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1467,14 +1344,8 @@
           "name": "meal_distribution_member_fk",
           "tableFrom": "meal_distribution",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1482,14 +1353,8 @@
           "name": "meal_distribution_slot_type_fk",
           "tableFrom": "meal_distribution",
           "tableTo": "slot_type",
-          "columnsFrom": [
-            "household_id",
-            "slot_type_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1497,11 +1362,7 @@
       "compositePrimaryKeys": {
         "meal_distribution_member_id_day_kind_slot_type_id_pk": {
           "name": "meal_distribution_member_id_day_kind_slot_type_id_pk",
-          "columns": [
-            "member_id",
-            "day_kind",
-            "slot_type_id"
-          ]
+          "columns": ["member_id", "day_kind", "slot_type_id"]
         }
       },
       "uniqueConstraints": {},
@@ -1604,12 +1465,8 @@
           "name": "member_household_id_household_id_fk",
           "tableFrom": "member",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1619,10 +1476,7 @@
         "member_household_id_id_key": {
           "name": "member_household_id_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "id"
-          ]
+          "columns": ["household_id", "id"]
         }
       },
       "policies": {},
@@ -1686,12 +1540,8 @@
           "name": "member_slot_schedule_household_id_household_id_fk",
           "tableFrom": "member_slot_schedule",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1699,14 +1549,8 @@
           "name": "member_slot_schedule_member_fk",
           "tableFrom": "member_slot_schedule",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1714,14 +1558,8 @@
           "name": "member_slot_schedule_slot_type_fk",
           "tableFrom": "member_slot_schedule",
           "tableTo": "slot_type",
-          "columnsFrom": [
-            "household_id",
-            "slot_type_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1729,11 +1567,7 @@
       "compositePrimaryKeys": {
         "member_slot_schedule_member_id_slot_type_id_weekday_pk": {
           "name": "member_slot_schedule_member_id_slot_type_id_weekday_pk",
-          "columns": [
-            "member_id",
-            "slot_type_id",
-            "weekday"
-          ]
+          "columns": ["member_id", "slot_type_id", "weekday"]
         }
       },
       "uniqueConstraints": {},
@@ -1799,12 +1633,8 @@
           "name": "portion_bias_household_id_household_id_fk",
           "tableFrom": "portion_bias",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1812,14 +1642,8 @@
           "name": "portion_bias_member_fk",
           "tableFrom": "portion_bias",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1827,10 +1651,7 @@
       "compositePrimaryKeys": {
         "portion_bias_member_id_component_role_pk": {
           "name": "portion_bias_member_id_component_role_pk",
-          "columns": [
-            "member_id",
-            "component_role"
-          ]
+          "columns": ["member_id", "component_role"]
         }
       },
       "uniqueConstraints": {},
@@ -1919,12 +1740,8 @@
           "name": "slot_target_override_household_id_household_id_fk",
           "tableFrom": "slot_target_override",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1932,14 +1749,8 @@
           "name": "slot_target_override_member_fk",
           "tableFrom": "slot_target_override",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1947,14 +1758,8 @@
           "name": "slot_target_override_slot_type_fk",
           "tableFrom": "slot_target_override",
           "tableTo": "slot_type",
-          "columnsFrom": [
-            "household_id",
-            "slot_type_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1962,11 +1767,7 @@
       "compositePrimaryKeys": {
         "slot_target_override_member_id_day_kind_slot_type_id_pk": {
           "name": "slot_target_override_member_id_day_kind_slot_type_id_pk",
-          "columns": [
-            "member_id",
-            "day_kind",
-            "slot_type_id"
-          ]
+          "columns": ["member_id", "day_kind", "slot_type_id"]
         }
       },
       "uniqueConstraints": {},
@@ -2079,12 +1880,8 @@
           "name": "slot_type_household_id_household_id_fk",
           "tableFrom": "slot_type",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2094,18 +1891,12 @@
         "slot_type_household_id_id_key": {
           "name": "slot_type_household_id_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "id"
-          ]
+          "columns": ["household_id", "id"]
         },
         "slot_type_household_id_key_key": {
           "name": "slot_type_household_id_key_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "key"
-          ]
+          "columns": ["household_id", "key"]
         }
       },
       "policies": {},
@@ -2212,12 +2003,8 @@
           "name": "target_profile_household_id_household_id_fk",
           "tableFrom": "target_profile",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2225,14 +2012,8 @@
           "name": "target_profile_member_fk",
           "tableFrom": "target_profile",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2242,10 +2023,7 @@
         "target_profile_member_id_kind_key": {
           "name": "target_profile_member_id_kind_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "member_id",
-            "kind"
-          ]
+          "columns": ["member_id", "kind"]
         }
       },
       "policies": {},
@@ -2332,12 +2110,8 @@
           "name": "tolerance_household_id_household_id_fk",
           "tableFrom": "tolerance",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2345,14 +2119,8 @@
           "name": "tolerance_member_fk",
           "tableFrom": "tolerance",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2426,12 +2194,8 @@
           "name": "training_schedule_household_id_household_id_fk",
           "tableFrom": "training_schedule",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2439,14 +2203,8 @@
           "name": "training_schedule_member_fk",
           "tableFrom": "training_schedule",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2454,10 +2212,7 @@
       "compositePrimaryKeys": {
         "training_schedule_member_id_weekday_pk": {
           "name": "training_schedule_member_id_weekday_pk",
-          "columns": [
-            "member_id",
-            "weekday"
-          ]
+          "columns": ["member_id", "weekday"]
         }
       },
       "uniqueConstraints": {},
@@ -2506,9 +2261,7 @@
         "cuisine_key_unique": {
           "name": "cuisine_key_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "key"
-          ]
+          "columns": ["key"]
         }
       },
       "policies": {},
@@ -2703,12 +2456,8 @@
           "name": "ingredient_created_by_household_id_household_id_fk",
           "tableFrom": "ingredient",
           "tableTo": "household",
-          "columnsFrom": [
-            "created_by_household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2716,12 +2465,8 @@
           "name": "ingredient_verified_by_user_id_user_id_fk",
           "tableFrom": "ingredient",
           "tableTo": "user",
-          "columnsFrom": [
-            "verified_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["verified_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2731,9 +2476,7 @@
         "ingredient_slug_unique": {
           "name": "ingredient_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -2792,12 +2535,8 @@
           "name": "method_yield_method_id_preparation_method_id_fk",
           "tableFrom": "method_yield",
           "tableTo": "preparation_method",
-          "columnsFrom": [
-            "method_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["method_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2805,10 +2544,7 @@
       "compositePrimaryKeys": {
         "method_yield_method_id_ingredient_category_pk": {
           "name": "method_yield_method_id_ingredient_category_pk",
-          "columns": [
-            "method_id",
-            "ingredient_category"
-          ]
+          "columns": ["method_id", "ingredient_category"]
         }
       },
       "uniqueConstraints": {},
@@ -2872,9 +2608,7 @@
         "preparation_method_key_unique": {
           "name": "preparation_method_key_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "key"
-          ]
+          "columns": ["key"]
         }
       },
       "policies": {},
@@ -3004,12 +2738,8 @@
           "name": "component_household_id_household_id_fk",
           "tableFrom": "component",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3017,12 +2747,8 @@
           "name": "component_dish_id_dish_id_fk",
           "tableFrom": "component",
           "tableTo": "dish",
-          "columnsFrom": [
-            "dish_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dish_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3176,12 +2902,8 @@
           "name": "dish_household_id_household_id_fk",
           "tableFrom": "dish",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3189,12 +2911,8 @@
           "name": "dish_cuisine_id_cuisine_id_fk",
           "tableFrom": "dish",
           "tableTo": "cuisine",
-          "columnsFrom": [
-            "cuisine_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cuisine_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3202,12 +2920,8 @@
           "name": "dish_secondary_cuisine_id_cuisine_id_fk",
           "tableFrom": "dish",
           "tableTo": "cuisine",
-          "columnsFrom": [
-            "secondary_cuisine_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["secondary_cuisine_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3215,12 +2929,8 @@
           "name": "dish_ai_generation_id_ai_generation_id_fk",
           "tableFrom": "dish",
           "tableTo": "ai_generation",
-          "columnsFrom": [
-            "ai_generation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["ai_generation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3230,10 +2940,7 @@
         "dish_household_id_slug_key": {
           "name": "dish_household_id_slug_key",
           "nullsNotDistinct": true,
-          "columns": [
-            "household_id",
-            "slug"
-          ]
+          "columns": ["household_id", "slug"]
         }
       },
       "policies": {},
@@ -3356,12 +3063,8 @@
           "name": "dish_nutrition_cache_variant_id_variant_id_fk",
           "tableFrom": "dish_nutrition_cache",
           "tableTo": "variant",
-          "columnsFrom": [
-            "variant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["variant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3369,12 +3072,8 @@
           "name": "dish_nutrition_cache_household_id_household_id_fk",
           "tableFrom": "dish_nutrition_cache",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3430,12 +3129,8 @@
           "name": "household_adjuster_household_id_household_id_fk",
           "tableFrom": "household_adjuster",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3443,12 +3138,8 @@
           "name": "household_adjuster_dish_id_dish_id_fk",
           "tableFrom": "household_adjuster",
           "tableTo": "dish",
-          "columnsFrom": [
-            "dish_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dish_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3456,10 +3147,7 @@
       "compositePrimaryKeys": {
         "household_adjuster_household_id_dish_id_pk": {
           "name": "household_adjuster_household_id_dish_id_pk",
-          "columns": [
-            "household_id",
-            "dish_id"
-          ]
+          "columns": ["household_id", "dish_id"]
         }
       },
       "uniqueConstraints": {},
@@ -3577,12 +3265,8 @@
           "name": "variant_household_id_household_id_fk",
           "tableFrom": "variant",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3590,12 +3274,8 @@
           "name": "variant_component_id_component_id_fk",
           "tableFrom": "variant",
           "tableTo": "component",
-          "columnsFrom": [
-            "component_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["component_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3603,12 +3283,8 @@
           "name": "variant_method_id_preparation_method_id_fk",
           "tableFrom": "variant",
           "tableTo": "preparation_method",
-          "columnsFrom": [
-            "method_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["method_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3721,12 +3397,8 @@
           "name": "variant_ingredient_household_id_household_id_fk",
           "tableFrom": "variant_ingredient",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3734,12 +3406,8 @@
           "name": "variant_ingredient_variant_id_variant_id_fk",
           "tableFrom": "variant_ingredient",
           "tableTo": "variant",
-          "columnsFrom": [
-            "variant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["variant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3747,12 +3415,8 @@
           "name": "variant_ingredient_ingredient_id_ingredient_id_fk",
           "tableFrom": "variant_ingredient",
           "tableTo": "ingredient",
-          "columnsFrom": [
-            "ingredient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["ingredient_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3856,12 +3520,8 @@
           "name": "cook_batch_household_id_household_id_fk",
           "tableFrom": "cook_batch",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3869,12 +3529,8 @@
           "name": "cook_batch_variant_id_variant_id_fk",
           "tableFrom": "cook_batch",
           "tableTo": "variant",
-          "columnsFrom": [
-            "variant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["variant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3882,14 +3538,8 @@
           "name": "cook_batch_plan_meal_fk",
           "tableFrom": "cook_batch",
           "tableTo": "plan_meal",
-          "columnsFrom": [
-            "household_id",
-            "plan_meal_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "plan_meal_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -3982,12 +3632,8 @@
           "name": "meal_override_household_id_household_id_fk",
           "tableFrom": "meal_override",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -3995,12 +3641,8 @@
           "name": "meal_override_created_by_user_id_fk",
           "tableFrom": "meal_override",
           "tableTo": "user",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4008,14 +3650,8 @@
           "name": "meal_override_slot_type_fk",
           "tableFrom": "meal_override",
           "tableTo": "slot_type",
-          "columnsFrom": [
-            "household_id",
-            "slot_type_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4025,11 +3661,7 @@
         "meal_override_household_date_slot_key": {
           "name": "meal_override_household_date_slot_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "plan_date",
-            "slot_type_id"
-          ]
+          "columns": ["household_id", "plan_date", "slot_type_id"]
         }
       },
       "policies": {},
@@ -4111,12 +3743,8 @@
           "name": "plan_day_household_id_household_id_fk",
           "tableFrom": "plan_day",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4126,18 +3754,12 @@
         "plan_day_household_id_date_key": {
           "name": "plan_day_household_id_date_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "date"
-          ]
+          "columns": ["household_id", "date"]
         },
         "plan_day_household_id_id_key": {
           "name": "plan_day_household_id_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "id"
-          ]
+          "columns": ["household_id", "id"]
         }
       },
       "policies": {},
@@ -4248,12 +3870,8 @@
           "name": "plan_meal_household_id_household_id_fk",
           "tableFrom": "plan_meal",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4261,12 +3879,8 @@
           "name": "plan_meal_dish_id_dish_id_fk",
           "tableFrom": "plan_meal",
           "tableTo": "dish",
-          "columnsFrom": [
-            "dish_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dish_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4274,14 +3888,8 @@
           "name": "plan_meal_plan_day_fk",
           "tableFrom": "plan_meal",
           "tableTo": "plan_day",
-          "columnsFrom": [
-            "household_id",
-            "plan_day_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "plan_day_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4289,14 +3897,8 @@
           "name": "plan_meal_slot_type_fk",
           "tableFrom": "plan_meal",
           "tableTo": "slot_type",
-          "columnsFrom": [
-            "household_id",
-            "slot_type_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "slot_type_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4306,10 +3908,7 @@
         "plan_meal_household_id_id_key": {
           "name": "plan_meal_household_id_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "id"
-          ]
+          "columns": ["household_id", "id"]
         }
       },
       "policies": {},
@@ -4412,12 +4011,8 @@
           "name": "plate_household_id_household_id_fk",
           "tableFrom": "plate",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4425,14 +4020,8 @@
           "name": "plate_plan_meal_fk",
           "tableFrom": "plate",
           "tableTo": "plan_meal",
-          "columnsFrom": [
-            "household_id",
-            "plan_meal_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "plan_meal_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4440,14 +4029,8 @@
           "name": "plate_member_fk",
           "tableFrom": "plate",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4457,18 +4040,12 @@
         "plate_household_id_id_key": {
           "name": "plate_household_id_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "id"
-          ]
+          "columns": ["household_id", "id"]
         },
         "plate_plan_meal_id_member_id_key": {
           "name": "plate_plan_meal_id_member_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "plan_meal_id",
-            "member_id"
-          ]
+          "columns": ["plan_meal_id", "member_id"]
         }
       },
       "policies": {},
@@ -4559,12 +4136,8 @@
           "name": "plate_item_household_id_household_id_fk",
           "tableFrom": "plate_item",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4572,12 +4145,8 @@
           "name": "plate_item_component_id_component_id_fk",
           "tableFrom": "plate_item",
           "tableTo": "component",
-          "columnsFrom": [
-            "component_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["component_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4585,12 +4154,8 @@
           "name": "plate_item_variant_id_variant_id_fk",
           "tableFrom": "plate_item",
           "tableTo": "variant",
-          "columnsFrom": [
-            "variant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["variant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4598,14 +4163,8 @@
           "name": "plate_item_plate_fk",
           "tableFrom": "plate_item",
           "tableTo": "plate",
-          "columnsFrom": [
-            "household_id",
-            "plate_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "plate_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4692,12 +4251,8 @@
           "name": "exclusion_household_id_household_id_fk",
           "tableFrom": "exclusion",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4705,14 +4260,8 @@
           "name": "exclusion_member_fk",
           "tableFrom": "exclusion",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4722,12 +4271,7 @@
         "exclusion_household_member_kind_key_key": {
           "name": "exclusion_household_member_kind_key_key",
           "nullsNotDistinct": true,
-          "columns": [
-            "household_id",
-            "member_id",
-            "kind",
-            "key"
-          ]
+          "columns": ["household_id", "member_id", "kind", "key"]
         }
       },
       "policies": {},
@@ -4823,12 +4367,8 @@
           "name": "frequency_rule_household_id_household_id_fk",
           "tableFrom": "frequency_rule",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -4836,14 +4376,8 @@
           "name": "frequency_rule_member_fk",
           "tableFrom": "frequency_rule",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -4853,12 +4387,7 @@
         "frequency_rule_household_member_entity_key": {
           "name": "frequency_rule_household_member_entity_key",
           "nullsNotDistinct": true,
-          "columns": [
-            "household_id",
-            "member_id",
-            "entity_type",
-            "entity_key"
-          ]
+          "columns": ["household_id", "member_id", "entity_type", "entity_key"]
         }
       },
       "policies": {},
@@ -4961,12 +4490,8 @@
           "name": "planning_weights_household_id_household_id_fk",
           "tableFrom": "planning_weights",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5089,12 +4614,8 @@
           "name": "preference_household_id_household_id_fk",
           "tableFrom": "preference",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5102,14 +4623,8 @@
           "name": "preference_member_fk",
           "tableFrom": "preference",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5119,13 +4634,7 @@
         "preference_household_member_entity_source_key": {
           "name": "preference_household_member_entity_source_key",
           "nullsNotDistinct": true,
-          "columns": [
-            "household_id",
-            "member_id",
-            "entity_type",
-            "entity_key",
-            "source"
-          ]
+          "columns": ["household_id", "member_id", "entity_type", "entity_key", "source"]
         }
       },
       "policies": {},
@@ -5294,12 +4803,8 @@
           "name": "review_household_id_household_id_fk",
           "tableFrom": "review",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5307,12 +4812,8 @@
           "name": "review_author_user_id_user_id_fk",
           "tableFrom": "review",
           "tableTo": "user",
-          "columnsFrom": [
-            "author_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["author_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5320,14 +4821,8 @@
           "name": "review_on_behalf_of_member_fk",
           "tableFrom": "review",
           "tableTo": "member",
-          "columnsFrom": [
-            "household_id",
-            "on_behalf_of_member_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "on_behalf_of_member_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5335,14 +4830,8 @@
           "name": "review_plan_meal_fk",
           "tableFrom": "review",
           "tableTo": "plan_meal",
-          "columnsFrom": [
-            "household_id",
-            "plan_meal_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "plan_meal_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5350,14 +4839,8 @@
           "name": "review_parent_review_fk",
           "tableFrom": "review",
           "tableTo": "review",
-          "columnsFrom": [
-            "household_id",
-            "parent_review_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "parent_review_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5367,10 +4850,7 @@
         "review_household_id_id_key": {
           "name": "review_household_id_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "id"
-          ]
+          "columns": ["household_id", "id"]
         }
       },
       "policies": {},
@@ -5434,12 +4914,8 @@
           "name": "review_reaction_household_id_household_id_fk",
           "tableFrom": "review_reaction",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5447,12 +4923,8 @@
           "name": "review_reaction_user_id_user_id_fk",
           "tableFrom": "review_reaction",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5460,14 +4932,8 @@
           "name": "review_reaction_review_fk",
           "tableFrom": "review_reaction",
           "tableTo": "review",
-          "columnsFrom": [
-            "household_id",
-            "review_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "review_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5475,11 +4941,7 @@
       "compositePrimaryKeys": {
         "review_reaction_review_id_user_id_kind_pk": {
           "name": "review_reaction_review_id_user_id_kind_pk",
-          "columns": [
-            "review_id",
-            "user_id",
-            "kind"
-          ]
+          "columns": ["review_id", "user_id", "kind"]
         }
       },
       "uniqueConstraints": {},
@@ -5544,12 +5006,8 @@
           "name": "weight_preset_household_id_household_id_fk",
           "tableFrom": "weight_preset",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5559,10 +5017,7 @@
         "weight_preset_household_id_name_key": {
           "name": "weight_preset_household_id_name_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "name"
-          ]
+          "columns": ["household_id", "name"]
         }
       },
       "policies": {},
@@ -5666,12 +5121,8 @@
           "name": "review_revision_household_id_household_id_fk",
           "tableFrom": "review_revision",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5679,12 +5130,8 @@
           "name": "review_revision_edited_by_user_id_user_id_fk",
           "tableFrom": "review_revision",
           "tableTo": "user",
-          "columnsFrom": [
-            "edited_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["edited_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5692,14 +5139,8 @@
           "name": "review_revision_review_fk",
           "tableFrom": "review_revision",
           "tableTo": "review",
-          "columnsFrom": [
-            "household_id",
-            "review_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "review_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5816,12 +5257,8 @@
           "name": "change_set_household_id_household_id_fk",
           "tableFrom": "change_set",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5829,12 +5266,8 @@
           "name": "change_set_actor_user_id_user_id_fk",
           "tableFrom": "change_set",
           "tableTo": "user",
-          "columnsFrom": [
-            "actor_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["actor_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5842,14 +5275,8 @@
           "name": "change_set_undone_by_fk",
           "tableFrom": "change_set",
           "tableTo": "change_set",
-          "columnsFrom": [
-            "household_id",
-            "undone_by_change_set_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "undone_by_change_set_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5859,10 +5286,7 @@
         "change_set_household_id_id_key": {
           "name": "change_set_household_id_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "id"
-          ]
+          "columns": ["household_id", "id"]
         }
       },
       "policies": {},
@@ -5954,12 +5378,8 @@
           "name": "chat_message_household_id_household_id_fk",
           "tableFrom": "chat_message",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -5967,14 +5387,8 @@
           "name": "chat_message_conversation_fk",
           "tableFrom": "chat_message",
           "tableTo": "conversation",
-          "columnsFrom": [
-            "household_id",
-            "conversation_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "conversation_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -5984,10 +5398,7 @@
         "chat_message_household_id_id_key": {
           "name": "chat_message_household_id_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "id"
-          ]
+          "columns": ["household_id", "id"]
         }
       },
       "policies": {},
@@ -6057,12 +5468,8 @@
           "name": "conversation_household_id_household_id_fk",
           "tableFrom": "conversation",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -6070,12 +5477,8 @@
           "name": "conversation_user_id_user_id_fk",
           "tableFrom": "conversation",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -6085,10 +5488,7 @@
         "conversation_household_id_id_key": {
           "name": "conversation_household_id_id_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "id"
-          ]
+          "columns": ["household_id", "id"]
         }
       },
       "policies": {},
@@ -6247,12 +5647,8 @@
           "name": "proposal_household_id_household_id_fk",
           "tableFrom": "proposal",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -6260,12 +5656,8 @@
           "name": "proposal_decided_by_user_id_user_id_fk",
           "tableFrom": "proposal",
           "tableTo": "user",
-          "columnsFrom": [
-            "decided_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["decided_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -6273,14 +5665,8 @@
           "name": "proposal_conversation_fk",
           "tableFrom": "proposal",
           "tableTo": "conversation",
-          "columnsFrom": [
-            "household_id",
-            "conversation_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "conversation_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -6288,14 +5674,8 @@
           "name": "proposal_message_fk",
           "tableFrom": "proposal",
           "tableTo": "chat_message",
-          "columnsFrom": [
-            "household_id",
-            "message_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "message_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -6303,14 +5683,8 @@
           "name": "proposal_change_set_fk",
           "tableFrom": "proposal",
           "tableTo": "change_set",
-          "columnsFrom": [
-            "household_id",
-            "change_set_id"
-          ],
-          "columnsTo": [
-            "household_id",
-            "id"
-          ],
+          "columnsFrom": ["household_id", "change_set_id"],
+          "columnsTo": ["household_id", "id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -6445,12 +5819,8 @@
           "name": "kg_edge_household_id_household_id_fk",
           "tableFrom": "kg_edge",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -6458,12 +5828,8 @@
           "name": "kg_edge_src_id_kg_node_id_fk",
           "tableFrom": "kg_edge",
           "tableTo": "kg_node",
-          "columnsFrom": [
-            "src_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["src_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -6471,12 +5837,8 @@
           "name": "kg_edge_dst_id_kg_node_id_fk",
           "tableFrom": "kg_edge",
           "tableTo": "kg_node",
-          "columnsFrom": [
-            "dst_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dst_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -6486,12 +5848,7 @@
         "kg_edge_household_src_dst_type_key": {
           "name": "kg_edge_household_src_dst_type_key",
           "nullsNotDistinct": true,
-          "columns": [
-            "household_id",
-            "src_id",
-            "dst_id",
-            "type"
-          ]
+          "columns": ["household_id", "src_id", "dst_id", "type"]
         }
       },
       "policies": {},
@@ -6561,12 +5918,8 @@
           "name": "kg_node_household_id_household_id_fk",
           "tableFrom": "kg_node",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -6576,11 +5929,7 @@
         "kg_node_household_type_key_key": {
           "name": "kg_node_household_type_key_key",
           "nullsNotDistinct": true,
-          "columns": [
-            "household_id",
-            "type",
-            "key"
-          ]
+          "columns": ["household_id", "type", "key"]
         }
       },
       "policies": {},
@@ -6693,12 +6042,8 @@
           "name": "ai_generation_household_id_household_id_fk",
           "tableFrom": "ai_generation",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -6819,12 +6164,8 @@
           "name": "job_household_id_household_id_fk",
           "tableFrom": "job",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -6832,12 +6173,8 @@
           "name": "job_created_by_user_id_user_id_fk",
           "tableFrom": "job",
           "tableTo": "user",
-          "columnsFrom": [
-            "created_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -6911,12 +6248,8 @@
           "name": "job_event_job_id_job_id_fk",
           "tableFrom": "job_event",
           "tableTo": "job",
-          "columnsFrom": [
-            "job_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["job_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -6924,12 +6257,8 @@
           "name": "job_event_household_id_household_id_fk",
           "tableFrom": "job_event",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -6937,10 +6266,7 @@
       "compositePrimaryKeys": {
         "job_event_job_id_seq_pk": {
           "name": "job_event_job_id_seq_pk",
-          "columns": [
-            "job_id",
-            "seq"
-          ]
+          "columns": ["job_id", "seq"]
         }
       },
       "uniqueConstraints": {},
@@ -7017,12 +6343,8 @@
           "name": "support_access_household_id_household_id_fk",
           "tableFrom": "support_access",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -7030,12 +6352,8 @@
           "name": "support_access_operator_user_id_platform_operator_user_id_fk",
           "tableFrom": "support_access",
           "tableTo": "platform_operator",
-          "columnsFrom": [
-            "operator_user_id"
-          ],
-          "columnsTo": [
-            "user_id"
-          ],
+          "columnsFrom": ["operator_user_id"],
+          "columnsTo": ["user_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -7122,12 +6440,8 @@
           "name": "setup_followup_household_id_household_id_fk",
           "tableFrom": "setup_followup",
           "tableTo": "household",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -7135,12 +6449,8 @@
           "name": "setup_followup_change_set_id_change_set_id_fk",
           "tableFrom": "setup_followup",
           "tableTo": "change_set",
-          "columnsFrom": [
-            "change_set_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["change_set_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -7148,12 +6458,8 @@
           "name": "setup_followup_resolved_by_user_id_user_id_fk",
           "tableFrom": "setup_followup",
           "tableTo": "user",
-          "columnsFrom": [
-            "resolved_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["resolved_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -7163,10 +6469,7 @@
         "setup_followup_household_key_key": {
           "name": "setup_followup_household_key_key",
           "nullsNotDistinct": false,
-          "columns": [
-            "household_id",
-            "key"
-          ]
+          "columns": ["household_id", "key"]
         }
       },
       "policies": {},
@@ -7187,60 +6490,32 @@
     "public.ai_generation_mode": {
       "name": "ai_generation_mode",
       "schema": "public",
-      "values": [
-        "auto",
-        "ask",
-        "off"
-      ]
+      "values": ["auto", "ask", "off"]
     },
     "public.ai_purpose": {
       "name": "ai_purpose",
       "schema": "public",
-      "values": [
-        "recipe",
-        "insights",
-        "chat",
-        "comment_extraction",
-        "onboarding_parse"
-      ]
+      "values": ["recipe", "insights", "chat", "comment_extraction", "onboarding_parse"]
     },
     "public.appetite": {
       "name": "appetite",
       "schema": "public",
-      "values": [
-        "small",
-        "medium",
-        "large"
-      ]
+      "values": ["small", "medium", "large"]
     },
     "public.change_actor": {
       "name": "change_actor",
       "schema": "public",
-      "values": [
-        "user",
-        "agent",
-        "system"
-      ]
+      "values": ["user", "agent", "system"]
     },
     "public.change_source": {
       "name": "change_source",
       "schema": "public",
-      "values": [
-        "ui",
-        "agent_apply",
-        "proposal_accept",
-        "learning"
-      ]
+      "values": ["ui", "agent_apply", "proposal_accept", "learning"]
     },
     "public.chat_role": {
       "name": "chat_role",
       "schema": "public",
-      "values": [
-        "user",
-        "assistant",
-        "tool",
-        "event"
-      ]
+      "values": ["user", "assistant", "tool", "event"]
     },
     "public.component_role": {
       "name": "component_role",
@@ -7260,113 +6535,62 @@
     "public.cooking_liquid": {
       "name": "cooking_liquid",
       "schema": "public",
-      "values": [
-        "absorbed",
-        "retained"
-      ]
+      "values": ["absorbed", "retained"]
     },
     "public.day_kind": {
       "name": "day_kind",
       "schema": "public",
-      "values": [
-        "default",
-        "training"
-      ]
+      "values": ["default", "training"]
     },
     "public.day_override_kind": {
       "name": "day_override_kind",
       "schema": "public",
-      "values": [
-        "training",
-        "rest",
-        "absent_slot",
-        "extra_slot"
-      ]
+      "values": ["training", "rest", "absent_slot", "extra_slot"]
     },
     "public.detail_level_value": {
       "name": "detail_level_value",
       "schema": "public",
-      "values": [
-        "basic",
-        "detailed",
-        "expert"
-      ]
+      "values": ["basic", "detailed", "expert"]
     },
     "public.dish_source": {
       "name": "dish_source",
       "schema": "public",
-      "values": [
-        "seed",
-        "ai",
-        "admin"
-      ]
+      "values": ["seed", "ai", "admin"]
     },
     "public.dish_status": {
       "name": "dish_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "active",
-        "retired"
-      ]
+      "values": ["draft", "active", "retired"]
     },
     "public.exclusion_kind": {
       "name": "exclusion_kind",
       "schema": "public",
-      "values": [
-        "ingredient",
-        "category",
-        "dietary_flag"
-      ]
+      "values": ["ingredient", "category", "dietary_flag"]
     },
     "public.exclusion_reason": {
       "name": "exclusion_reason",
       "schema": "public",
-      "values": [
-        "allergy",
-        "religious",
-        "dislike",
-        "medical",
-        "other"
-      ]
+      "values": ["allergy", "religious", "dislike", "medical", "other"]
     },
     "public.fit_status": {
       "name": "fit_status",
       "schema": "public",
-      "values": [
-        "in_tolerance",
-        "flexible_miss",
-        "infeasible",
-        "untargeted"
-      ]
+      "values": ["in_tolerance", "flexible_miss", "infeasible", "untargeted"]
     },
     "public.frequency_entity_type": {
       "name": "frequency_entity_type",
       "schema": "public",
-      "values": [
-        "dish",
-        "ingredient",
-        "cuisine",
-        "method"
-      ]
+      "values": ["dish", "ingredient", "cuisine", "method"]
     },
     "public.household_role": {
       "name": "household_role",
       "schema": "public",
-      "values": [
-        "admin",
-        "member",
-        "kitchen"
-      ]
+      "values": ["admin", "member", "kitchen"]
     },
     "public.household_user_status": {
       "name": "household_user_status",
       "schema": "public",
-      "values": [
-        "active",
-        "invited",
-        "blocked"
-      ]
+      "values": ["active", "invited", "blocked"]
     },
     "public.ingredient_category": {
       "name": "ingredient_category",
@@ -7399,124 +6623,67 @@
     "public.insight_frequency": {
       "name": "insight_frequency",
       "schema": "public",
-      "values": [
-        "nightly",
-        "weekly",
-        "on_demand"
-      ]
+      "values": ["nightly", "weekly", "on_demand"]
     },
     "public.kg_edge_source": {
       "name": "kg_edge_source",
       "schema": "public",
-      "values": [
-        "seed",
-        "derived",
-        "learned",
-        "ai"
-      ]
+      "values": ["seed", "derived", "learned", "ai"]
     },
     "public.meal_override_kind": {
       "name": "meal_override_kind",
       "schema": "public",
-      "values": [
-        "split_member",
-        "make_individual"
-      ]
+      "values": ["split_member", "make_individual"]
     },
     "public.nutrition_confidence": {
       "name": "nutrition_confidence",
       "schema": "public",
-      "values": [
-        "high",
-        "medium",
-        "low"
-      ]
+      "values": ["high", "medium", "low"]
     },
     "public.plan_day_status": {
       "name": "plan_day_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "published",
-        "cooked"
-      ]
+      "values": ["draft", "published", "cooked"]
     },
     "public.plan_meal_status": {
       "name": "plan_meal_status",
       "schema": "public",
-      "values": [
-        "planned",
-        "cooked",
-        "skipped"
-      ]
+      "values": ["planned", "cooked", "skipped"]
     },
     "public.portioning": {
       "name": "portioning",
       "schema": "public",
-      "values": [
-        "continuous",
-        "unit",
-        "fixed"
-      ]
+      "values": ["continuous", "unit", "fixed"]
     },
     "public.preference_entity_type": {
       "name": "preference_entity_type",
       "schema": "public",
-      "values": [
-        "dish",
-        "ingredient",
-        "cuisine",
-        "method",
-        "flavour_tag",
-        "component_role"
-      ]
+      "values": ["dish", "ingredient", "cuisine", "method", "flavour_tag", "component_role"]
     },
     "public.preference_hardness": {
       "name": "preference_hardness",
       "schema": "public",
-      "values": [
-        "none",
-        "never",
-        "always_ok"
-      ]
+      "values": ["none", "never", "always_ok"]
     },
     "public.preference_source": {
       "name": "preference_source",
       "schema": "public",
-      "values": [
-        "explicit",
-        "learned",
-        "proposal"
-      ]
+      "values": ["explicit", "learned", "proposal"]
     },
     "public.proposal_origin": {
       "name": "proposal_origin",
       "schema": "public",
-      "values": [
-        "agent_chat",
-        "insights",
-        "rule"
-      ]
+      "values": ["agent_chat", "insights", "rule"]
     },
     "public.proposal_status": {
       "name": "proposal_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "accepted",
-        "rejected",
-        "expired",
-        "superseded"
-      ]
+      "values": ["pending", "accepted", "rejected", "expired", "superseded"]
     },
     "public.reaction_kind": {
       "name": "reaction_kind",
       "schema": "public",
-      "values": [
-        "agree",
-        "disagree",
-        "helpful"
-      ]
+      "values": ["agree", "disagree", "helpful"]
     },
     "public.review_target_type": {
       "name": "review_target_type",
@@ -7536,62 +6703,37 @@
     "public.sex": {
       "name": "sex",
       "schema": "public",
-      "values": [
-        "female",
-        "male",
-        "unspecified"
-      ]
+      "values": ["female", "male", "unspecified"]
     },
     "public.target_kind": {
       "name": "target_kind",
       "schema": "public",
-      "values": [
-        "default",
-        "training"
-      ]
+      "values": ["default", "training"]
     },
     "public.tolerance_mode": {
       "name": "tolerance_mode",
       "schema": "public",
-      "values": [
-        "strict",
-        "flexible"
-      ]
+      "values": ["strict", "flexible"]
     },
     "public.training_intensity": {
       "name": "training_intensity",
       "schema": "public",
-      "values": [
-        "light",
-        "moderate",
-        "hard"
-      ]
+      "values": ["light", "moderate", "hard"]
     },
     "public.unit_system": {
       "name": "unit_system",
       "schema": "public",
-      "values": [
-        "metric"
-      ]
+      "values": ["metric"]
     },
     "public.job_status": {
       "name": "job_status",
       "schema": "public",
-      "values": [
-        "queued",
-        "running",
-        "succeeded",
-        "failed",
-        "cancelled"
-      ]
+      "values": ["queued", "running", "succeeded", "failed", "cancelled"]
     },
     "public.setup_followup_status": {
       "name": "setup_followup_status",
       "schema": "public",
-      "values": [
-        "answered",
-        "dismissed"
-      ]
+      "values": ["answered", "dismissed"]
     }
   },
   "schemas": {},

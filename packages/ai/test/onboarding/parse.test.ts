@@ -2,11 +2,7 @@
 // structured-output client over recorded responses. Typed results for each field; a schema-failing
 // or semantically invalid answer is refused, not repaired; typed errors; one audit row per call.
 import { describe, expect, it } from "vitest";
-import {
-  parseNeverEat,
-  parsePeople,
-  parseTargets,
-} from "@mealplanner/core/onboarding";
+import { parseNeverEat, parsePeople, parseTargets } from "@mealplanner/core/onboarding";
 import {
   checkOutput,
   parseOnboardingText,
@@ -38,10 +34,17 @@ function recorder() {
 async function run(
   response: string,
   input: Parameters<typeof parseOnboardingText>[1],
-): Promise<{ result: OnboardingParseResult; records: OnboardingGenerationRecord[]; bodies: Record<string, unknown>[] }> {
+): Promise<{
+  result: OnboardingParseResult;
+  records: OnboardingGenerationRecord[];
+  bodies: Record<string, unknown>[];
+}> {
   const { model, bodies } = replayModel(response);
   const rec = recorder();
-  const result = await parseOnboardingText({ model, recordGeneration: rec.recordGeneration }, input);
+  const result = await parseOnboardingText(
+    { model, recordGeneration: rec.recordGeneration },
+    input,
+  );
   return { result, records: rec.records, bodies };
 }
 
@@ -74,11 +77,17 @@ describe("G1 typed results from recorded responses", () => {
     const { result } = await run("targets-f1-adult-a", { field: "targets", text: F1.adultA });
     const expected = parseTargets(F1.adultA);
     expect(expected.ok).toBe(true);
-    expect(result).toMatchObject({ status: "parsed", value: { field: "targets", targets: expected } });
+    expect(result).toMatchObject({
+      status: "parsed",
+      value: { field: "targets", targets: expected },
+    });
   });
 
   it("G1 targets: text without numbers is a typed not-ok reading with the model's reason", async () => {
-    const { result } = await run("targets-none", { field: "targets", text: "whatever the coach says" });
+    const { result } = await run("targets-none", {
+      field: "targets",
+      text: "whatever the coach says",
+    });
     expect(result).toMatchObject({
       status: "parsed",
       value: {
@@ -134,7 +143,11 @@ describe("G1 schema-failing and invalid answers are refused, not repaired (SPEC-
     ["schema-not-json", "people"],
   ] as const)
     it(`G1 schema failure refused: ${response}`, async () => {
-      const { result, records } = await run(response, { field, text: "some answer", people: ["Zayd"] });
+      const { result, records } = await run(response, {
+        field,
+        text: "some answer",
+        people: ["Zayd"],
+      });
       expect(result).toMatchObject({ status: "failed", code: "model_output_invalid" });
       expect(records).toHaveLength(1);
       expect(records[0]?.validationErrors).not.toBeNull();
@@ -164,14 +177,36 @@ describe("G1 schema-failing and invalid answers are refused, not repaired (SPEC-
 
   it("G1 negative control: the same checks accept the valid reading they refuse when broken", () => {
     const valid = {
-      day: { kcal: 2150, proteinG: 180, carbsG: 200, fatG: 70, satFatMaxG: null, solubleFibreMinG: null, fibreMinG: null, sodiumMaxMg: null },
+      day: {
+        kcal: 2150,
+        proteinG: 180,
+        carbsG: 200,
+        fatG: 70,
+        satFatMaxG: null,
+        solubleFibreMinG: null,
+        fibreMinG: null,
+        sodiumMaxMg: null,
+      },
       training: null,
       problem: null,
     };
     expect(checkOutput("targets", valid).ok).toBe(true);
-    expect(checkOutput("targets", { ...valid, day: { ...valid.day, proteinG: 250, carbsG: 300, fatG: 90 } }).ok).toBe(false);
-    expect(checkOutput("never_eat", { rules: [{ who: "Zayd", term: "sesame", reason: "allergy" }] }, ["Zayd"]).ok).toBe(true);
-    expect(checkOutput("never_eat", { rules: [{ who: "Zayd", term: "sesame", reason: "allergy" }] }, ["Sara"]).ok).toBe(false);
+    expect(
+      checkOutput("targets", {
+        ...valid,
+        day: { ...valid.day, proteinG: 250, carbsG: 300, fatG: 90 },
+      }).ok,
+    ).toBe(false);
+    expect(
+      checkOutput("never_eat", { rules: [{ who: "Zayd", term: "sesame", reason: "allergy" }] }, [
+        "Zayd",
+      ]).ok,
+    ).toBe(true);
+    expect(
+      checkOutput("never_eat", { rules: [{ who: "Zayd", term: "sesame", reason: "allergy" }] }, [
+        "Sara",
+      ]).ok,
+    ).toBe(false);
   });
 });
 
@@ -221,7 +256,10 @@ describe("G1 client rules and typed errors (REC-2, 07 §1)", () => {
     const summary = JSON.stringify(records[0]?.requestSummary);
     expect(summary).not.toContain("Adult A 40");
     expect(summary).not.toContain("test-key-not-real");
-    expect(records[0]?.requestSummary).toMatchObject({ field: "people", textLength: F1.people.length });
+    expect(records[0]?.requestSummary).toMatchObject({
+      field: "people",
+      textLength: F1.people.length,
+    });
   });
 
   it("G1 text over 2000 characters is not sent", async () => {

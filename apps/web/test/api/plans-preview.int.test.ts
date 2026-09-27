@@ -20,7 +20,14 @@ import {
 import { callJson, startTestApp, type TestApp } from "./support/app";
 import { createTestDatabase, type TestDatabase } from "./support/db";
 import { startWorkerProcess, type WorkerProcess } from "./support/worker";
-import { acceptWithSignup, addMembers, applyOps, invite, ok, signupAdmin, type Login } from "./support/world";
+import {
+  acceptWithSignup,
+  addMembers,
+  applyOps,
+  invite,
+  signupAdmin,
+  type Login,
+} from "./support/world";
 
 type Preview = ReturnType<typeof c.PlanPreviewDto.parse>;
 
@@ -59,7 +66,9 @@ async function finished(jobId: string, timeoutMs = 240_000) {
     const [row] = await app.rt.db
       .select({ type: jobEvent.type, payload: jobEvent.payload })
       .from(jobEvent)
-      .where(and(eq(jobEvent.jobId, jobId), sql`${jobEvent.type} IN ('done', 'failed', 'cancelled')`));
+      .where(
+        and(eq(jobEvent.jobId, jobId), sql`${jobEvent.type} IN ('done', 'failed', 'cancelled')`),
+      );
     if (row !== undefined) return row;
     if (Date.now() > deadline) throw new Error(`job ${jobId} did not finish:\n${worker.output()}`);
     await new Promise((r) => setTimeout(r, 200));
@@ -119,7 +128,9 @@ async function rowCounts(): Promise<Record<string, number>> {
   const out: Record<string, number> = {};
   for (const { t } of tables.rows) {
     if (t === "job" || t === "job_event") continue;
-    const r = await app.rt.db.execute<{ n: string }>(sql`SELECT count(*) AS n FROM ${sql.identifier(t)}`);
+    const r = await app.rt.db.execute<{ n: string }>(
+      sql`SELECT count(*) AS n FROM ${sql.identifier(t)}`,
+    );
     out[t] = Number(r.rows[0]?.n ?? 0);
   }
   return out;
@@ -147,8 +158,16 @@ function planDiffs(x: readonly PlannedMeal[], y: readonly PlannedMeal[]): string
         .map((p) => ({
           member: p.memberId,
           fit: p.fitStatus,
-          items: p.solution.items.map((i) => [i.componentId, i.variantId, Math.round(i.cookedG * 10) / 10]),
-          adjusters: p.solution.adjusters.map((i) => [i.dishId, i.variantId, Math.round(i.cookedG * 10) / 10]),
+          items: p.solution.items.map((i) => [
+            i.componentId,
+            i.variantId,
+            Math.round(i.cookedG * 10) / 10,
+          ]),
+          adjusters: p.solution.adjusters.map((i) => [
+            i.dishId,
+            i.variantId,
+            Math.round(i.cookedG * 10) / 10,
+          ]),
         })),
     });
   const ym = new Map(y.map((m) => [key(m), m]));
@@ -158,7 +177,8 @@ function planDiffs(x: readonly PlannedMeal[], y: readonly PlannedMeal[]): string
     if (n === undefined) diffs.push(`${key(m)} only in the first plan`);
     else if (shape(m) !== shape(n)) diffs.push(`${key(m)} differs`);
   }
-  for (const m of y) if (!x.some((n) => key(n) === key(m))) diffs.push(`${key(m)} only in the second plan`);
+  for (const m of y)
+    if (!x.some((n) => key(n) === key(m))) diffs.push(`${key(m)} only in the second plan`);
   return diffs;
 }
 
@@ -214,7 +234,9 @@ describe("G2 planning preview (UX-4)", () => {
     const { meals } = await saved();
     const [firstMeal, ...rest] = meals;
     if (firstMeal === undefined) throw new Error("no saved meal");
-    expect(planDiffs(meals, [{ ...firstMeal, dishId: "00000000-0000-4000-8000-000000000000" }, ...rest])).toHaveLength(1);
+    expect(
+      planDiffs(meals, [{ ...firstMeal, dishId: "00000000-0000-4000-8000-000000000000" }, ...rest]),
+    ).toHaveLength(1);
     const plate = firstMeal.plates[0];
     if (plate === undefined) throw new Error("no plate");
     const item = plate.solution.items[0];
@@ -222,11 +244,19 @@ describe("G2 planning preview (UX-4)", () => {
     const moved = {
       ...firstMeal,
       plates: [
-        { ...plate, solution: { ...plate.solution, items: [{ ...item, cookedG: item.cookedG + 10 }, ...plate.solution.items.slice(1)] } },
+        {
+          ...plate,
+          solution: {
+            ...plate.solution,
+            items: [{ ...item, cookedG: item.cookedG + 10 }, ...plate.solution.items.slice(1)],
+          },
+        },
         ...firstMeal.plates.slice(1),
       ],
     };
-    expect(planDiffs(meals, [moved, ...rest])).toEqual([`${firstMeal.date} ${firstMeal.slotKey} ${firstMeal.memberScope} differs`]);
+    expect(planDiffs(meals, [moved, ...rest])).toEqual([
+      `${firstMeal.date} ${firstMeal.slotKey} ${firstMeal.memberScope} differs`,
+    ]);
   });
 
   it("G2 admin only; a member gets 403 and nothing is queued", async () => {
