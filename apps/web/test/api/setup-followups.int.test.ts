@@ -133,7 +133,8 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
     const f = await get();
     expect(f.card?.key).toBe("school_nut_free");
     expect(f.card?.question).toBe(
-      "Is the school nut-free? I'll keep nuts out of Child C1, Child C2 and Child C3's meals.",
+      // 1.2.6 (R-62): lunch boxes only (OQ-9).
+      "Is the school nut-free? I'll keep nuts out of the lunch boxes.",
     );
     expect(f.upcoming.map((u) => u.key)).toEqual(["dinner_time", `training_kcal:${id("Adult B")}`]);
     expect([f.position, f.total, f.day]).toEqual([1, 3, 1]);
@@ -162,12 +163,21 @@ describe("G3 first-days follow-ups (R2-ONB-6)", () => {
       .from(changeSet)
       .where(eq(changeSet.id, body.changeSetId ?? ""));
     expect([cs?.actor, cs?.source, cs?.householdId]).toEqual(["user", "ui", a.householdId]);
-    const exclusions = ok<{ exclusions: { memberId: string | null; kind: string; key: string }[] }>(
-      await callJson(c.exclusionsList, {}, a),
-      "exclusions",
-    ).exclusions.filter((e) => e.key === "contains_nuts");
-    expect(exclusions.map((e) => [e.memberId, e.kind]).sort()).toEqual(
-      ["Child C1", "Child C2", "Child C3"].map((n) => [id(n), "dietary_flag"]).sort(),
+    const exclusions = ok<{
+      exclusions: {
+        memberId: string | null;
+        kind: string;
+        key: string;
+        slotKeys: string[] | null;
+      }[];
+    }>(await callJson(c.exclusionsList, {}, a), "exclusions").exclusions.filter(
+      (e) => e.key === "contains_nuts",
+    );
+    // 1.2.6 (R-62): scoped to the packed school lunch (OQ-9).
+    expect(exclusions.map((e) => [e.memberId, e.kind, e.slotKeys]).sort()).toEqual(
+      ["Child C1", "Child C2", "Child C3"]
+        .map((n) => [id(n), "dietary_flag", ["packed_school_lunch"]])
+        .sort(),
     );
     // At most one a day.
     expect(body.followups.card).toBeNull();

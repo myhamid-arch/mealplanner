@@ -220,7 +220,8 @@ for (const vp of VIEWPORTS) {
     await expect(card.getByText("QUICK QUESTION · 1 OF 3")).toBeVisible();
     await expect(
       card.getByRole("heading", {
-        name: "Is the school nut-free? I'll keep nuts out of Layla, Adam and Zayd's meals.",
+        // 1.2.6 (R-62): lunch boxes only (OQ-9).
+        name: "Is the school nut-free? I'll keep nuts out of the lunch boxes.",
       }),
     ).toBeVisible();
     for (const label of ["Yes, nut-free", "No", "Not sure · Ask me later"])
@@ -256,11 +257,14 @@ for (const vp of VIEWPORTS) {
     await card.getByRole("button", { name: "Yes, nut-free" }).click();
     await expect(page.getByRole("heading", { name: "That's today's question done" })).toBeVisible();
     await expect(page.locator("[data-followup]")).toHaveCount(0);
-    const exclusions = await getJson<{ exclusions: { key: string }[] }>(
+    const exclusions = await getJson<{ exclusions: { key: string; slotKeys: string[] | null }[] }>(
       page.request,
       "/api/v1/exclusions",
     );
-    expect(exclusions.exclusions.filter((e) => e.key === "contains_nuts")).toHaveLength(3);
+    const nuts = exclusions.exclusions.filter((e) => e.key === "contains_nuts");
+    expect(nuts).toHaveLength(3);
+    // 1.2.6 (R-62): scoped to the packed school lunch (OQ-9).
+    expect(nuts.every((e) => e.slotKeys?.join() === "packed_school_lunch")).toBe(true);
     await page.reload();
     await expect(page.getByRole("heading", { name: "That's today's question done" })).toBeVisible();
     await expect(page.getByText("Dinner at 19:30 — is that about right?")).toBeVisible();
