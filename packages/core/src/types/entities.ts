@@ -453,6 +453,9 @@ export interface ReviewRow {
   createdAt: Date;
   editedAt: Date | null;
   processedAt: Date | null;
+  /** `reviews.extract` (R-46, R-49). */
+  extractedTags: string[];
+  extractedAt: Date | null;
 }
 
 export interface ReviewReactionRow {

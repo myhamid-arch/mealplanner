@@ -301,6 +301,8 @@ export async function loadFixture(db: Executor, input: FixtureInput): Promise<Lo
         createdAt: new Date(r.createdAt),
         editedAt: null,
         processedAt: null,
+        extractedTags: [],
+        extractedAt: null,
       });
       for (const reaction of r.reactions)
         await repos.review_reaction.insert({

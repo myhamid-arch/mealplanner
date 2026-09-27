@@ -94,8 +94,8 @@ export function successProblems(endpoint: EndpointSpec, o: Observed): string[] {
       .map((l) => l.slice(5).trim());
     if (data.length === 0) problems.push("the event stream carried no events");
     for (const d of data) {
-      const parsed = JobEventDto.safeParse(JSON.parse(d));
-      if (!parsed.success) problems.push(`event violates JobEventDto: ${parsed.error.message}`);
+      const parsed = (endpoint.response ?? JobEventDto).safeParse(JSON.parse(d));
+      if (!parsed.success) problems.push(`event violates its schema: ${parsed.error.message}`);
     }
     return problems;
   }

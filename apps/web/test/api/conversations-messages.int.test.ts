@@ -8,6 +8,8 @@
 //   breaks the check (negative control).
 // - SPEC-Q-11 (R-46): an aborted turn releases its lock; a concurrent turn gets 409.
 import { and, count, eq } from "drizzle-orm";
+import { createServer, type Server } from "node:http";
+import type { AddressInfo } from "node:net";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import * as c from "@mealplanner/api-contract/contract";
 import { ChatStreamEventDto } from "@mealplanner/api-contract/contract";
@@ -25,8 +27,11 @@ import {
   conversation,
   exclusion,
   job,
+  jobEvent,
+  member,
   newId,
   proposal,
+  review,
 } from "@mealplanner/db/schema";
 import { applyChangeSet } from "@mealplanner/db/services/changes";
 import { conversationRows, useAgentModel } from "../../lib/server/agent";
@@ -665,7 +670,7 @@ describe("worker: jobs started from chat report back (SPEC-Q-9, R-46)", () => {
 
   afterAll(async () => {
     await worker.stop();
-  });
+  }, 60_000);
 
   async function finished(jobId: string): Promise<typeof job.$inferSelect> {
     for (let i = 0; i < 600; i += 1) {
@@ -719,6 +724,47 @@ describe("worker: jobs started from chat report back (SPEC-Q-9, R-46)", () => {
     expect(content.cards[0]?.error).toMatch(/credential|disabled/i);
   }, 120_000);
 
+  it("generate_plan from chat is logged as the assistant's change (R-49) and reports back", async () => {
+    const id = await newConversation(w.a.admin);
+    const stub = new Stub([
+      msg([tool("generate_plan", { from: "2026-12-20", to: "2026-12-20" })], "tool_use"),
+      msg([say("Planning.")], "end_turn"),
+    ]);
+    const r = await send(w.a.admin, id, "Plan the 20th of December", stub);
+    const row = await finished(jobIdOf(r));
+    expect(row.status, worker.output().slice(-2000)).toBe("succeeded");
+    const [done] = await rt.db
+      .select()
+      .from(jobEvent)
+      .where(and(eq(jobEvent.jobId, row.id), eq(jobEvent.type, "done")));
+    const changeSetId = (done?.payload as { changeSetId?: string } | undefined)?.changeSetId;
+    const [cs] = await rt.db
+      .select()
+      .from(changeSet)
+      .where(eq(changeSet.id, changeSetId ?? ""));
+    expect(cs).toMatchObject({
+      actor: "agent",
+      source: "agent_apply",
+      actorUserId: w.a.admin.userId,
+    });
+    const events = await eventRows(id);
+    expect(
+      (events[0]?.content as { cards: { type: string; status: string }[] }).cards[0],
+    ).toMatchObject({
+      type: "job_progress",
+      status: "succeeded",
+    });
+  }, 180_000);
+
+  it("POST /plans/generate refuses a client-set source (only the agent adapter sets it; R-49)", async () => {
+    const res = await callJson(
+      c.plansGenerate,
+      { body: { dates: ["2026-12-21"], source: "agent" } },
+      w.a.admin,
+    );
+    expect(res.status).toBe(400);
+  });
+
   it("run_insights posts its digest into the conversation that asked", async () => {
     const id = await newConversation(w.a.admin);
     const stub = new Stub([
@@ -732,5 +778,141 @@ describe("worker: jobs started from chat report back (SPEC-Q-9, R-46)", () => {
     expect(events).toHaveLength(1);
     const content = events[0]?.content as { cards: { type: string }[] };
     expect(content.cards.map((x) => x.type)).toEqual(["insight_digest"]);
+  }, 120_000);
+
+  it("a new review with a comment queues reviews.extract; without a credential it reports disabled and leaves the review unmarked", async () => {
+    const rev = await callJson(
+      c.reviewsCreate,
+      {
+        body: {
+          targetType: "dish",
+          targetId: w.a.ownDishId,
+          rating: 3,
+          tags: [],
+          comment: "Too salty, make it less often",
+          onBehalfOfMemberId: w.a.adultId,
+        },
+      },
+      w.a.admin,
+    );
+    const reviewId = ok<{ id: string }>(rev, "review").id;
+    let extractJob: typeof job.$inferSelect | undefined;
+    for (let i = 0; i < 100 && extractJob === undefined; i += 1) {
+      [extractJob] = (
+        await rt.db
+          .select()
+          .from(job)
+          .where(and(eq(job.householdId, w.a.id), eq(job.kind, "reviews.extract")))
+      ).filter((j) => (j.payload as { reviewId?: string }).reviewId === reviewId);
+      if (extractJob === undefined) await new Promise((r) => setTimeout(r, 50));
+    }
+    if (extractJob === undefined) throw new Error("no reviews.extract job");
+    const done = await finished(extractJob.id);
+    expect(done.status).toBe("succeeded");
+    const [result] = await rt.db
+      .select()
+      .from(jobEvent)
+      .where(and(eq(jobEvent.jobId, done.id), eq(jobEvent.type, "done")));
+    expect(result?.payload).toMatchObject({ status: "disabled" });
+    const [r] = await rt.db.select().from(review).where(eq(review.id, reviewId));
+    expect(r?.extractedAt).toBeNull();
+    expect(r?.processedAt).toBeNull();
+  }, 120_000);
+});
+
+// reviews.extract with a model: the worker's client is pointed at a local server that answers
+// with a recorded extraction (no credential; the token is a placeholder the server ignores).
+describe("worker: reviews.extract with a recorded model response (R-46)", () => {
+  let worker: WorkerProcess;
+  let server: Server;
+  const requests: Record<string, unknown>[] = [];
+  const saved = { base: process.env.ANTHROPIC_BASE_URL, token: process.env.ANTHROPIC_AUTH_TOKEN };
+
+  beforeAll(async () => {
+    server = createServer((req, res) => {
+      let body = "";
+      req.on("data", (chunk: Buffer) => (body += chunk.toString()));
+      req.on("end", () => {
+        requests.push(JSON.parse(body) as Record<string, unknown>);
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(
+          JSON.stringify({
+            id: "msg_recorded",
+            type: "message",
+            role: "assistant",
+            model: "claude-recorded",
+            content: [{ type: "text", text: '{"tags":["too_salty","more_often"]}' }],
+            stop_reason: "end_turn",
+            stop_sequence: null,
+            usage: { input_tokens: 120, output_tokens: 12 },
+          }),
+        );
+      });
+    });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const { port } = server.address() as AddressInfo;
+    process.env.ANTHROPIC_BASE_URL = `http://127.0.0.1:${String(port)}`;
+    process.env.ANTHROPIC_AUTH_TOKEN = "recorded-response-placeholder";
+    worker = await startWorkerProcess(db.url);
+  }, 120_000);
+
+  afterAll(async () => {
+    await worker.stop();
+    server.closeAllConnections();
+    await new Promise((resolve) => server.close(resolve));
+    if (saved.base === undefined) delete process.env.ANTHROPIC_BASE_URL;
+    else process.env.ANTHROPIC_BASE_URL = saved.base;
+    if (saved.token === undefined) delete process.env.ANTHROPIC_AUTH_TOKEN;
+    else process.env.ANTHROPIC_AUTH_TOKEN = saved.token;
+  }, 60_000);
+
+  it("stores the new tags once, applies their learning, audits the call, and never touches processed_at", async () => {
+    const before = await changeSetCount();
+    const [adult] = await rt.db.select().from(member).where(eq(member.id, w.a.adultId));
+    const name = adult?.displayName ?? "";
+    expect(name.length).toBeGreaterThan(1);
+    const rev = await callJson(
+      c.reviewsCreate,
+      {
+        body: {
+          targetType: "dish",
+          targetId: w.a.ownDishId,
+          rating: 4,
+          tags: ["tasty"],
+          comment: `${name} found it way too salty, but please make it more often`,
+          onBehalfOfMemberId: w.a.adultId,
+        },
+      },
+      w.a.admin,
+    );
+    const reviewId = ok<{ id: string }>(rev, "review").id;
+    let extracted: typeof review.$inferSelect | undefined;
+    for (let i = 0; i < 600 && extracted?.extractedAt == null; i += 1) {
+      [extracted] = await rt.db.select().from(review).where(eq(review.id, reviewId));
+      if (extracted?.extractedAt == null) await new Promise((r) => setTimeout(r, 100));
+    }
+    expect(extracted?.extractedTags, worker.output().slice(-2000)).toEqual([
+      "more_often",
+      "too_salty",
+    ]);
+    expect(extracted?.tags).toEqual(["tasty"]);
+    expect(extracted?.processedAt).toBeNull();
+    // The comment went out with the member's name scrubbed, at effort low.
+    const sent = JSON.stringify(requests.at(-1));
+    expect(sent).not.toContain(name);
+    expect(requests.at(-1)?.output_config).toMatchObject({ effort: "low" });
+    const audit = await rt.db
+      .select()
+      .from(aiGeneration)
+      .where(
+        and(eq(aiGeneration.householdId, w.a.id), eq(aiGeneration.purpose, "comment_extraction")),
+      );
+    expect(audit).toHaveLength(1);
+    // Learning from the added tags: one more learning change set than the review's own.
+    const learning = (
+      await rt.db.select().from(changeSet).where(eq(changeSet.householdId, w.a.id))
+    ).filter((x) => x.source === "learning");
+    expect(learning.length).toBeGreaterThanOrEqual(2);
+    expect(await changeSetCount()).toBeGreaterThan(before + 1);
   }, 120_000);
 });

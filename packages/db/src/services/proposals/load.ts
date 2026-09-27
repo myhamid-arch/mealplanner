@@ -168,7 +168,8 @@ export async function loadInsightInput(
       targetId: row.targetId,
       planMealId: row.planMealId,
       rating: row.rating,
-      tags: row.tags,
+      // R-46: tags implied by the comment (reviews.extract) count as the author's own.
+      tags: [...new Set([...row.tags, ...row.extractedTags])],
       comment: row.comment,
       createdAt: row.createdAt,
     }));

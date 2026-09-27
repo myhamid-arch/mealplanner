@@ -36,6 +36,13 @@
       "when": 1790454325230,
       "tag": "0004_jobs_support_access",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790467525260,
+      "tag": "0005_review_extraction",
+      "breakpoints": true
     }
   ]
 }

@@ -21,6 +21,7 @@ export const JOB_KINDS = [
   "recipe.generate",
   "recipe.revise",
   "household.purge",
+  "reviews.extract",
   "recipe.draft",
 ] as const;
 export type JobKind = (typeof JOB_KINDS)[number];

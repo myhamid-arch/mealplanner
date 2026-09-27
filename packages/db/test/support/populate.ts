@@ -425,6 +425,8 @@ export async function populateAllTables(db: Executor, loaded: LoadedFixture): Pr
     createdAt: now,
     editedAt: null,
     processedAt: null,
+    extractedTags: [],
+    extractedAt: null,
   });
   await write.review_reaction.insert({
     householdId: ctx.householdId,

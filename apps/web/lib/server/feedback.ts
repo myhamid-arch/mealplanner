@@ -173,6 +173,14 @@ export async function writeReview(
     comment: body.comment ?? null,
   });
   await afterReview(rt, caller, result.learningChangeSetId);
+  // ARC-7 (R-46): a new review with a comment has its implicit tags extracted.
+  if ((result.review.comment ?? "").trim() !== "")
+    await enqueueJob(rt.db, rt.queue, {
+      kind: "reviews.extract",
+      householdId: caller.ctx.householdId,
+      payload: { reviewId: result.review.id },
+      createdByUserId: null,
+    });
   return one(rt, result.review);
 }
 

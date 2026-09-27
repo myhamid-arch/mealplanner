@@ -35,6 +35,12 @@ function opSatisfied(op: ParsedChangeOp, state: SatisfactionState): boolean {
     }
     case "exclusion.add": {
       const p = op.payload;
+      // R-49: an op that changes the reason or hardness of the member's own row for the key
+      // changes its protection (DM-5, AGT-5), so it is not satisfied by that row.
+      const own = config.exclusions.find(
+        (row) => row.memberId === p.memberId && row.kind === p.kind && row.key === p.key,
+      );
+      if (own !== undefined && (own.reason !== p.reason || own.hard !== p.hard)) return false;
       // Any exclusion of the key already keeps it off the member's plates.
       return config.exclusions.some(
         (row) =>
