@@ -156,4 +156,22 @@ describe("preference.set on an existing row", () => {
     const html = renderToStaticMarkup(<ChangeDiff descriptions={[created]} names={names} />);
     expect(html).not.toContain("data-comparison");
   });
+
+  it("a new frequency rule lists what it sets, not its empty or default fields", () => {
+    const rule: Description = {
+      kind: "frequency.set",
+      area: "taste",
+      title: "Set frequency rule",
+      changes: [
+        { entity: "frequency_rule", key: { id: "f" }, field: "memberId", after: null },
+        { entity: "frequency_rule", key: { id: "f" }, field: "minGapDays", after: 3 },
+        { entity: "frequency_rule", key: { id: "f" }, field: "maxPerWeek", after: null },
+        { entity: "frequency_rule", key: { id: "f" }, field: "locked", after: false },
+      ],
+    };
+    expect(diffLines(rule, names).map((l) => [l.label, l.after])).toEqual([
+      ["Who", "Everyone"],
+      ["Minimum gap (days)", "3"],
+    ]);
+  });
 });

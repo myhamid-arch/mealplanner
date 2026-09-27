@@ -3,8 +3,8 @@
 // - Ids that the screen knows are shown as names (members, dishes, ingredients).
 // - Stored values are shown as labels: enums in words, catalogue slugs by their catalogue name,
 //   booleans as Yes / No. Numbers are flagged so only they use the numeric font.
-// - A new row's fields that only repeat a default (not locked, rule none, not protected) are left
-//   out; a changed default is shown.
+// - A new row's fields that only repeat a default (not locked, rule none, not protected) or are
+//   empty are left out; a changed default is shown.
 // - R-34 / R-36 (SPEC-Q-13): every exclusion filters, whatever `hard`; `hard` only protects it from
 //   automatic change. It is never worded as "may be served".
 import type { z } from "zod";
@@ -102,10 +102,9 @@ const VALUE_LABELS: Readonly<Record<string, Readonly<Record<string, string>>>> =
 };
 
 /** Defaults that say nothing on a new row (shown only when the op sets something else). */
-const DEFAULTS: Readonly<Record<string, unknown>> = {
-  "preference.locked": false,
-  "preference.hard": "none",
-  "exclusion.hard": false,
+const DEFAULTS: Readonly<Record<string, readonly unknown[]>> = {
+  locked: [false],
+  hard: ["none", false],
 };
 
 const ENTITY_LABELS: Readonly<Record<string, string>> = {
@@ -167,20 +166,18 @@ function value(field: string, v: unknown, names: ReadonlyMap<string, string>): s
   return humanize(JSON.stringify(v), names);
 }
 
-function isDefault(entity: string, field: string, before: unknown, after: unknown): boolean {
-  const key = `${entity}.${field}`;
-  return (
-    (before === undefined || before === null) &&
-    key in DEFAULTS &&
-    JSON.stringify(DEFAULTS[key]) === JSON.stringify(after)
-  );
+/** A new row's field that only repeats a default, or is empty ("Who: Everyone" is not). */
+function isDefault(field: string, before: unknown, after: unknown): boolean {
+  if (before !== undefined && before !== null) return false;
+  if (after === null) return field !== "memberId";
+  return DEFAULTS[field]?.includes(after) ?? false;
 }
 
 export function diffLines(d: Description, names: ReadonlyMap<string, string>): DiffLine[] {
   return d.changes
     .filter((c) => !HIDDEN.has(c.field) && !/(At|UserId)$/.test(c.field))
     .filter((c) => JSON.stringify(c.before) !== JSON.stringify(c.after))
-    .filter((c) => !isDefault(c.entity, c.field, c.before, c.after))
+    .filter((c) => !isDefault(c.field, c.before, c.after))
     .map((c) => ({
       entity: ENTITY_LABELS[c.entity] ?? words(c.entity),
       label:
