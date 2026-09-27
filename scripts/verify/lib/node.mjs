@@ -1143,7 +1143,7 @@ export async function runE2ESuite(report, { webDir, distDir, server }) {
       );
     report.check(
       ok,
-      `e2e ${run.label}: ${String(tests.length - bad.length)} of ${String(run.expected.length)} tests passed (${String(out?.seconds)} s)`,
+      `e2e ${run.label}: ${String(tests.length - bad.length)} of ${String(tests.length)} tests passed, all ${String(run.expected.length)} of the group among them (${String(out?.seconds)} s)`,
       [
         ...bad.map((t) => `[${t.status}] ${t.title}\n${t.error.slice(0, 1500)}`),
         ...missing.map((m) => `[not run] ${m}`),
