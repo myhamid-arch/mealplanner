@@ -6,6 +6,7 @@ import { useState } from "react";
 import { reviewsCreate } from "@mealplanner/api-contract/contract";
 import { api, problemMessage } from "../admin/api";
 import { FormError } from "../admin/field";
+import { LoadError } from "../admin/load-error";
 import { useLoad } from "../admin/use-load";
 import { Button, buttonClasses } from "../ui/button";
 import { Sheet } from "../ui/sheet";
@@ -94,7 +95,9 @@ export function QuickRateSheet({
       width={460}
     >
       {load.status === "loading" && <SkeletonBlock label="Loading the meal" lines={4} />}
-      {load.status === "error" && <FormError>{load.message}</FormError>}
+      {load.status === "error" && (
+        <LoadError message={load.message} onRetry={() => void load.reload()} />
+      )}
       {ready !== null && (
         <>
           <div className="flex items-center gap-3">

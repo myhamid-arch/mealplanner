@@ -49,8 +49,8 @@ export function MacroTableCardView({ card }: { readonly card: Card }) {
                     {r.member}
                   </th>
                   <td className="py-1 pr-3">{r.slot}</td>
-                  <td className="py-1 pr-3 tabular">{fmt(r.target)}</td>
-                  <td className="py-1 pr-3 tabular">{fmt(r.actual)}</td>
+                  <td className="py-1 pr-3 whitespace-nowrap tabular">{fmt(r.target)}</td>
+                  <td className="py-1 pr-3 whitespace-nowrap tabular">{fmt(r.actual)}</td>
                   <td className="py-1">
                     {r.fitStatus === undefined ? "—" : <FitBadge status={r.fitStatus} />}
                   </td>

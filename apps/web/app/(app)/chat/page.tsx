@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * ChatDesktop.dc.html (AGT-7): the assistant. `?prompt=<text>` puts text in the composer of a new
- * conversation without sending it (1.4.3 SPEC-Q-16, R-53); `?new=1` starts an empty one.
+ * conversation without sending it (1.4.3 SPEC-Q-16, R-53); `?new=<anything>` starts an empty one.
  */
 export default async function ChatPage({
   searchParams,
@@ -21,7 +21,14 @@ export default async function ChatPage({
   await requirePageSession(
     prompt === null ? "/chat" : `/chat?prompt=${encodeURIComponent(prompt)}`,
   );
+  // A new query (another "New conversation", another prompt) starts the screen afresh.
   return (
-    <ChatScreen conversationId={null} prompt={prompt} fresh={q.new === "1"} labels={TOOL_LABELS} />
+    <ChatScreen
+      key={`${q.new ?? ""}|${prompt ?? ""}`}
+      conversationId={null}
+      prompt={prompt}
+      fresh={q.new !== undefined}
+      labels={TOOL_LABELS}
+    />
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   conversationMessages,
@@ -82,7 +83,7 @@ export function ChatScreen({
 }: {
   readonly conversationId: string | null;
   readonly prompt: string | null;
-  /** `/chat?new=1`: start an empty conversation instead of opening the most recent. */
+  /** `/chat?new=…`: start an empty conversation instead of opening the most recent. */
   readonly fresh: boolean;
   readonly labels: Readonly<Record<string, string>>;
 }) {
@@ -99,6 +100,7 @@ export function ChatScreen({
   const [search, setSearch] = useState("");
   const [badges, setBadges] = useState<Record<string, number>>({});
   const [listOpen, setListOpen] = useState(false);
+  const router = useRouter();
 
   // `load.data` keeps its identity between renders (the hook's state), unlike `load` itself.
   const data = load.status === "ready" ? load.data : null;
@@ -194,8 +196,11 @@ export function ChatScreen({
       >
         <Link
           href="/chat?new=1"
-          onClick={() => {
+          onClick={(e) => {
+            // A fresh query each time, so a second "New conversation" also starts afresh.
+            e.preventDefault();
             setListOpen(false);
+            router.push(`/chat?new=${String(Date.now())}`);
           }}
           className="flex min-h-11 items-center justify-center rounded-md bg-agent font-extrabold text-on-agent no-underline hover:bg-agent-raised hover:text-on-agent"
         >

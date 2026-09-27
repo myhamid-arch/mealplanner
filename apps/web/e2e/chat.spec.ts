@@ -318,6 +318,12 @@ test.describe.serial("@G3 chat cards", () => {
     await expect(
       log.locator("[data-card=proposal]").getByText("Accepted", { exact: true }),
     ).toBeVisible();
+    // "New conversation" starts an empty one, twice in a row too.
+    for (let i = 0; i < 2; i++) {
+      await page.getByRole("link", { name: "New conversation" }).click();
+      await expect(page.getByRole("heading", { name: "Ask the assistant" })).toBeVisible();
+      await expect(log.locator("[data-role]")).toHaveCount(0);
+    }
     await ctx.close();
   });
 

@@ -260,7 +260,7 @@ function PreferenceTable({
                   </td>
                   <td className="py-1 whitespace-nowrap">
                     {canChange && (
-                      <div className="flex flex-wrap justify-end gap-1">
+                      <div className="flex flex-wrap justify-end gap-1 xl:flex-nowrap">
                         {editing === key ? (
                           <>
                             <Button

@@ -234,6 +234,38 @@ function SetupProposal({
         .filter((x) => x.who === n || x.who === "everyone")
         .map((x) => `Never ${x.term}${x.reason === "allergy" ? " (allergy)" : ""}`),
     ].filter((x): x is string => x !== null);
+  // Shared / Individual meals after the ops (R2-MEAL-1): the household's slots with each
+  // `slot.update` / `slot.create` of the set-up applied.
+  const slots = new Map(
+    ctx.slots.map((sl) => [sl.id, { label: sl.label, shared: sl.isShared, active: sl.active }]),
+  );
+  for (const op of inferred.changeOps) {
+    const p = op.payload as {
+      slotTypeId?: string;
+      id?: string;
+      label?: string;
+      isShared?: boolean;
+      active?: boolean;
+    };
+    if (op.kind === "slot.update" && p.slotTypeId !== undefined) {
+      const sl = slots.get(p.slotTypeId);
+      if (sl !== undefined)
+        slots.set(p.slotTypeId, {
+          ...sl,
+          shared: p.isShared ?? sl.shared,
+          active: p.active ?? sl.active,
+        });
+    }
+    if (op.kind === "slot.create" && p.label !== undefined)
+      slots.set(p.id ?? p.label, {
+        label: p.label,
+        shared: p.isShared ?? false,
+        active: p.active ?? true,
+      });
+  }
+  const activeSlots = [...slots.values()].filter((sl) => sl.active);
+  const shared = activeSlots.filter((sl) => sl.shared).map((sl) => sl.label.toLowerCase());
+  const individual = activeSlots.filter((sl) => !sl.shared).map((sl) => sl.label.toLowerCase());
   const liked = (answers.cuisines ?? [])
     .map((k) => ctx.cuisines.find((cu) => cu.key === k)?.label ?? k)
     .join(" · ");
@@ -304,11 +336,23 @@ function SetupProposal({
           </table>
         </div>
       )}
-      {liked !== "" && (
-        <span className="self-start rounded-full bg-basil-tint px-2.5 py-1 text-[13px] font-extrabold text-basil-text">
-          Likes: {liked}
-        </span>
-      )}
+      <div className="flex flex-wrap gap-2 text-[13px] font-extrabold">
+        {shared.length > 0 && (
+          <span className="rounded-full bg-sea-tint px-2.5 py-1 text-sea-text">
+            Shared: {shared.join(" · ")}
+          </span>
+        )}
+        {individual.length > 0 && (
+          <span className="rounded-full bg-saffron-tint px-2.5 py-1 text-saffron-text">
+            Individual: {individual.join(" · ")}
+          </span>
+        )}
+        {liked !== "" && (
+          <span className="rounded-full bg-basil-tint px-2.5 py-1 text-basil-text">
+            Likes: {liked}
+          </span>
+        )}
+      </div>
       <ul className="m-0 flex flex-col gap-1 pl-5 text-sm">
         {inferred.explanations.map((e, i) => (
           <li key={`${String(e.answer)}-${String(i)}`}>{e.text}</li>
