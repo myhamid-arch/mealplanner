@@ -5,8 +5,8 @@
 //
 // N2  The branch packages (@mealplanner/core, @mealplanner/db) are built; every workspace package
 //     that depends on them typechecks against their dist/ declarations; the api-contract contract
-//     tests pass. Negative control: in a disposable copy, `PlanResult.flags` in the planner's types
-//     is renamed and @mealplanner/db's typecheck fails.
+//     tests pass. Negative control: in a disposable copy, the published `PlanResult.flags` of the
+//     planner (dist declaration) is renamed and @mealplanner/db's typecheck fails.
 // N3  apps/web/test/node/engine.node.ts on a fresh database of the gate's own (migrated from zero,
 //     catalogue, F1), used as the template of one database per plan run (SPEC-Q-5). Each run queues
 //     `plan.generate` through the API route and the real worker runs it. From the persisted plan of
@@ -38,10 +38,12 @@ import {
 const LABEL = "node-1.2";
 
 const N2_CONTROL = {
-  description: "PlanResult.flags is renamed to planFlags",
-  file: "packages/core/src/planner/select/types.ts",
-  find: /\n {2}flags: PlanFlag\[\];\n {2}generationRequests: PlanGenerationRequest\[\];/,
-  replace: "\n  planFlags: PlanFlag[];\n  generationRequests: PlanGenerationRequest[];",
+  // @mealplanner/core reads PlanResult.flags itself, so a source rename would break its own build;
+  // the published declaration is changed instead, which is what consumers compile against.
+  description: "the published PlanResult.flags is renamed to planFlags",
+  file: "packages/core/dist/src/planner/select/types.d.ts",
+  find: /\n( +)flags: PlanFlag\[\];\n( +)generationRequests: PlanGenerationRequest\[\];/,
+  replace: "\n$1planFlags: PlanFlag[];\n$2generationRequests: PlanGenerationRequest[];",
   packageDir: "packages/core",
   consumer: "@mealplanner/db",
   consumerDir: "packages/db",
