@@ -1,0 +1,14 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" gate-check --approve leaf-1.4.7.md (G6) | utc: 2026-09-27T16:04:19Z | commit: 026411c62d0e0b10d0a472e51894d1d355e418c8
+APPROVAL REQUIRED leaf-1.4.7:G6
+    CHECK: node scripts/verify/leaf-1.4.7.mjs --live
+    EXPECT: VERIFY leaf-1.4.7 LIVE PASSED
+    CWD: /home/user/mealplanner
+    SHELL: /bin/sh
+    PATH: /root/.local/bin:/root/.cargo/bin:/usr/local/go/bin:/opt/node22/bin:/opt/maven/bin:/opt/gradle/bin:/opt/rbenv/bin:/root/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    APPROVED: /root/.unlazy/approved/b60888a7c555a9195d3b915c61355693ea869003f79d89239e6d07b8284bfedb.json
+  RUN  leaf-1.4.7:G6 shell=/bin/sh cwd=/home/user/mealplanner PATH=/root/.local/bin:/root/.cargo/bin:/usr/local/go/bin:/opt/node22/bin:/opt/maven/bin:/opt/gradle/bin:/opt/rbenv/bin:/root/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  PASS leaf-1.4.7:G6: live parse of the F1 answers through the real model matches the deterministic parse (owner handoff: needs ANTHROPIC_API_KEY)
+       exit=0; EXPECT=matched; output=sha256=71ac0220c2273c9d8f38e387d33ad35927eaecc6db7153367d451894c124d91c; bytes=613
+leaf-1.4.7.md: 6 gates
+ALL MET (6 met)
+# exit: 0
