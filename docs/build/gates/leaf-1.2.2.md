@@ -7,7 +7,7 @@ Scope: Target resolver and portion solver, as specified in docs/spec (see 11-bui
 - [x] G1: F1 week: per-slot targets sum to daily targets within 1 g; training slots appear only for the training member (PLN-4)
   CHECK: node scripts/verify/leaf-1.2.2.mjs --gate G1
   EXPECT: VERIFY leaf-1.2.2 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=5830c5cf0bc34c22340c9704c81e72d58c37adee791930bf493e56d6679b6ba6; exit=0; EXPECT=matched; output-sha256=132380a1ce2fd735d86519df0d0c84bde463acf7840e05bdd0b996251cc00036; output-bytes=1113; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=5830c5cf0bc34c22340c9704c81e72d58c37adee791930bf493e56d6679b6ba6; exit=0; EXPECT=matched; output-sha256=735e133b0b9aca57902abfd03d4a9d06058f370b523e23798aeaee9ed40ebe43; output-bytes=1113; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: 200 known-feasible cases are all in_tolerance on the step grid; 50 known-infeasible cases are infeasible in strict and flexible_miss in flexible (PLN-5, PLN-8)
   CHECK: node scripts/verify/leaf-1.2.2.mjs --gate G2
@@ -27,4 +27,4 @@ Scope: Target resolver and portion solver, as specified in docs/spec (see 11-bui
 - [x] G5: p95 solve time at most 150 ms per plate
   CHECK: node scripts/verify/leaf-1.2.2.mjs --gate G5
   EXPECT: VERIFY leaf-1.2.2 G5 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=8f032d294889c62083ec573b287bae269b0083abc91fea365747b03e6e9bec1f; exit=0; EXPECT=matched; output-sha256=c837acf3353a45e71ae3179684066f60bfeb5b4346d319743f03b8cd8ebb2c0b; output-bytes=399; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=8f032d294889c62083ec573b287bae269b0083abc91fea365747b03e6e9bec1f; exit=0; EXPECT=matched; output-sha256=7b4c062a1e0c0e07be16e7432c94a3da5b46a7d5ef9458afa1d2e75ec21083c3; output-bytes=396; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries

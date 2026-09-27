@@ -22,4 +22,4 @@ Scope: Nutrition engine, as specified in docs/spec (see 11-build-plan.md §5 and
 - [x] G4: 100% line coverage of nutrition/ (NUT-1)
   CHECK: node scripts/verify/leaf-1.2.1.mjs --gate G4
   EXPECT: VERIFY leaf-1.2.1 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=63a44719e5a720eee82c3663bd9129fc98538906cb58d541062a5408680a119d; exit=0; EXPECT=matched; output-sha256=35750038ce595266029bed909cf647d4b639fad5e43e2f696d593c2dc17e24fb; output-bytes=941; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=63a44719e5a720eee82c3663bd9129fc98538906cb58d541062a5408680a119d; exit=0; EXPECT=matched; output-sha256=e5850a980d2ab174db7f44b22ef2a0130d22aeb1c868147507af8a7a47de6854; output-bytes=943; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
