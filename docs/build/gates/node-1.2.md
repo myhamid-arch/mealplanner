@@ -1,9 +1,9 @@
 # Gates: node-1.2 Engine integration
 
-Scope: integrate children leaf-1.2.1, leaf-1.2.2, leaf-1.2.3, leaf-1.2.4, leaf-1.2.5 into one verified result
+Scope: integrate children leaf-1.2.1, leaf-1.2.2, leaf-1.2.3, leaf-1.2.4, leaf-1.2.5, leaf-1.2.6 into one verified result
 
 - [ ] N1: every direct child is reverified from its exact ledger
-  CHECK: node .claude/skills/unlazy/scripts/gate-check.mjs --root . --cwd . --reverify --jobs 1 docs/build/gates/leaf-1.2.1.md docs/build/gates/leaf-1.2.2.md docs/build/gates/leaf-1.2.3.md docs/build/gates/leaf-1.2.4.md docs/build/gates/leaf-1.2.5.md
+  CHECK: node .claude/skills/unlazy/scripts/gate-check.mjs --root . --cwd . --reverify --jobs 1 docs/build/gates/leaf-1.2.1.md docs/build/gates/leaf-1.2.2.md docs/build/gates/leaf-1.2.3.md docs/build/gates/leaf-1.2.4.md docs/build/gates/leaf-1.2.5.md docs/build/gates/leaf-1.2.6.md
   EXPECT: ALL MET
   EVIDENCE: pending
 

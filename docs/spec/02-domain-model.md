@@ -78,7 +78,7 @@ DM-3 **Variant ingredient sets.** Variants of one component SHOULD share their c
 
 **frequency_rule** — household_id →, member_id →?, entity_type (`dish` | `ingredient` | `cuisine` | `method`), entity_key, min_gap_days?, max_per_week?, source, locked.
 
-**exclusion** — household_id →, member_id →?, kind (`ingredient` | `category` | `dietary_flag`), key, reason (`allergy` | `religious` | `dislike` | `medical` | `other`), hard (bool, always true for allergy). Household-level exclusions apply to all members. Allergy exclusions are never removed by learning or proposals without an explicit admin action (DM-5).
+**exclusion** — household_id →, member_id →?, kind (`ingredient` | `category` | `dietary_flag`), key, reason (`allergy` | `religious` | `dislike` | `medical` | `other`), hard (bool, always true for allergy), slot_keys (text[]?, OQ-9: null means every slot; otherwise only meals of those slots; always null for allergy). Household-level exclusions apply to all members. Allergy exclusions are never removed by learning or proposals without an explicit admin action (DM-5).
 
 **planning_weights** — household_id → (PK), macro_precision (0–1, default 1.0), appeal (default 0.6), ingredient_economy (default 0.4), variety (default 0.3), fairness (0–1, default 0.5; see [04-planner.md](04-planner.md) §6.2), ai_generation (`auto` | `ask` | `off`, default `auto`), economy_window_days (default 7), updated_at. **weight_preset** — household_id →, name ("Weekend", "Busy week"), values (jsonb), applies_to_weekdays (int[])?.
 
