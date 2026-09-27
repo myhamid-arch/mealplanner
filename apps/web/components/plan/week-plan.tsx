@@ -479,8 +479,10 @@ export function WeekPlanScreen({
   const drafts = planned.filter(
     (d) => data.days.get(d)?.status === "draft" && d >= data.basics.today,
   );
+  // The status of the days still to come; a week in the past has none.
+  const upcoming = planned.filter((d) => d >= data.basics.today);
   const status =
-    planned.length === 0
+    upcoming.length === 0
       ? null
       : drafts.length > 0
         ? { text: "Draft · not sent to kitchen", tone: "saffron" as const }

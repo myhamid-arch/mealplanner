@@ -92,7 +92,6 @@ function MealBlock({
             variant="secondary"
             loading={busy}
             onClick={() => void toggleLock()}
-            aria-pressed={meal.locked}
           >
             {meal.locked ? (
               <ExtraIconSvg name="unlock" size={18} />
@@ -110,14 +109,14 @@ function MealBlock({
           >
             Swap
           </Button>
-          <Link
-            href={`/recipes/${meal.dishId}`}
-            className="inline-flex min-h-11 items-center px-2 font-extrabold"
-          >
-            Recipe
-          </Link>
         </div>
       )}
+      <Link
+        href={`/recipes/${meal.dishId}`}
+        className="inline-flex min-h-11 items-center self-start font-extrabold"
+      >
+        See the recipe
+      </Link>
     </section>
   );
 }
