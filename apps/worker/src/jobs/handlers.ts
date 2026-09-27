@@ -23,6 +23,8 @@ import { toJson, type JobContext, type JobHandler } from "../runner.js";
 import type { WorkerRuntime } from "../runtime.js";
 import { reviseRecipe } from "./revise.js";
 import { purgeDueHouseholds } from "./purge.js";
+import { postInsightDigest } from "./chat-events.js";
+import { recipeDraft } from "./recipe-draft.js";
 
 const SYSTEM: ChangeActorInput = { actor: "system", source: "learning" };
 
@@ -147,6 +149,7 @@ export const insightsRun: JobHandler = async (ctx) => {
   const hh = systemCtx(ctx.household().householdId);
   const expired = await expireProposals(ctx.rt.db, hh);
   const digest = await runInsights(ctx.rt.db, hh, { synthesize: synthesizeFor(ctx.rt, hh) });
+  await postInsightDigest(ctx.rt, ctx.job, digest);
   return toJson({
     expired,
     runAt: digest.runAt,
@@ -311,4 +314,5 @@ export const HANDLERS: Record<string, JobHandler> = {
   "recipe.generate": recipeGenerate,
   "recipe.revise": recipeRevise,
   "household.purge": householdPurge,
+  "recipe.draft": recipeDraft,
 };

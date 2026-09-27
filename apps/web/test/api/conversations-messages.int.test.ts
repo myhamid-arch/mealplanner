@@ -24,6 +24,7 @@ import {
   chatMessage,
   conversation,
   exclusion,
+  job,
   newId,
   proposal,
 } from "@mealplanner/db/schema";
@@ -32,6 +33,7 @@ import { conversationRows, useAgentModel } from "../../lib/server/agent";
 import { call, callJson, startTestApp, type Caller, type TestApp } from "./support/app";
 import { createTestDatabase, type TestDatabase } from "./support/db";
 import { measure } from "./support/measure";
+import { startWorkerProcess, type WorkerProcess } from "./support/worker";
 import { applyOps, buildWorld, ok, PLAN_DATE, type World } from "./support/world";
 
 // A scripted stub model ---------------------------------------------------------------------------
@@ -650,4 +652,85 @@ describe("G1 turn control (SPEC-Q-11, ARC-6)", () => {
     );
     expect(archived.status).toBe(409);
   });
+});
+
+// Worker: proactive messages (SPEC-Q-9, R-46) -----------------------------------------------------
+
+describe("worker: jobs started from chat report back (SPEC-Q-9, R-46)", () => {
+  let worker: WorkerProcess;
+
+  beforeAll(async () => {
+    worker = await startWorkerProcess(db.url);
+  }, 120_000);
+
+  afterAll(async () => {
+    await worker.stop();
+  });
+
+  async function finished(jobId: string): Promise<typeof job.$inferSelect> {
+    for (let i = 0; i < 600; i += 1) {
+      const [row] = await rt.db.select().from(job).where(eq(job.id, jobId));
+      if (row !== undefined && (row.status === "succeeded" || row.status === "failed")) return row;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    throw new Error(`job ${jobId} did not finish:\n${worker.output().slice(-2000)}`);
+  }
+
+  async function eventRows(conversationId: string) {
+    for (let i = 0; i < 100; i += 1) {
+      const rows = (await conversationRows(rt, w.a.id, conversationId)).filter(
+        (r) => r.role === "event",
+      );
+      if (rows.length > 0) return rows;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    return [];
+  }
+
+  function jobIdOf(r: Sse): string {
+    const done = r.events.find((e) => (e.data as { type: string }).type === "tool_done")?.data as {
+      cards: { type: string; jobId: string }[];
+    };
+    const card = done.cards[0];
+    if (card?.type !== "job_progress") throw new Error("no job card");
+    return card.jobId;
+  }
+
+  it("create_recipe queues recipe.draft; without a credential its failure and reason come back as an event", async () => {
+    const id = await newConversation(w.a.admin);
+    const stub = new Stub([
+      msg(
+        [tool("create_recipe", { request: "a high-protein breakfast", slot: "breakfast" })],
+        "tool_use",
+      ),
+      msg([say("Started.")], "end_turn"),
+    ]);
+    const r = await send(w.a.admin, id, "New breakfast recipe please", stub);
+    const row = await finished(jobIdOf(r));
+    expect(row.kind).toBe("recipe.draft");
+    expect(row.status).toBe("failed");
+    const events = await eventRows(id);
+    expect(events).toHaveLength(1);
+    const content = events[0]?.content as {
+      text: string;
+      cards: { type: string; status: string; error?: string }[];
+    };
+    expect(content.cards[0]).toMatchObject({ type: "job_progress", status: "failed" });
+    expect(content.cards[0]?.error).toMatch(/credential|disabled/i);
+  }, 120_000);
+
+  it("run_insights posts its digest into the conversation that asked", async () => {
+    const id = await newConversation(w.a.admin);
+    const stub = new Stub([
+      msg([tool("run_insights", {})], "tool_use"),
+      msg([say("Running.")], "end_turn"),
+    ]);
+    const r = await send(w.a.admin, id, "What have you learned this week?", stub);
+    const row = await finished(jobIdOf(r));
+    expect(row.status).toBe("succeeded");
+    const events = await eventRows(id);
+    expect(events).toHaveLength(1);
+    const content = events[0]?.content as { cards: { type: string }[] };
+    expect(content.cards.map((x) => x.type)).toEqual(["insight_digest"]);
+  }, 120_000);
 });

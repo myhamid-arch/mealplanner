@@ -10,6 +10,7 @@ import {
   finishJob,
   type JobRow,
 } from "@mealplanner/db/services/plans";
+import { postJobCompletion } from "./jobs/chat-events.js";
 import type { Logger } from "./log.js";
 import type { WorkerRuntime } from "./runtime.js";
 
@@ -100,6 +101,16 @@ export async function runJob(rt: WorkerRuntime, jobId: string, handler: JobHandl
     }
   }
   const ms = Math.round(performance.now() - started);
+  // leaf 1.3.5 (R-46): a job the agent started reports back into its conversation (SPEC-Q-9).
+  await postJobCompletion(
+    rt,
+    job,
+    outcome.ok
+      ? { ok: true, result: outcome.result }
+      : { ok: false, error: errorJson(outcome.error) },
+  ).catch((error: unknown) => {
+    log.error({ err: error }, "the job's chat message could not be posted");
+  });
   if (outcome.ok) {
     try {
       await appendJobEvent(rt.db, jobId, "done", outcome.result);
