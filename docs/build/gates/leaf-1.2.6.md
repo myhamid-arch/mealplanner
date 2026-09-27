@@ -9,7 +9,7 @@ Scope: The owner's answers to OQ-8 and OQ-9 (R-62): main meals repeat a dish onl
   EXPECT: VERIFY leaf-1.2.6 G1 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=a3294e51f9bca0169921242e9b165a920fc1222c2a874d0967524cf35be66e31; exit=0; EXPECT=matched; output-sha256=2944b8e3c745b59bb25017b861b38ca05aa18e55ee4430e42e9e8ecfc5f8237f; output-bytes=1796; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [x] G2: SC-2 as re-set: 1.2.3 G2 (median >= 8 %, every seed >= 5 %, measured) passes; 1.2.3 G1/G3/G4/G5, 1.2.2 G1-G5 and 1.2.5 G1-G4 pass; SC-1 reported
+- [x] G2: SC-2 as re-set: 1.2.3 G2 (median >= 8 %, every seed >= 0 %, measured; R-63) passes; 1.2.3 G1/G3/G4/G5, 1.2.2 G1-G5 and 1.2.5 G1-G4 pass; SC-1 reported
   CHECK: node scripts/verify/leaf-1.2.6.mjs --gate G2
   EXPECT: VERIFY leaf-1.2.6 G2 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=8ae6fbd3f054e0d03f25b03bbb5750efb7aad4e1f5b7c6bb693c269b55b8c5ad; exit=0; EXPECT=matched; output-sha256=585362d4aaeff00f3f14cdf22c24ab5ed5fe0d0dbbbfced6d0604727558fbdf1; output-bytes=1345; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
