@@ -119,10 +119,13 @@ export function echoableContent(content: readonly BetaContentBlock[]): BetaConte
 
 export type RejectionNote = { dishName: string; reasons: string[] };
 
-/** The follow-up user message (REC-5): each rejection reason, and how many dishes to replace. */
+/**
+ * The follow-up user message (REC-5): each rejection reason and each infeasible dish's solver reason
+ * (R-67), and how many dishes to replace.
+ */
 export function followUpMessage(rejections: readonly RejectionNote[], needed: number): string {
   return [
-    `Some dishes did not pass validation. Write ${String(needed)} replacement ${needed === 1 ? "dish" : "dishes"} that avoid these problems, following the same rules and context. Return only the replacement dishes (and any new ingredients they use).`,
+    `Some dishes did not pass validation, or cannot be portioned to every plate target in the context. Write ${String(needed)} replacement ${needed === 1 ? "dish" : "dishes"} that avoid these problems, following the same rules and context. Return only the replacement dishes (and any new ingredients they use).`,
     ...rejections.map((r) => `- ${r.dishName}: ${r.reasons.join("; ")}`),
   ].join("\n");
 }

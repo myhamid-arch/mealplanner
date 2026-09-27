@@ -92,3 +92,8 @@ Whether the prompt changes caused the flip is not established:
 - There are 1 pre-fix sample and 2 post-fix samples.
 
 A grounded fix would be one prompt line: "how often a dish may repeat is frequency.set (main meals default to at least 7 days apart); preference.set only changes how much it is liked". That fix is outside the three diagnosed cases, so it waits for the architect.
+
+**Production gap closed (R-67).** `get_household` in the app now returns `logins` (userId, name, role, status, member; no emails) from `listAccess` (`apps/web/lib/server/agent.ts`, `1.3.6 (R-64, R-67)` block). `apps/web/test/api/agent-household.int.test.ts` proves three things through the real route:
+- an admin gets every login, equal to People & access without emails;
+- `role.set` with that userId through `apply_change` becomes a pending proposal;
+- members and kitchen staff get 403 before any model call, and another household's admin sees only their own logins.

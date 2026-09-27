@@ -57,6 +57,7 @@ import type { CallerContext } from "../auth/context";
 import { changeLog, conversationOne, proposals } from "./changes";
 import { listReviews } from "./feedback";
 import { afterChangeSet } from "./followups";
+import { listAccess } from "./identity";
 import { enqueueJob } from "./jobs";
 import { logger } from "./log";
 import { alternatives, mealDto, planDays } from "./plans";
@@ -167,6 +168,15 @@ export function agentPorts(rt: Runtime, caller: CallerContext, conversationId: s
           weights: await getWeights(rt, caller),
           ...(await listPresets(rt, caller)),
           ...(await listExclusions(rt, caller, undefined)),
+          // 1.3.6 (R-64, R-67): role.set needs the login's userId; no emails reach the model.
+          logins: (await listAccess(rt, caller)).logins.map((l) => ({
+            userId: l.userId,
+            name: l.name,
+            role: l.role,
+            status: l.status,
+            memberId: l.memberId,
+            memberName: l.memberName,
+          })),
           agentMayApply: caller.household.agentMayApply,
         }),
       ),

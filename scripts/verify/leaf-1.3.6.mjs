@@ -1,16 +1,19 @@
-// Verify script for leaf 1.3.6 (live-model fixes, W-11, R-64, R-66).
+// Verify script for leaf 1.3.6 (live-model fixes, W-11, R-64, R-66, R-67).
 // Usage:
 //   node scripts/verify/leaf-1.3.6.mjs --gate G1|G2
 //   ANTHROPIC_API_KEY=… node scripts/verify/leaf-1.3.6.mjs --measure <dishes>   (live, costs money)
 // A gate prints "VERIFY leaf-1.3.6 <gate> PASSED" only when every assertion holds, including its
 // negative controls; it exits non-zero otherwise.
 //
-// G1 runs leaf 1.3.1's G1–G3 (which build core and ai), this leaf's recipe tests, and then checks
-// the budget with this script's own arithmetic against the live measurements logged in
-// docs/build/live/leaf-1.3.6-budget-measure-*.log, and on the wire through the recorded SDK client.
+// G1 runs leaf 1.3.1's G1–G3 (which build core and ai) and 1.4.1's G2 (R-67), this leaf's recipe
+// tests, and then checks the budget with this script's own arithmetic against the live measurements
+// logged in docs/build/live/leaf-1.3.6-budget-measure-*.log, on the wire through the recorded SDK
+// client, and the R-67 follow-up (it fills candidates; an infeasible dish counts as missing).
 // G2 runs leaf 1.3.5's G1–G3 (which build the workspace and need PostgreSQL 16), this leaf's agent
-// tests, and then checks the diagnosis record, grades the logged live transcripts, and compares the
-// eval set with the one that failed (commit 9d23db6): only the case R-66 ruled on may differ.
+// tests and the web test proving get_household carries the logins (R-67), and then checks the
+// diagnosis record, grades the logged live transcripts, and compares the eval set with the one that
+// failed (commit 9d23db6): only the case R-66 ruled on may differ.
+// Database for the web test: DATABASE_URL, else postgres://postgres:postgres@localhost:5432/postgres.
 // Both gates hold one lock for their whole run, because the two dependency scripts build the same
 // dist directories under different locks.
 //
@@ -25,6 +28,7 @@ import {
   readdirSync,
   rmSync,
   statSync,
+  writeFileSync,
 } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -60,16 +64,32 @@ function sleep(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
+/** True while the process that took the lock is alive (a killed gate must not block the next). */
+function holderAlive() {
+  try {
+    const pid = Number(readFileSync(join(LOCK, "pid"), "utf8"));
+    if (!Number.isInteger(pid) || pid <= 0) return false;
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    // EPERM: the process exists but belongs to someone else.
+    return error?.code === "EPERM";
+  }
+}
+
 async function withLock(fn) {
   mkdirSync(dirname(LOCK), { recursive: true });
   const started = Date.now();
   for (;;) {
     try {
       mkdirSync(LOCK);
+      writeFileSync(join(LOCK, "pid"), String(process.pid));
       break;
     } catch {
       try {
-        if (Date.now() - statSync(LOCK).mtimeMs > LOCK_STALE_MS)
+        // A lock without a live holder is stale: its gate was killed (e.g. by a checker timeout).
+        const age = Date.now() - statSync(LOCK).mtimeMs;
+        if ((age > 2_000 && !holderAlive()) || age > LOCK_STALE_MS)
           rmSync(LOCK, { recursive: true, force: true });
       } catch {
         // Released between the two calls.
@@ -103,7 +123,7 @@ function dependencyGate(report, leaf, gate) {
 }
 
 /** Runs Vitest files in packages/ai; every named test must be present and pass, none skipped. */
-function vitest(report, label, files, required) {
+function vitest(report, label, files, required, { cwd = AI, env = {} } = {}) {
   const dir = mkdtempSync(join(tmpdir(), "leaf-1.3.6-vitest-"));
   const outputFile = join(dir, "report.json");
   const result = run(
@@ -116,7 +136,7 @@ function vitest(report, label, files, required) {
       `--outputFile=${outputFile}`,
       ...files,
     ],
-    { cwd: AI },
+    { cwd, env },
   );
   const json = existsSync(outputFile) ? JSON.parse(readFileSync(outputFile, "utf8")) : null;
   rmSync(dir, { recursive: true, force: true });
@@ -251,6 +271,7 @@ function expectationDrift(before, after) {
 
 async function gateG1(report) {
   for (const gate of ["G1", "G2", "G3"]) if (!dependencyGate(report, "1.3.1", gate)) return;
+  if (!dependencyGate(report, "1.4.1", "G2")) return;
   vitest(
     report,
     "recipes",
@@ -267,6 +288,8 @@ async function gateG1(report) {
       "negative control: without the explicit timeout the SDK refuses",
       "is a typed max_tokens failure naming the budget",
       "a caller without maxTokens keeps the 20 000 default",
+      "rejects one dish of each REC-5 defect class",
+      "does not detect a duplicate when the library does not hold the dish (control)",
     ],
   );
 
@@ -353,6 +376,37 @@ async function gateG1(report) {
     refused !== null && /Streaming is required/.test(String(refused)),
     "negative control: the SDK refuses a 60 000 non-streaming budget without the explicit timeout",
   );
+
+  // R-67: the follow-up fills candidates. The defects batch without a library holds two candidates
+  // and one dish infeasible for both adults (every dish survives, as in the live 1.3.1 G4 run).
+  const { INFEASIBLE_DISH } = await loadAi("test/recipes/support/expectations.js");
+  const f = scenario([
+    batchResponse(batchFixture("defects-batch")),
+    batchResponse(batchFixture("follow-up-batch")),
+  ]);
+  const runF = await recipes.generateRecipes(f.deps, f1DinnerRequest());
+  const firstCall = runF.candidates.filter((d) => d.call === 1).length;
+  const survivors1 = firstCall + runF.infeasible.filter((d) => d.call === 1).length;
+  const count = f1DinnerRequest().context.count;
+  const note = String(f.recorder.requests[1]?.body.messages.at(-1)?.content ?? "");
+  const infeasible = runF.infeasible.find((d) => d.dish.name === INFEASIBLE_DISH);
+  const quoted = (infeasible?.reasons ?? []).every((r) => note.includes(r.message));
+  report.check(
+    runF.calls === 2 &&
+      count - firstCall === 1 &&
+      note.includes("Write 1 replacement dish") &&
+      note.includes(`- ${INFEASIBLE_DISH}: `) &&
+      (infeasible?.reasons.length ?? 0) > 0 &&
+      quoted &&
+      f.recorder.requests[1]?.body.max_tokens === expectedBudget(1) &&
+      f.ports.saved.flatMap((x) => x.dishes).some((d) => d.dish.name === INFEASIBLE_DISH),
+    `R-67: ${String(firstCall)} candidates of ${String(count)} (+1 infeasible, saved): one follow-up for ${String(count - firstCall)} dish, quoting the solver's reasons`,
+    note.slice(0, 600),
+  );
+  report.check(
+    count - survivors1 <= 0 && count - firstCall > 0,
+    "negative control: counting survivors (the superseded SPEC-Q-6) would have asked for no follow-up here",
+  );
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -379,6 +433,46 @@ async function gateG2(report) {
       "no longer says roles are off-limits",
       "R-66: a sesame allergy excluded only as the sesame-seeds ingredient fails",
     ],
+  );
+
+  // R-67: the production get_household carries the logins role.set needs (real route, PostgreSQL).
+  vitest(
+    report,
+    "web get_household logins",
+    ["test/api/agent-household.int.test.ts"],
+    [
+      "an admin's get_household returns every login, equal to People & access without emails",
+      "with that userId, role.set through apply_change becomes a pending proposal",
+      "negative control: non-admins cannot reach get_household",
+    ],
+    {
+      cwd: join(ROOT, "apps/web"),
+      env: {
+        DATABASE_URL:
+          process.env.DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/postgres",
+      },
+    },
+  );
+  const port = readFileSync(join(ROOT, "apps/web/lib/server/agent.ts"), "utf8");
+  const household = port.slice(port.indexOf("getHousehold:"), port.indexOf("getPlan:"));
+  const portBefore = spawnSync(
+    "git",
+    ["show", `${FAILED_EVAL_COMMIT}:apps/web/lib/server/agent.ts`],
+    {
+      cwd: ROOT,
+      encoding: "utf8",
+    },
+  ).stdout;
+  const householdBefore = portBefore.slice(
+    portBefore.indexOf("getHousehold:"),
+    portBefore.indexOf("getPlan:"),
+  );
+  report.check(
+    /logins: \(await listAccess\(rt, caller\)\)/.test(household) &&
+      !/email/.test(household) &&
+      householdBefore.length > 0 &&
+      !householdBefore.includes("logins"),
+    "get_household adds the logins from listAccess without emails; at the failed commit it had none (negative control)",
   );
 
   const agent = await loadAi("src/agent/index.js");
