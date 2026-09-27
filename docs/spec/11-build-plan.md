@@ -443,3 +443,5 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - SPEC-Q-4 … 9, 11 … 13, 15 accepted; SPEC-Q-9's routes are fixed for every leaf.
 - **R-54 (1.2.5 CP1).** Approved. SPEC-Q-5: approve and reverify this ledger with `--jobs 1 --timeout 1200`, so G1's load never overlaps G2/G3; the idleness check stays as a guard and fails loudly rather than report a figure measured under load. No wall-clock guard (ADR-1) accepted: the node and iteration limits bound every solve. SPEC-Q-1 … 4, 6 … 8 accepted.
 - **W-5 addendum.** Drag to move a dish between days (UX-4, 1.4.4 SPEC-Q-3) joins W-5.
+  - R-52 addendum: single-entry edit granted in `packages/db/test/support/op-samples.ts`: generators for `plan.publish` and `plan_meal.status` (1.1.2 G3 asserts one generator per public op kind).
+  - R-53 addendum: the "Just tell me" link lives in `apps/web/components/config/onboarding/onboarding-flow.tsx` (1.4.3's `components/config/**`), not under `(setup)/onboarding/**`; the single-entry edit is granted there instead.
