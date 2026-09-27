@@ -561,8 +561,8 @@ describe("G3 history is append-only and replayed verbatim", () => {
 
 // Turn control ------------------------------------------------------------------------------------
 
-describe("turn control (SPEC-Q-11, ARC-6)", () => {
-  it("an aborted turn releases its lock: a concurrent POST gets 409, the next one succeeds", async () => {
+describe("G1 turn control (SPEC-Q-11, ARC-6)", () => {
+  it("G1 an aborted turn releases its lock: a concurrent POST gets 409, the next one succeeds", async () => {
     const id = await newConversation(w.a.admin);
     let started!: () => void;
     const running = new Promise<void>((r) => (started = r));
@@ -606,7 +606,7 @@ describe("turn control (SPEC-Q-11, ARC-6)", () => {
     expect(rows.map((x) => x.role)).toEqual(["user", "user", "assistant"]);
   });
 
-  it("refusals before anything is stored: 503 without a model, 429 over the hourly limit, 404 and 403", async () => {
+  it("G1 refusals before anything is stored: 503 without a model, 429 over the hourly limit, 404 and 403", async () => {
     const id = await newConversation(w.a.admin);
     const none = await send(w.a.admin, id, "hi", null);
     expect(none.status).toBe(503);
