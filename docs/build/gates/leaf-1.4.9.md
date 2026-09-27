@@ -7,22 +7,22 @@ Scope: The W-9 and W-10 follow-ups (R-61): the insights digest lists learning ch
 - [x] G1: done automatically: digest card lists learning change sets since the previous digest with Undo; stored digests without the field still render; negative control: user and accepted-proposal change sets are not listed
   CHECK: node scripts/verify/leaf-1.4.9.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.9 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=1ce2084e7bcf51d84bd81728803ec13ae1597ce521120af22e289f176f9f1730; exit=0; EXPECT=matched; output-sha256=da3138ca7bac557922cece12ab12cda26f614c48201ec01da172ffb7cd9d1823; output-bytes=1473; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=1ce2084e7bcf51d84bd81728803ec13ae1597ce521120af22e289f176f9f1730; exit=0; EXPECT=matched; output-sha256=71339e35fb69a5a835fabe2595d71e4a865ad39694de6f0d13a4dd1849a670c3; output-bytes=1473; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: plan ready in Updates: a plan.generate job no agent turn started posts a plan-ready row into Updates; agent-started jobs post only where they started; negative control
   CHECK: node scripts/verify/leaf-1.4.9.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.9 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=865ffbe1aecc9c6f3312241bd1cfa0125ff39cebc1ca0811d56c99e7a8c1f989; exit=0; EXPECT=matched; output-sha256=9929b6cd2462ec97a71a1a82dcaa17421909ccf867121959a8830ea4879bf710; output-bytes=1134; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=865ffbe1aecc9c6f3312241bd1cfa0125ff39cebc1ca0811d56c99e7a8c1f989; exit=0; EXPECT=matched; output-sha256=506fe7d4f354000d759c99091a9fe966a6409a4fff77d8957c352c4c4c6b5176; output-bytes=1246; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: deterministic parse names: relation and possessive phrases stripped (F1 lines plus at least 8 phrasings); 1.4.3 G1-G5 and 1.4.7 G1, G3 pass; negative control against the pre-fix parse
   CHECK: node scripts/verify/leaf-1.4.9.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.9 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=1d63b64d1725b551ff1c691b7e7ab0e9231ba21e67f66edff53e6772e63529eb; exit=0; EXPECT=matched; output-sha256=a1e967fa23418d41b5d331f29f513d2e415bf659f74c65dc0495cea57722a2ac; output-bytes=1581; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=1d63b64d1725b551ff1c691b7e7ab0e9231ba21e67f66edff53e6772e63529eb; exit=0; EXPECT=matched; output-sha256=8a742457992acfe67e1ef01ad20920d88479e046f58e42b185c7b8b1f5815bd8; output-bytes=1581; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: Playwright 390/1280 plus axe-core (no serious or critical): digest automatic block with Undo, plan-ready row, floating Assistant hidden at desktop and shown at 390; 1.4.2 G1-G2, 1.3.5 G1-G3 and 1.4.5 G1-G3 pass
   CHECK: node scripts/verify/leaf-1.4.9.mjs --gate G4
   EXPECT: VERIFY leaf-1.4.9 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=3c6f49a4f6178d68a93ca82146bee0570fd83fb8e4904e99203f866831acab54; exit=0; EXPECT=matched; output-sha256=44887a0d897b5c182332908c8a94655ecf4a38e3f47be55702cf9c4b36a94e04; output-bytes=1801; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=3c6f49a4f6178d68a93ca82146bee0570fd83fb8e4904e99203f866831acab54; exit=0; EXPECT=matched; output-sha256=8f9b8517054fb8cd3368498d8c329786888c3e6c735b612fb739258790240209; output-bytes=1801; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G5: architect visual review against ChatPhoneDigest and the shell at 1280 px
   EVIDENCE: pending
