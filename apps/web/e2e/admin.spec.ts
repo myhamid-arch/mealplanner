@@ -460,11 +460,12 @@ test.describe("@G1 sign-in, people and access, change log", () => {
   test("@G1 change-log undo: the block is undone from the log; an entry changed again later cannot be undone and says why", async () => {
     await adminPage.goto("/changelog");
     const entry = adminPage.getByTestId(`log-${blockChangeSet}`);
-    await expect(entry).toContainText("Block login");
+    // 1.4.10 (R-68): the entry names its subject (W-14).
+    await expect(entry).toContainText(`Blocked ${priya.name} (kitchen)`);
     await expect(entry).toContainText("You");
-    await entry.getByRole("button", { name: "Undo: Block login" }).click();
+    await entry.getByRole("button", { name: `Undo: Blocked ${priya.name} (kitchen)` }).click();
     await expect(
-      adminPage.getByRole("status").filter({ hasText: "Undone: Block login" }),
+      adminPage.getByRole("status").filter({ hasText: `Undone: Blocked ${priya.name} (kitchen)` }),
     ).toBeVisible();
     await expectUndoRestored(blockChangeSet);
     await expect(adminPage.getByTestId(`log-${blockChangeSet}`)).toContainText("Undone");
@@ -484,7 +485,12 @@ test.describe("@G1 sign-in, people and access, change log", () => {
     expect(rows).toHaveLength(2);
     await adminPage.goto("/changelog");
     const first = adminPage.getByTestId(`log-${rows[0]?.id ?? ""}`);
-    await expect(first.getByRole("button", { name: "Undo: Household settings" })).toBeDisabled();
+    // 1.4.10 (R-68): the entry names the field and its before → after (W-14).
+    await expect(
+      first.getByRole("button", {
+        name: "Undo: Household settings: name Khalifa City home → Khalifa home",
+      }),
+    ).toBeDisabled();
     await expect(first).toContainText("A later change touched the same settings");
     await adminPage.getByRole("button", { name: "People & access", pressed: false }).click();
     await expect(adminPage.getByTestId(`log-${blockChangeSet}`)).toBeVisible();

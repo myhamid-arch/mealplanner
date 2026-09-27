@@ -431,7 +431,7 @@ function preFixChangeSetHandler(): JobHandler {
     // with the pre-fix dish sync.
     const result = (await REAL_KG_SYNC({
       ...ctx,
-      rt: { ...ctx.rt, graph: dryRunStore(ctx.rt.graph) } as WorkerRuntime,
+      rt: { ...ctx.rt, graph: dryRunStore(ctx.rt.graph) },
     })) as { requests: KgSyncRequest[] };
     const requests = result.requests;
     for (const r of requests) await PRE_FIX(ctx.rt.graph, ctx.rt.kgSource, r);
@@ -459,7 +459,7 @@ function dryRunStore(graph: WorkerRuntime["graph"]): WorkerRuntime["graph"] {
         ? (value as (...a: unknown[]) => unknown).bind(target)
         : value;
     },
-  }) as WorkerRuntime["graph"];
+  });
 }
 
 describe("SPEC-Q-6: a change set adding a private ingredient and a dish using it", () => {
