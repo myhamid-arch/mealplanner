@@ -621,8 +621,9 @@ async function gateG4() {
     `the catalogue flags tahini, hummus and za'atar contains_sesame (${String(sesame.length)} sesame ingredients: ${sesame.join(", ")})`,
   );
   // No model call in the engine: the deterministic part never imports the AI package.
-  const src = readdirSync(join(CORE, "src/onboarding"))
-    .map((f) => readFileSync(join(CORE, "src/onboarding", f), "utf8"))
+  const src = readdirSync(join(CORE, "src/onboarding"), { recursive: true })
+    .filter((f) => String(f).endsWith(".ts"))
+    .map((f) => readFileSync(join(CORE, "src/onboarding", String(f)), "utf8"))
     .join("\n");
   report.check(
     !/@mealplanner\/ai|@anthropic-ai|fetch\(/.test(src),
