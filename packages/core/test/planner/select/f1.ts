@@ -20,6 +20,7 @@ export function f1Exclusions(): ExclusionRow[] {
     key: e.key,
     reason: e.reason,
     hard: true,
+    slotKeys: null,
   }));
 }
 

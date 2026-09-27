@@ -52,6 +52,7 @@ const exclusion = (over: Partial<ExclusionRow>): ExclusionRow => ({
   key: "contains_sesame",
   reason: "allergy",
   hard: true,
+  slotKeys: null,
   ...over,
 });
 
@@ -115,8 +116,8 @@ describe("exclusions (SPEC-Q-6, R-34, R-36)", () => {
       exclusion({ kind: "ingredient", key: "chicken-thigh", reason: "dislike", hard: false }),
     ];
     const hh = new Household(cfg, pool);
-    expect(hh.exclusionsOf("c3").ingredientIds).toEqual(["ing:chicken-thigh"]);
-    expect(hh.exclusionsOf("c2").ingredientIds).toEqual([]);
+    expect(hh.exclusionsOf("c3", "dinner").ingredientIds).toEqual(["ing:chicken-thigh"]);
+    expect(hh.exclusionsOf("c2", "dinner").ingredientIds).toEqual([]);
   });
   it("applies household-level exclusions to every member", () => {
     const cfg = f1PlanConfig();
@@ -124,7 +125,8 @@ describe("exclusions (SPEC-Q-6, R-34, R-36)", () => {
       exclusion({ memberId: null, kind: "category", key: "seafood", reason: "religious" }),
     ];
     const hh = new Household(cfg, pool);
-    for (const m of ["adult_a", "c1"]) expect(hh.exclusionsOf(m).categories).toEqual(["seafood"]);
+    for (const m of ["adult_a", "c1"])
+      expect(hh.exclusionsOf(m, "dinner").categories).toEqual(["seafood"]);
   });
 
   it("a hard: false dislike exclusion removes the ingredient from that member's plates (R-34)", async () => {

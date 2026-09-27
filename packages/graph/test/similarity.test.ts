@@ -207,6 +207,7 @@ describe("substitutes (KG-4.3; SPEC-Q-2, SPEC-Q-3, R-36)", () => {
     key,
     reason: "dislike",
     hard: false,
+    slotKeys: null,
   });
 
   const candidates = [
