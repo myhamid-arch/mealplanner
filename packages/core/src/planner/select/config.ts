@@ -9,8 +9,15 @@ export const IMPROVEMENT_ALTERNATIVES = 5;
 /** PLN-11: improvement passes over the week. */
 export const IMPROVEMENT_PASSES = 2;
 
-/** PLN-9 §6.3: the same dish is not served to a member within this many days (SPEC-Q-5). */
-export const DEFAULT_MIN_GAP_DAYS = 6;
+/**
+ * PLN-9 §6.3 (OQ-8): the same dish is not served to an attendee at a smaller day difference than
+ * this. Main meals need 6 full days in between (Monday → next Monday); snack and workout meals 3
+ * (Monday → Friday).
+ */
+export const MAIN_MIN_GAP_DAYS = 7;
+export const SHORT_MIN_GAP_DAYS = 4;
+/** OQ-8: the slots whose repeat gap is SHORT_MIN_GAP_DAYS; every other slot is a main meal. */
+export const SHORT_GAP_SLOT_KEYS: readonly string[] = ["snack", "pre_workout", "post_workout"];
 
 /** PLN-9 §6.1 economy: weight of an ingredient not already in the window. */
 export const ECONOMY_NEW_INGREDIENT_WEIGHT = 1.5;

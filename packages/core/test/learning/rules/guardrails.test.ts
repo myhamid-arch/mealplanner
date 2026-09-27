@@ -361,6 +361,7 @@ describe("exclusion.add satisfaction (R-49)", () => {
       key: SESAME,
       reason: "allergy" as const,
       hard: true,
+      slotKeys: null, // 1.2.6 (R-62): every slot (OQ-9)
     };
     return { config: { ...cfg, exclusions: [row] }, verifiedIngredientIds: new Set<string>() };
   }

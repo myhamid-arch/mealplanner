@@ -499,6 +499,11 @@ export interface ExclusionRow {
   key: string;
   reason: ExclusionReason;
   hard: boolean;
+  /**
+   * 1.2.6 (R-62), OQ-9: null = every slot; otherwise only meals of these slot keys
+   * (sorted, de-duplicated). Always null for an allergy.
+   */
+  slotKeys: string[] | null;
 }
 
 export interface PlanningWeightsRow {

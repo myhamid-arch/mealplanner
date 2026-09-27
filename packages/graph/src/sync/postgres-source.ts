@@ -358,7 +358,7 @@ export class PostgresKgSource implements KgSource {
     return (
       await rows<Row>(
         this.#db,
-        `SELECT id, household_id, member_id, kind, key, reason, hard FROM exclusion
+        `SELECT id, household_id, member_id, kind, key, reason, hard, slot_keys FROM exclusion
          WHERE household_id = $1::uuid ORDER BY id`,
         [householdId],
       )
@@ -370,6 +370,8 @@ export class PostgresKgSource implements KgSource {
       key: str(r.key),
       reason: r.reason as ExclusionRow["reason"],
       hard: r.hard as boolean,
+      // 1.2.6 (R-62): the slot scope (OQ-9); substitutes still avoid it everywhere.
+      slotKeys: (r.slot_keys as string[] | null) ?? null,
     }));
   }
 }

@@ -272,15 +272,21 @@ export function opGenerators(
         payload: { memberId: p.memberId, entityType: p.entityType, entityKey: p.entityKey },
       };
     },
-    "exclusion.add": async (r) => ({
-      kind: "exclusion.add",
-      payload: {
-        memberId: pick(r, await members(), "member").id,
-        kind: "ingredient",
-        key: `ingredient_${tag(r)}`,
-        reason: pick(r, ["dislike", "allergy", "medical"] as const, "reason"),
-      },
-    }),
+    "exclusion.add": async (r) => {
+      const reason = pick(r, ["dislike", "allergy", "medical"] as const, "reason");
+      // 1.2.6 (R-62): a non-allergy exclusion is sometimes scoped to one slot (OQ-9).
+      const scoped = reason !== "allergy" && r() < 0.5;
+      return {
+        kind: "exclusion.add",
+        payload: {
+          memberId: pick(r, await members(), "member").id,
+          kind: "ingredient",
+          key: `ingredient_${tag(r)}`,
+          reason,
+          ...(scoped ? { slotKeys: [pick(r, await slots(), "slot").key] } : {}),
+        },
+      };
+    },
     "exclusion.remove": async (r) => ({
       kind: "exclusion.remove",
       payload: { exclusionId: pick(r, await repos().exclusion.list(), "exclusion").id },

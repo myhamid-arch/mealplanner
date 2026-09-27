@@ -26,7 +26,9 @@ const DATA = join(ROOT, "data");
 const SELF = fileURLToPath(import.meta.url);
 const EPS = 1e-6;
 
-const SC2_REDUCTION = 0.25;
+/** SC-2 (OQ-8, R-63): median reduction over seeds 1–10, and the floor every seed must meet. */
+const SC2_MEDIAN = 0.08;
+const SC2_MIN = 0;
 const G3_SEEDS = 50;
 const DAY_BUDGET_S = 5;
 const WEEK_BUDGET_S = 30;
@@ -503,6 +505,23 @@ function distinctIngredients(summary, idx) {
 
 const G2_SEEDS = 10;
 
+const pct = (x) => `${(x * 100).toFixed(1)} %`;
+
+/** SC-2 over the seeds: the median and the minimum reduction against their thresholds. */
+function sc2Aggregate(reductions) {
+  const sorted = [...reductions].sort((u, v) => u - v);
+  const mid = Math.floor(sorted.length / 2);
+  const median =
+    sorted.length === 0
+      ? Number.NaN
+      : sorted.length % 2 === 1
+        ? sorted[mid]
+        : (sorted[mid - 1] + sorted[mid]) / 2;
+  const min = sorted[0] ?? Number.NaN;
+  const max = sorted.at(-1) ?? Number.NaN;
+  return { median, min, max, pass: median >= SC2_MEDIAN && min >= SC2_MIN };
+}
+
 async function gateG2() {
   const report = new Report("leaf-1.2.3 G2");
   vitest(report, ["test/planner/select/score.test.ts"]);
@@ -534,16 +553,9 @@ async function gateG2() {
     if (a1 === undefined || b1 === undefined) return;
     const a = distinctIngredients(a1.summary, idx);
     const b = distinctIngredients(b1.summary, idx);
-    const reduction = 1 - a.core / b.core;
-    const reductionAll = 1 - a.all / b.all;
-    report.check(
-      reduction >= SC2_REDUCTION,
-      `SC-2: distinct core ingredients over the F1 week (seed 1), economy 0.4 against 0: ${a.core} against ${b.core} = ${(reduction * 100).toFixed(1)} % fewer (>= ${SC2_REDUCTION * 100} %)`,
-    );
     console.log(
-      `info - seed 1, all ingredients (spices and water included): ${a.all} against ${b.all} = ${(reductionAll * 100).toFixed(1)} % fewer`,
+      `info - seed 1, all ingredients (spices and water included): ${a.all} against ${b.all} = ${((1 - a.all / b.all) * 100).toFixed(1)} % fewer`,
     );
-    // R-37: information for the owner decision (OQ-8); the assertion above is unchanged.
     console.log(
       "info - seed | economy 0.4: core (shared / per-member / both) singletons dishes/meals | economy 0: same | core reduction",
     );
@@ -562,16 +574,24 @@ async function gateG2() {
         `info - ${String(seed).padStart(2)} | ${fmt(p)} | ${fmt(q)} | ${(r * 100).toFixed(1)} %`,
       );
     }
-    const sorted = [...reductions].sort((u, v) => u - v);
-    const mid = Math.floor(sorted.length / 2);
-    const median = sorted.length % 2 === 1 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    const agg = sc2Aggregate(reductions);
     console.log(
-      `info - reduction over seeds 1–${G2_SEEDS}: min ${(sorted[0] * 100).toFixed(1)} %, median ${(median * 100).toFixed(1)} %, max ${(sorted.at(-1) * 100).toFixed(1)} %`,
+      `info - reduction over seeds 1–${G2_SEEDS}: min ${pct(agg.min)}, median ${pct(agg.median)}, max ${pct(agg.max)}`,
+    );
+    report.check(
+      reductions.length === G2_SEEDS && agg.pass,
+      `SC-2: distinct core ingredients over the F1 week, economy 0.4 against 0, seeds 1–${G2_SEEDS}: median ${pct(agg.median)} fewer (>= ${pct(SC2_MEDIAN)}), min ${pct(agg.min)} (>= ${pct(SC2_MIN)}), max ${pct(agg.max)}`,
     );
     // Negative controls.
     report.check(
-      1 - distinctIngredients(a1.summary, idx).core / a.core < SC2_REDUCTION,
-      "negative control: a plan measured against itself shows 0 % and fails the threshold",
+      !sc2Aggregate(seeds.map(() => 1 - distinctIngredients(a1.summary, idx).core / a.core)).pass,
+      "negative control: ten plans each measured against themselves (0 %) fail the median threshold",
+    );
+    const oneBelow = [...reductions];
+    oneBelow[oneBelow.indexOf(Math.min(...oneBelow))] = -0.01;
+    report.check(
+      sc2Aggregate(oneBelow).median >= SC2_MEDIAN && !sc2Aggregate(oneBelow).pass,
+      `negative control: the measured set with its lowest seed set to -1.0 % keeps a passing median (${pct(sc2Aggregate(oneBelow).median)}) and fails on the floor`,
     );
     const extra = structuredClone(a1.summary);
     const seen = new Set(
