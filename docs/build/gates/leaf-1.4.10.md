@@ -7,22 +7,22 @@ Scope: W-12, W-13 and W-14 (R-68): plain-language planner reasons on the Plate, 
 - [x] G1: plain reasons: ingredient display names and cuisine labels in score reasons; no slug, snake_case key or id in any reason over F1 seeds 1-10; no replaced ingredient named after a substitution; 1.2.3 G1-G6, 1.2.6 G1-G2 and 1.4.8 G1-G4 pass; negative control with today's labels
   CHECK: node scripts/verify/leaf-1.4.10.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.10 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=2169a7a26e4d205f68a590b747253cbb7f912a451c1b189e03316f2957edaf68; exit=0; EXPECT=matched; output-sha256=a11f5e98b72deb370f9846956a31199454a01a5ecba86726a4458239b53ec788; output-bytes=2204; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=2169a7a26e4d205f68a590b747253cbb7f912a451c1b189e03316f2957edaf68; exit=0; EXPECT=matched; output-sha256=a44f671d69c834277366fb3ca1d57e492e9036bd1fa894682989c25bdb02b479; output-bytes=2191; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: graph start-up: both syncCatalogueGraph jobs at concurrency 2 on an empty graph with the F1 seed library: no missing-node failure and the graph equals kg:rebuild's; 1.3.4 G1-G3 pass; negative control: the pre-fix start-up fails (reproduced and recorded)
   CHECK: node scripts/verify/leaf-1.4.10.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.10 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=048685b7977647866f3a7ff8a45cd9823b861109913763ec12acc5ac9bf4f204; exit=0; EXPECT=matched; output-sha256=732e2c64312441e644ff374b3ed085fc913d3c1b269e12620bd3ace47e0256cd; output-bytes=2253; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=048685b7977647866f3a7ff8a45cd9823b861109913763ec12acc5ac9bf4f204; exit=0; EXPECT=matched; output-sha256=57da3318f929b0d90d6b31cc66bd793b1f17d1b8770a518de7f7de2404ea1465; output-bytes=2250; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: change-log subjects: entries name their subject and scalar before -> after, resolved at read time with no migration; a vanished subject falls back to the stored title; 1.4.1 G1-G3 and 1.4.6 G1-G2 pass; negative controls: two blocks of different logins differ, title-only rendering fails
   CHECK: node scripts/verify/leaf-1.4.10.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.10 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=b4bdd172ceaffd3bf30c1282046aea698e9248b136446295f5d8718a802edb30; exit=0; EXPECT=matched; output-sha256=c158878824736ec940e5c7f8d6b136f77cb2bbbd6f8e37ad8d84d852e202fd9c; output-bytes=1910; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=b4bdd172ceaffd3bf30c1282046aea698e9248b136446295f5d8718a802edb30; exit=0; EXPECT=matched; output-sha256=6c15d0a6c30a17ef178e88f9d563a4821e83cecdc1cc50afe7d6d8ac2ff86ecf; output-bytes=1909; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: Playwright 390/1280 plus axe-core (no serious or critical): Plate "Why this dinner" after a substitution and /changelog with a block, a target change and a settings change; 1.4.2 G1-G2 pass
   CHECK: node scripts/verify/leaf-1.4.10.mjs --gate G4
   EXPECT: VERIFY leaf-1.4.10 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=307f7216284d6c831f985be2a6df9d77d300bef36b8f3dc557a2ead139594cae; exit=0; EXPECT=matched; output-sha256=e96d9246032c31dc1eafaccbafa3d8ffcfe9ac9798e24d79176b95d427246534; output-bytes=1300; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=307f7216284d6c831f985be2a6df9d77d300bef36b8f3dc557a2ead139594cae; exit=0; EXPECT=matched; output-sha256=87866f48ef975df9dfbd3e2001c589d4e1c3dce573829f4ffee027db1944fbdb; output-bytes=1300; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G5: architect visual review against PlatePhone and ChangeLog mockups
   EVIDENCE: pending
