@@ -13,7 +13,8 @@
 // tests and the web test proving get_household carries the logins (R-67), and then checks the
 // diagnosis record, grades the logged live transcripts, and compares the eval set with the one that
 // failed (commit 9d23db6): only the case R-66 ruled on may differ.
-// Database for the web test: DATABASE_URL, else postgres://postgres:postgres@localhost:5432/postgres.
+// Database for the web test: DATABASE_URL, else localhost:5432, else a throwaway PostgreSQL 16
+// cluster (the same order as leaf 1.3.5's script).
 // Both gates hold one lock for their whole run, because the two dependency scripts build the same
 // dist directories under different locks.
 //
@@ -31,6 +32,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { createRequire } from "node:module";
+import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -157,6 +159,100 @@ function vitest(report, label, files, required, { cwd = AI, env = {} } = {}) {
 
 async function loadAi(path) {
   return import(pathToFileURL(join(AI, "dist", path)).href);
+}
+
+// ---------------------------------------------------------------------------------------------
+// PostgreSQL 16 for the web test (as leaf 1.3.5's script: DATABASE_URL, else localhost:5432, else a
+// throwaway cluster started from the local binaries and stopped afterwards)
+// ---------------------------------------------------------------------------------------------
+
+const WEB = join(ROOT, "apps/web");
+const DEFAULT_URLS = [
+  "postgres://postgres:postgres@localhost:5432/postgres",
+  "postgres://postgres@localhost:5432/postgres",
+];
+
+async function reachable(url) {
+  const pg = (await import(pathToFileURL(join(WEB, "node_modules/pg/lib/index.js")).href)).default;
+  const client = new pg.Client({ connectionString: url, connectionTimeoutMillis: 3000 });
+  try {
+    await client.connect();
+    await client.query("SELECT 1");
+    return true;
+  } catch {
+    return false;
+  } finally {
+    await client.end().catch(() => undefined);
+  }
+}
+
+function freePort() {
+  return new Promise((resolvePort, reject) => {
+    const server = createServer();
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      const { port } = server.address();
+      server.close(() => resolvePort(port));
+    });
+  });
+}
+
+function pgBinDir() {
+  const fromConfig = run("pg_config", ["--bindir"], { cwd: ROOT });
+  return [fromConfig.code === 0 ? fromConfig.stdout.trim() : "", "/usr/lib/postgresql/16/bin"].find(
+    (dir) => dir !== "" && existsSync(join(dir, "initdb")) && existsSync(join(dir, "pg_ctl")),
+  );
+}
+
+async function startCluster() {
+  const bin = pgBinDir();
+  if (bin === undefined)
+    throw new Error(
+      "no DATABASE_URL, nothing on localhost:5432, and no PostgreSQL 16 binaries found",
+    );
+  const asRoot = process.getuid?.() === 0;
+  const dir = mkdtempSync(join(tmpdir(), "leaf-1.3.6-pg-"));
+  const port = await freePort();
+  const as = (args) =>
+    asRoot ? ["runuser", ["-u", "postgres", "--", ...args]] : [args[0], args.slice(1)];
+  if (asRoot) run("chown", ["postgres", dir], { cwd: ROOT });
+  const data = join(dir, "data");
+  const init = run(
+    ...as([join(bin, "initdb"), "-D", data, "-U", "postgres", "--auth=trust", "--no-sync"]),
+    { cwd: tmpdir() },
+  );
+  if (init.code !== 0) throw new Error(`initdb failed:\n${tail(init)}`);
+  const start = run(
+    ...as([
+      join(bin, "pg_ctl"),
+      "-D",
+      data,
+      "-l",
+      join(dir, "log"),
+      "-w",
+      "-o",
+      `-p ${String(port)} -k ${dir} -c listen_addresses=127.0.0.1 -c fsync=off -c max_connections=300`,
+      "start",
+    ]),
+    { cwd: tmpdir() },
+  );
+  if (start.code !== 0) throw new Error(`pg_ctl start failed:\n${tail(start)}`);
+  return {
+    url: `postgres://postgres@127.0.0.1:${String(port)}/postgres`,
+    source: "throwaway cluster",
+    stop: () => {
+      run(...as([join(bin, "pg_ctl"), "-D", data, "-m", "immediate", "stop"]), { cwd: tmpdir() });
+      rmSync(dir, { recursive: true, force: true });
+    },
+  };
+}
+
+async function acquireDatabase() {
+  if (process.env.DATABASE_URL)
+    return { url: process.env.DATABASE_URL, source: "DATABASE_URL", stop: () => undefined };
+  for (const url of DEFAULT_URLS)
+    if (await reachable(url)) return { url, source: "localhost:5432", stop: () => undefined };
+  return startCluster();
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -438,23 +534,22 @@ async function gateG2(report) {
   );
 
   // R-67: the production get_household carries the logins role.set needs (real route, PostgreSQL).
-  vitest(
-    report,
-    "web get_household logins",
-    ["test/api/agent-household.int.test.ts"],
-    [
-      "an admin's get_household returns every login, equal to People & access without emails",
-      "with that userId, role.set through apply_change becomes a pending proposal",
-      "negative control: non-admins cannot reach get_household",
-    ],
-    {
-      cwd: join(ROOT, "apps/web"),
-      env: {
-        DATABASE_URL:
-          process.env.DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/postgres",
-      },
-    },
-  );
+  const database = await acquireDatabase();
+  try {
+    vitest(
+      report,
+      `web get_household logins (${database.source})`,
+      ["test/api/agent-household.int.test.ts"],
+      [
+        "an admin's get_household returns every login, equal to People & access without emails",
+        "with that userId, role.set through apply_change becomes a pending proposal",
+        "negative control: non-admins cannot reach get_household",
+      ],
+      { cwd: WEB, env: { DATABASE_URL: database.url } },
+    );
+  } finally {
+    database.stop();
+  }
   const port = readFileSync(join(ROOT, "apps/web/lib/server/agent.ts"), "utf8");
   const household = port.slice(port.indexOf("getHousehold:"), port.indexOf("getPlan:"));
   const portBefore = spawnSync(
