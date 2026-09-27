@@ -445,3 +445,4 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
 - **W-5 addendum.** Drag to move a dish between days (UX-4, 1.4.4 SPEC-Q-3) joins W-5.
   - R-52 addendum: single-entry edit granted in `packages/db/test/support/op-samples.ts`: generators for `plan.publish` and `plan_meal.status` (1.1.2 G3 asserts one generator per public op kind).
   - R-53 addendum: the "Just tell me" link lives in `apps/web/components/config/onboarding/onboarding-flow.tsx` (1.4.3's `components/config/**`), not under `(setup)/onboarding/**`; the single-entry edit is granted there instead.
+- **W-4 closed (1.2.5 merged).** CP3: G1–G4 met twice (`--jobs 1`), with `DATABASE_URL` unset and set; re-adding `time_limit: 0.25` to the MILP options fails G1. F1 seeds 1–10 give plans identical to the 0.25 s baseline at idle; worst day 2.64 s CPU. 04 PLN-5's engine text updated to the work limit (572 nodes, 10,748 LP iterations).
