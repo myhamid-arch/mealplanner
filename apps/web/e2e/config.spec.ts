@@ -160,7 +160,7 @@ async function onboard(
   opts: { skipAll?: boolean; check?: (where: string) => Promise<void> } = {},
 ): Promise<StepRecord[]> {
   const steps: StepRecord[] = [];
-  const check = opts.check ?? (async () => undefined);
+  const check = opts.check ?? (() => Promise.resolve());
   await page.goto("/onboarding");
   await expect(page.getByRole("heading", { name: "Who eats at home?" })).toBeVisible();
   await expect(
@@ -424,6 +424,16 @@ test("@G1 negative control: a page wider than the viewport is reported", async (
 
 // G2 ---------------------------------------------------------------------------------------------
 
+/**
+ * Waits for running CSS transitions and animations to end: after a colour-scheme switch, colours
+ * transition (`transition-colors`), and axe must measure the final colours, not a frame between.
+ */
+async function settled(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    await Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined)));
+  });
+}
+
 async function seriousViolations(page: Page): Promise<string[]> {
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -444,6 +454,7 @@ for (const vp of VIEWPORTS) {
     const scan = async (where: string) => {
       for (const scheme of ["light", "dark"] as const) {
         await page.emulateMedia({ colorScheme: scheme });
+        await settled(page);
         for (const v of await seriousViolations(page)) found.push(`${where} [${scheme}]: ${v}`);
       }
       await page.emulateMedia({ colorScheme: "light" });

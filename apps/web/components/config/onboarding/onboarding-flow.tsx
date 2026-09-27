@@ -504,7 +504,7 @@ function WorkedOut({
           Nothing yet. Answer the first question.
         </p>
       ) : (
-        <ul className="m-0 flex list-none flex-col gap-2 p-0" aria-live="polite">
+        <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {explanations.map((e, i) => (
             <li
               key={`${String(e.answer)}-${String(i)}`}

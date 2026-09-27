@@ -1,6 +1,6 @@
 # leaf-1.4.3 ADR-1: axe-core through `@axe-core/playwright`
 
-Status: proposed (CP1)
+Status: accepted (CP1 APPROVED, BLD-8 R-45/R-47); built for CP2
 Requirement: BLD-5 1.4.3 G2 (axe-core: no serious or critical violations); UX-6
 
 ## Decision
@@ -14,3 +14,7 @@ Usage, to be verified against the installed package before use (ARC-1):
 ## Alternatives
 - `axe-core` alone, injected with `page.addScriptTag({ path: require.resolve("axe-core") })` and `axe.run()`: one dependency fewer, but hand-written glue for iframes and result typing that the wrapper already provides.
 - Lighthouse accessibility category: a score, not the axe impact levels the gate names, and a much larger dependency.
+
+## As built
+- Installed on the base branch by the architect (R-45): `@axe-core/playwright` 4.13.0 (checked in `apps/web/node_modules/@axe-core/playwright/package.json`). It is used as its default export, `import AxeBuilder from "@axe-core/playwright"`, with `withTags([...]).analyze()` as above.
+- The G2 negative control (`<img>` without `alt`, `<button>` without a name) is reported as `image-alt` and `button-name`, both critical.
