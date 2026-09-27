@@ -7,12 +7,12 @@ Scope: Insights engine and proposals, as specified in docs/spec (see 11-build-pl
 - [x] G1: every FBK-7 rule has triggering and non-triggering fixture tests
   CHECK: node scripts/verify/leaf-1.3.3.mjs --gate G1
   EXPECT: VERIFY leaf-1.3.3 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=b975f85931b86771202e174f798db8d910ae31870bd65da1b832fccde792d593; exit=0; EXPECT=matched; output-sha256=663de923d7b9706ca30cd6d88585246bd017b8498af9d883d055d6eb0bbcd20e; output-bytes=2725; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=b975f85931b86771202e174f798db8d910ae31870bd65da1b832fccde792d593; exit=0; EXPECT=matched; output-sha256=ede62fcceb69797a12f7e7de5f11f33f70c8cb591b3e981ecc08b173de458e0d; output-bytes=2728; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: FBK-8 guardrails: fingerprint suppression, pending budget, protected ops never proposed, expiry
   CHECK: node scripts/verify/leaf-1.3.3.mjs --gate G2
   EXPECT: VERIFY leaf-1.3.3 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=9eec43482da6aef0daf2706474aba02a67bd2198b25edfd1cb1e391a5d290e88; exit=0; EXPECT=matched; output-sha256=6f043bdb5b6f18b79294de69e3892dc584090febf5ccd89444319e2052e9efbc; output-bytes=3447; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=9eec43482da6aef0daf2706474aba02a67bd2198b25edfd1cb1e391a5d290e88; exit=0; EXPECT=matched; output-sha256=4c70f7da5169d624184bc5c0f8e9b9ba43492a8f8b55f20c01a7069cf763a266; output-bytes=3447; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: LLM synthesis output Zod-validated; invalid kinds dropped and logged (stubbed model)
   CHECK: node scripts/verify/leaf-1.3.3.mjs --gate G3
