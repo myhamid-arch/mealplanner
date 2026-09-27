@@ -9,7 +9,7 @@ Scope: Dish scoring, plan search, cook sheet, as specified in docs/spec (see 11-
   EXPECT: VERIFY leaf-1.2.3 G1 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=98e8beb4acd97c272126722ff86c9c6b232efbf940fc2d7cd5dc267a862e51e3; exit=0; EXPECT=matched; output-sha256=a6567bd1c2f2ba71b17ceb762c4a9e676c7ac74ac9ea9cd4615d8118095c118a; output-bytes=2178; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G2: SC-2: distinct ingredients with economy 0.4 vs 0 drop by at least 25% (measured, not asserted from a constant)
+- [ ] G2: SC-2 (OQ-8, R-62): distinct core ingredients with economy 0.4 vs 0 drop by a median of at least 8% over seeds 1-10, no seed below 5% (measured, not asserted from a constant)
   CHECK: node scripts/verify/leaf-1.2.3.mjs --gate G2
   EXPECT: VERIFY leaf-1.2.3 G2 PASSED
   EVIDENCE: pending

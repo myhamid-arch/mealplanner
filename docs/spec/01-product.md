@@ -75,7 +75,7 @@ Stated explicitly so the builder does not add them: shopping lists and grocery o
 ## 7. Success criteria (v1 acceptance)
 
 - SC-1 For the reference household fixture ([11-build-plan.md](11-build-plan.md) fixture F1), a generated 7-day plan has **100%** of targeted member-meals within tolerance, or each miss is explicitly flagged with its reason and the smallest deviation found. Measured by an automated check.
-- SC-2 In the same plan, distinct ingredients across the 7 days are at least 25% fewer than a baseline generated with ingredient-economy weight 0, with every other setting unchanged. Measured.
+- SC-2 Across seeds 1–10 of the F1 week, distinct core ingredients are at least 8 % fewer (median) than a baseline generated with ingredient-economy weight 0, with every other setting unchanged, and no seed below 5 %. Measured. (OQ-8, 2026-09-27: lowered from 25 % because the repeat rule of PLN-9 §6.3 needs about 34 distinct dishes a week.)
 - SC-3 A 1-star review on a dish, repeated twice by the same member, measurably lowers that dish's appeal score for that member and produces a proposal. Measured.
 - SC-4 Every agent-applied change appears in the change log and can be undone, restoring the prior state exactly. Measured.
 - SC-5 The core flows (onboarding, plan, cook sheet, review, chat proposal accept) work at 390 px phone width and on desktop. Playwright.

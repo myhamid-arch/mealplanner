@@ -128,9 +128,9 @@ Weights come from `planning_weights`, or from a matching `weight_preset` for the
 
 ### 6.3 Hard filters (applied before solving)
 
-- Exclusions: household and attendee-level ingredient, category and dietary-flag exclusions. Allergies are always hard.
+- Exclusions: household and attendee-level ingredient, category and dietary-flag exclusions. An exclusion with `slot_keys` applies only to meals of those slots (OQ-9: a nut-free school excludes nuts from the packed school lunch only); without `slot_keys` it applies everywhere. Allergies are always hard and never slot-scoped.
 - Preferences with `hard = never` for any attendee, on the dish or any core ingredient of every variant of a required component.
-- Frequency: the same dish within `min_gap_days` (default 6), plus `frequency_rule`s.
+- Frequency (OQ-8): the same dish for an attendee is blocked unless at least 6 full days lie in between for main-meal slots (served Monday, next allowed the following Monday: day difference ≥ 7) and at least 3 full days for `snack`, `pre_workout` and `post_workout` (Monday → Friday: day difference ≥ 4); plus `frequency_rule`s, whose `min_gap_days` keeps its meaning (days apart, as the insights copy "every N days" reads) and replaces the default for its dish.
 - Slot suitability: `slot_keys` contains the slot key or an equivalent class (`packed_*` → `lunch` dishes with `is_packable`). Packed with no reheat → `served_cold_ok`.
 - `dish.status = active` and no `needs_review` variants.
 
