@@ -1,0 +1,11 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" node scripts/verify/leaf-1.3.1.mjs --gate G4 | utc: 2026-09-27T12:31:07Z | exit: 1 | commit: d26d83b6c0cbd53002d14538d903a5cd254c7c22 | wall: 172 s
+ok   - core and ai are built from the current sources
+ok   - an Anthropic credential is configured (ANTHROPIC_API_KEY)
+model: claude-fable-5-1
+call: stop=end_turn in=706 out=16963 cacheRead=0
+candidate: Lemon and Herb Cod with Roasted Potatoes, Garlic Green Beans and Tomato-Basil Sauce [Adult A in_tolerance, Adult B in_tolerance]
+candidate: Beef Kofta with Bulgur Pilaf, Fattoush-Style Salad and Garlic Yogurt [Adult A in_tolerance, Adult B in_tolerance]
+infeasible: Tandoori Chicken with Jeera Rice, Kachumber and Mint Raita: no plate for Adult A reaches the 679 kcal / 57 P / 63 C / 22 F target within tolerance; the closest misses by protein +12 g (tolerance ±5), fat -4 g (tolerance ±2); no plate for Adult B reaches the 413 kcal / 32 P / 40 C / 14 F target within tolerance; the closest misses by protein +10 g (tolerance ±5), fat -4 g (tolerance ±2)
+FAIL - 3 valid F1 dinner dishes generated (2 candidates in 1 call(s))
+ok   - every candidate solves in tolerance for both targeted adults
+VERIFY leaf-1.3.1 G4 FAILED (1 failed assertion(s))
