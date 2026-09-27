@@ -78,3 +78,17 @@ The op reference in the same prompt does include `role.set (protected)`, so the 
 | allergy-sesame | Expectation disagrees with R2-ONB-3 on the allergy's shape; the prompt has no flag rule | prompt: R2-ONB-3 flag rule | changed per R-66 (SPEC-Q-1, ruling A) |
 | weekend-appeal | Weekday numbering missing from the prompt; the model used 0 = Sunday | prompt: 0 = Monday … 6 = Sunday; presets for day-specific weights | unchanged |
 | make-sara-admin | The prompt forbids role changes, contrary to AGT-5/AGT-6 | prompt: `role.set` through `apply_change` becomes a proposal | unchanged |
+
+## After the fixes (G3, live)
+
+- Three fixed cases alone: 3/3 (`docs/build/live/leaf-1.3.6-check-3cases.log`, 12:30:04Z, commit d26d83b). allergy-sesame sends one `contains_sesame` flag exclusion; weekend-appeal sends `appliesToWeekdays [5, 6]`; make-sara-admin reads `get_household` and sends `role.set {userId, role: admin}` through `apply_change`, which becomes a proposal (AGT-5).
+- Full run 1: 28/29 = 96.6 % (`docs/build/live/leaf-1.3.6-eval-full-1.log`, 12:37:05Z, commit 20de36f, exit 0).
+- Full run 2: 28/29 = 96.6 % (`docs/build/live/leaf-1.3.6-eval-full-2.log`, 12:45:21Z, same commit, exit 0).
+
+**Observed, not fixed: shawarma-more-often ("We love the chicken shawarma wrap, put it on more often").** It failed in both full runs and passed in the 09:17 run before the fixes. In both runs the model sent `preference.set` (a household dish liking of 0.8, locked) instead of `frequency.set`, and offered a frequency rule as a follow-up (`docs/build/live/leaf-1.3.6-eval-full-1-shawarma-more-often.log`, `…-full-2-…`). The eval's expectation is sound: under OQ-8 (04 §6.3; R-62) a main-meal dish is blocked below a 7-day gap unless a `frequency_rule` replaces the default, so a liking alone cannot put it on "more often" than weekly.
+
+Whether the prompt changes caused the flip is not established:
+- None of the added lines mentions preferences or frequency.
+- There are 1 pre-fix sample and 2 post-fix samples.
+
+A grounded fix would be one prompt line: "how often a dish may repeat is frequency.set (main meals default to at least 7 days apart); preference.set only changes how much it is liked". That fix is outside the three diagnosed cases, so it waits for the architect.
