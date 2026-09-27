@@ -63,3 +63,18 @@ Not changed: variant labels, component names and the dish description (W-6 names
 ## SPEC-Q-7: which meals can be dragged (G1)
 
 Drag and the Move menu are offered to admins only, on meals dated today or later whose day is a draft and which are unlocked, planned and unreviewed (SPEC-Q-3). Drag moves the whole cell only when the cell holds one meal; a cell with a shared meal and split members' own dishes, or several individual dishes, is moved one meal at a time from the meal sheet's "Move to…" menu. Drop targets are the cells of the same slot row on other draft days of the week; dropping anywhere else cancels. The Move menu lists the week's other draft days from today on and says what happens ("Move here", "Swap with <dish>", or disabled with the reason: locked, sent to the kitchen, not planned).
+
+## Rulings at CP1 (BLD-8 R-60) and as built
+
+- **SPEC-Q-1, SPEC-Q-2, SPEC-Q-5 and SPEC-Q-7:** accepted, and built as written.
+- **SPEC-Q-3:** accepted, with R-60's addition, which is built. In an exchange, the occupant is re-solved on the source date like the moved meal. If the planner refuses either one, the move is refused with 422 and nothing is written. `plan-move.int.test.ts` covers this with an occupant whose member no longer attends the slot on the source date.
+- **SPEC-Q-4 / R-7:** granted, and built in `swapMeal` (`strictMiss`).
+  - For a member in strict mode, an infeasible re-solved plate is refused with 422. The message names the member, the macro and the amount, for example "Nour's dinner would miss protein by 612 g (under; ±5 allowed)". If every macro is inside its band, it names the saturated-fat cap instead.
+  - For a member in flexible mode, the least-bad plate is kept.
+  - Both modes have a service test in `plan-move.int.test.ts`.
+- **SPEC-Q-6:** amended by R-60, and built. `substitutedText` rewrites component names and variant labels, and `substitutedSteps` rewrites steps. Both apply only to the variants and components that contain the ingredient. The dish description is not changed.
+  - Added during the build: names that merely contain the unavailable ingredient's name are left as written. This covers the substitute's own name and the other ingredients of the same variant, for example "red onion" when onion is replaced by red onion.
+  - Without this rule the copy read "red red onion". The rule was found on the real substitution in the flags integration test (onion → red onion) and is tested in G2.
+- **Drag (ADR-1), two defects found in the build and fixed:**
+  - A touch drag cannot scroll the page, and the phone tab bar covers the bottom of the screen. So the page now scrolls by itself while the pointer is within 96 px of the window's top or bottom edge.
+  - After Escape cancels a drag, releasing the button no longer opens the meal sheet. G5 asserts this.

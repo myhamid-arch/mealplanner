@@ -89,14 +89,19 @@ export function useMealDrag(opts: {
         setDrag(state);
         frame = requestAnimationFrame(scroll);
       };
-      const end = (drop: boolean) => {
+      const end = (drop: boolean, released: boolean) => {
         const done = state;
         cleanup.current?.();
         if (!active) return;
+        // Swallow the click the release produces: now if released, else on the coming release
+        // (Escape cancels while the button is still held).
         justDragged.current = true;
-        setTimeout(() => {
-          justDragged.current = false;
-        }, 0);
+        const clear = () =>
+          setTimeout(() => {
+            justDragged.current = false;
+          }, 0);
+        if (released) clear();
+        else window.addEventListener("pointerup", clear, { once: true });
         setDrag(null);
         if (drop && done?.over != null) {
           const [date = ""] = done.over.split("|");
@@ -122,15 +127,15 @@ export function useMealDrag(opts: {
         setDrag(state);
       };
       const onUp = (ev: globalThis.PointerEvent) => {
-        if (ev.pointerId === e.pointerId) end(true);
+        if (ev.pointerId === e.pointerId) end(true, true);
       };
       const onCancel = (ev: globalThis.PointerEvent) => {
-        if (ev.pointerId === e.pointerId) end(false);
+        if (ev.pointerId === e.pointerId) end(false, true);
       };
       const onKey = (ev: KeyboardEvent) => {
         if (ev.key === "Escape" && active) {
           ev.preventDefault();
-          end(false);
+          end(false, false);
         }
       };
       // Once a touch drag is active the page must not scroll under the finger.

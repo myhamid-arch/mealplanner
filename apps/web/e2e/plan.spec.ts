@@ -1925,6 +1925,9 @@ for (const v of VIEWPORTS)
         await page.keyboard.press("Escape");
         await page.mouse.up();
         await expect(page.getByTestId("drag-ghost")).toHaveCount(0);
+        // Escape cancelled the drag: releasing the button does not open the meal sheet.
+        await page.waitForTimeout(300);
+        await expect(page.getByRole("dialog")).toHaveCount(0);
       }
       await openCell(page, date, "dinner");
       await page.getByRole("dialog").getByRole("button", { name: "Move to…" }).first().click();

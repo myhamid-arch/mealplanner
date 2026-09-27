@@ -205,7 +205,7 @@ function Cell({
       aria-describedby={source === null ? undefined : "move-hint"}
       data-testid={`cell-${lead.date}-${lead.slotKey}`}
       data-draggable={source === null ? undefined : "true"}
-      className={`flex min-h-11 w-full flex-col items-stretch gap-0.5 rounded-[10px] bg-card p-2 text-left text-ink hover:bg-flour ${source === null ? "" : "cursor-grab select-none"} ${dragged ? "opacity-40" : ""}`}
+      className={`flex min-h-11 w-full flex-col items-stretch gap-0.5 rounded-[10px] p-2 text-left text-ink hover:bg-flour ${source === null ? "" : "cursor-grab select-none"} ${dragged ? "bg-flour outline-2 outline-offset-1 outline-line-strong outline-dashed" : "bg-card"}`}
       style={{ boxShadow: `inset 0 -4px 0 ${TONE_BAR[tone] ?? "var(--olive)"}` }}
     >
       <span className="flex items-start justify-between gap-1">

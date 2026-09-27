@@ -20,3 +20,9 @@ Option 3, in `apps/web/components/plan/drag.ts` (a small hook) used by `week-pla
 
 ## Consequences
 No new dependency. Playwright drives the drag with `page.mouse` (down, move in steps, up) at both widths; the Move menu is driven by keyboard only.
+
+## As built
+Two additions came out of the Playwright runs.
+- **Edge auto-scroll.** While a drag is active and the pointer is within 96 px of the window's top or bottom edge, the page scrolls 12 px per frame. Once a touch drag has started it prevents page scrolling, and the phone tab bar covers the bottom of the screen, so without this a target below the fold could not be reached.
+- **Escape.** After Escape cancels a drag, the click produced by the coming release is swallowed.
+- **Drag source style.** The dragged cell is not dimmed. Dimming failed axe colour contrast. It gets a dashed outline on the flour fill and keeps full-contrast text.
