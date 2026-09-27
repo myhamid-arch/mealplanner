@@ -56,9 +56,14 @@ describe("exclusion.add payload (OQ-9)", () => {
   };
   const parse = (payload: object) => ChangeOpSchema.safeParse({ kind: "exclusion.add", payload });
 
-  it("defaults to every slot", () => {
-    const r = parse(base);
-    expect(r.success && r.data.kind === "exclusion.add" && r.data.payload.slotKeys).toBeNull();
+  it("means every slot when absent or null; an absent scope stays absent (unchanged old ops)", () => {
+    const absent = parse(base);
+    if (!absent.success || absent.data.kind !== "exclusion.add") throw new Error("did not parse");
+    expect("slotKeys" in absent.data.payload).toBe(false);
+    const explicit = parse({ ...base, slotKeys: null });
+    expect(
+      explicit.success && explicit.data.kind === "exclusion.add" && explicit.data.payload.slotKeys,
+    ).toBeNull();
   });
   it("stores the scope sorted and de-duplicated", () => {
     const r = parse({ ...base, slotKeys: ["snack", SCHOOL, "snack"] });

@@ -118,14 +118,15 @@ function isProtectedExclusion(row: Pick<ExclusionRow, "reason" | "hard">): boole
 }
 
 // 1.2.6 (R-62), OQ-9: an optional slot scope, stored sorted and de-duplicated so that equal scopes
-// compare equal in the unique key (leaf-1.2.6 SPEC-Q-4). Null = every slot.
+// compare equal in the unique key (leaf-1.2.6 SPEC-Q-4). Null or absent = every slot; absent stays
+// absent in the parsed op, so ops written before the scope existed parse to the same payload.
 const slotScope = z
   .array(slotKey)
   .min(1)
   .max(20)
   .transform((keys) => [...new Set(keys)].sort())
   .nullable()
-  .default(null);
+  .optional();
 
 /** Equal slot scopes: both every slot, or the same set of slot keys. */
 const scopeKey = (keys: readonly string[] | null | undefined) =>
@@ -145,7 +146,7 @@ const ExclusionAdd = z
   .strict()
   .refine((p) => p.reason !== "allergy" || p.hard, "an allergy exclusion is always hard (DM-5)")
   .refine(
-    (p) => p.reason !== "allergy" || p.slotKeys === null,
+    (p) => p.reason !== "allergy" || p.slotKeys == null,
     "an allergy exclusion applies to every slot (02 §6, OQ-9)",
   );
 
@@ -156,11 +157,11 @@ async function sameExclusion(
     memberId: string | null;
     kind: ExclusionRow["kind"];
     key: string;
-    slotKeys: string[] | null;
+    slotKeys?: string[] | null | undefined;
   },
 ) {
   const rows = await tx.find("exclusion", { memberId: p.memberId, kind: p.kind, key: p.key });
-  return rows.find((r) => sameScope(r.slotKeys, p.slotKeys));
+  return rows.find((r) => sameScope(r.slotKeys, p.slotKeys ?? null));
 }
 
 /**
@@ -177,10 +178,11 @@ export const exclusionAdd = defineOp({
   },
   title: (p) =>
     `Exclude ${p.kind.replace("_", " ")} "${p.key}" (${p.reason})${
-      p.slotKeys === null ? "" : ` in ${p.slotKeys.join(", ")} only`
+      p.slotKeys == null ? "" : ` in ${p.slotKeys.join(", ")} only`
     }`,
   apply: async (tx, p) => {
-    const { memberId, kind, key, reason, hard, slotKeys } = p;
+    const { memberId, kind, key, reason, hard } = p;
+    const slotKeys = p.slotKeys ?? null;
     await requireMemberOrHousehold("exclusion.add", tx, memberId);
     if (reason === "allergy" && slotKeys !== null)
       throw new ChangeOpError("exclusion.add", "an allergy exclusion applies to every slot");
