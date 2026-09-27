@@ -1937,16 +1937,23 @@ for (const v of VIEWPORTS)
       await expect(page.getByRole("dialog").getByRole("list", { name: /^Move / })).toBeVisible();
       await axe(page, `meal sheet with Move menu and day targets ${v.name} ${theme}`);
       await page.keyboard.press("Escape");
-      // The plate as it is now (plates get new ids whenever the meal is re-solved).
-      const omarNow = (await mealOf(world.admin, date, "dinner")).plates.find(
-        (p) => p.memberId === world.members.omar,
-      );
-      await page.goto(`/today/plates/${omarNow?.id ?? ""}`);
-      await loaded(page);
-      await expect(
-        page.getByText(/kcal day/),
-        `plate page for ${omarNow?.id ?? "?"}: ${(await page.locator("main").textContent()) ?? ""}`,
-      ).toBeVisible({ timeout: 60_000 });
+      // The plate as it is now: plates get new ids whenever the meal is re-solved, and the
+      // substitution's follow-up `plates.resolve` (1.4.1) can re-solve this week while the test
+      // runs, so a plate that has just been replaced is looked up again.
+      let shown = false;
+      for (let attempt = 0; attempt < 6 && !shown; attempt += 1) {
+        const omarNow = (await mealOf(world.admin, date, "dinner")).plates.find(
+          (p) => p.memberId === world.members.omar,
+        );
+        await page.goto(`/today/plates/${omarNow?.id ?? ""}`);
+        await loaded(page);
+        shown = await page
+          .getByText(/kcal day/)
+          .waitFor({ timeout: 15_000 })
+          .then(() => true)
+          .catch(() => false);
+      }
+      await expect(page.getByText(/kcal day/)).toBeVisible();
       await axe(page, `plate with day target ${v.name} ${theme}`);
       await page.goto(`/recipes/${alts[0]?.dishId ?? dinner.dishId}?date=${date}&slot=dinner`);
       await expect(page.getByTestId("use-for").getByRole("button")).toBeEnabled({
