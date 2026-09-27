@@ -36,13 +36,28 @@ const PACKAGE_DIRS = ["core", "db", "ai", "graph", "api-contract", "ui-tokens"].
   join(ROOT, "packages", p),
 );
 const LOCAL_URL = "postgres://postgres:postgres@localhost:5432/postgres";
+/**
+ * Machine-wide slots so that concurrent gates share the machine instead of exhausting it (12 gates
+ * at once used all 16 GB): heavy suite steps one at a time, workspace copies two at a time.
+ */
+export const SUITE_SLOTS = Math.max(1, Number(process.env.NODE_SUITE_SLOTS ?? "1") || 1);
+export const COPY_SLOTS = Math.max(1, Number(process.env.NODE_COPY_SLOTS ?? "2") || 2);
+
+/**
+ * The caller's NODE_OPTIONS without preloads or other flags: only the heap size is kept (this
+ * environment sets --max-old-space-size, which `eslint .` needs).
+ */
+export const HEAP_OPTIONS = (process.env.NODE_OPTIONS ?? "")
+  .split(/\s+/)
+  .filter((o) => /^--max-old-space-size=\d+$/.test(o))
+  .join(" ");
 
 /** Environment every child gets on top of the caller's: no model credential, no preloads. */
 export const CHILD_ENV = {
   ANTHROPIC_API_KEY: "",
   ANTHROPIC_AUTH_TOKEN: "",
   ANTHROPIC_BASE_URL: "",
-  NODE_OPTIONS: "",
+  NODE_OPTIONS: HEAP_OPTIONS,
   NEXT_TELEMETRY_DISABLED: "1",
   TURBO_TELEMETRY_DISABLED: "1",
 };
@@ -566,51 +581,54 @@ export async function gateN2(report, node) {
     );
   }
 
-  // 2. Every consumer typechecks against them.
-  const typechecks = await Promise.all(
-    consumers.map(async (c) => {
-      const started = Date.now();
-      const r = await runAsync("pnpm", ["run", "typecheck"], {
-        cwd: join(ROOT, c.dir),
-        timeoutMs: 1_200_000,
-      });
-      return { c, r, seconds: Math.round((Date.now() - started) / 1000) };
-    }),
-  );
-  for (const { c, r, seconds } of typechecks)
-    report.check(
-      r.code === 0,
-      `${c.manifest.name} typechecks against the branch packages (${String(seconds)} s)`,
-      tail(r, 40),
+  // Steps 2 and 3 share the machine with other gates' heavy steps (one at a time, SUITE_SLOTS).
+  await withSlot("suite", SUITE_SLOTS, async () => {
+    // 2. Every consumer typechecks against them.
+    const typechecks = await Promise.all(
+      consumers.map(async (c) => {
+        const started = Date.now();
+        const r = await runAsync("pnpm", ["run", "typecheck"], {
+          cwd: join(ROOT, c.dir),
+          timeoutMs: 1_200_000,
+        });
+        return { c, r, seconds: Math.round((Date.now() - started) / 1000) };
+      }),
     );
+    for (const { c, r, seconds } of typechecks)
+      report.check(
+        r.code === 0,
+        `${c.manifest.name} typechecks against the branch packages (${String(seconds)} s)`,
+        tail(r, 40),
+      );
 
-  // 3. The api-contract contract tests.
-  const server = await acquireServer(report, `${node.label}-n2`);
-  try {
-    const contract = await vitestRun(
-      WEB,
-      ["test/api/g1-contract-matrix.int.test.ts", "test/api/g3-openapi.int.test.ts"],
-      { DATABASE_URL: server.url, LOG_LEVEL: "silent" },
-    );
-    const counts = judgeTests(
-      report,
-      "@mealplanner/api-contract contract tests (g1, g3)",
-      contract,
-    );
-    const files = new Set(contract.tests.map((t) => t.file));
-    report.check(
-      files.has("apps/web/test/api/g1-contract-matrix.int.test.ts") &&
-        files.has("apps/web/test/api/g3-openapi.int.test.ts") &&
-        counts.total > 0,
-      "both contract test files ran",
-      [...files].join("\n"),
-    );
-  } finally {
-    server.stop();
-  }
+    // 3. The api-contract contract tests.
+    const server = await acquireServer(report, `${node.label}-n2`);
+    try {
+      const contract = await vitestRun(
+        WEB,
+        ["test/api/g1-contract-matrix.int.test.ts", "test/api/g3-openapi.int.test.ts"],
+        { DATABASE_URL: server.url, LOG_LEVEL: "silent" },
+      );
+      const counts = judgeTests(
+        report,
+        "@mealplanner/api-contract contract tests (g1, g3)",
+        contract,
+      );
+      const files = new Set(contract.tests.map((t) => t.file));
+      report.check(
+        files.has("apps/web/test/api/g1-contract-matrix.int.test.ts") &&
+          files.has("apps/web/test/api/g3-openapi.int.test.ts") &&
+          counts.total > 0,
+        "both contract test files ran",
+        [...files].join("\n"),
+      );
+    } finally {
+      server.stop();
+    }
+  });
 
   // 4. Negative control: an incompatible change to an exported type fails a consumer's typecheck.
-  await n2NegativeControl(report, node.n2Control);
+  await withSlot("copy", COPY_SLOTS, () => n2NegativeControl(report, node.n2Control));
 }
 
 /**
@@ -1035,7 +1053,8 @@ async function e2eRun({ webDir, distDir, server, spec, tag }) {
       }
       if (spec.env === "chat") {
         env.WORLD_FILE = join(scratch, "world.json");
-        env.NODE_OPTIONS = `--import ${pathToFileURL(join(webDir, "e2e/chat/agent-stub.mjs")).href}`;
+        env.NODE_OPTIONS =
+          `${HEAP_OPTIONS} --import ${pathToFileURL(join(webDir, "e2e/chat/agent-stub.mjs")).href}`.trim();
         // The same build without the scripted model, for the chat route's 503 (leaf 1.4.5 G3).
         const bare = await freePort();
         const noModel = background(
@@ -1192,19 +1211,8 @@ export async function runE2ESuite(report, { webDir, distDir, server }) {
   );
 }
 
-/** N4: format, lint, typecheck, build, unit, integration, web e2e; plus the negative control. */
-export async function gateN4(report, node) {
-  if (!(await buildPackages(report))) return;
-  const step = async (label, command, args, cwd = ROOT, env = {}) => {
-    const started = Date.now();
-    const r = await runAsync(command, args, { cwd, env, timeoutMs: 1_800_000 });
-    report.check(
-      r.code === 0,
-      `${label} (${String(Math.round((Date.now() - started) / 1000))} s)`,
-      tail(r, 60),
-    );
-    return r;
-  };
+/** N4's suite before the e2e runs: format, lint, typecheck, build, unit, integration. */
+async function suite(report, node, step, distDir, server) {
   await step("pnpm format:check exits 0", "pnpm", ["format:check"]);
   await step("pnpm lint exits 0", "pnpm", ["lint"]);
 
@@ -1252,23 +1260,47 @@ export async function gateN4(report, node) {
   } finally {
     rmSync(outRoot, { recursive: true, force: true });
   }
-  const distDir = distDirFor(node.label, "N4");
-  if (!(await buildWeb(report, distDir))) return;
+  if (!(await buildWeb(report, distDir))) return false;
+  reportSuite(report, "test:unit", await runVitestSuite(ROOT, "test:unit"));
+  reportSuite(
+    report,
+    "test:integration",
+    await runVitestSuite(ROOT, "test:integration", { DATABASE_URL: server.url }),
+  );
+  return true;
+}
 
+/** N4: format, lint, typecheck, build, unit, integration, web e2e; plus the negative control. */
+export async function gateN4(report, node) {
+  if (!(await buildPackages(report))) return;
+  const step = async (label, command, args, cwd = ROOT, env = {}) => {
+    const started = Date.now();
+    const r = await runAsync(command, args, { cwd, env, timeoutMs: 1_800_000 });
+    report.check(
+      r.code === 0,
+      `${label} (${String(Math.round((Date.now() - started) / 1000))} s)`,
+      tail(r, 60),
+    );
+    return r;
+  };
+  const distDir = distDirFor(node.label, "N4");
   const server = await acquireServer(report, `${node.label}-n4`);
   try {
-    reportSuite(report, "test:unit", await runVitestSuite(ROOT, "test:unit"));
-    reportSuite(
-      report,
-      "test:integration",
-      await runVitestSuite(ROOT, "test:integration", { DATABASE_URL: server.url }),
+    // The suite's heavy steps run one gate at a time on this machine (SUITE_SLOTS); the web e2e
+    // runs share the e2e slots.
+    const built = await withSlot("suite", SUITE_SLOTS, () =>
+      suite(report, node, step, distDir, server),
     );
-    await runE2ESuite(report, { webDir: WEB, distDir, server });
+    if (built) await runE2ESuite(report, { webDir: WEB, distDir, server });
   } finally {
     server.stop();
   }
 
-  // Negative control: a disposable copy with one failing unit test fails the same unit verdict.
+  await withSlot("copy", COPY_SLOTS, () => n4NegativeControl(report));
+}
+
+/** N4's negative control: a disposable copy with one failing unit test fails the unit verdict. */
+async function n4NegativeControl(report) {
   const copy = copyWorkspace(ROOT);
   try {
     const install = installCopy(copy.dir);

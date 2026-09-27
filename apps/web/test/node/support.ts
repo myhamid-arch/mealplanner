@@ -42,7 +42,12 @@ function childEnv(extra: Record<string, string>): NodeJS.ProcessEnv {
   const env: Record<string, string> = {};
   for (const [key, value] of Object.entries(process.env))
     if (value !== undefined && !DROPPED.has(key)) env[key] = value;
-  return { ...env, NODE_ENV: "production", NODE_OPTIONS: "", LOG_LEVEL: "warn", ...extra };
+  // Only the heap size of the caller's NODE_OPTIONS is kept (no preloads).
+  const heap = (process.env.NODE_OPTIONS ?? "")
+    .split(/\s+/)
+    .filter((o) => /^--max-old-space-size=\d+$/.test(o))
+    .join(" ");
+  return { ...env, NODE_ENV: "production", NODE_OPTIONS: heap, LOG_LEVEL: "warn", ...extra };
 }
 
 export interface Child {

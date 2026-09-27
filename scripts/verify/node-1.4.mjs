@@ -35,6 +35,7 @@ import {
   runAsync,
   WEB,
   withSlot,
+  COPY_SLOTS,
 } from "./lib/node.mjs";
 import { tail } from "./lib/run.mjs";
 import { copyWorkspace, installCopy } from "./lib/workspace.mjs";
@@ -196,57 +197,67 @@ async function gateN3(report) {
     recheck(report, measures);
 
     // Negative control: the same spec against a copy without the cook sheet's route.
-    const copy = copyWorkspace(ROOT);
-    try {
-      const install = installCopy(copy.dir);
-      if (!report.check(install.code === 0, "negative control: the copy installs", tail(install)))
-        return;
-      const kitchen = join(copy.dir, "apps/web/app/(app)/kitchen");
-      rmSync(kitchen, { recursive: true, force: true });
-      report.check(
-        !existsSync(kitchen),
-        "negative control: the copy has no apps/web/app/(app)/kitchen route",
-      );
-      const build = await runAsync(
-        "pnpm",
-        ["exec", "turbo", "run", "build", "--filter=./packages/*", "--filter=@mealplanner/worker"],
-        { cwd: copy.dir, timeoutMs: 1_200_000 },
-      );
-      if (
-        !report.check(
-          build.code === 0,
-          "negative control: the copy's packages build",
-          tail(build, 30),
+    // Workspace copies of every gate share COPY_SLOTS machine-wide slots (lib/node.mjs).
+    await withSlot("copy", COPY_SLOTS, async () => {
+      const copy = copyWorkspace(ROOT);
+      try {
+        const install = installCopy(copy.dir);
+        if (!report.check(install.code === 0, "negative control: the copy installs", tail(install)))
+          return;
+        const kitchen = join(copy.dir, "apps/web/app/(app)/kitchen");
+        rmSync(kitchen, { recursive: true, force: true });
+        report.check(
+          !existsSync(kitchen),
+          "negative control: the copy has no apps/web/app/(app)/kitchen route",
+        );
+        const build = await runAsync(
+          "pnpm",
+          [
+            "exec",
+            "turbo",
+            "run",
+            "build",
+            "--filter=./packages/*",
+            "--filter=@mealplanner/worker",
+          ],
+          { cwd: copy.dir, timeoutMs: 1_200_000 },
+        );
+        if (
+          !report.check(
+            build.code === 0,
+            "negative control: the copy's packages build",
+            tail(build, 30),
+          )
         )
-      )
-        return;
-      if (!(await buildWeb(report, ".next/node-1.4-n3-control", join(copy.dir, "apps/web"))))
-        return;
-      const control = await withSlot("e2e-run", slots, () =>
-        runSpec(
-          join(copy.dir, "apps/web"),
-          ".next/node-1.4-n3-control",
-          server,
-          "node14_n3c",
-          "at 390 px",
-        ),
-      );
-      const status = (title) => control.tests.find((t) => t.title === title)?.status ?? "missing";
-      const [onboarding, plan, cook] = FLOWS("390");
-      console.log(
-        `       measured (negative control): without the route: onboarding ${status(onboarding)}, plan ${status(plan)}, cook sheet ${status(cook)}`,
-      );
-      report.check(
-        status(onboarding) === "passed" && status(plan) === "passed",
-        "negative control is sound: the flows before the cook sheet still pass in the copy",
-      );
-      report.check(
-        control.r.code !== 0 && status(cook) === "failed",
-        "negative control: the cook-sheet flow fails when its route is removed",
-      );
-    } finally {
-      copy.dispose();
-    }
+          return;
+        if (!(await buildWeb(report, ".next/node-1.4-n3-control", join(copy.dir, "apps/web"))))
+          return;
+        const control = await withSlot("e2e-run", slots, () =>
+          runSpec(
+            join(copy.dir, "apps/web"),
+            ".next/node-1.4-n3-control",
+            server,
+            "node14_n3c",
+            "at 390 px",
+          ),
+        );
+        const status = (title) => control.tests.find((t) => t.title === title)?.status ?? "missing";
+        const [onboarding, plan, cook] = FLOWS("390");
+        console.log(
+          `       measured (negative control): without the route: onboarding ${status(onboarding)}, plan ${status(plan)}, cook sheet ${status(cook)}`,
+        );
+        report.check(
+          status(onboarding) === "passed" && status(plan) === "passed",
+          "negative control is sound: the flows before the cook sheet still pass in the copy",
+        );
+        report.check(
+          control.r.code !== 0 && status(cook) === "failed",
+          "negative control: the cook-sheet flow fails when its route is removed",
+        );
+      } finally {
+        copy.dispose();
+      }
+    });
   } finally {
     server.stop();
   }
