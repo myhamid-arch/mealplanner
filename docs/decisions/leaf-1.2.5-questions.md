@@ -20,7 +20,7 @@ The baseline must be measured by the verify script, not stored. Reading: the ver
 
 ## SPEC-Q-5: "idle" and running gates concurrently (G2, G3 vs G1)
 
-G1 saturates every CPU on purpose. G2's week wall time and G3's baseline must be measured idle. Reading: G2 and G3 check idleness from their own measurements (the ratio of wall time to main-thread CPU time of each timed plan must stay ≤ 1.15; about 1.0 when idle, ≈ 1.3 or more when a busy process shares the CPU) and fail with "machine not idle" rather than report a figure measured under load. Consequence: G2 and G3 pass only when they do not overlap G1 (or other heavy work). All gates remain *safe* to run concurrently: separate build directories under `packages/core/node_modules/.cache/leaf-1.2.5-<gate>-<pid>`, no ports, no shared temp files, and G1's load processes end with G1. Raised as an ARCHITECT QUESTION at CP1.
+G1 saturates every CPU on purpose. G2's week wall time and G3's baseline must be measured idle. Reading: G2 and G3 check idleness from their own measurements (the ratio of wall time to main-thread CPU time of each timed plan must stay ≤ 1.15; about 1.0 when idle, ≈ 1.3 or more when a busy process shares the CPU) and fail with "machine not idle" rather than report a figure measured under load. Consequence: G2 and G3 pass only when they do not overlap G1 (or other heavy work). All gates remain _safe_ to run concurrently: separate build directories under `packages/core/node_modules/.cache/leaf-1.2.5-<gate>-<pid>`, no ports, no shared temp files, and G1's load processes end with G1. Raised as an ARCHITECT QUESTION at CP1.
 
 ## SPEC-Q-6: G1 runs
 
