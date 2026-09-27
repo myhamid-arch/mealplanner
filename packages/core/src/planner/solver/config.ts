@@ -33,12 +33,11 @@ export const MAX_ADJUSTERS = 2;
 /** PLN-6: an adjuster needs at least this appeal for the member. */
 export const MIN_ADJUSTER_APPEAL = -0.2;
 
-/**
- * PLN-5 as amended by R-51 (W-4): the work each combination's HiGHS solve may do. A deterministic
- * limit, not a wall-clock one, so the same seed gives the same plan whatever the machine load
- * (PLN-11). Calibrated to what PLN-5's former 0.25 s did on an idle machine (leaf-1.2.5 ADR-1):
- * 0.25 s ÷ the median idle cost per unit, over every solve of the F1 week, seeds 1–10.
- */
+// PLN-5 as amended by R-51 (W-4): the work each combination's HiGHS solve may do. A deterministic
+// limit, not a wall-clock one, so the same seed gives the same plan whatever the machine load
+// (PLN-11). Calibrated to what PLN-5's former 0.25 s did on an idle machine (leaf-1.2.5 ADR-1):
+// 0.25 s ÷ the median idle cost per unit, over every solve of the F1 week, seeds 1–10.
+
 /** MILP: processed branch-and-bound nodes (HiGHS `mip_max_nodes`); 0.25 s ÷ 0.437 ms/node. */
 export const MIP_NODE_LIMIT_PER_COMBINATION = 572;
 /** LP relaxation: simplex iterations (HiGHS `simplex_iteration_limit`); 0.25 s ÷ 0.0233 ms/iteration. */
