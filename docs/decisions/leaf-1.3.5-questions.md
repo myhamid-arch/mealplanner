@@ -116,10 +116,10 @@ Reading: the tool returns 1.2.3's alternatives with their score breakdowns and e
 
 ## SPEC-Q-18: who a plan generated from chat is attributed to
 
-`generate_plan` enqueues `plan.generate` with the admin as the job's creator, so 1.4.1's handler writes the saved days as `actor: user, source: ui` (its SPEC-Q-12 rule for UI-started jobs). The change log (R2-ADM-7) would then badge an agent-started plan as a UI change. Reading: the job payload carries `source: "agent"` and `conversationId`; attributing it as `agent` / `agent_apply` needs a line in `apps/worker/src/jobs/handlers.ts` (`planGenerate`'s `by`). Asked (ARCHITECT QUESTION on the PR); until then the plan is attributed to the admin who asked.
+`generate_plan` enqueues `plan.generate` with the admin as the job's creator, so 1.4.1's handler writes the saved days as `actor: user, source: ui` (its SPEC-Q-12 rule for UI-started jobs). The change log (R2-ADM-7) would then badge an agent-started plan as a UI change. Reading: the job payload carries `source: "agent"` and `conversationId`; attributing it as `agent` / `agent_apply` needs a line in `apps/worker/src/jobs/handlers.ts` (`planGenerate`'s `by`). Granted in R-49: `planGenerate` uses `agent` / `agent_apply` when the payload says `source: "agent"`, which only the agent adapter sets.
 
-## Open ARCHITECT QUESTIONs (PR #14)
+## Outcomes (R-46, R-49)
 
-- 1.4.1's `matrix.ts` validates every SSE endpoint's events as `JobEventDto` (blocks 1.4.1 G1 for `conversations.send`).
-- `review.extracted_*` columns: `ReviewRow` and four review-row literals outside the grant (blocks the `reviews.extract` job and 1.3.3's `load.ts` union).
-- 1.3.3's `satisfied.ts` drops a relaxing `exclusion.add` proposal (blocks one case of G2).
+- CP1 (R-46): R-A … R-G granted; SPEC-Q-10 changed to a `recipe.draft` job run by the worker (`generateDishes(..., { save: false })`), its recipe card posted by the completion message; SPEC-Q-11 accepted with the lock released in `finally` (tested by aborting a turn mid-stream); SPEC-Q-15 accepted with migration 0005.
+- After CP1 (R-49): 1.4.1's matrix validates SSE events with the endpoint's own schema; the `ReviewRow` type cascade; `satisfied.ts` no longer counts a relaxing `exclusion.add` as satisfied by the member's own row; agent-started plans are attributed `agent` / `agent_apply` (the client body of `POST /plans/generate` cannot set `source`: it is strict, and a test shows 400). SPEC-Q-17 accepted.
+- Found while building: the worker refuses to start with a `JOB_KINDS` entry that has no handler, so `reviews.extract` was added to `JOB_KINDS` only together with its handler.
