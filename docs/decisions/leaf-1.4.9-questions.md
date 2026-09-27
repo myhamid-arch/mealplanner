@@ -83,3 +83,14 @@ Reading:
   ("Wife"), so no one is dropped. An age-only piece that follows a named person without an age
   ("Sara, my wife, 39") is that person's age.
 - Relation words do not set sex (not asked for).
+
+## SPEC-Q-7: the chat recipe card's "Use for" link (CP3 finding 2; R-66)
+
+Answered by the architect (R-66, option a). `create_recipe` takes an optional `date` (the day the
+admin names), the agent passes it into the `recipe.draft` payload, and the job drafts for that
+day. The recipe card carries `use: {date, slotKey, slotLabel}` only when the request named both a
+day and a slot. The slot is the one the job resolved the request to, since the admin may name it
+by its label. A saved draft then shows "Use for <Day> <slot label>", linking to
+`/recipes/{dishId}?date=&slot=`. The job's own computed date is never used for the link.
+`RecipeDraftPayload.date` is optional (`string | null` or absent), so jobs queued before the field
+existed still run as before.
