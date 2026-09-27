@@ -1879,8 +1879,12 @@ test("@1.4.8-G5 the substituted cook sheet names the substitute (olive oil → c
   for (const v of VIEWPORTS) {
     const { ctx, page } = await as(browser, "kitchen", v);
     await page.goto(`/kitchen?date=${date}&meal=${changed.planMealId}`);
-    const article = page.getByTestId("cook-meal").filter({ visible: true }).first();
-    await expect(article).toContainText(changed.toDishName, { timeout: 60_000 });
+    // An individual slot shows one article per person: take the one serving the copy.
+    const article = page
+      .getByTestId("cook-meal")
+      .filter({ visible: true, hasText: changed.toDishName })
+      .first();
+    await expect(article).toBeVisible({ timeout: 60_000 });
     for (const b of touched) for (const step of b.steps) await expect(article).toContainText(step);
     await expectFits(page, `substituted cook sheet ${v.name}`);
     await ctx.close();
