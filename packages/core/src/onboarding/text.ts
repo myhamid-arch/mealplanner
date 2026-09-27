@@ -9,6 +9,13 @@ export function normalise(text: string): string {
     .trim();
 }
 
+/** "me", "myself", "I", "I'm": the person answering (leaf-1.4.9 SPEC-Q-6). */
+export function isSelfWord(name: string): boolean {
+  return SELF_WORDS.has(normalise(name));
+}
+
+const SELF_WORDS: ReadonlySet<string> = new Set(["me", "myself", "i", "im", "i am"]);
+
 /** A crude English singular: "kidneys" → "kidney", "peaches" → "peach", "eggs" → "egg". */
 export function singular(word: string): string {
   if (word.length > 4 && word.endsWith("ies")) return `${word.slice(0, -3)}y`;

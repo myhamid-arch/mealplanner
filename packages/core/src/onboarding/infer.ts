@@ -7,7 +7,7 @@ import { adjustHref, MEMBER_COLOR_ORDER } from "./explain.js";
 import { appetiteForAge, isChild } from "./parse-people.js";
 import { targetsText } from "./parse-targets.js";
 import { resolveTerm } from "./resolve.js";
-import { listJoin, normalise, weekdayText } from "./text.js";
+import { isSelfWord, listJoin, normalise, weekdayText } from "./text.js";
 import type {
   AdjustTarget,
   DayTargets,
@@ -77,14 +77,17 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
   };
 
   // 1. Members ---------------------------------------------------------------------------------
+  // "me (41)" is the admin (leaf-1.4.9 SPEC-Q-6): the member takes their name, and every answer
+  // that says "me" means that member.
+  const nameKey = (name: string): string => normalise(isSelfWord(name) ? ctx.adminName : name);
   const people: PersonAnswer[] =
     answers.people === null || answers.people.length === 0
       ? [{ name: ctx.adminName, age: null, sex: null }]
-      : answers.people;
+      : answers.people.map((p) => (isSelfWord(p.name) ? { ...p, name: ctx.adminName } : p));
   const lowerNames = people.map((p) => normalise(p.name));
   if (new Set(lowerNames).size !== lowerNames.length)
     throw new OnboardingError("two people have the same name");
-  const targetedNames = new Set((answers.targets ?? []).map((t) => normalise(t.person)));
+  const targetedNames = new Set((answers.targets ?? []).map((t) => nameKey(t.person)));
   const members: NewMember[] = people.map((person) => ({
     id: ctx.newId(),
     person,
@@ -92,7 +95,7 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
   }));
   const byName = new Map(members.map((m) => [normalise(m.person.name), m]));
   const memberOf = (name: string): NewMember => {
-    const m = byName.get(normalise(name));
+    const m = byName.get(nameKey(name));
     if (m === undefined)
       throw new OnboardingError(`"${name}" is not one of the people in question 1`);
     return m;
