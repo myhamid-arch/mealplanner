@@ -26,6 +26,8 @@ const HIDDEN = new Set([
   "updatedAt",
   "createdByUserId",
   "version",
+  "evidenceWeight",
+  "source",
 ]);
 
 const FIELD_LABELS: Readonly<Record<string, string>> = {
@@ -104,7 +106,10 @@ export function diffLines(d: Description, names: ReadonlyMap<string, string>): D
     .filter((c) => JSON.stringify(c.before) !== JSON.stringify(c.after))
     .map((c) => ({
       entity: ENTITY_LABELS[c.entity] ?? words(c.entity),
-      label: FIELD_LABELS[c.field] ?? words(c.field),
+      label:
+        c.field === "hard" && c.entity !== "exclusion"
+          ? "Rule"
+          : (FIELD_LABELS[c.field] ?? words(c.field)),
       before: value(c.field, c.before, names),
       after: value(c.field, c.after, names),
     }));

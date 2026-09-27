@@ -11,6 +11,7 @@ export const DESKTOP = { width: 1280, height: 900 } as const;
 export interface World {
   run: string;
   householdId: string;
+  adminUserId: string;
   adminState: string;
   memberState: string;
   members: { omar: string; sara: string; layla: string; zayd: string };
@@ -62,6 +63,7 @@ export async function createWorld(browser: Browser, tag: string): Promise<World>
     "signup",
   );
   const householdId = signup.householdId as string;
+  const adminUserId = (signup.user as { id: string }).id;
   const members = { omar: randomUUID(), sara: randomUUID(), layla: randomUUID(), zayd: randomUUID() };
   const year = new Date().getUTCFullYear();
   await ok(
@@ -109,6 +111,7 @@ export async function createWorld(browser: Browser, tag: string): Promise<World>
   const world: World = {
     run,
     householdId,
+    adminUserId,
     adminState: JSON.stringify(await admin.storageState()),
     memberState: JSON.stringify(await member.storageState()),
     members,

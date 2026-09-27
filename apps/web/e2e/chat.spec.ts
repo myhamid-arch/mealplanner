@@ -12,8 +12,9 @@
 // (where the set-up test keeps what later tests need; the worker restarts after a failure).
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import pg from "pg";
+import { recordedRows } from "./chat/recorded";
 import { contextFor, createWorld, DESKTOP, PHONE, type World } from "./chat/world";
 
 const DATABASE_URL = process.env.DATABASE_URL ?? "";
@@ -181,6 +182,210 @@ test.describe.serial("@G1 reviews to proposals", () => {
   });
 });
 
-// @G2 and @G3 follow.
-export type { Page };
-export { AxeBuilder };
+// ---------------------------------------------------------------------------------------------
+// @G3 — every AGT-7 card from recorded tool results; the chat's problem states
+// ---------------------------------------------------------------------------------------------
+
+/** A proposal card as drawn: its badge, a before → after diff and Accept / Reject. */
+async function isProposalCard(card: Locator): Promise<boolean> {
+  return (
+    (await card.getAttribute("data-card")) === "proposal" &&
+    (await card.getByText("PROPOSAL", { exact: true }).count()) === 1 &&
+    (await card.locator("dl").count()) > 0 &&
+    (await card.getByRole("button", { name: /^Accept/ }).count()) === 1
+  );
+}
+
+/** A macro table as drawn: a table with a row per member × slot and fit badges in words. */
+async function isMacroTable(card: Locator): Promise<boolean> {
+  return (
+    (await card.getAttribute("data-card")) === "macro_table" &&
+    (await card.locator("tbody tr").count()) >= 2 &&
+    (await card.getByText("on target").count()) > 0
+  );
+}
+
+async function newConversation(w: World, title: string, rows: { role: string; content: unknown }[]) {
+  const [conv] = await sql<{ id: string }>(
+    `INSERT INTO conversation (id, household_id, user_id, title, created_at, archived_at)
+     VALUES (gen_random_uuid(), $1, $2, $3, now() - interval '1 minute', NULL) RETURNING id`,
+    [w.householdId, w.adminUserId, title],
+  );
+  if (conv === undefined) throw new Error("no conversation");
+  for (const [i, r] of rows.entries())
+    await sql(
+      `INSERT INTO chat_message (id, household_id, conversation_id, role, content, created_at)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, now() - interval '1 minute' + ($5 || ' seconds')::interval)`,
+      [w.householdId, conv.id, r.role, JSON.stringify(r.content), String(i)],
+    );
+  return conv.id;
+}
+
+test.describe.serial("@G3 chat cards", () => {
+  test.setTimeout(180_000);
+
+  test("@G3 set-up: a household with today's plan", async ({ browser }) => {
+    writeShared("g3", await createWorld(browser, "g3"));
+  });
+
+  test("@G3 live and replayed: a stubbed turn draws proposal, applied_change, plan_day and job_progress cards", async ({ browser }) => {
+    const w = world("g3");
+    const ctx = await contextFor(browser, w.adminState, DESKTOP);
+    const page = await ctx.newPage();
+    await page.goto("/chat?new=1");
+    await page.getByRole("textbox", { name: "Message" }).fill("Show me every card, please");
+    await page.getByRole("button", { name: "Send" }).click();
+    const log = page.getByRole("log", { name: "Conversation" });
+    // Live: the activity chips, then the cards as each tool finishes.
+    await expect(log.locator("[data-card=proposal]")).toBeVisible();
+    await expect(log.locator("[data-card=applied_change]")).toBeVisible();
+    await expect(log.locator("[data-card=plan_day]")).toBeVisible();
+    await expect(log.locator("[data-card=job_progress]")).toBeVisible();
+    await expect(log.locator("table")).toContainText("waiting for you");
+    await expect(page).toHaveURL(/\/chat\/[0-9a-f-]{36}$/);
+    const check = async () => {
+      const proposal = log.locator("[data-card=proposal]");
+      expect(await isProposalCard(proposal)).toBe(true);
+      // R-34: a soft exclusion still means "never serve", never "may be served".
+      await expect(proposal).toContainText(/Never serve mushrooms to (Layla|Zayd)/);
+      await expect(proposal).toContainText("Protected from automatic change");
+      await expect(proposal).not.toContainText(/may be served/i);
+      const applied = log.locator("[data-card=applied_change]");
+      await expect(applied).toContainText("APPLIED · you asked");
+      await expect(applied).toContainText("More Italian for everyone");
+      await expect(applied.getByRole("button", { name: /^Undo/ })).toBeVisible();
+      const day = log.locator("[data-card=plan_day]");
+      await expect(day.locator("li").first()).toBeVisible();
+      await expect(day).toContainText(/on target|close|off target|no targets/);
+      await expect(log.locator("[data-card=job_progress]")).toContainText("Planning");
+      await expect(log.getByText(/^Details · 5 steps$/)).toBeVisible();
+    };
+    await check();
+    // Replayed from the stored rows (AGT-8).
+    await page.reload();
+    await check();
+    // The cards act: undo the applied change, accept the proposal.
+    await log.locator("[data-card=applied_change]").getByRole("button", { name: /^Undo/ }).click();
+    await expect(log.locator("[data-card=applied_change]").getByText("Undone")).toBeVisible();
+    await log.locator("[data-card=proposal]").getByRole("button", { name: /^Accept/ }).click();
+    await expect(log.locator("[data-card=proposal]").getByText("Accepted", { exact: true })).toBeVisible();
+    await ctx.close();
+  });
+
+  test("@G3 recorded: recipe (Save, Discard), insight_digest, failed job_progress, macro_table and iteration_limit", async ({ browser }) => {
+    const w = world("g3");
+    const recorded = await recordedRows(DATABASE_URL, w.householdId);
+    const id = await newConversation(w, "Recorded cards", recorded.rows);
+    writeShared("g3Recorded", id);
+    for (const width of [PHONE, DESKTOP]) {
+      const ctx = await contextFor(browser, w.adminState, width);
+      const page = await ctx.newPage();
+      await page.goto(`/chat/${id}`);
+      const log = page.getByRole("log", { name: "Conversation" });
+      const recipe = log.locator("[data-card=recipe]");
+      await expect(recipe.locator("[data-draft]")).toHaveCount(2);
+      const first = recipe.locator("[data-draft]").first();
+      await expect(first).toContainText(recorded.draftNames[0] ?? "?");
+      await expect(first).toContainText("NEW");
+      await expect(first).toContainText("Omar");
+      await expect(first).toContainText("on target");
+      await expect(recipe.locator("[data-draft]").nth(1)).toContainText("Not every target fits");
+      await expect(recipe).toContainText("1 idea didn't pass the checks");
+      const digest = log.locator("[data-card=insight_digest]");
+      await expect(digest).toContainText("Tahini sauce too thick");
+      await expect(digest).toContainText("2 more ideas were held back");
+      await expect(log.locator("[data-card=job_progress]", { hasText: "Writing recipe ideas" })).toContainText("Finished");
+      await expect(log.locator("[data-card=job_progress]", { hasText: "Planning" })).toContainText(
+        "Did not finish: no feasible plate for Sara at lunch",
+      );
+      expect(await isMacroTable(log.locator("[data-card=macro_table]"))).toBe(true);
+      await expect(log.locator("[data-card=macro_table] tbody tr")).toHaveCount(3);
+      await expect(log.locator("[data-card=iteration_limit]")).toContainText("Stopped after 12 steps");
+      await expect(log.locator("[data-card=iteration_limit]")).toContainText("Not done yet: apply change");
+      // The unknown and the malformed card say so, and nothing else breaks.
+      await expect(log.locator("[data-card=unreadable]")).toHaveCount(2);
+      await ctx.close();
+    }
+    // Save the first draft (R-53: its own ops through POST /change-sets), discard the second.
+    const ctx = await contextFor(browser, w.adminState, DESKTOP);
+    const page = await ctx.newPage();
+    await page.goto(`/chat/${id}`);
+    const drafts = page.locator("[data-card=recipe] [data-draft]");
+    await drafts.first().getByRole("button", { name: /^Save/ }).click();
+    await expect(drafts.first().getByText("SAVED TO RECIPES")).toBeVisible();
+    await drafts.nth(1).getByRole("button", { name: /^Discard/ }).click();
+    await expect(page.getByText(/^Discarded “/)).toBeVisible();
+    const saved = await sql<{ source: string; name: string }>(
+      `SELECT source, name FROM dish WHERE id = $1 AND household_id = $2`,
+      [recorded.draftDishIds[0], w.householdId],
+    );
+    expect(saved).toEqual([{ source: "ai", name: recorded.draftNames[0] }]);
+    const notSaved = await sql(`SELECT 1 FROM dish WHERE id = $1`, [recorded.draftDishIds[1]]);
+    expect(notSaved).toHaveLength(0);
+    // After a reload the saved draft reads as saved; the discarded one stays discarded.
+    await page.reload();
+    await expect(drafts.first()).toContainText("Saved to recipes.");
+    await expect(page.getByText(/^Discarded “/)).toBeVisible();
+    await ctx.close();
+  });
+
+  test("@G3 negative control: the card checks fail on the malformed proposal and on another card type", async ({ browser }) => {
+    const w = world("g3");
+    const id = readShared().g3Recorded as string;
+    const ctx = await contextFor(browser, w.adminState, DESKTOP);
+    const page = await ctx.newPage();
+    await page.goto(`/chat/${id}`);
+    const bad = page.locator("[data-card=unreadable][data-card-type=proposal]");
+    await expect(bad).toHaveCount(1);
+    expect(await isProposalCard(bad)).toBe(false);
+    expect(await isMacroTable(page.locator("[data-card=iteration_limit]"))).toBe(false);
+    await ctx.close();
+  });
+
+  test("@G3 problem states: 409 while another reply runs, 429 over the hourly limit, 503 without a model", async ({ browser }) => {
+    const w = world("g3");
+    const ctx = await contextFor(browser, w.adminState, PHONE);
+    const page = await ctx.newPage();
+    // 409: a slow reply is running in this conversation (another tab), then the admin sends.
+    const busyId = await newConversation(w, "Busy", []);
+    await page.goto(`/chat/${busyId}`);
+    const slow = page.request.post(`/api/v1/conversations/${busyId}/messages`, {
+      data: { text: "Take your time with this one" },
+    });
+    await expect
+      .poll(async () => (await sql(`SELECT 1 FROM chat_message WHERE conversation_id = $1`, [busyId])).length)
+      .toBeGreaterThan(0);
+    await page.getByRole("textbox", { name: "Message" }).fill("And another thing");
+    await page.getByRole("button", { name: "Send" }).click();
+    await expect(page.locator("[data-problem=busy]")).toContainText("still running");
+    await expect(page.getByRole("textbox", { name: "Message" })).toHaveValue("And another thing");
+    await slow;
+    // 429: the household has used this hour's turns (CHAT_TURNS_PER_HOUR, default 30).
+    const limitId = await newConversation(
+      w,
+      "Limit",
+      Array.from({ length: 30 }, (_, i) => ({ role: "user", content: [{ type: "text", text: `turn ${String(i)}` }] })),
+    );
+    await page.goto(`/chat/${limitId}`);
+    await page.getByRole("textbox", { name: "Message" }).fill("One more");
+    await page.getByRole("button", { name: "Send" }).click();
+    await expect(page.locator("[data-problem=limit]")).toContainText("this hour");
+    await sql(`DELETE FROM chat_message WHERE conversation_id = $1`, [limitId]);
+    // 503: the same app without a model.
+    const port = process.env.PLAYWRIGHT_PORT_NO_MODEL ?? "";
+    expect(port).not.toBe("");
+    const bare = await browser.newContext({
+      baseURL: `http://localhost:${port}`,
+      viewport: PHONE,
+      storageState: JSON.parse(w.adminState) as { cookies: []; origins: [] },
+    });
+    const p2 = await bare.newPage();
+    await p2.goto("/chat?new=1");
+    await p2.getByRole("textbox", { name: "Message" }).fill("Plan tomorrow");
+    await p2.getByRole("button", { name: "Send" }).click();
+    await expect(p2.locator("[data-problem=unavailable]")).toContainText("isn't set up on this server");
+    await expect(p2.getByRole("textbox", { name: "Message" })).toBeDisabled();
+    await bare.close();
+    await ctx.close();
+  });
+});

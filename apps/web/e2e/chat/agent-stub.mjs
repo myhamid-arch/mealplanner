@@ -102,15 +102,15 @@ function respond(request) {
         [
           text("Here is what I found and did."),
           use("propose_change", {
-            title: `Never plan liver for ${child?.displayName ?? "the kids"}`,
-            rationale: "Two low ratings for dishes with liver.",
+            title: `Never plan mushrooms for ${child?.displayName ?? "the kids"}`,
+            rationale: "Two low ratings for dishes with mushrooms.",
             ops: [
               {
                 kind: "exclusion.add",
                 payload: {
                   memberId: child?.id ?? null,
                   kind: "ingredient",
-                  key: "liver",
+                  key: "mushrooms",
                   reason: "dislike",
                   hard: false,
                 },
