@@ -320,7 +320,7 @@ test.describe.serial("@G4 Updates conversation and shell", () => {
           cards: [
             {
               type: "insight_digest",
-              runAt: new Date(Date.now() - 86_400_000).toISOString(),
+              runAt: new Date(Date.now() - 3_600_000).toISOString(),
               proposals: [],
               dropped: [],
               notes: [{ title: "Earlier note", rationale: "Stored before the automatic list." }],

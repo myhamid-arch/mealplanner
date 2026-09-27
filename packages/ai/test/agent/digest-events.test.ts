@@ -81,8 +81,8 @@ describe("insightDigestEvent with automatic changes (W-9a)", () => {
         undone: true,
       },
     ]);
-    expect((content as { text: string }).text).toContain(
-      "2 changes were made automatically; you can undo them.",
+    expect((content as { text: string }).text).toBe(
+      "I looked at the latest reviews. 2 changes were made automatically; you can undo them.",
     );
   });
   it("without automatic changes the card is as before (no field)", () => {

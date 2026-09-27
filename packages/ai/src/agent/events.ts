@@ -110,9 +110,11 @@ export function insightDigestEvent(
       ? ""
       : ` ${a === 1 ? "One change was" : `${String(a)} changes were`} made automatically; you can undo ${a === 1 ? "it" : "them"}.`;
   const text =
-    n === 0
-      ? `I looked at the latest reviews: ${String(d.notes.length)} note(s), no new proposals.${done}`
-      : `I looked at the latest reviews and have ${String(n)} new proposal${n === 1 ? "" : "s"} for you.${done}`;
+    n === 0 && d.notes.length === 0 && a > 0
+      ? `I looked at the latest reviews.${done}`
+      : n === 0
+        ? `I looked at the latest reviews: ${String(d.notes.length)} note(s), no new proposals.${done}`
+        : `I looked at the latest reviews and have ${String(n)} new proposal${n === 1 ? "" : "s"} for you.${done}`;
   return eventRowContent({ text, cards: [cardJson(card) as unknown as Card] });
 }
 

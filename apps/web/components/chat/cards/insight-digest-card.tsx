@@ -44,7 +44,7 @@ function AutomaticChange({ item }: { readonly item: Automatic }) {
       ) : (
         <Button
           variant="secondary"
-          className="self-start border-[1.5px] border-ink bg-card"
+          className="self-start border-[1.5px] border-ink bg-card! hover:bg-flour!"
           loading={busy}
           disabled={blocked}
           aria-label={`Undo: ${item.title}`}
