@@ -291,7 +291,8 @@ test.describe.serial("@G3 chat cards", () => {
       const proposal = log.locator("[data-card=proposal]");
       expect(await isProposalCard(proposal)).toBe(true);
       // R-34: a soft exclusion still means "never serve", never "may be served".
-      await expect(proposal).toContainText(/Never serve mushrooms to (Layla|Zayd)/);
+      // The slug "mushrooms" by its catalogue name ("Mushrooms, white"), R-36.
+      await expect(proposal).toContainText(/Never serve mushrooms, white to (Layla|Zayd)/);
       await expect(proposal).not.toContainText(/may be served/i);
       // CP3 finding 1: labels, not stored values; defaults of a new row are not listed.
       await expect(proposal).toContainText("Ingredient");
