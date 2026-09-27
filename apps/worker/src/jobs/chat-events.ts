@@ -5,7 +5,7 @@
 // Leaf 1.4.9 (W-9, R-61): the digest lists the FBK-5 portion moves learning applied since the
 // household's previous digest ("Done automatically", with Undo), and a plan job no agent turn
 // started is announced to the admins the same way as the digest ("Monday's plan is ready").
-import { and, asc, desc, eq, gt, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, inArray, isNull, lte, sql } from "drizzle-orm";
 import {
   digestHasNews,
   insightDigestEvent,
@@ -33,6 +33,7 @@ async function insertEvent(
   householdId: string,
   conversationId: string,
   content: Json,
+  createdAt: Date = new Date(),
 ): Promise<string> {
   const id = newId();
   await rt.db.insert(chatMessage).values({
@@ -41,7 +42,7 @@ async function insertEvent(
     conversationId,
     role: "event",
     content,
-    createdAt: new Date(),
+    createdAt,
   });
   return id;
 }
@@ -130,14 +131,16 @@ function records(value: unknown): Record<string, unknown>[] {
 }
 
 /**
- * The FBK-5 portion moves review learning applied since `since` (SPEC-Q-1): `learning` change
- * sets by the system actor whose ops include `portion_bias.set`, oldest first, with the member's
- * name and the bias before (from the stored before-image; 1.0 when the row was new) and after.
+ * The FBK-5 portion moves review learning applied after `since` and up to `until` (SPEC-Q-1):
+ * `learning` change sets by the system actor whose ops include `portion_bias.set`, oldest first,
+ * with the member's name and the bias before (from the stored before-image; 1.0 when the row was
+ * new) and after.
  */
 export async function automaticChangesSince(
   rt: WorkerRuntime,
   householdId: string,
   since: Date | null,
+  until: Date,
 ): Promise<AutomaticChanges> {
   const rows = await rt.db
     .select()
@@ -148,6 +151,7 @@ export async function automaticChangesSince(
         eq(changeSet.source, "learning"),
         eq(changeSet.actor, "system"),
         sql`${changeSet.forward} @> '[{"kind":"portion_bias.set"}]'::jsonb`,
+        lte(changeSet.appliedAt, until),
         ...(since === null ? [] : [gt(changeSet.appliedAt, since)]),
       ),
     )
@@ -211,20 +215,30 @@ export async function postInsightDigest(
 ): Promise<string[]> {
   const householdId = job.householdId;
   if (householdId === null) return [];
+  // The digest is stored as of `now`: a change applied while it is being posted falls in the next
+  // digest's window instead of neither.
+  const now = new Date();
   const automatic = await automaticChangesSince(
     rt,
     householdId,
     await previousDigestAt(rt, householdId),
+    now,
   );
   const content = insightDigestEvent(digest, automatic);
   // The admin asked in chat: answer there, even when there is nothing new.
   const asked = await startingConversation(rt, job);
-  if (asked !== null) return [await insertEvent(rt, householdId, asked, content)];
+  if (asked !== null) return [await insertEvent(rt, householdId, asked, content, now)];
   if (!digestHasNews(digest, automatic)) return [];
   const ids: string[] = [];
   for (const userId of await activeAdmins(rt, householdId))
     ids.push(
-      await insertEvent(rt, householdId, await conversationFor(rt, householdId, userId), content),
+      await insertEvent(
+        rt,
+        householdId,
+        await conversationFor(rt, householdId, userId),
+        content,
+        now,
+      ),
     );
   return ids;
 }

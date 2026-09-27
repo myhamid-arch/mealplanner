@@ -59,7 +59,9 @@ progress bar. The event's text is empty (the card carries the title). Facts, all
 result:
 - "All meals on target" when every targeted plate is `in_tolerance`, else "<n> meal(s) off target"
   (no fact when the plan has no targeted plates);
-- per packed slot type, "<n> <slot label, lower case, plural>" ("3 packed school lunches");
+- per packed slot type, "<n> <slot label, lower case, plural>", counting lunch boxes (a shared
+  packed meal counts once per person eating it, as the mockup's "3 school lunches" for three
+  children): "3 packed school lunches";
 - for meals in training slots (`slot_type.is_training_slot`), "<names>'s training-day meals
   included".
 Title: one date "Monday's plan is ready"; several "The plan from Monday to Sunday is ready". The
