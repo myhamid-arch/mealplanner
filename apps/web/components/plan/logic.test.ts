@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   addDays,
+  moveOptions,
+  unmovable,
+  type MovableMeal,
+  type MoveDay,
+  dayTarget,
   dayKindOf,
   dayProfile,
   profileMacros,
@@ -235,5 +240,129 @@ describe("the day's target (R-28, CP3 finding 1)", () => {
   it("negative control: summing slot targets is not the day target", () => {
     const slotSum = { kcal: 2146, protein: 179, carbs: 199, fat: 70 };
     expect(slotSum.kcal).not.toBe(profileMacros(profiles[0] ?? profile("default", 0, 0)).kcal);
+  });
+});
+
+// Leaf 1.4.8 G3 (W-7, BLD-8 R-58/R-60) ---------------------------------------------------------------
+describe("W-7: the day target on Plan and Plate", () => {
+  const profile = (kind: string, kcal: number, carbsG: number) => ({
+    memberId: "omar",
+    kind,
+    kcal,
+    proteinG: 180,
+    carbsG,
+    fatG: 70,
+    satFatMaxG: 22,
+    fibreMinG: null,
+    solubleFibreMinG: null,
+  });
+  const profiles = [profile("default", 2150, 200), profile("training", 2390, 260)];
+  const f1 = {
+    training: [0, 2, 4].map((weekday) => ({ memberId: "omar", weekday })),
+    dayOverrides: [],
+  };
+  // F1 seed 1, Sunday 2026-10-04: Omar's plates as stored (R-28 re-targeted kcal targets), measured
+  // by packages/core/test/planner/targets/day-sums.test.ts.
+  const sunday = [566, 677.48, 677.58, 224.76].map((kcal) => ({
+    memberId: "omar",
+    target: { kcal, protein: 45, carbs: 50, fat: 17.5 },
+  }));
+  /** The pre-fix rule (1.4.4 before CP3): the sum of the plates' targets. */
+  const preFix = (plates: typeof sunday) =>
+    Math.round(plates.reduce((a, p) => a + p.target.kcal, 0));
+
+  it("F1 Sunday: the day target is 2150 (rest day), with or without schedules", () => {
+    expect(dayTarget(profiles, "omar", "2026-10-04", f1, sunday)).toEqual({
+      kcal: 2150,
+      kind: "default",
+      label: "rest day",
+    });
+    expect(dayTarget(profiles, "omar", "2026-10-04", null, sunday)?.kcal).toBe(2150);
+    // Without schedules a default profile does not tell the day kind.
+    expect(dayTarget(profiles, "omar", "2026-10-04", null, sunday)?.label).toBeNull();
+    // Sara-like: one profile, training by schedule: the kind comes from the schedule.
+    const one = [{ ...profile("default", 1655, 160), memberId: "sara" }];
+    const s = { training: [{ memberId: "sara", weekday: 1 }], dayOverrides: [] };
+    expect(dayTarget(one, "sara", "2026-09-29", s, [])).toMatchObject({
+      kcal: 1655,
+      label: "training day",
+    });
+    expect(dayTarget(profiles, "omar", "2026-10-05", f1, sunday)?.label).toBe("training day");
+    expect(dayTarget(profiles, "sara", "2026-10-04", f1, sunday)).toBeNull();
+  });
+
+  it("negative control: the pre-fix sum of plate targets gives 2146", () => {
+    expect(preFix(sunday)).toBe(2146);
+    expect(preFix(sunday)).not.toBe(dayTarget(profiles, "omar", "2026-10-04", f1, sunday)?.kcal);
+  });
+});
+
+// Leaf 1.4.8 G1 (UX-4 move; R-58, SPEC-Q-3, SPEC-Q-7) ---------------------------------------------
+describe("moving a meal: which days it can go to", () => {
+  const meal = (over: Partial<MovableMeal> = {}): MovableMeal => ({
+    id: "m1",
+    date: "2027-03-01",
+    slotTypeId: "dinner",
+    memberScope: "shared",
+    dishName: "Lamb kofta",
+    locked: false,
+    status: "planned",
+    ...over,
+  });
+  const days = new Map<string, MoveDay>([
+    ["2027-03-01", { date: "2027-03-01", status: "draft", meals: [meal()] }],
+    [
+      "2027-03-02",
+      {
+        date: "2027-03-02",
+        status: "draft",
+        meals: [meal({ id: "m2", date: "2027-03-02", dishName: "Dal" })],
+      },
+    ],
+    ["2027-03-03", { date: "2027-03-03", status: "draft", meals: [] }],
+    [
+      "2027-03-04",
+      {
+        date: "2027-03-04",
+        status: "draft",
+        meals: [meal({ id: "m4", date: "2027-03-04", dishName: "Pilaf", locked: true })],
+      },
+    ],
+    ["2027-03-05", { date: "2027-03-05", status: "published", meals: [] }],
+  ]);
+  const dates = [
+    "2027-02-28",
+    "2027-03-01",
+    "2027-03-02",
+    "2027-03-03",
+    "2027-03-04",
+    "2027-03-05",
+    "2027-03-06",
+  ];
+
+  it("offers swap, move, and blocked days with the reason, from today on", () => {
+    expect(moveOptions(meal(), days, dates, "2027-03-01")).toEqual([
+      { date: "2027-03-02", kind: "swap", occupant: "Dal", reason: null },
+      { date: "2027-03-03", kind: "move", occupant: null, reason: null },
+      { date: "2027-03-04", kind: "blocked", occupant: "Pilaf", reason: "Pilaf there is locked." },
+      {
+        date: "2027-03-05",
+        kind: "blocked",
+        occupant: null,
+        reason: "Already sent to the kitchen.",
+      },
+      { date: "2027-03-06", kind: "blocked", occupant: null, reason: "Not planned yet." },
+    ]);
+  });
+
+  it("a locked, cooked or past meal, or one on a sent day, cannot be moved", () => {
+    const day = days.get("2027-03-01");
+    expect(unmovable(meal(), day, "2027-03-01")).toBeNull();
+    expect(unmovable(meal({ locked: true }), day, "2027-03-01")).toMatch(/locked/);
+    expect(unmovable(meal({ status: "cooked" }), day, "2027-03-01")).toMatch(/cooked/);
+    expect(unmovable(meal(), day, "2027-03-02")).toMatch(/past/);
+    expect(
+      unmovable(meal(), { date: "2027-03-01", status: "published", meals: [] }, "2027-03-01"),
+    ).toMatch(/kitchen/);
   });
 });

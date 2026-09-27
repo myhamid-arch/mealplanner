@@ -1478,6 +1478,23 @@ export const planMealsStatus = endpoint({
   errors: [422],
 });
 
+// 1.4.8 (R-58) ------------------------------------------------------------------------------------
+
+export const planMealsMove = endpoint({
+  id: "planMeals.move",
+  method: "POST",
+  path: `${V}/plan-meals/{id}/move`,
+  summary:
+    "Move a meal to the same slot on another draft day; an occupant exchanges; both days re-solved",
+  tag: "plans",
+  auth: "household",
+  roles: ADMIN,
+  params: byId,
+  body: d.PlanMealMoveBody,
+  response: d.PlanMealMoveResultDto,
+  errors: [409, 422],
+});
+
 export const ENDPOINTS = [
   signup,
   me,
@@ -1547,6 +1564,8 @@ export const ENDPOINTS = [
   cookSheetsFlags,
   plansPublish,
   planMealsStatus,
+  // 1.4.8 (R-58)
+  planMealsMove,
   reviewsList,
   reviewsCreate,
   reviewsEdit,

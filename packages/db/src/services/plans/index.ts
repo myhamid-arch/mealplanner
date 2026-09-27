@@ -45,6 +45,7 @@ export {
   planAlternatives,
   resolvePlates,
   solveMealWith,
+  strictMiss,
   swapMeal,
   swapOp,
   type Alternative,
@@ -61,6 +62,7 @@ export {
 export {
   SUBSTITUTE_DAYS,
   substituteUnavailable,
+  substitutedText,
   type SubstituteReport,
   type SubstitutesPort,
 } from "./substitute.js";
@@ -109,3 +111,5 @@ export {
   type TreeLine,
   type TreeVariant,
 } from "./dish-tree.js";
+// 1.4.8 (R-58)
+export { PlanMoveError, moveMeal, type MoveResult, type PlanMoveErrorCode } from "./move.js";

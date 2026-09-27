@@ -475,3 +475,57 @@ export const mealOverrideRemove = defineOp({
     await tx.remove("meal_override", { id: existing.id });
   },
 });
+
+// 1.4.8 (R-58) -------------------------------------------------------------------------------------
+
+async function requireMovable(tx: ChangeTx, planMealId: string, what: string) {
+  const meal = await requireMeal("plan_meal.move", tx, planMealId);
+  if (meal.locked) throw new ChangeOpError("plan_meal.move", `${what} is locked`);
+  if (meal.status !== "planned")
+    throw new ChangeOpError("plan_meal.move", `${what} is already ${meal.status}`);
+  if ((await tx.find("review", { planMealId })).length > 0)
+    throw new ChangeOpError("plan_meal.move", `${what} has reviews`);
+  const day = await requireRow(
+    "plan_meal.move",
+    `plan day ${meal.planDayId}`,
+    tx.get("plan_day", { id: meal.planDayId }),
+  );
+  if (day.status !== "draft")
+    throw new ChangeOpError("plan_meal.move", `the plan for ${day.date} is already ${day.status}`);
+  return { meal, day };
+}
+
+/**
+ * UX-4 drag to move (W-5 addendum, R-58, leaf-1.4.8 SPEC-Q-3): moves an unlocked meal to the same
+ * slot and member scope on another planned draft day. A meal already there (the occupant) moves to
+ * the source day instead, so the two exchange. The caller re-solves the plates of both days in the
+ * same change set (`plan.swap_dish`).
+ */
+export const planMealMove = defineOp({
+  kind: "plan_meal.move",
+  area: "plans",
+  schema: z.object({ planMealId: id, toDate: isoDate }).strict(),
+  title: (p) => `Move a meal to ${p.toDate}`,
+  apply: async (tx, { planMealId, toDate }) => {
+    const { meal, day } = await requireMovable(tx, planMealId, "the meal");
+    if (day.date === toDate)
+      throw new ChangeOpError("plan_meal.move", `the meal is already on ${toDate}`);
+    const [target] = await tx.find("plan_day", { date: toDate });
+    if (target === undefined) throw new ChangeOpError("plan_meal.move", `no plan for ${toDate}`);
+    if (target.status !== "draft")
+      throw new ChangeOpError(
+        "plan_meal.move",
+        `the plan for ${toDate} is already ${target.status}`,
+      );
+    const [occupant] = await tx.find("plan_meal", {
+      planDayId: target.id,
+      slotTypeId: meal.slotTypeId,
+      memberScope: meal.memberScope,
+    });
+    if (occupant !== undefined) {
+      await requireMovable(tx, occupant.id, `the meal on ${toDate}`);
+      await tx.update("plan_meal", { id: occupant.id }, { planDayId: day.id });
+    }
+    await tx.update("plan_meal", { id: meal.id }, { planDayId: target.id });
+  },
+});

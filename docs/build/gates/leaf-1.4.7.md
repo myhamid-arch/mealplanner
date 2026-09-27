@@ -32,4 +32,4 @@ Scope: The W-5 deferred scope (R-55): model-backed onboarding free-text parse (R
   EXPECT: VERIFY leaf-1.4.7 LIVE PASSED
   EVIDENCE: pending
 
-ABANDON: G6 owner credential handoff (BLD-8 R-56): no Anthropic credential exists in the build environment; the owner runs `ANTHROPIC_API_KEY=<key> node scripts/verify/leaf-1.4.7.mjs --live`, which parses the F1 answers with the live model and must print VERIFY leaf-1.4.7 LIVE PASSED (without a credential it refuses and exits 1)
+ABANDON: G6 owner credential handoff (BLD-8 R-56): no Anthropic credential exists in the build environment; the owner runs `ANTHROPIC_API_KEY=<key> node scripts/verify/leaf-1.4.7.mjs --live`, which parses the F1 answers with the live model and must print VERIFY leaf-1.4.7 LIVE PASSED (without a credential it refuses and exits 1) PASSED LIVE 2026-09-27T09:17Z at 61c3b5b with claude-fable-5-1 (4 calls, 624 tokens; people, both adults' targets and never-eat equal the deterministic parse): docs/build/live/leaf-1.4.7-G6.log. Kept as ABANDON only because the architect session has no credential to rerun it under gate-check.

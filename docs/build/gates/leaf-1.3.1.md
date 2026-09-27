@@ -20,6 +20,5 @@ Scope: Claude client and recipe generator, as specified in docs/spec (see 11-bui
   EVIDENCE: automatic-evidence=v1; definition-sha256=512d8e56de617449da18c1107e8a988acbff6929a7bbde0358ea5d809bd3b4fa; exit=0; EXPECT=matched; output-sha256=4a873d019d442c20edf6a957f4341c347f478430d7d0e1208086ca65a6055b89; output-bytes=1096; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G4: live smoke test generates 3 valid F1 dinner dishes (HANDOFF if no credentials)
-  EVIDENCE: pending
+  EVIDENCE: pending (live run 2026-09-27T09:13Z at 61c3b5b, claude-fable-5-1: FAILED, the 3-dish response hit max_tokens 20000 before completing; docs/build/live/leaf-1.3.1-G4.log; fix in W-11)
 
-ABANDON: G4 no Anthropic credential in the build environment (ANTHROPIC_API_KEY, ANTHROPIC_AUTH_TOKEN, ANTHROPIC_PROFILE and the WIF variables are unset); the owner must provide ANTHROPIC_API_KEY, then run node scripts/verify/leaf-1.3.1.mjs --gate G4 (live F1 dinner generation, expects 3 candidates)
