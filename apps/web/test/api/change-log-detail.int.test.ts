@@ -198,8 +198,8 @@ describe("W-14 change-log subjects", () => {
     const e = entries.find((x) => x.id === ids.target);
     expect(e?.detail?.subject).toBe("Sara");
     expect(e?.detail?.changes).toEqual([
-      { label: "calories", before: "2150 kcal", after: "2190 kcal" },
       { label: "protein", before: "180 g", after: "190 g" },
+      { label: "calories", before: "2150 kcal", after: "2190 kcal" },
     ]);
   });
 

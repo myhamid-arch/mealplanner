@@ -244,11 +244,12 @@ const MEMBER_FIELDS: Record<string, Field> = {
   appetite: { label: "appetite", show: enumText },
   notes: { label: "notes", show: text },
 };
+// Chip order as ChangeLog.dc.html: the nutrients, then calories ("P 130 · 1655 kcal").
 const TARGET_FIELDS: Record<string, Field> = {
-  kcal: { label: "calories", show: grams("kcal") },
   proteinG: { label: "protein", show: grams("g") },
   carbsG: { label: "carbs", show: grams("g") },
   fatG: { label: "fat", show: grams("g") },
+  kcal: { label: "calories", show: grams("kcal") },
   satFatMaxG: { label: "sat fat cap", show: grams("g") },
   solubleFibreMinG: { label: "soluble fibre", show: grams("g") },
   fibreMinG: { label: "fibre", show: grams("g") },

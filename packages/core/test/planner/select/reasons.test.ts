@@ -195,6 +195,9 @@ describe("W-12 plain reasons over the F1 week, seeds 1–10", () => {
       if (plan === undefined) throw new Error(`no plan for seed ${String(seed)}`);
       return problems(plan, lib).map((p) => `seed ${String(seed)} ${p}`);
     });
+    const checked = SEEDS.reduce((n, s) => n + reasonsOf(plans.get(s) as PlanResult).length, 0);
+    process.stdout.write(`W-12 reasons checked: ${String(checked)} over seeds 1–10\n`);
+    expect(checked).toBeGreaterThan(0);
     expect(found).toEqual([]);
   });
 
