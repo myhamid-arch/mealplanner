@@ -59,7 +59,7 @@ function isProtected(e: Exclusion): boolean {
  * rule that applies to every meal.
  */
 export function exclusionScope(e: Exclusion, data: HouseholdData): string {
-  if (e.slotKeys === null) return "";
+  if (e.slotKeys == null) return "";
   const labels = e.slotKeys.map(
     (k) => data.slots.find((s) => s.key === k)?.label.toLowerCase() ?? k.replace(/_/g, " "),
   );
@@ -76,7 +76,7 @@ export function exclusionScope(e: Exclusion, data: HouseholdData): string {
  */
 function lines(rows: readonly Exclusion[], data: HouseholdData, names: Map<string, string>) {
   const groups = new Map<string, Exclusion[]>();
-  const scopeOf = (e: Exclusion) => (e.slotKeys === null ? "" : `|${e.slotKeys.join(",")}`);
+  const scopeOf = (e: Exclusion) => (e.slotKeys == null ? "" : `|${e.slotKeys.join(",")}`);
   for (const e of rows) {
     const key = `${e.memberId ?? "*"}|${e.reason}${scopeOf(e)}`;
     groups.set(key, [...(groups.get(key) ?? []), e]);
@@ -151,7 +151,7 @@ export function NeverServeList({
             <li
               key={line.key}
               data-never-serve={`${line.who}|${line.head.reason}${
-                line.head.slotKeys === null ? "" : `|${line.head.slotKeys.join(",")}`
+                line.head.slotKeys == null ? "" : `|${line.head.slotKeys.join(",")}`
               }`}
               className={`flex flex-wrap items-center gap-2 rounded-lg px-3 py-2.5 ${
                 line.head.reason === "allergy"

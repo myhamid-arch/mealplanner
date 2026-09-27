@@ -1,5 +1,10 @@
 // Constants of the insights engine (FBK-6, FBK-7, FBK-8; leaf-1.3.3 SPEC-Q-4 … 16, BLD-8 R-33).
 // They are constants in v1.
+import {
+  MAIN_MIN_GAP_DAYS,
+  SHORT_GAP_SLOT_KEYS,
+  SHORT_MIN_GAP_DAYS,
+} from "../../planner/select/config.js";
 import { NEGATIVE_TASTE_TAGS } from "../preferences/config.js";
 
 /** FBK-7: the insights job runs after every 10 unprocessed reviews (SPEC-Q-8). */
@@ -59,20 +64,18 @@ export const FREQUENCY_MIN_SIGNALS = 2;
 export const MORE_OFTEN_MIN_GAP_DAYS = 3;
 export const LESS_OFTEN_MIN_GAP_DAYS = 14;
 /**
- * 1.2.6 (R-62, R-63, R-14), OQ-8: the planner's default repeat gap, which a frequency proposal
- * starts from: 7 days for main meals, 4 for snack and workout meals (PLN-9 §6.3).
+ * 1.2.6 (R-62, R-63, R-14), OQ-8: the planner's default repeat gap (PLN-9 §6.3), which a frequency
+ * proposal starts from: 7 days for main meals, 4 for snack and workout meals.
  */
-export const DEFAULT_MIN_GAP_DAYS = 7;
-export const SHORT_DEFAULT_MIN_GAP_DAYS = 4;
-const SHORT_GAP_SLOT_KEYS: readonly string[] = ["snack", "pre_workout", "post_workout"];
+export const DEFAULT_MIN_GAP_DAYS = MAIN_MIN_GAP_DAYS;
 /**
  * The default gap for a dish served in these slots: 4 when every one is a snack or workout slot,
  * else 7 (a pair of servings takes the larger gap of its two slots, R-63).
  */
 export function defaultMinGapDays(slotKeys: readonly string[]): number {
   return slotKeys.length > 0 && slotKeys.every((k) => SHORT_GAP_SLOT_KEYS.includes(k))
-    ? SHORT_DEFAULT_MIN_GAP_DAYS
-    : DEFAULT_MIN_GAP_DAYS;
+    ? SHORT_MIN_GAP_DAYS
+    : MAIN_MIN_GAP_DAYS;
 }
 
 /** FBK-5 targeted: preference boost for higher-volume plates (SPEC-Q-14). */

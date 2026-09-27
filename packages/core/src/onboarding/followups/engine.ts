@@ -103,7 +103,7 @@ function nutFreeFor(cfg: FollowupConfig, memberId: string): boolean {
       e.kind === "dietary_flag" &&
       e.key === NUT_FLAG &&
       (e.memberId === null || e.memberId === memberId) &&
-      (e.slotKeys === null || e.slotKeys.includes(SCHOOL_SLOT)),
+      (e.slotKeys == null || e.slotKeys.includes(SCHOOL_SLOT)),
   );
 }
 
