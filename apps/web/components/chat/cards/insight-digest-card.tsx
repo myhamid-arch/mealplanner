@@ -146,7 +146,11 @@ export function InsightDigestCardView({ card }: { readonly card: Card }) {
         <span className="text-[13px] text-ink-soft">
           {card.dropped.length} more {card.dropped.length === 1 ? "idea was" : "ideas were"} held
           back ({[...new Set(card.dropped.map((d) => d.reason.replace(/_/g, " ")))].join(", ")}).{" "}
-          <Link href="/insights#waiting">See Insights</Link>
+          {/* Underlined: inside running text a link must not rely on colour alone (axe
+          link-in-text-block). */}
+          <Link href="/insights#waiting" className="underline">
+            See Insights
+          </Link>
         </span>
       )}
     </div>

@@ -20,7 +20,7 @@ function PlanReadyRow({ ready }: { readonly ready: NonNullable<Card["ready"]> })
       {ready.facts.length > 0 && (
         <span className="text-[13px] text-ink-soft">{ready.facts.join(" · ")}</span>
       )}
-      <Link href={ready.href} className="self-start text-sm font-extrabold">
+      <Link href={ready.href} className="self-start text-sm font-extrabold underline">
         {ready.action}
       </Link>
     </div>

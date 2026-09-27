@@ -147,13 +147,16 @@ async function floatingButtonShown(page: Page): Promise<boolean> {
 }
 
 /**
- * Waits for the content a check measures (CP3 finding 1): the given element visible, the network
- * idle, fonts loaded, and the page's layout unchanged over three samples 250 ms apart. Under
+ * Waits for the content a check measures (CP3 finding 1): the given element visible, the document
+ * loaded, fonts loaded, and the page's layout unchanged over three samples 250 ms apart. Under
  * concurrent gate load a page can otherwise be measured before it has rendered or hydrated.
  */
 async function contentSettled(page: Page, selector: string): Promise<void> {
   await expect(page.locator(selector).first()).toBeVisible({ timeout: 120_000 });
-  await page.waitForLoadState("networkidle");
+  // Not "networkidle": some pages keep a live connection open (job events, previews).
+  await page.waitForFunction(() => document.readyState === "complete", undefined, {
+    timeout: 120_000,
+  });
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
   const layout = () =>
     page.evaluate(() => {
