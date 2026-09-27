@@ -7,10 +7,15 @@
 import { plateNutrients, type Nutrients } from "../../nutrition/index.js";
 import type { SlotTarget } from "../targets/index.js";
 import { appealOf, enumerateCombinations } from "./combos.js";
-import { CHECK_EPSILON, LAMBDA_APPEAL, TIME_LIMIT_PER_COMBINATION_S } from "./config.js";
+import {
+  CHECK_EPSILON,
+  LAMBDA_APPEAL,
+  LP_ITERATION_LIMIT_PER_COMBINATION,
+  MIP_NODE_LIMIT_PER_COMBINATION,
+} from "./config.js";
 import { adjusterOptions, variantAllowed, type AdjusterOption } from "./eligibility.js";
 import { SolverError } from "./errors.js";
-import { highsRuntime, solveMilp } from "./highs.js";
+import { highsRuntime, solveMilp, type WorkLimit } from "./highs.js";
 import {
   MACROS,
   buildPlateModel,
@@ -33,6 +38,12 @@ import type {
 import { solveUntargeted } from "./untargeted.js";
 
 type Combo = (VariantForSolve | null)[];
+
+/** PLN-5 / R-51: the deterministic work limit of every combination's solve. */
+const WORK_LIMIT: WorkLimit = {
+  mipNodes: MIP_NODE_LIMIT_PER_COMBINATION,
+  lpIterations: LP_ITERATION_LIMIT_PER_COMBINATION,
+};
 
 type Candidate = {
   combo: Combo;
@@ -179,11 +190,10 @@ function runStage(
       per100g: combo[i]?.per100g ?? null,
       rho: p.rhos[i] ?? 0,
     }));
-    const lp = solveMilp(
-      buildPlateModel(modelInput(main, true)).milp,
-      TIME_LIMIT_PER_COMBINATION_S,
-    );
-    if (lp.status !== "solved") return;
+    const lp = solveMilp(buildPlateModel(modelInput(main, true)).milp, WORK_LIMIT);
+    // An infeasible relaxation means an infeasible combination. A relaxation cut short by the
+    // work limit gives no bound, so the combination is kept with bound −∞ (never pruned).
+    if (lp.status !== "solved" && !lp.limited) return;
     const bestAppeal = Math.max(
       0,
       ...combo.filter((v): v is VariantForSolve => v !== null).map((v) => appealOf(v, p.member)),
@@ -192,7 +202,7 @@ function runStage(
       index,
       combo,
       main,
-      bound: lp.objective - LAMBDA_APPEAL * bestAppeal,
+      bound: lp.status === "solved" ? lp.objective - LAMBDA_APPEAL * bestAppeal : -Infinity,
       appealBound: bestAppeal,
     });
   });
@@ -206,7 +216,7 @@ function runStage(
     // can reach best + λ_appeal·(its best appeal), within the tie slack; HiGHS may cut off the rest.
     const cutoff =
       best === undefined ? undefined : best.objective + LAMBDA_APPEAL * appealBound + CUTOFF_SLACK;
-    const result = solveMilp(model.milp, TIME_LIMIT_PER_COMBINATION_S, cutoff);
+    const result = solveMilp(model.milp, WORK_LIMIT, cutoff);
     if (result.status !== "solved") continue;
     const mainGrams = main.map((term, i) => {
       const k = Math.round(result.x[model.mainCol(i)] ?? 0);

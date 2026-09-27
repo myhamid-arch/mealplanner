@@ -42,8 +42,14 @@ export type Milp = {
   rows: Array<{ lower: number; upper: number; entries: Map<number, number> }>;
 };
 
+/**
+ * `limited`: the work limit ended the solve before optimality was proven. A limited MILP may still
+ * be `solved` with its incumbent; a limited LP is never `solved`, because its point is not the
+ * relaxation's optimum and so no valid bound.
+ */
 export type MilpResult =
-  { status: "solved"; x: number[]; objective: number } | { status: "no_solution" };
+  | { status: "solved"; x: number[]; objective: number; limited: boolean }
+  | { status: "no_solution"; limited: boolean };
 
 /**
  * Plate models are tiny (≤ ~40 columns). HiGHS's primal heuristics, restarts, symmetry detection
@@ -69,13 +75,20 @@ const PLATE_OPTIONS = {
 } as const;
 
 /**
- * Solves one MILP with a time limit; a time-limited run counts only if it has a feasible point.
+ * Work limit of one solve (R-51): processed branch-and-bound nodes when the model has an integer
+ * column, simplex iterations when it is a pure LP (an LP relaxation). No wall-clock limit is set,
+ * so the result depends on the model alone, not on machine speed or load (leaf-1.2.5 ADR-1).
+ */
+export type WorkLimit = { mipNodes: number; lpIterations: number };
+
+/**
+ * Solves one MILP within a work limit; a limited run counts only if it has a feasible point.
  * With `cutoff`, HiGHS prunes every node whose bound exceeds it (`objective_bound`). A model whose
  * optimum is above the cutoff ends early, with no solution or with a feasible point, which can
  * never be better than that optimum. A model whose optimum is at or below the cutoff is solved to
- * the same proven optimum, unless the time limit ends the search first (leaf-1.2.3 ADR-2).
+ * the same proven optimum, unless the work limit ends the search first (leaf-1.2.3 ADR-2).
  */
-export function solveMilp(milp: Milp, timeLimitS: number, cutoff?: number): MilpResult {
+export function solveMilp(milp: Milp, limit: WorkLimit, cutoff?: number): MilpResult {
   const highs = highsRuntime();
   const starts: number[] = [0];
   const indices: number[] = [];
@@ -109,22 +122,29 @@ export function solveMilp(milp: Milp, timeLimitS: number, cutoff?: number): Milp
   const status = highs.constants.modelStatus;
   try {
     return highs.withModel(data, (model) => {
+      const isMip = milp.integrality.some((t) => t !== 0);
+      const workLimit: Record<string, number> = isMip
+        ? { mip_max_nodes: limit.mipNodes }
+        : { simplex_iteration_limit: limit.lpIterations };
       model.options.set(
         cutoff === undefined
-          ? { ...PLATE_OPTIONS, time_limit: timeLimitS }
-          : { ...PLATE_OPTIONS, time_limit: timeLimitS, objective_bound: cutoff },
+          ? { ...PLATE_OPTIONS, ...workLimit }
+          : { ...PLATE_OPTIONS, ...workLimit, objective_bound: cutoff },
       );
       model.run();
       const code = model.getModelStatus();
+      // The node limit ends a MILP with `solutionLimit`, the iteration limit an LP with
+      // `iterationLimit` (highs 1.15.3; work-limit.test.ts pins both).
+      const limited = code === (isMip ? status.solutionLimit : status.iterationLimit);
       const hasPoint =
         code === status.optimal ||
-        ((code === status.timeLimit || code === status.interrupted) &&
-          model.info.get("primal_solution_status") === 2);
-      if (!hasPoint) return { status: "no_solution" } as const;
+        (isMip && limited && model.info.get("primal_solution_status") === 2);
+      if (!hasPoint) return { status: "no_solution", limited } as const;
       return {
         status: "solved",
         x: Array.from(model.getSolution().colValue),
         objective: model.getObjectiveValue(),
+        limited,
       } as const;
     });
   } catch (error) {

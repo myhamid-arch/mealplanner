@@ -5,10 +5,10 @@
 // and require identical solutions, on a constructed case that only the appeal term decides and on
 // seed dishes with randomised non-zero appeal.
 //
-// Both runs lift the per-combination time limit (PLN-5, 0.25 s), so every MILP is solved to proven
-// optimality and the comparison does not depend on machine speed. Under the 0.25 s limit, a model
-// that runs out of time without the cutoff returns its incumbent, which can differ from the proven
-// optimum the cutoff run reaches in time (ADR-2, "Time limit").
+// Both runs lift the per-combination work limit (PLN-5, R-51), so every MILP is solved to proven
+// optimality and the comparison is about the cutoff alone. Under the work limit, a model that runs
+// out of nodes without the cutoff returns its incumbent, which can differ from the proven optimum
+// the cutoff run reaches within the limit (ADR-2, "Time limit"; leaf-1.2.5 ADR-1).
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import {
   loadPortionSolver,
@@ -33,8 +33,12 @@ import {
   type MacroKey,
 } from "./fixtures/cases.js";
 
-/** `unlimitedS`: the per-MILP limit for both runs, far above any plate model's solve time. */
-const milp = vi.hoisted(() => ({ cutoff: true, cutoffCalls: 0, unlimitedS: 60 }));
+/** `unlimited`: HiGHS's largest node and iteration limits, for both runs. */
+const milp = vi.hoisted(() => ({
+  cutoff: true,
+  cutoffCalls: 0,
+  unlimited: { mipNodes: 2_147_483_647, lpIterations: 2_147_483_647 },
+}));
 
 vi.mock("../../../src/planner/solver/highs.js", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../../../src/planner/solver/highs.js")>();
@@ -42,7 +46,7 @@ vi.mock("../../../src/planner/solver/highs.js", async (importOriginal) => {
     ...actual,
     solveMilp: (...[model, , cutoff]: Parameters<typeof actual.solveMilp>) => {
       if (cutoff !== undefined) milp.cutoffCalls++;
-      return actual.solveMilp(model, milp.unlimitedS, milp.cutoff ? cutoff : undefined);
+      return actual.solveMilp(model, milp.unlimited, milp.cutoff ? cutoff : undefined);
     },
   };
 });
