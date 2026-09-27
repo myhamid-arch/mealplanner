@@ -1,0 +1,9 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" RUN_LLM_EVALS=1 EVAL_TRANSCRIPTS=<dir> node evals/agent/run.ts allergy-sesame weekend-appeal make-sara-admin | utc: 2026-09-27T11:03:12Z | exit: 1 | commit: dc6178312f2ba65c1df64ec0e9eb795895c06450 (+ uncommitted run.ts transcript option)
+FAIL allergy-sesame (end_turn, 6 calls; tools: search_dishes, search_dishes, search_dishes, get_dish, apply_change)
+     expected a exclusion.add op with {"kind":"ingredient","key":"sesame-seeds","reason":"allergy","hard":true}
+FAIL weekend-appeal (end_turn, 3 calls; tools: get_household, apply_change)
+     expected a preset.upsert op with {"appliesToWeekdays":[5,6]}
+FAIL make-sara-admin (end_turn, 1 calls; tools: none)
+     expected a role.set op
+     expected a role.set op with {"role":"admin"}
+AGENT EVAL 0/3 passed (0.0 %, threshold 90 %) with claude-fable-5-1
