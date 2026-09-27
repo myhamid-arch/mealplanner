@@ -1,6 +1,6 @@
 # Leaf 1.4.5 ADR-2 — chat client: streaming, Markdown, cards, voice
 
-Status: proposed at CP1.
+Status: accepted at CP1 (R-53); built as below.
 
 ## Streaming (AGT-2, AGT-7)
 
@@ -8,7 +8,7 @@ The composer posts through the contract client's `events(conversationsSend, …)
 
 HTTP errors before the stream starts are separate states with their own copy and action (ApiProblem codes): `409 turn_in_progress` ("A reply to this conversation is still running", retry), `503 assistant_unavailable` ("The assistant isn't set up on this server"; composer disabled, screens still work), `429 rate_limited` ("You've used this hour's assistant turns"; the composer keeps the text).
 
-Proactive `event` rows (digests, job completions) appear by re-reading `GET …/messages`: while a `job_progress` card of this conversation is `queued`/`running`, the page follows `GET /jobs/{id}/events` (SSE) and re-reads the messages when the job ends; otherwise it re-reads when the page becomes visible.
+Proactive `event` rows (digests, job completions) appear by re-reading `GET …/messages`: each `queued`/`running` `job_progress` card follows `GET /jobs/{id}/events` (SSE; plan jobs show the day being planned and the meals chosen) and the conversation is re-read when the job ends (the worker posts its completion row before the job's terminal event); otherwise it is re-read when the page becomes visible again and every 30 s while it is visible.
 
 ## Markdown (AGT-7 "streamed Markdown, tables supported")
 
@@ -16,7 +16,7 @@ No Markdown dependency is added (anti-drift 3). `components/chat/markdown.tsx` r
 
 ## Cards
 
-Card payloads are `JsonValue` in the contract. `components/chat/cards/parse.ts` validates each card with a Zod schema per `CARD_TYPES` entry (types imported from `@mealplanner/ai/agent` with `import type` only, so no SDK code reaches the browser bundle); an unknown or malformed card renders a small "This card can't be shown" note with its type, never a crash. Each card type has its own component (AGT-7 list plus `iteration_limit`).
+Card payloads are `JsonValue` in the contract. The recipe card's Save posts the draft's own `ops` (R-53) with `POST /change-sets`. `components/chat/cards/parse.ts` validates each card with a Zod schema per `CARD_TYPES` entry (types imported from `@mealplanner/ai/agent` with `import type` only, so no SDK code reaches the browser bundle); an unknown or malformed card renders a small "This card can't be shown" note with its type, never a crash. Each card type has its own component (AGT-7 list plus `iteration_limit`).
 
 ## Voice input
 

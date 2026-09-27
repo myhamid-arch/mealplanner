@@ -1,6 +1,8 @@
 # Leaf 1.4.5 — spec questions
 
-Each question records the reading this leaf takes (the more conservative one) until the architect rules. `ARCHITECT QUESTION` marks the ones that need an answer before the part they affect can be finished; everything else proceeds on the reading.
+Each question records the reading this leaf takes (the more conservative one) until the architect rules. `ARCHITECT QUESTION` marks the ones that needed an answer before the part they affect could be finished.
+
+**Rulings (CP1, R-53 and its addendum):** SPEC-Q-1 option A; SPEC-Q-2, SPEC-Q-3 and SPEC-Q-14 granted; SPEC-Q-10 built now, the link edit in `apps/web/components/config/onboarding/onboarding-flow.tsx` (addendum `b09f7ed`); SPEC-Q-9's routes fixed for every leaf; SPEC-Q-4 … 8, 11 … 13 and 15 accepted. How each was built is noted under the question.
 
 ## SPEC-Q-1 (ARCHITECT QUESTION): building the `dish.create` ops for the recipe card's Save (R-46, REC-6)
 
@@ -10,6 +12,8 @@ R-46: "Save applies `dish.create` through `POST /change-sets` (1.4.5)." The `rec
 - **Option B (the reading taken until ruled):** the chat builds the same ops in `apps/web/components/chat/recipe-ops.ts` from `GET /cuisines`, `GET /methods`, `GET /ingredients?q=<slug>` and `GET /dishes` (taken slugs), mirroring `saveGeneratedDishes` line for line, with a unit test that compares its output with `saveGeneratedDishes` on the same draft (the test needs SPEC-Q-14's OWNS). Risk: two copies can drift.
 
 Discard drops the card locally (the draft was never saved; nothing to undo). Save shows an `applied_change`-style confirmation with Undo (`POST /change-sets/{id}/undo`).
+
+**Built (option A):** `generatedDishOps` in `packages/db/src/services/plans/generation.ts` (with `householdDishSlugs`), used by `saveGeneratedDishes`; `recipe-draft.ts` adds `ops` and `summary` (`Add AI recipe "<name>"`) to each draft, slugs distinct across the drafts of one job. Save posts exactly those ops. One addition in the chat only: when two drafts of one card propose the same new ingredient and the first is saved, the second's `ingredient.create` for that slug is dropped and its dish points at the created ingredient (`remapOps`), so the second Save does not collide on the unique slug.
 
 ## SPEC-Q-2 (request): the desktop side panel needs one line in the shell layout (AGT-7, ChatSidePanel)
 
@@ -27,6 +31,8 @@ GET /api/v1/portion-biases?memberId=<id>        roles: admin; member (own member
 ```
 
 Reading until ruled: the portions section is not rendered, and this is listed as a deviation. "History" links to `/changelog`.
+
+**Built (granted):** `portion_bias` has no timestamp column, so the DTO is `{ memberId, componentRole, factor }` (no `updatedAt`). A member asking for another member gets 403; a member without a linked member gets an empty list; kitchen is refused by role. Targeted members' portions are fixed by targets (FBK-5), so Insights says so instead of showing factors.
 
 ## SPEC-Q-4: `macro_table` has no producer (AGT-7)
 
@@ -55,11 +61,13 @@ No endpoint links a review to the learning change set it caused, and `ReviewDto.
 - Quick rating: `/reviews/rate?planMealId=<id>` (the bottom sheet; "Say more…" → the detailed review).
 - Detailed review: `/reviews/new?planMealId=<id>[&for=<memberId>]`, and `/reviews/new?targetType=<t>&targetId=<id>` for any other reviewable object (dish, ingredient, …; FBK-2). This matches 1.4.4 SPEC-Q-9's `/reviews/new?planMealId=`.
 - Chat: `/chat?prompt=<text>` prefills the composer and does not send (1.4.3 SPEC-Q-16, architect note). 1.4.4 SPEC-Q-9 proposed `/chat?draft=`; this leaf reads only `prompt` and asks that 1.4.4 use it.
-- Conversations: `/chat` opens the most recent conversation (or an empty new one); `/chat/<conversationId>` a given one.
+- Conversations: `/chat` opens the most recent conversation (or an empty new one); `/chat/<conversationId>` a given one; `/chat?new=<anything>` an empty one ("New conversation"; each press uses a fresh value so the screen starts afresh).
 
 ## SPEC-Q-10: ChatOnboarding (R2-ONB-5) — where it lives and how it converses
 
 `(setup)/onboarding/**` is 1.4.3's; this leaf owns `(app)/chat/**`. Reading: `/chat/setup`. The conversational path does not use the agent model (no endpoint parses onboarding free text yet; the model-backed parse is W-5): the assistant's side is scripted in the page and asks the five R2-ONB-1 questions in turn, each skippable; replies are parsed with 1.4.3's deterministic parsers (`parsePeople`, `parseTargets`, `parseNeverEat`, cuisine matching) into `OnboardingAnswers`, shown for confirmation, and `inferSetup` builds the ops; "Create all & plan tomorrow" applies them as one change set (`POST /change-sets`) then `POST /plans/generate` for tomorrow, the same ending as 1.4.3's review. 1.4.3's "Just tell me" link currently points to `/chat?prompt=Set up my household: `; it should point to `/chat/setup`. Built after 1.4.3 merges (architect note); if it has not merged by CP2, this is stated at CP2.
+
+**Built:** questions 1, 2 and 5 are typed answers (question 2 in one message: each person's numbers after their name, "I"/"me" meaning the admin; `targetsByPerson`); questions 3 and 4 are tap cards inside the conversation (packed school lunch, work lunch, who trains with days and morning/evening, snacks; cuisine stickers), because 1.4.3 has no deterministic parser for a free-text week. The SETUP PROPOSAL card shows the people table, Shared / Individual / Likes chips and every explanation; after saving, each explanation links to where it is adjusted (SC-7), and tomorrow is planned.
 
 ## SPEC-Q-11: conversation list: auto titles, search, the Updates badge (AGT-7)
 
@@ -88,3 +96,15 @@ Reading until granted: fixtures are generated by `scripts/verify/leaf-1.4.5.mjs`
 - Reviewing for: admins may pick any member; a member sees their own member and, when the household allows members to review for younger siblings, members younger than them (`GET /households/current`, `GET /members`); the server enforces it either way.
 - The "Kitchen" chip in "Who" filters reviews whose tags are all kitchen tags (FBK-3 Kitchen group), since `ReviewDto` has no author role.
 - "About" filters by target type: Dishes = dish, plan_meal, plate; Parts of dishes = component, variant; Ingredients = ingredient; Portions = reviews with a quantity tag; How often = reviews with a frequency tag; Whole days = plan_day. "Low ratings only" = rating ≤ 2; "Unanswered" = no reply (`GET /reviews?parentId=`).
+
+## SPEC-Q-16: the chat as a full-screen sheet on phones
+
+AGT-7: "On mobile it is a full-screen sheet." The shell (1.4.2) draws the tab bar and the floating Assistant button on every page, which would cover the composer. Reading: below 1024 px the chat screen is a fixed full-screen layer over the shell (ChatPhoneDigest / ChatPhoneRecipe: a purple header with Back and the conversation's title, no tab bar), with a "Conversations" button for the list. At ≥ 1024 px it sits beside the rail (ChatDesktop).
+
+## SPEC-Q-17: steps after a turn, and card order
+
+AGT-7: activity chips "collapse into a Details disclosure". Reading: while the turn streams, each tool is a chip with the server's label ("Checking the plan…"); when it ends they fold into "Details · N steps" (a failed tool is marked "(failed)"). ChatDesktop's permanent past-tense chips are drawn this way (listed as a deviation). Text and cards appear in the order the loop stored them (a card can come before the text of the next model call).
+
+## SPEC-Q-18: what a stored proposal card shows later
+
+A `proposal` card is stored as `pending`. Reading: the chat reads the proposals and the change log, so a card whose proposal was since accepted shows "Accepted" with Undo, one whose change set was undone "Accepted, then undone", one rejected its reason, one expired or superseded says so, instead of offering Accept again. The digest card does the same per proposal.
