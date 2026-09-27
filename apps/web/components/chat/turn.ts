@@ -257,13 +257,3 @@ export function reduce(
       };
   }
 }
-
-/** Job ids of this conversation's `job_progress` cards that are still queued or running. */
-export function openJobs(rows: readonly Row[]): string[] {
-  const state = new Map<string, string>();
-  for (const row of rows)
-    for (const card of row.role === "tool" || row.role === "event" ? rowCards(row) : [])
-      if (isRecord(card) && card.type === "job_progress" && typeof card.jobId === "string")
-        state.set(card.jobId, typeof card.status === "string" ? card.status : "queued");
-  return [...state].filter(([, s]) => s === "queued" || s === "running").map(([id]) => id);
-}

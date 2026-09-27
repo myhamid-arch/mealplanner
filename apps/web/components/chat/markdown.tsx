@@ -54,7 +54,12 @@ export function parseBlocks(source: string): Block[] {
       i++;
       continue;
     }
-    if (line.includes("|") && TABLE_RULE.test(lines[i + 1] ?? "")) {
+    // GFM: a table needs a delimiter row with one cell per header cell.
+    if (
+      line.includes("|") &&
+      TABLE_RULE.test(lines[i + 1] ?? "") &&
+      cells(lines[i + 1] ?? "").length === cells(line).length
+    ) {
       flush();
       const head = cells(line);
       const align = cells(lines[i + 1] ?? "").map((c) =>

@@ -185,7 +185,7 @@ export async function recordedRows(
         },
       ],
       draftDishIds,
-      draftNames: dishes.map((d) => (d.dish).name),
+      draftNames: dishes.map((d) => d.dish.name),
     };
   } finally {
     await pool.end();
