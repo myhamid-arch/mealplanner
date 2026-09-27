@@ -1,6 +1,6 @@
 # leaf-1.3.6 ADR-1: recipe output budget sized from a measured per-dish output
 
-Status: proposed (CP1)
+Status: accepted (CP1, BLD-8 R-66)
 
 ## Context
 - The live 1.3.1 G4 run (`docs/build/live/leaf-1.3.1-G4.log`, 2026-09-27T09:13:25Z, `claude-fable-5-1`) failed: the 3-dish F1 dinner request ended at `max_tokens` = 20 000 (leaf-1.3.1 ADR-1 chose 20 000 as the largest round value below the SDK's non-streaming ceiling of 21 333, and said to revisit it if G4 hit `max_tokens`).

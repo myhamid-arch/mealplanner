@@ -58,8 +58,8 @@ describe("AGT-9 eval set", () => {
               kind: "exclusion.add",
               payload: {
                 memberId: "x",
-                kind: "ingredient",
-                key: "sesame-seeds",
+                kind: "dietary_flag",
+                key: "contains_sesame",
                 reason: "allergy",
                 hard: true,
               },
@@ -71,6 +71,30 @@ describe("AGT-9 eval set", () => {
     expect(g).toEqual({ id: "allergy-sesame", pass: true, failures: [] });
   });
 
+  it("R-66: a sesame allergy excluded only as the sesame-seeds ingredient fails (R2-ONB-3)", () => {
+    const g = gradeCase(byId("allergy-sesame"), [
+      {
+        name: "apply_change",
+        input: {
+          summary: "Omar: sesame allergy",
+          ops: [
+            {
+              kind: "exclusion.add",
+              payload: {
+                memberId: "x",
+                kind: "ingredient",
+                key: "sesame-seeds",
+                reason: "allergy",
+                hard: true,
+              },
+            },
+          ],
+        },
+      },
+    ]);
+    expect(g.pass).toBe(false);
+  });
+
   it("negative control: a soft allergy, a proposal instead of an apply, or an apply of an idea all fail", () => {
     const soft = gradeCase(byId("allergy-sesame"), [
       {
@@ -80,7 +104,12 @@ describe("AGT-9 eval set", () => {
           ops: [
             {
               kind: "exclusion.add",
-              payload: { kind: "ingredient", key: "sesame-seeds", reason: "allergy", hard: false },
+              payload: {
+                kind: "dietary_flag",
+                key: "contains_sesame",
+                reason: "allergy",
+                hard: false,
+              },
             },
           ],
         },

@@ -5,7 +5,7 @@ Source failure: `docs/build/live/leaf-1.3.5-G4.log` (2026-09-27T09:17:05Z, commi
 Diagnosis run: the three failing cases only, live, with the new `EVAL_TRANSCRIPTS` option of `evals/agent/run.ts` (the stored rows exactly as sent and received, plus the port writes).
 
 - Command, time, exit and commit: `docs/build/live/leaf-1.3.6-diag-3cases.log` (2026-09-27T11:03:12Z, exit 1, commit dc61783 plus the uncommitted transcript option). Result 0/3.
-- Transcripts: `docs/build/live/leaf-1.3.6-diag-allergy-sesame.log`, `…-diag-weekend-appeal.log`, `…-diag-make-sara-admin.log`.
+- Transcripts: `docs/build/live/leaf-1.3.6-diag-allergy-sesame.log`, `docs/build/live/leaf-1.3.6-diag-weekend-appeal.log`, `docs/build/live/leaf-1.3.6-diag-make-sara-admin.log`.
 
 Thinking blocks come back empty (`display` defaults to `omitted` on this model), so the evidence is the tool calls and the visible text.
 
@@ -33,7 +33,7 @@ A second contributing cause is in the system prompt: its only allergy example is
 
 **Fix (prompt, `packages/ai/src/agent/prompt.ts`).** State R2-ONB-3: an allergen that has a catalogue dietary flag (sesame, nuts, gluten, dairy, egg, fish, shellfish, soy) is one `exclusion.add` with `kind: "dietary_flag"`, the flag key, `reason: "allergy"`, `hard: true`, which covers every flagged ingredient. Other foods are ingredient exclusions keyed by slug.
 
-**Expectation.** The expectation stays unchanged until the architect rules (`ARCHITECT QUESTION`, SPEC-Q-1 in `leaf-1.3.6-questions.md`). Proposed: `{kind: dietary_flag, key: contains_sesame, reason: allergy, hard: true}`, with the `hard: false` must-not kept.
+**Expectation.** Changed by architect ruling **R-66** (SPEC-Q-1, ruling A; `docs/spec/11-build-plan.md` §8) to `{kind: dietary_flag, key: contains_sesame, reason: allergy, hard: true}`, with the `hard: false` must-not kept. This is the only expectation that changed. The YAML comment cites R-66, and G2 checks every other case against the failed set at 9d23db6.
 
 ## 2. weekend-appeal ("Make weekends more about appeal")
 
@@ -69,10 +69,12 @@ The op reference in the same prompt does include `role.set (protected)`, so the 
 
 **Fix (prompt).** Replace the sentence. A role change is `role.set` with the login's `userId` from `get_household` (`logins`), sent through `apply_change`, where it becomes a proposal the admin confirms. Invitations, blocking, removing logins, sessions and support access stay on People & access. No expectation change.
 
+**Open outside OWNS.** The eval household's `get_household` returns `logins` with user ids. The production port (`apps/web/lib/server/agent.ts:160`) does not, so in the app the model cannot name Sara's `userId`. A single-entry request for that file is on the PR (ARCHITECT QUESTION after CP1). The eval result does not depend on it.
+
 ## Summary
 
 | Case | Root cause | Fix | Expectation |
 |---|---|---|---|
-| allergy-sesame | Expectation disagrees with R2-ONB-3 on the allergy's shape; the prompt has no flag rule | prompt: R2-ONB-3 flag rule | change proposed, ARCHITECT QUESTION (SPEC-Q-1) |
+| allergy-sesame | Expectation disagrees with R2-ONB-3 on the allergy's shape; the prompt has no flag rule | prompt: R2-ONB-3 flag rule | changed per R-66 (SPEC-Q-1, ruling A) |
 | weekend-appeal | Weekday numbering missing from the prompt; the model used 0 = Sunday | prompt: 0 = Monday … 6 = Sunday; presets for day-specific weights | unchanged |
 | make-sara-admin | The prompt forbids role changes, contrary to AGT-5/AGT-6 | prompt: `role.set` through `apply_change` becomes a proposal | unchanged |

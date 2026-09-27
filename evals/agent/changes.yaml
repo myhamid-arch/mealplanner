@@ -9,6 +9,8 @@ cases:
       payloads:
         - kind: target.set
           match: { kind: default, profile: { proteinG: 140 } }
+  # R-66 (leaf-1.3.6 SPEC-Q-1): an allergen a dietary flag names is excluded by the flag
+  # (R2-ONB-3), as onboarding's resolver does; sesame-seeds alone leaves tahini and hummus allowed.
   - id: allergy-sesame
     prompt: "Omar is allergic to sesame"
     expect:
@@ -16,7 +18,7 @@ cases:
       via: apply_change
       payloads:
         - kind: exclusion.add
-          match: { kind: ingredient, key: sesame-seeds, reason: allergy, hard: true }
+          match: { kind: dietary_flag, key: contains_sesame, reason: allergy, hard: true }
     mustNot:
       payloads:
         - kind: exclusion.add

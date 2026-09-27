@@ -30,6 +30,7 @@ export {
 } from "./generate.js";
 export {
   RECIPE_EFFORT,
+  RECIPE_TOKENS_PER_DISH,
   SYSTEM_PROMPT,
   buildFollowUpRequest,
   buildRecipeRequest,
@@ -37,6 +38,7 @@ export {
   contextMessage,
   echoableContent,
   followUpMessage,
+  recipeMaxTokens,
   systemBlocks,
   type RejectionNote,
 } from "./prompt.js";

@@ -5,7 +5,6 @@ import {
   ClaudeCallError,
   DEFAULT_MODEL,
   FALLBACK_BETA,
-  MAX_OUTPUT_TOKENS,
   createClaudeClient,
   resolveClaudeConfig,
   type ClaudeCallErrorCode,
@@ -14,6 +13,7 @@ import {
   RecipeGenerationError,
   buildRecipeRequest,
   generateRecipes,
+  recipeMaxTokens,
 } from "../../src/recipes/index.js";
 import { loadCatalogue } from "./support/catalogue.js";
 import { batchFixture, batchResponse, recordedClient, wireFixture } from "./support/recorded.js";
@@ -55,7 +55,7 @@ describe("G3 request shape (REC-2)", () => {
     );
     expect(sent?.body).toMatchObject({
       model: DEFAULT_MODEL,
-      max_tokens: MAX_OUTPUT_TOKENS,
+      max_tokens: recipeMaxTokens(f1DinnerRequest().context.count),
       fallbacks: "default",
       thinking: { type: "adaptive" },
       output_config: { effort: "high", format: { type: "json_schema" } },

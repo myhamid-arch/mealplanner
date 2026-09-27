@@ -4,7 +4,7 @@ import type { BetaContentBlock } from "@anthropic-ai/sdk/resources/beta/messages
 import type { DishForSolve } from "@mealplanner/core/planner/solver";
 import {
   ClaudeCallError,
-  MAX_OUTPUT_TOKENS,
+  outputBudget,
   type StructuredModel,
   type StructuredRequest,
 } from "../client/index.js";
@@ -94,14 +94,14 @@ function requestSummary(
   call: 1 | 2,
   model: string,
   request: RecipeRequest,
-  messageCount: number,
+  req: StructuredRequest<typeof DishBatchSchema>,
 ): Json {
   return asJson({
     call,
     model,
     effort: RECIPE_EFFORT,
-    maxTokens: MAX_OUTPUT_TOKENS,
-    messages: messageCount,
+    maxTokens: outputBudget(req),
+    messages: req.messages.length,
     context: request.context,
   });
 }
@@ -153,7 +153,7 @@ export async function generateRecipes(
     const base = {
       purpose: "recipe" as const,
       model: model.model,
-      requestSummary: requestSummary(call, model.model, request, req.messages.length),
+      requestSummary: requestSummary(call, model.model, request, req),
     };
     const rec: AiGenerationRecord = result.ok
       ? {

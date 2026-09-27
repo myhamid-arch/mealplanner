@@ -10,4 +10,4 @@
 - **Live evidence:** `docs/build/live/leaf-1.3.6-diag-allergy-sesame.log`. The model sends the `contains_sesame` flag (plus tahini).
 - **Proposed ruling (A):** change the expectation to `{kind: dietary_flag, key: contains_sesame, reason: allergy, hard: true}` and keep the `hard: false` must-not. The prompt states the R2-ONB-3 rule (one flag exclusion per flagged allergen).
 - **Alternative (B):** keep the expectation, and the prompt asks for the flag exclusion **and** an ingredient exclusion for the named ingredient's slug. Both ops are hard, so this is safe. But it stores two rows for one allergy, unlike onboarding, which stores one.
-- **Conservative reading until the ruling:** the expectation is unchanged. The prompt states the flag rule, which both A and B need.
+- **Ruling: R-66, option A** (2026-09-27, CP1 APPROVED). The expectation is now `{kind: dietary_flag, key: contains_sesame, reason: allergy, hard: true}`, the `hard: false` must-not stays, and the YAML comment cites R-66. No other expectation changed.
