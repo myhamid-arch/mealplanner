@@ -58,6 +58,8 @@ const MEMBER = "adult.b@f1.example";
  */
 const TURN_TABLES = ["ai_generation", "chat_message", "conversation"];
 const EXCLUDED = new Set([...NOT_COMPARED, ...TURN_TABLES]);
+/** The recording that answers every insight synthesis request (recorded/intelligence.json). */
+const SYNTHESIS = "insights.run: synthesis keeps the rule candidates as they are";
 
 let database: { url: string; pool: pg.Pool };
 let f1: LoadedFixture;
@@ -406,11 +408,15 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
     measure({
       check: "model",
       requests: model.requests.length,
+      syntheses: model.answered.get(SYNTHESIS) ?? 0,
       failures: model.failures,
       remaining: model.remaining(),
     });
     expect(model.failures, model.failures.join("\n")).toEqual([]);
+    // The six agent requests, each once and in order; the two explicit insights runs (plus any the
+    // worker's daily schedule started) each made one synthesis request.
     expect(model.remaining()).toEqual([]);
-    expect(model.requests.length).toBe(8);
+    expect(model.answered.get(SYNTHESIS) ?? 0).toBeGreaterThanOrEqual(2);
+    expect(model.requests.length).toBe(6 + (model.answered.get(SYNTHESIS) ?? 0));
   });
 });

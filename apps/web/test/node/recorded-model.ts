@@ -123,6 +123,13 @@ function mismatch(r: Recording, body: Body): string | null {
   return null;
 }
 
+/** What a request asked, for failure messages. */
+function describe(body: Body): string {
+  const last = body.messages?.at(-1);
+  const results = toolResults(body).map((t) => t.name);
+  return `stream ${String(body.stream === true)}, ${String(body.messages?.length ?? 0)} message(s), last ${String(last?.role)}: "${textOf(last?.content).slice(0, 80)}"${results.length > 0 ? `, tool results of ${results.join(", ")}` : ""}, system "${systemText(body).slice(0, 60)}"`;
+}
+
 let seq = 0;
 
 function message(model: string, r: Recording) {
@@ -215,7 +222,7 @@ export async function startRecordedModel(recordings: Recording[]): Promise<Recor
       const why = next === undefined ? headWhy : null;
       if (next === undefined || why !== null) {
         failures.push(
-          `request ${String(requests.length)} ${String(req.url)} (next: ${head?.name ?? "none"}): ${String(why)}`,
+          `request ${String(requests.length)} ${String(req.url)} (next: ${head?.name ?? "none"}): ${String(why)}; ${describe(body)}`,
         );
         res.writeHead(500, { "content-type": "application/json" }).end(
           JSON.stringify({

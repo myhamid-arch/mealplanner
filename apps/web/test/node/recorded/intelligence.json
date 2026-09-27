@@ -1,8 +1,8 @@
 {
-  "about": "node-1.3 N3 (R-69, SPEC-Q-6): the worker's insight synthesis (structured, not streamed) and the agent's streamed turns, in the order the flow makes them. Written by hand in the shape of Messages API responses; placeholders {{…}} are filled from the seeded household. The request each one answers must match `expect`.",
+  "about": "node-1.3 N3 (R-69, SPEC-Q-6): the worker's insight synthesis (structured, not streamed) and the agent's streamed turns, the agent turns in the order the flow makes them; the synthesis recording answers every insights run (the explicit ones and any the worker's daily schedule starts). Written by hand in the shape of Messages API responses; placeholders {{…}} are filled from the seeded household. The request each one answers must match `expect`.",
   "recordings": [
     {
-      "name": "insights.run after one review: synthesis keeps the rule candidates as they are",
+      "name": "insights.run: synthesis keeps the rule candidates as they are",
       "expect": {
         "stream": false,
         "systemContains": ["You are the insights engine of a family meal planner"]
@@ -15,23 +15,8 @@
           }
         ],
         "stop_reason": "end_turn"
-      }
-    },
-    {
-      "name": "insights.run after two reviews: synthesis keeps the rule candidates as they are",
-      "expect": {
-        "stream": false,
-        "systemContains": ["You are the insights engine of a family meal planner"]
       },
-      "response": {
-        "content": [
-          {
-            "type": "text",
-            "text": "{\"proposals\":[]}"
-          }
-        ],
-        "stop_reason": "end_turn"
-      }
+      "repeat": true
     },
     {
       "name": "turn 1: read Adult B's preferences",

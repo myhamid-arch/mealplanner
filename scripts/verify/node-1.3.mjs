@@ -137,10 +137,10 @@ function recheck(report, m) {
   );
   const model = one("model");
   console.log(
-    `       measured: ${String(model?.requests)} model request(s), all answered from recordings; ${String(model?.failures?.length)} unrecorded`,
+    `       measured: ${String(model?.requests)} model request(s) (${String(model?.syntheses)} insight syntheses), answered from recordings; ${String(model?.failures?.length)} unrecorded`,
   );
   report.check(
-    model?.failures?.length === 0 && model?.remaining?.length === 0,
+    model?.failures?.length === 0 && model?.remaining?.length === 0 && model?.syntheses >= 2,
     "every model request was answered from a recording",
   );
 }

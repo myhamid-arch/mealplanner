@@ -1,5 +1,5 @@
 {
-  "about": "node-1.4 N3 (R-69, SPEC-Q-6): the onboarding parse (POST /onboarding/parse, structured, not streamed) of the Onboarding mockup's answers, read the way the deterministic parse reads them. Written by hand in the shape of Messages API responses. Each may answer any number of requests: the page asks 800 ms after typing stops, so how often depends on timing.",
+  "about": "node-1.4 N3 (R-69, SPEC-Q-6): the onboarding parse (POST /onboarding/parse, structured, not streamed) of the Onboarding mockup's answers, read the way the deterministic parse reads them. Written by hand in the shape of Messages API responses. Each may answer any number of requests: the page asks 800 ms after typing stops, so how often depends on timing. The last recording answers the insight synthesis of any insights run the worker's daily schedule starts while the spec runs (it depends on the clock).",
   "recordings": [
     {
       "name": "parse: who eats at home",
@@ -68,6 +68,23 @@
           {
             "type": "text",
             "text": "{\"rules\":[{\"who\":\"Zayd\",\"term\":\"sesame\",\"reason\":\"allergy\"},{\"who\":\"everyone\",\"term\":\"pork\",\"reason\":\"religious\"},{\"who\":\"everyone\",\"term\":\"alcohol\",\"reason\":\"religious\"},{\"who\":\"Sara\",\"term\":\"liver\",\"reason\":\"dislike\"}]}"
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    },
+    {
+      "name": "insights.run: synthesis keeps the rule candidates as they are",
+      "repeat": true,
+      "expect": {
+        "stream": false,
+        "systemContains": ["You are the insights engine of a family meal planner"]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"proposals\":[]}"
           }
         ],
         "stop_reason": "end_turn"
