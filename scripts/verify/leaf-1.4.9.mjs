@@ -35,6 +35,7 @@
 import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import {
+  appendFileSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -797,6 +798,19 @@ async function main() {
     console.error("usage: node scripts/verify/leaf-1.4.9.mjs --gate G1|G2|G3|G4");
     return 2;
   }
+  // The full output also goes to a log file (gate-check keeps only a bounded transcript; W-1).
+  const logFile = join(tmpdir(), `leaf-1.4.9-${gate.toLowerCase()}-last.log`);
+  writeFileSync(logFile, "");
+  const print = console.log.bind(console);
+  console.log = (...args) => {
+    print(...args);
+    try {
+      appendFileSync(logFile, `${args.map(String).join(" ")}\n`);
+    } catch {
+      // The log is a convenience; the gate's verdict does not depend on it.
+    }
+  };
+  console.log(`full output: ${logFile}`);
   const report = new Report(`${LABEL} ${gate}`);
   const started = Date.now();
   await GATES[gate](report);
