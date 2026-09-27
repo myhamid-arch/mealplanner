@@ -21,6 +21,8 @@ export interface RecipeDraftPayload {
   conversationId: string;
   request: string;
   slot: string | null;
+  /** 1.4.9 (R-61, R-66): the day the admin named; absent in jobs queued before it existed. */
+  date?: string | null;
   count: number;
 }
 
@@ -75,12 +77,11 @@ export const recipeDraft: JobHandler = async (ctx) => {
   const config = await loadHouseholdConfig(ctx.rt.db, hh);
   const pool = await loadPlanPool(ctx.rt.db, hh);
   const slotKey = draftSlot(config, p.slot);
-  const date = draftDate(
-    config,
-    slotKey,
-    p.count,
-    localDate(new Date(), config.household.timezone),
-  );
+  // 1.4.9 (R-61, R-66): the day the admin named, else the first day someone attends the slot.
+  const date =
+    typeof p.date === "string" && p.date !== ""
+      ? p.date
+      : draftDate(config, slotKey, p.count, localDate(new Date(), config.household.timezone));
   const outcome = await generateDishes(ctx.rt, hh, {
     config,
     pool,

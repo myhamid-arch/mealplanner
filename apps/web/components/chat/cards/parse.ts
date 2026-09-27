@@ -80,6 +80,14 @@ export const RecipeCardSchema = z.object({
   jobId: z.string(),
   dishes: z.array(DraftDishSchema),
   rejected: z.array(z.object({ dishName: z.string(), reasons: z.array(Reason) })).default([]),
+  /** leaf 1.4.9 (R-61): the day and slot the request named, for "Use for <Day> <slot>". */
+  use: z
+    .object({
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      slotKey: z.string().min(1),
+      slotLabel: z.string().min(1),
+    })
+    .optional(),
 });
 
 export const MacroRowSchema = z.object({
@@ -103,6 +111,15 @@ export const JobProgressCardSchema = z.object({
   kind: z.string(),
   status: z.enum(["queued", "running", "succeeded", "failed", "cancelled"]),
   error: z.string().optional(),
+  /** leaf 1.4.9 (W-9b): a plan no agent turn started, announced in Updates. */
+  ready: z
+    .object({
+      title: z.string(),
+      facts: z.array(z.string()),
+      href: z.string(),
+      action: z.string(),
+    })
+    .optional(),
 });
 
 export const InsightDigestCardSchema = z.object({
@@ -113,6 +130,18 @@ export const InsightDigestCardSchema = z.object({
   ),
   dropped: z.array(z.object({ title: z.string(), reason: z.string() })),
   notes: z.array(z.object({ title: z.string(), rationale: z.string() }).loose()),
+  /** leaf 1.4.9 (W-9a): changes made automatically since the previous digest; older digests lack it. */
+  automatic: z
+    .array(
+      z.object({
+        changeSetId: z.string(),
+        title: z.string(),
+        detail: z.string(),
+        appliedAt: z.string(),
+        undone: z.boolean(),
+      }),
+    )
+    .default([]),
 });
 
 export const IterationLimitCardSchema = z.object({

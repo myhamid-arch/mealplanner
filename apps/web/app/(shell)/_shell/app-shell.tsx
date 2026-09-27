@@ -16,13 +16,16 @@ export interface AppShellProps {
 
 /**
  * App shell (UX-3): a left rail at ≥ 1024 px; below that, a bottom tab bar and, for admins, a
- * floating assistant button. Role-aware parts take the viewer; nothing here fetches data.
+ * floating assistant button (hidden at ≥ 1024 px, where the rail has Assistant). Role-aware parts take the viewer; nothing here fetches data.
  * Pure; `AppShell` in app-shell-client.tsx supplies the path from the router.
  */
 export function AppShellFrame({ viewer, pathname, children, panel }: AppShellProps) {
   const assistant = viewer !== null && hasAssistant(viewer.role);
   return (
-    <div className="flex min-h-dvh bg-paper">
+    // W-10b (leaf 1.4.9, R-63 option A): at ≥ 1024 px, while the side panel is closed its round
+    // opener (ChatPanel, fixed 24 px from the bottom-right corner) is the aside's only child; the
+    // main area then keeps clear of that corner so the button covers no content.
+    <div className="flex min-h-dvh bg-paper lg:[&:has(>aside>button)>main]:pr-[100px] lg:[&:has(>aside>button)>main]:pb-[100px]">
       <a
         href="#main"
         className="sr-only-focusable fixed top-2 left-2 z-50 rounded-md bg-card px-4 py-3 font-extrabold text-action shadow-card"

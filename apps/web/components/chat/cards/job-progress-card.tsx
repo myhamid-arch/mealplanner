@@ -1,11 +1,31 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { jobsEvents } from "@mealplanner/api-contract/contract";
 import { api } from "../../admin/api";
 import { useChatData } from "../context";
 import { dayTitle } from "../../reviews/targets";
 import type { JobProgressCard as Card } from "./parse";
+
+/** A plan no agent turn started, announced in Updates (W-9b; ChatPhoneDigest's last row). */
+function PlanReadyRow({ ready }: { readonly ready: NonNullable<Card["ready"]> }) {
+  return (
+    <div
+      className="flex flex-col gap-1.5 rounded-card bg-card p-3.5 shadow-card"
+      data-card="job_progress"
+      data-plan-ready
+    >
+      <span className="font-extrabold">{ready.title}</span>
+      {ready.facts.length > 0 && (
+        <span className="text-[13px] text-ink-soft">{ready.facts.join(" · ")}</span>
+      )}
+      <Link href={ready.href} className="self-start text-sm font-extrabold underline">
+        {ready.action}
+      </Link>
+    </div>
+  );
+}
 
 const KINDS: Readonly<Record<string, string>> = {
   "plan.generate": "Planning",
@@ -18,9 +38,16 @@ const TERMINAL = new Set(["done", "failed", "cancelled"]);
 /**
  * AGT-7 `job_progress`: a live progress bar for a plan, insights or recipe job. While the job is
  * queued or running it follows `GET /jobs/{id}/events`; when it ends, the conversation is re-read
- * so the worker's completion message appears (R-46).
+ * so the worker's completion message appears (R-46). A succeeded plan job that carries `ready`
+ * (leaf 1.4.9) is drawn as the plan-ready row instead.
  */
 export function JobProgressCardView({ card }: { readonly card: Card }) {
+  if (card.status === "succeeded" && card.ready !== undefined)
+    return <PlanReadyRow ready={card.ready} />;
+  return <JobProgress card={card} />;
+}
+
+function JobProgress({ card }: { readonly card: Card }) {
   const { onJobDone } = useChatData();
   const [status, setStatus] = useState<string>(card.status);
   const [detail, setDetail] = useState<string | null>(null);

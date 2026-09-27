@@ -46,6 +46,11 @@ export interface RecipeCard {
   /** Draft dishes (not saved; Save applies `dish.create`, REC-6) with per-attendee example plates. */
   dishes: Json[];
   rejected: Json[];
+  /**
+   * Optional (leaf 1.4.9, R-61; 1.4.8 SPEC-Q-5): the day and slot the admin asked for, so a saved
+   * draft links to "Use for <Day> <slot>" on its recipe page. Only when the request named both.
+   */
+  use?: { date: string; slotKey: string; slotLabel: string };
 }
 
 export interface MacroTableCard {
@@ -54,12 +59,34 @@ export interface MacroTableCard {
   rows: Json[];
 }
 
+/** A finished plan announced in Updates (W-9b, leaf-1.4.9 SPEC-Q-5): ChatPhoneDigest's row. */
+export interface PlanReady {
+  title: string;
+  /** Short facts, shown joined by " · " ("All meals on target", "3 packed school lunches"). */
+  facts: string[];
+  href: string;
+  action: string;
+}
+
 export interface JobProgressCard {
   type: "job_progress";
   jobId: string;
   kind: string;
   status: "queued" | "running" | "succeeded" | "failed" | "cancelled";
   error?: string;
+  /** Optional (W-9b): a succeeded plan job no agent turn started. */
+  ready?: PlanReady;
+}
+
+/** A `learning` change set applied without a proposal (FBK-5; W-9a, leaf-1.4.9 SPEC-Q-1). */
+export interface AutomaticChange {
+  changeSetId: string;
+  title: string;
+  /** The change set's summary ("Learned from Zayd's review of …"). */
+  detail: string;
+  appliedAt: string;
+  /** Undone when the digest was posted (the card reads the live state from the change log). */
+  undone: boolean;
 }
 
 export interface InsightDigestCard {
@@ -68,6 +95,8 @@ export interface InsightDigestCard {
   proposals: { id: string; kind: string; title: string; rationale: string }[];
   dropped: { title: string; reason: string }[];
   notes: Json[];
+  /** Optional (W-9a): "Done automatically" since the previous digest. Older digests lack it. */
+  automatic?: AutomaticChange[];
 }
 
 export interface IterationLimitCard {

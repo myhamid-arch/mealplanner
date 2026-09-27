@@ -85,6 +85,8 @@ export const TOOL_SCHEMAS = {
     .object({
       request: z.string().trim().min(1).max(1000),
       slot: z.string().trim().min(1).max(60).optional(),
+      // 1.4.9 (R-61, R-66): the day the recipe is for, when the admin names one.
+      date: isoDate.optional(),
       count: z.number().int().min(1).max(5).default(1),
     })
     .strict(),
