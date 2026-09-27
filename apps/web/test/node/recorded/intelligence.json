@@ -1,0 +1,201 @@
+{
+  "about": "node-1.3 N3 (R-69, SPEC-Q-6): the worker's insight synthesis (structured, not streamed) and the agent's streamed turns, in the order the flow makes them. Written by hand in the shape of Messages API responses; placeholders {{…}} are filled from the seeded household. The request each one answers must match `expect`.",
+  "recordings": [
+    {
+      "name": "insights.run after one review: synthesis keeps the rule candidates as they are",
+      "expect": {
+        "stream": false,
+        "systemContains": [
+          "You are the insights engine of a family meal planner"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"proposals\":[]}"
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    },
+    {
+      "name": "insights.run after two reviews: synthesis keeps the rule candidates as they are",
+      "expect": {
+        "stream": false,
+        "systemContains": [
+          "You are the insights engine of a family meal planner"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"proposals\":[]}"
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    },
+    {
+      "name": "turn 1: read Adult B's preferences",
+      "expect": {
+        "stream": true,
+        "lastUserText": [
+          "What does Adult B think of"
+        ],
+        "systemContains": [
+          "You are this household's meal-planning assistant"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Let me look at Adult B's preferences."
+          },
+          {
+            "type": "tool_use",
+            "name": "get_preferences",
+            "input": {
+              "memberId": "{{MEMBER_ID}}"
+            }
+          }
+        ],
+        "stop_reason": "tool_use"
+      }
+    },
+    {
+      "name": "turn 1: answer from the preference the tool returned",
+      "expect": {
+        "stream": true,
+        "toolResultOf": "get_preferences",
+        "toolResultContains": [
+          "{{DISH_ID}}",
+          "-0.8"
+        ],
+        "systemContains": [
+          "You are this household's meal-planning assistant"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Adult B dislikes that dish: it is at -0.8 and locked, so the planner avoids it for them."
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    },
+    {
+      "name": "turn 2: apply the change the admin asked for",
+      "expect": {
+        "stream": true,
+        "lastUserText": [
+          "Weigh appeal higher"
+        ],
+        "systemContains": [
+          "You are this household's meal-planning assistant"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "tool_use",
+            "name": "apply_change",
+            "input": {
+              "summary": "Weigh appeal higher",
+              "ops": [
+                {
+                  "kind": "weights.set",
+                  "payload": {
+                    "appeal": 0.7
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "stop_reason": "tool_use"
+      }
+    },
+    {
+      "name": "turn 2: confirm",
+      "expect": {
+        "stream": true,
+        "toolResultOf": "apply_change",
+        "toolResultContains": [
+          "applied"
+        ],
+        "systemContains": [
+          "You are this household's meal-planning assistant"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Done: appeal now weighs 0.7. You can undo it from the change log."
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    },
+    {
+      "name": "turn 3 (negative control): apply a second change",
+      "expect": {
+        "stream": true,
+        "lastUserText": [
+          "Rename Child C1"
+        ],
+        "systemContains": [
+          "You are this household's meal-planning assistant"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "tool_use",
+            "name": "apply_change",
+            "input": {
+              "summary": "Rename Child C1",
+              "ops": [
+                {
+                  "kind": "member.update",
+                  "payload": {
+                    "memberId": "{{CHILD_ID}}",
+                    "displayName": "Child C1 renamed"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "stop_reason": "tool_use"
+      }
+    },
+    {
+      "name": "turn 3: confirm",
+      "expect": {
+        "stream": true,
+        "toolResultOf": "apply_change",
+        "toolResultContains": [
+          "applied"
+        ],
+        "systemContains": [
+          "You are this household's meal-planning assistant"
+        ]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Done: Child C1 is renamed."
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    }
+  ]
+}

@@ -6,7 +6,7 @@ import { randomBytes } from "node:crypto";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import { and, eq } from "drizzle-orm";
 import pg from "pg";
 import { account, household, householdUser, newId, user } from "@mealplanner/db/schema";
@@ -151,44 +151,55 @@ export async function startBuiltApp(
 
 const noMail: Mailer = { configured: false, send: () => Promise.resolve() };
 
+type Auth = ReturnType<typeof createAuth>;
+
 /**
- * Gives a login of the seeded household a password through Better Auth's own hashing (SPEC-Q-3;
- * `loadFixture` creates users without a credential) and signs in over HTTP; returns the bearer
- * token and household id.
+ * Gives a login of the seeded household a password through Better Auth's own hashing (SPEC-Q-3:
+ * `loadFixture` creates users without a credential).
  */
-export async function signIn(
-  app: BuiltApp,
-  databaseUrl: string,
+export async function giveCredential(
+  db: NodePgDatabase,
+  auth: Auth,
   email: string,
-): Promise<{ token: string; householdId: string; userId: string }> {
-  const pool = new pg.Pool({ connectionString: databaseUrl, max: 2 });
-  const db = drizzle(pool);
+): Promise<{ password: string; householdId: string; userId: string }> {
   const password = `node-${randomBytes(9).toString("base64url")}`;
+  const ctx = await auth.$context;
+  const [u] = await db.select({ id: user.id }).from(user).where(eq(user.email, email));
+  if (u === undefined) throw new Error(`no user ${email}`);
+  const [hh] = await db
+    .select({ id: household.id })
+    .from(householdUser)
+    .innerJoin(household, eq(household.id, householdUser.householdId))
+    .where(eq(householdUser.userId, u.id));
+  if (hh === undefined) throw new Error(`${email} has no household`);
+  const hash = await ctx.password.hash(password);
+  await db.delete(account).where(and(eq(account.userId, u.id), eq(account.providerId, "credential")));
+  const now = new Date();
+  await db.insert(account).values({
+    id: newId(),
+    userId: u.id,
+    accountId: u.id,
+    providerId: "credential",
+    password: hash,
+    createdAt: now,
+    updatedAt: now,
+  });
+  return { password, householdId: hh.id, userId: u.id };
+}
+
+export interface Login {
+  token: string;
+  householdId: string;
+  userId: string;
+}
+
+/** Signs a seeded login in to the built app over HTTP (`POST /api/auth/sign-in/email`). */
+export async function signIn(app: BuiltApp, databaseUrl: string, email: string): Promise<Login> {
+  const pool = new pg.Pool({ connectionString: databaseUrl, max: 2 });
   try {
+    const db = drizzle(pool);
     const auth = createAuth({ db, mailer: noMail, appUrl: app.url, secret: app.secret });
-    const ctx = await auth.$context;
-    const [u] = await db.select({ id: user.id }).from(user).where(eq(user.email, email));
-    if (u === undefined) throw new Error(`no user ${email}`);
-    const [hh] = await db
-      .select({ id: household.id })
-      .from(householdUser)
-      .innerJoin(household, eq(household.id, householdUser.householdId))
-      .where(eq(householdUser.userId, u.id));
-    if (hh === undefined) throw new Error(`${email} has no household`);
-    const hash = await ctx.password.hash(password);
-    await db
-      .delete(account)
-      .where(and(eq(account.userId, u.id), eq(account.providerId, "credential")));
-    const now = new Date();
-    await db.insert(account).values({
-      id: newId(),
-      userId: u.id,
-      accountId: u.id,
-      providerId: "credential",
-      password: hash,
-      createdAt: now,
-      updatedAt: now,
-    });
+    const { password, householdId, userId } = await giveCredential(db, auth, email);
     const res = await fetch(`${app.url}/api/auth/sign-in/email`, {
       method: "POST",
       headers: { "content-type": "application/json", origin: app.url },
@@ -197,10 +208,21 @@ export async function signIn(
     const token = res.headers.get("set-auth-token");
     if (!res.ok || token === null)
       throw new Error(`sign-in failed (${String(res.status)}): ${await res.text()}`);
-    return { token, householdId: hh.id, userId: u.id };
+    return { token, householdId, userId };
   } finally {
     await pool.end();
   }
+}
+
+/** Signs a seeded login in through an in-process runtime's Better Auth API. */
+export async function signInInProcess(
+  rt: { db: NodePgDatabase; auth: Auth },
+  email: string,
+): Promise<Login> {
+  const { password, householdId, userId } = await giveCredential(rt.db, rt.auth, email);
+  const signed = await rt.auth.api.signInEmail({ body: { email, password }, returnHeaders: true });
+  const token = signed.headers.get("set-auth-token") ?? signed.response.token;
+  return { token, householdId, userId };
 }
 
 export interface Api {
