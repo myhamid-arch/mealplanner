@@ -77,7 +77,7 @@ Solves one **plate**: one member, one dish, one slot target.
 - `− λ_appeal · variantAppeal`: breaks ties towards the variants the member prefers. It is applied across combinations, not inside the MILP.
 - Defaults: `λ_ratio = 2` (R-29; 0.5 let the centring term dominate), `λ_sat = 0.02`, `λ_appeal = 0.3`, and the fibre shortfall weights of R-28. They are constants in `planner/solver/config.ts`, not user settings in v1.
 
-**Engine.** HiGHS (WASM, `highs` npm package) MILP with absolute-value linearisation through deviation variables. Time limit 250 ms per combination. If HiGHS cannot run in a target runtime, `javascript-lp-solver` is the fallback, behind the same interface.
+**Engine.** HiGHS (WASM, `highs` npm package) MILP with absolute-value linearisation through deviation variables. Each combination has a deterministic work limit instead of a wall-clock limit (R-51): at most 572 branch-and-bound nodes per MILP and 10,748 simplex iterations per LP relaxation, calibrated to the former 250 ms budget on the reference container; the same seed gives the same plan whatever the machine load (PLN-11). A relaxation stopped by its iteration limit gives no bound, so its combination is never pruned. If HiGHS cannot run in a target runtime, `javascript-lp-solver` is the fallback, behind the same interface.
 
 **Adjusters (PLN-6).** If no combination is feasible, the solver retries with up to 2 **adjuster** components. Adjusters are single-component global dishes marked `role = adjuster`, for example: 0 % Greek yogurt, egg whites, cottage cheese (low fat), olive oil, apple, banana, dates, rice cakes, cucumber-tomato salad, labneh (light). They must:
 - pass the member's exclusions,
