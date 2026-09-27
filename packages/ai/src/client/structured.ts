@@ -14,10 +14,28 @@ import { FALLBACK_BETA, type ClaudeConfig } from "./config.js";
 import { ClaudeCallError, fromSdkError, type ClaudeUsage } from "./errors.js";
 
 /**
- * The largest round output budget below the SDK's non-streaming ceiling (21 333 tokens without an
- * explicit timeout; ADR-1). A response that does not fit ends as a typed `max_tokens` error.
+ * The default output budget: the largest round value below the SDK's non-streaming ceiling
+ * (21 333 tokens without an explicit timeout; leaf-1.3.1 ADR-1). A request can ask for more with
+ * `maxTokens` (leaf-1.3.6 ADR-1). A response that does not fit ends as a typed `max_tokens` error.
  */
 export const MAX_OUTPUT_TOKENS = 20_000;
+
+/** The model's maximum output per response (leaf-1.3.6 ADR-1). */
+export const MODEL_MAX_OUTPUT_TOKENS = 128_000;
+
+const MINUTE_MS = 60_000;
+
+/**
+ * The request timeout for a non-streaming call with this budget: the SDK's own scaling (60 min for
+ * the model's full output), at least its 10-minute default. Passing it explicitly lets the SDK send
+ * a budget above its non-streaming ceiling (leaf-1.3.6 ADR-1).
+ */
+export function nonStreamingTimeoutMs(maxTokens: number): number {
+  return Math.max(
+    10 * MINUTE_MS,
+    Math.ceil((60 * MINUTE_MS * maxTokens) / MODEL_MAX_OUTPUT_TOKENS),
+  );
+}
 
 export type Effort = "low" | "medium" | "high" | "xhigh" | "max";
 
@@ -28,6 +46,8 @@ export type StructuredRequest<S extends z.ZodType> = {
   /** The conversation; only ever appended to by callers. */
   messages: BetaMessageParam[];
   effort: Effort;
+  /** Output budget, thinking included; default {@link MAX_OUTPUT_TOKENS}. */
+  maxTokens?: number;
 };
 
 export type StructuredResult<T> = {
@@ -57,6 +77,16 @@ function usageOf(message: BetaMessage): ClaudeUsage {
   };
 }
 
+/** The output budget of a request. */
+export function outputBudget(request: { maxTokens?: number }): number {
+  const budget = request.maxTokens ?? MAX_OUTPUT_TOKENS;
+  if (!Number.isInteger(budget) || budget < 1 || budget > MODEL_MAX_OUTPUT_TOKENS)
+    throw new RangeError(
+      `maxTokens must be an integer from 1 to ${String(MODEL_MAX_OUTPUT_TOKENS)} (got ${String(budget)})`,
+    );
+  return budget;
+}
+
 /** The request body sent for a structured call (exported so tests can compare it with the wire). */
 export function structuredParams<S extends z.ZodType>(
   model: string,
@@ -65,7 +95,7 @@ export function structuredParams<S extends z.ZodType>(
 ) {
   return {
     model,
-    max_tokens: MAX_OUTPUT_TOKENS,
+    max_tokens: outputBudget(request),
     betas: [FALLBACK_BETA],
     fallbacks: "default" as const,
     thinking: { type: "adaptive" as const },
@@ -103,11 +133,13 @@ class AnthropicStructuredModel implements StructuredModel {
       },
     };
 
+    const budget = outputBudget(request);
     let message: BetaMessage & { parsed_output: z.output<S> | null };
     try {
       // The SDK types parsed_output as unknown for a generic schema; the format above fixes it.
       message = (await this.#client.beta.messages.parse(
         structuredParams(this.model, request, format),
+        { timeout: nonStreamingTimeoutMs(budget) },
       )) as BetaMessage & { parsed_output: z.output<S> | null };
     } catch (error) {
       throw fromSdkError(error);
@@ -133,7 +165,7 @@ class AnthropicStructuredModel implements StructuredModel {
     if (message.stop_reason === "max_tokens") {
       throw new ClaudeCallError(
         "max_tokens",
-        `the response reached max_tokens (${String(MAX_OUTPUT_TOKENS)}) before it was complete`,
+        `the response reached max_tokens (${String(budget)}) before it was complete`,
         details,
       );
     }

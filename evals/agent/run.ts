@@ -4,10 +4,13 @@
 //   pnpm -r build
 //   RUN_LLM_EVALS=1 ANTHROPIC_API_KEY=… node evals/agent/run.ts [case-id …]
 //
+// With EVAL_TRANSCRIPTS=<dir>, each case's stored rows (the exact content blocks, tool results
+// included) and the writes its ports recorded are written to <dir>/<case-id>.json for diagnosis.
+//
 // Each case is one user turn of the real loop (`runAgentTurn`) with the live model, in-memory
 // ports over the eval household (household.ts), and a fresh conversation. The tool calls of the
 // turn are graded by `gradeCase`.
-import { readFileSync, readdirSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import {
@@ -78,6 +81,8 @@ async function main(): Promise<number> {
   }
   const only = new Set(process.argv.slice(2));
   const cases = loadCases().filter((c) => only.size === 0 || only.has(c.id));
+  const transcripts = process.env.EVAL_TRANSCRIPTS?.trim();
+  if (transcripts !== undefined && transcripts !== "") mkdirSync(transcripts, { recursive: true });
   const grades = [];
   for (const c of cases) {
     const rows: StoredMessage[] = [];
@@ -100,6 +105,23 @@ async function main(): Promise<number> {
     const calls = toolCalls(rows);
     const grade = gradeCase(c, calls);
     grades.push(grade);
+    if (transcripts !== undefined && transcripts !== "")
+      writeFileSync(
+        join(transcripts, `${c.id}.json`),
+        `${JSON.stringify(
+          {
+            case: c.id,
+            prompt: c.prompt,
+            model: model.model,
+            stopReason: outcome.stopReason,
+            grade,
+            rows,
+            writes: record.writes,
+          },
+          null,
+          2,
+        )}\n`,
+      );
     console.log(
       `${grade.pass ? "PASS" : "FAIL"} ${c.id} (${outcome.stopReason}, ${String(outcome.modelCalls)} calls; tools: ${calls.map((x) => x.name).join(", ") || "none"})${grade.pass ? "" : `\n     ${grade.failures.join("\n     ")}`}`,
     );

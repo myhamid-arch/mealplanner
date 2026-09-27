@@ -1,0 +1,26 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" node <scratch measure.mjs> 3 & node <scratch measure.mjs> 1 (run from packages/ai; script body below) | utc: 2026-09-27T11:05:35Z | exit: 0 | commit: dc6178312f2ba65c1df64ec0e9eb795895c06450 (+ uncommitted run.ts transcript option)
+{"count":3,"model":"claude-fable-5-1","stop":"end_turn","out":24932,"textChars":40375,"dishes":3,"seconds":244,"thinkingBlocks":1}
+{"count":1,"model":"claude-fable-5-1","stop":"end_turn","out":9069,"textChars":14815,"dishes":1,"seconds":97,"thinkingBlocks":1}
+# script:
+// Measures the output size of the real recipe request (REC-2) at a large budget, streamed.
+import Anthropic from "@anthropic-ai/sdk";
+import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+const AI = "/home/user/mealplanner/packages/ai/dist";
+const { buildRecipeRequest } = await import(`${AI}/src/recipes/index.js`);
+const { structuredParams } = await import(`${AI}/src/client/structured.js`);
+const { loadCatalogue } = await import(`${AI}/test/recipes/support/catalogue.js`);
+const { f1DinnerRequest } = await import(`${AI}/test/recipes/support/scenario.js`);
+const { f1Config } = await import(`${AI}/test/recipes/support/household.js`);
+const count = Number(process.argv[2]);
+const cfg = f1Config();
+const req = buildRecipeRequest(loadCatalogue(), f1DinnerRequest(cfg, { count }).context,
+  cfg.slotTypes.filter((s) => s.active).map((s) => s.key));
+const client = new Anthropic();
+const params = { ...structuredParams("claude-fable-5-1", req, betaZodOutputFormat(req.schema)), max_tokens: 64000 };
+const t0 = Date.now();
+const msg = await client.beta.messages.stream(params).finalMessage();
+const text = msg.content.filter((b) => b.type === "text").map((b) => b.text).join("");
+let dishes = null; try { dishes = JSON.parse(text).dishes.length; } catch {}
+console.log(JSON.stringify({ count, model: msg.model, stop: msg.stop_reason, out: msg.usage.output_tokens,
+  textChars: text.length, dishes, seconds: Math.round((Date.now() - t0) / 1000),
+  thinkingBlocks: msg.content.filter((b) => b.type === "thinking").length }));

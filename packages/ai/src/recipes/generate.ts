@@ -1,10 +1,11 @@
 // The recipe generator (REC-2 … REC-6): one call, REC-5 validation, at most one append-only
-// follow-up, an audit record per call (DM-7) and the survivors saved through a port (SPEC-Q-8).
+// follow-up when fewer than `count` candidates result (R-67), an audit record per call (DM-7) and
+// the survivors saved through a port (SPEC-Q-8).
 import type { BetaContentBlock } from "@anthropic-ai/sdk/resources/beta/messages/messages";
 import type { DishForSolve } from "@mealplanner/core/planner/solver";
 import {
   ClaudeCallError,
-  MAX_OUTPUT_TOKENS,
+  outputBudget,
   type StructuredModel,
   type StructuredRequest,
 } from "../client/index.js";
@@ -94,14 +95,14 @@ function requestSummary(
   call: 1 | 2,
   model: string,
   request: RecipeRequest,
-  messageCount: number,
+  req: StructuredRequest<typeof DishBatchSchema>,
 ): Json {
   return asJson({
     call,
     model,
     effort: RECIPE_EFFORT,
-    maxTokens: MAX_OUTPUT_TOKENS,
-    messages: messageCount,
+    maxTokens: outputBudget(req),
+    messages: req.messages.length,
     context: request.context,
   });
 }
@@ -153,7 +154,7 @@ export async function generateRecipes(
     const base = {
       purpose: "recipe" as const,
       model: model.model,
-      requestSummary: requestSummary(call, model.model, request, req.messages.length),
+      requestSummary: requestSummary(call, model.model, request, req),
     };
     const rec: AiGenerationRecord = result.ok
       ? {
@@ -249,13 +250,23 @@ export async function generateRecipes(
   // At most one follow-up, appended to the same conversation (REC-5).
   let calls: 1 | 2 = 1;
   let followUpError: ClaudeCallError | undefined;
-  const needed = request.context.count - survivors.length;
+  // R-67 (leaf-1.3.6 SPEC-Q-2, superseding 1.3.1 SPEC-Q-6): the follow-up fills the candidates, so a
+  // dish infeasible for a targeted attendee counts as missing; it is still saved (REC-5 step 7).
+  const needed = request.context.count - survivors.filter((s) => s.candidate).length;
   if (needed > 0) {
     calls = 2;
-    const notes: RejectionNote[] = rejected.map((r) => ({
-      dishName: request.scrub(r.dishName),
-      reasons: r.reasons.map((x) => request.scrub(x.message)),
-    }));
+    const notes: RejectionNote[] = [
+      ...rejected.map((r) => ({
+        dishName: request.scrub(r.dishName),
+        reasons: r.reasons.map((x) => request.scrub(x.message)),
+      })),
+      ...survivors
+        .filter((s) => !s.candidate)
+        .map((s) => ({
+          dishName: request.scrub(s.dish.name),
+          reasons: s.reasons.map((x) => request.scrub(x.message)),
+        })),
+    ];
     const returned = one.result.output.dishes.length;
     if (returned < request.context.count)
       notes.push({

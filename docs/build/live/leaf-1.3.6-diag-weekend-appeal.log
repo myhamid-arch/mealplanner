@@ -1,0 +1,175 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" RUN_LLM_EVALS=1 EVAL_TRANSCRIPTS=<dir> node evals/agent/run.ts allergy-sesame weekend-appeal make-sara-admin | utc: 2026-09-27T11:03:12Z | exit: 1 | commit: dc6178312f2ba65c1df64ec0e9eb795895c06450 (+ uncommitted run.ts transcript option)
+# transcript: stored rows (exact content blocks) and recorded port writes of case weekend-appeal
+{
+  "case": "weekend-appeal",
+  "prompt": "Make weekends more about appeal",
+  "model": "claude-fable-5-1",
+  "stopReason": "end_turn",
+  "grade": {
+    "id": "weekend-appeal",
+    "pass": false,
+    "failures": [
+      "expected a preset.upsert op with {\"appliesToWeekdays\":[5,6]}"
+    ]
+  },
+  "rows": [
+    {
+      "id": "row-1",
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Make weekends more about appeal"
+        },
+        {
+          "type": "text",
+          "text": "Household digest (2026-09-27 11:03, Asia/Dubai):\nMembers:\n- Omar (id e0000000-0000-4000-8000-000000000064): targeted 2150 kcal / P 180 / C 200 / F 70\n- Sara (id e0000000-0000-4000-8000-000000000065): targeted 1655 kcal / P 130 / C 160 / F 55\n- Lina (id e0000000-0000-4000-8000-000000000066): untargeted\n- Adam (id e0000000-0000-4000-8000-000000000067): untargeted\n- Zayd (id e0000000-0000-4000-8000-000000000068): untargeted\nActive slots: breakfast [breakfast, shared], lunch [lunch, shared], dinner [dinner, shared], snack [snack, shared], packed school lunch [packed_school_lunch, individual], packed work lunch [packed_work_lunch, individual], pre workout [pre_workout, individual], post workout [post_workout, individual]\nWeights: macro precision 1, appeal 0.6, ingredient economy 0.4; AI recipes auto\nPending proposals: 1\nAssistant may apply requested changes: yes\nToday (2026-09-27): planned, 2 meal(s)"
+        }
+      ],
+      "createdAt": "2026-09-27T11:03:47.012Z"
+    },
+    {
+      "id": "row-2",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQSgQYKEAgSGAI4AUIIdGhpbmtpbmcSDLUqcF494Pgwg4YEihoMACgv13dIN/AzLH/OIjCAG0sSjRDqTQ8AAlhpAo9pVY7wHmNHMav+bsuIwNXnmnCXOhvFCXy0y5nmuRr1w8IqngW2Mz9fVydqH6fl9qsfetpb0baU0RGPJ81Tspb/C72UM+6FuOUFlmmqrTs4Vj5FWR8oDwXwLYlNaSpkKflPKlj6mnx8W7oyJW7J2PZpatz4P6UhXRreHRmM9vTdsczTRjfESOCDoU+9t76DchdKHhU4h2XlTUzlK9A2sj7t0GdGcKE70cLsS5su5qdrId6rmf4cGI9H1qabrWvtjoqI9FazuLzcQysvxOQ7L3zILEiipMm70vfo6wFiWXFnIw4ivFF5j1nS9EGdX1pk5RC/6aapzHvcDDSRnrWpxTjrOkHuwsi5xhbr10F8hHqd8K5gmrpml7TVkptP5hEKbuBagIBEV0RXkdLT9M7xUr6BJrSH3OC/Duf1d4kqhITOovc52kBtEHsVHJJ8S/X7vZn64mHaP2Vd2C6CpMyNrhr2B+YkFs2tMo/eNjCaG6gY1tDsZzsciQjdfJy1jMS7zqFCIvXOCevZx6u/jkgyNagbBXE7pteoyd5hk/iAlEgxP5BiBAl2OYWuPS0nqUz9xEov5Lqs8g6GoHYPh/4TE5B2PMVWTv9ARkm3F4gaN+5ILejYWwAg474HEXDDWDDoYKGQagnIfH8VQvoGc0L3OXTAqCSIgISblccipvktEMnlHoki4dOF3ZO04eZ5YDWMTSaBZSLQKauiwvA4naPg3lgmAaByd0Xzn5iGMIQ/O40MdTmvsinJ8rOlw7+2yTVsHKIqvTelQbGL2riwtgDg6pz4oAnvvYUarkvc0F/iyuqhR6Ta3MmcUPH1C1ekPxeAqXmku+289UQuohnzTHVJHiukTmeXyyjh1j+S2CSx5kmpMDJel7Ww3EYeHz0c+QJIqLEPlyVin3oMNLHW26MhvLhjQTtXmyR8st1LkQY6CUlD9oJkGAE="
+        },
+        {
+          "type": "text",
+          "text": "I'll check the current presets first."
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01NYKKCnQnJ7UdSaX2YPr7De",
+          "name": "get_household",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {}
+        }
+      ],
+      "createdAt": "2026-09-27T11:03:51.272Z"
+    },
+    {
+      "id": "row-3",
+      "role": "tool",
+      "content": {
+        "results": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "toolu_01NYKKCnQnJ7UdSaX2YPr7De",
+            "content": "{\"members\":[{\"id\":\"e0000000-0000-4000-8000-000000000064\",\"displayName\":\"Omar\",\"birthYear\":1986,\"isTargeted\":true,\"targets\":{\"default\":{\"kcal\":2150,\"proteinG\":180,\"carbsG\":200,\"fatG\":70,\"satFatMaxG\":22,\"solubleFibreMinG\":10},\"training\":{\"kcal\":2390,\"proteinG\":180,\"carbsG\":260,\"fatG\":70,\"satFatMaxG\":22,\"solubleFibreMinG\":10}},\"tolerance\":{\"proteinG\":5,\"carbsG\":5,\"fatG\":2,\"kcal\":50,\"mode\":\"strict\"},\"training\":[{\"weekday\":0,\"sessionTime\":\"18:00:00\"},{\"weekday\":2,\"sessionTime\":\"18:00:00\"},{\"weekday\":4,\"sessionTime\":\"18:00:00\"}]},{\"id\":\"e0000000-0000-4000-8000-000000000065\",\"displayName\":\"Sara\",\"birthYear\":1989,\"isTargeted\":true,\"targets\":{\"default\":{\"kcal\":1655,\"proteinG\":130,\"carbsG\":160,\"fatG\":55,\"satFatMaxG\":18}},\"tolerance\":{\"proteinG\":5,\"carbsG\":5,\"fatG\":2,\"kcal\":50,\"mode\":\"strict\"},\"training\":[{\"weekday\":1,\"sessionTime\":\"07:00:00\"},{\"weekday\":3,\"sessionTime\":\"07:00:00\"},{\"weekday\":5,\"sessionTime\":\"07:00:00\"}]},{\"id\":\"e0000000-0000-4000-8000-000000000066\",\"displayName\":\"Lina\",\"birthYear\":2008,\"isTargeted\":false,\"targets\":null,\"tolerance\":null,\"training\":[]},{\"id\":\"e0000000-0000-4000-8000-000000000067\",\"displayName\":\"Adam\",\"birthYear\":2011,\"isTargeted\":false,\"targets\":null,\"tolerance\":null,\"training\":[]},{\"id\":\"e0000000-0000-4000-8000-000000000068\",\"displayName\":\"Zayd\",\"birthYear\":2016,\"isTargeted\":false,\"targets\":null,\"tolerance\":null,\"training\":[]}],\"logins\":[{\"userId\":\"e0000000-0000-4000-8000-0000000000c8\",\"name\":\"Omar\",\"role\":\"admin\",\"memberId\":\"e0000000-0000-4000-8000-000000000064\"},{\"userId\":\"e0000000-0000-4000-8000-0000000000c9\",\"name\":\"Sara\",\"role\":\"member\",\"memberId\":\"e0000000-0000-4000-8000-000000000065\"},{\"userId\":\"e0000000-0000-4000-8000-0000000000ca\",\"name\":\"Lina\",\"role\":\"member\",\"memberId\":\"e0000000-0000-4000-8000-000000000066\"},{\"userId\":\"e0000000-0000-4000-8000-0000000000cb\",\"name\":\"Kitchen\",\"role\":\"kitchen\",\"memberId\":null}],\"slots\":[{\"id\":\"e0000000-0000-4000-8000-00000000012c\",\"key\":\"breakfast\",\"sortOrder\":0,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-00000000012d\",\"key\":\"lunch\",\"sortOrder\":1,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-00000000012e\",\"key\":\"dinner\",\"sortOrder\":2,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-00000000012f\",\"key\":\"snack\",\"sortOrder\":3,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-000000000130\",\"key\":\"packed_school_lunch\",\"sortOrder\":4,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-000000000131\",\"key\":\"packed_work_lunch\",\"sortOrder\":5,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-000000000132\",\"key\":\"pre_workout\",\"sortOrder\":6,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-000000000133\",\"key\":\"post_workout\",\"sortOrder\":7,\"active\":true}],\"exclusions\":[{\"id\":\"e0000000-0000-4000-8000-000000000190\",\"memberId\":\"e0000000-0000-4000-8000-000000000068\",\"kind\":\"ingredient\",\"key\":\"sesame-seeds\",\"reason\":\"allergy\",\"hard\":true}],\"weights\":{\"macroPrecision\":1,\"appeal\":0.6,\"ingredientEconomy\":0.4,\"variety\":0.3,\"fairness\":0.5,\"aiGeneration\":\"auto\"},\"presets\":[]}"
+          }
+        ],
+        "cards": []
+      },
+      "createdAt": "2026-09-27T11:03:51.272Z"
+    },
+    {
+      "id": "row-4",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQSrAkKEAgSGAI4AUIIdGhpbmtpbmcSDJhsoJ5aJzXKeYIiSxoMOesOEdiuv/8rvB/FIjBQ2TLhn43WBRAYvwTX7sWRZdnxNV79VeRCw3SHM0K9TxRbjkGkWHbKKKIkl/Bikr8qyQgVYIAiGbNY/53BdVBj/s8H/u3doy30cT2DqEtJ62QogVEN8gxHag4ZWpymQiWd6rNprd07CvkSjfBWowQkzeggOBKNu+0dKnsVp4efpV8PP46SVzj+LubXhXkQTVfttGpwvBCkpxOIIL5II8u2gzPJNdt6edBzKKSA0qrjCPNWG8lUPKlOiTnO9q/K+TKsYy/d8zdTpt8yJtNRcu2BhH3VdCmrYnCCtkTnvFUw0k9Lcav3hX14jlGfwAfclhW+1I1th2mhBwwMxk7g+30HEFzsYj+F2YE8RZa3hiq2Dnr5fd8rIcf7I0rk8ZauAnRx7jhvllZG9VuwkyvwbuQZdorfhihezBbvmo94zmni4bkrVhLTIWXruK3ELKxqRPQSEIFcAzWyNcdmLHw8VMyIk+JpzFIyzQzZ/wMqna+7BZqYYoM4ElqVLOtOvY9HZ8MHISfpaef850tDjeU4in4zzDylSuCL8VcUGA7VwbDKjc5ayPbu91RpYWdtBRgPcRBYbAm8zci2dowNHuYD9hgagK3s7nYoeFPHX3t2K5Sy7ezmfJDrl30yzXb5BG9SzSvdEoiVLVFq0XeVqFWL3EUxCGy+OxAK4CKO6HPMRdqbBPNpKUpv2JfxNPrni2dZk2YbLOWPWGvIEu5eFFV1lhxhb2HfSYI871bvjl8v59TxaUEFYUUFKtMIO2nXwwQg2LaDmlh5iuZR7UN0EmMH5mYEgC77z6tnSw0LJKkRtnhtoFJYLNLBD+d1IvuYCheITzGbnRKsccsjX8XeH76UbXx1UZ9ev+0dyWqcaSKK7A0oHUVgLMl4BUz8Lep1ZheieX6BgAFGeZk8exnisVtrMOuMNaAoTyL+xhI7sQeD9Kb8QXmKQPX36MhnkiXEsInGu+DfwIVHtdTFvNcdIp5PU/ffPgVvodPbr7ggKm3DtoxVVmB+ucteBhfVWeqhFBTXtV4mmRjCPGB0BIz0RMHcVHwiUWvIIHsmM6/d2XvBSR7JVzdG9otGwBGrhyWrmC9Sc1x+E/oLivnC3hM3UALOeDDbwWdWIW7ESV3im5ghyORBaIQaLKe42PLEFj7FCMiKNQQyJbjMKzXqE88AImfc6xDgbgw6razHUYa35cG5aZkMP0HpkW/5fwYt82GBtvrgnFNpHnvssDrcTCJe9qxy37hNnhgQ+Ce6jw3LaL4eIQ3lT+z7CPTgkYCvSI6J/+f41aF+K0lK4QojLBcFPxpG+EA5wkykAm5e1vHAcddCq32j07TWXXN0ECtzB4NJ8yhY1GbKspROxztXpNjZNSWueFzxQ47qkKPQfp9EgnnKw8DjQsVD5YqHH2Al3uzrwciVE2WeTB1G27QdQKzCqPPy3650iH4E33+JFN3NumtUu75ynIIOpoDYvgePD2NDxOEFpLWoMpEP0j50iVHD6ImSrK6vdWVbANtbuOQ9r8f9sX+XfasdCy9i06/JiFEuhRgB"
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01UCWh2Hr79o7DZTMMf4FNiQ",
+          "name": "apply_change",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "summary": "Add a \"Weekend\" weights preset (appeal 0.9, other weights unchanged) applied on Saturdays and Sundays",
+            "ops": [
+              {
+                "kind": "preset.upsert",
+                "payload": {
+                  "name": "Weekend",
+                  "values": {
+                    "macroPrecision": 1,
+                    "appeal": 0.9,
+                    "ingredientEconomy": 0.4,
+                    "variety": 0.3,
+                    "fairness": 0.5
+                  },
+                  "appliesToWeekdays": [
+                    6,
+                    0
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "createdAt": "2026-09-27T11:03:58.424Z"
+    },
+    {
+      "id": "row-5",
+      "role": "tool",
+      "content": {
+        "results": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "toolu_01UCWh2Hr79o7DZTMMf4FNiQ",
+            "content": "{\"status\":\"applied\",\"changeSetId\":\"e0000000-0000-4000-8000-00000000032a\",\"changes\":[]}"
+          }
+        ],
+        "cards": [
+          {
+            "type": "applied_change",
+            "changeSetId": "e0000000-0000-4000-8000-00000000032a",
+            "summary": "Add a \"Weekend\" weights preset (appeal 0.9, other weights unchanged) applied on Saturdays and Sundays",
+            "descriptions": [],
+            "appliedAt": "2026-09-27T11:03:58.425Z"
+          }
+        ]
+      },
+      "createdAt": "2026-09-27T11:03:58.425Z"
+    },
+    {
+      "id": "row-6",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "Done. There were no presets before, so I created a \"Weekend\" preset that applies on Saturdays and Sundays (the UAE weekend). See the change card above; it can be undone.\n\n| Weight | Weekdays | Weekend |\n|---|---|---|\n| Macro precision | 1 | 1 |\n| Appeal | 0.6 | 0.9 |\n| Ingredient economy | 0.4 | 0.4 |\n| Variety | 0.3 | 0.3 |\n| Fairness | 0.5 | 0.5 |\n\nTwo things to note:\n\n- Macro precision still comes first, so Omar's and Sara's plates stay within their strict tolerances; appeal only decides more strongly between dishes that already fit.\n- Higher appeal usually costs some ingredient economy: weekend dishes are less likely to reuse the week's leftover ingredients.\n\nThe change only affects plans generated from now on. Say the word if you want me to regenerate the coming weekend (4 and 5 October) with the new weights, or if you'd rather I use a different appeal value."
+        }
+      ],
+      "createdAt": "2026-09-27T11:04:05.088Z"
+    }
+  ],
+  "writes": [
+    {
+      "port": "applyChange",
+      "input": {
+        "summary": "Add a \"Weekend\" weights preset (appeal 0.9, other weights unchanged) applied on Saturdays and Sundays",
+        "ops": [
+          {
+            "kind": "preset.upsert",
+            "payload": {
+              "name": "Weekend",
+              "values": {
+                "macroPrecision": 1,
+                "appeal": 0.9,
+                "ingredientEconomy": 0.4,
+                "variety": 0.3,
+                "fairness": 0.5
+              },
+              "appliesToWeekdays": [
+                6,
+                0
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

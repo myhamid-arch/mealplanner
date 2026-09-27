@@ -1,0 +1,45 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" RUN_LLM_EVALS=1 EVAL_TRANSCRIPTS=<dir> node evals/agent/run.ts allergy-sesame weekend-appeal make-sara-admin | utc: 2026-09-27T11:03:12Z | exit: 1 | commit: dc6178312f2ba65c1df64ec0e9eb795895c06450 (+ uncommitted run.ts transcript option)
+# transcript: stored rows (exact content blocks) and recorded port writes of case make-sara-admin
+{
+  "case": "make-sara-admin",
+  "prompt": "Make Sara an admin too",
+  "model": "claude-fable-5-1",
+  "stopReason": "end_turn",
+  "grade": {
+    "id": "make-sara-admin",
+    "pass": false,
+    "failures": [
+      "expected a role.set op",
+      "expected a role.set op with {\"role\":\"admin\"}"
+    ]
+  },
+  "rows": [
+    {
+      "id": "row-1",
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Make Sara an admin too"
+        },
+        {
+          "type": "text",
+          "text": "Household digest (2026-09-27 11:04, Asia/Dubai):\nMembers:\n- Omar (id e0000000-0000-4000-8000-000000000064): targeted 2150 kcal / P 180 / C 200 / F 70\n- Sara (id e0000000-0000-4000-8000-000000000065): targeted 1655 kcal / P 130 / C 160 / F 55\n- Lina (id e0000000-0000-4000-8000-000000000066): untargeted\n- Adam (id e0000000-0000-4000-8000-000000000067): untargeted\n- Zayd (id e0000000-0000-4000-8000-000000000068): untargeted\nActive slots: breakfast [breakfast, shared], lunch [lunch, shared], dinner [dinner, shared], snack [snack, shared], packed school lunch [packed_school_lunch, individual], packed work lunch [packed_work_lunch, individual], pre workout [pre_workout, individual], post workout [post_workout, individual]\nWeights: macro precision 1, appeal 0.6, ingredient economy 0.4; AI recipes auto\nPending proposals: 1\nAssistant may apply requested changes: yes\nToday (2026-09-27): planned, 2 meal(s)"
+        }
+      ],
+      "createdAt": "2026-09-27T11:04:05.099Z"
+    },
+    {
+      "id": "row-2",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "Roles and access are managed on the People & access screen, not through me. To make Sara an admin:\n\n- Open People & access\n- Find Sara's user account\n- Change her role to admin\n\nNote that role changes are protected, so the app will ask you to confirm. If Sara does not yet have a user account linked to her member profile, you will need to invite her from that screen first."
+        }
+      ],
+      "createdAt": "2026-09-27T11:04:09.810Z"
+    }
+  ],
+  "writes": []
+}

@@ -1,0 +1,5 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" RUN_LLM_EVALS=1 node evals/agent/run.ts allergy-sesame weekend-appeal make-sara-admin | utc: 2026-09-27T12:30:04Z | exit: 0 | commit: d26d83b6c0cbd53002d14538d903a5cd254c7c22
+PASS allergy-sesame (end_turn, 2 calls; tools: apply_change)
+PASS weekend-appeal (end_turn, 3 calls; tools: get_household, apply_change)
+PASS make-sara-admin (end_turn, 3 calls; tools: get_household, apply_change)
+AGENT EVAL 3/3 passed (100.0 %, threshold 90 %) with claude-fable-5-1

@@ -8,13 +8,26 @@ import type {
   BetaMessageParam,
   BetaTextBlockParam,
 } from "@anthropic-ai/sdk/resources/beta/messages/messages";
-import type { StructuredRequest } from "../client/index.js";
+import { MODEL_MAX_OUTPUT_TOKENS, type StructuredRequest } from "../client/index.js";
 import type { RecipeCatalogue } from "./catalogue.js";
 import type { GenerationContext } from "./context.js";
 import { DishBatchSchema } from "./schema.js";
 
 /** REC-2: recipe generation runs at effort `high`. */
 export const RECIPE_EFFORT = "high";
+
+/**
+ * Output budget per dish requested, thinking included (leaf-1.3.6 ADR-1): 2.4x the measured mean
+ * of a 3-dish batch (24 932 tokens) and 2.2x the measured 1-dish output (9 069 tokens).
+ */
+export const RECIPE_TOKENS_PER_DISH = 20_000;
+
+/** The output budget of a call that asks for `dishes` dishes (ADR-1), capped at the model's. */
+export function recipeMaxTokens(dishes: number): number {
+  if (!Number.isInteger(dishes) || dishes < 1)
+    throw new RangeError(`a recipe call asks for at least one dish (got ${String(dishes)})`);
+  return Math.min(MODEL_MAX_OUTPUT_TOKENS, RECIPE_TOKENS_PER_DISH * dishes);
+}
 
 /** §2 items 1–2: role and output rules. Constant text. */
 export const SYSTEM_PROMPT = `You are an expert home-cooking recipe developer. You write recipes for professional household kitchen staff in the United Arab Emirates, who cook for one family and portion each plate separately for each person.
@@ -89,6 +102,7 @@ export function buildRecipeRequest(
     system: systemBlocks(catalogue),
     messages: [{ role: "user", content: contextMessage(context, slotKeys) }],
     effort: RECIPE_EFFORT,
+    maxTokens: recipeMaxTokens(context.count),
   };
 }
 
@@ -105,15 +119,21 @@ export function echoableContent(content: readonly BetaContentBlock[]): BetaConte
 
 export type RejectionNote = { dishName: string; reasons: string[] };
 
-/** The follow-up user message (REC-5): each rejection reason, and how many dishes to replace. */
+/**
+ * The follow-up user message (REC-5): each rejection reason and each infeasible dish's solver reason
+ * (R-67), and how many dishes to replace.
+ */
 export function followUpMessage(rejections: readonly RejectionNote[], needed: number): string {
   return [
-    `Some dishes did not pass validation. Write ${String(needed)} replacement ${needed === 1 ? "dish" : "dishes"} that avoid these problems, following the same rules and context. Return only the replacement dishes (and any new ingredients they use).`,
+    `Some dishes did not pass validation, or cannot be portioned to every plate target in the context. Write ${String(needed)} replacement ${needed === 1 ? "dish" : "dishes"} that avoid these problems, following the same rules and context. Return only the replacement dishes (and any new ingredients they use).`,
     ...rejections.map((r) => `- ${r.dishName}: ${r.reasons.join("; ")}`),
   ].join("\n");
 }
 
-/** The follow-up request: the first request's messages, the model's response, then the reasons. */
+/**
+ * The follow-up request: the first request's messages, the model's response, then the reasons. Its
+ * budget is sized by the replacements it asks for.
+ */
 export function buildFollowUpRequest(
   first: StructuredRequest<typeof DishBatchSchema>,
   assistantContent: readonly BetaContentBlock[],
@@ -125,5 +145,5 @@ export function buildFollowUpRequest(
     { role: "assistant", content: echoableContent(assistantContent) },
     { role: "user", content: followUpMessage(rejections, needed) },
   ];
-  return { ...first, messages };
+  return { ...first, messages, maxTokens: recipeMaxTokens(needed) };
 }

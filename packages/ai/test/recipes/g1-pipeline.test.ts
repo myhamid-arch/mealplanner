@@ -1,7 +1,7 @@
 // G1 (REC-5, REC-2 DM-7, REC-6): with recorded responses the pipeline accepts a valid batch and
 // rejects one of each REC-5 defect class, with each reason surfaced.
 import { describe, expect, it } from "vitest";
-import { generateRecipes } from "../../src/recipes/index.js";
+import { generateRecipes, recipeMaxTokens } from "../../src/recipes/index.js";
 import { batchFixture, batchResponse } from "./support/recorded.js";
 import { DEFECTS_VALID_DISH, DEFECT_CLASSES, INFEASIBLE_DISH } from "./support/expectations.js";
 import { f1DinnerRequest, libraryWithChicken, scenario } from "./support/scenario.js";
@@ -88,7 +88,8 @@ describe("G1 defect classes", () => {
     expect(infeasible?.reasons[0]?.message).toContain("Adult A");
     expect(infeasible?.reasons[1]?.message).toContain("Adult B");
 
-    // Two survivors of three → exactly one follow-up; its dish is accepted.
+    // One candidate of three (the infeasible dish is saved but is not a candidate; R-67) → exactly
+    // one follow-up for the two missing candidates; its dish is accepted.
     expect(run.calls).toBe(2);
     expect(s.recorder.requests).toHaveLength(2);
     expect(run.candidates.map((c) => [c.dish.name, c.call])).toEqual([
@@ -111,9 +112,12 @@ describe("G1 defect classes", () => {
     const note = secondMessages[firstMessages.length + 1];
     expect(note?.role).toBe("user");
     const noteText = String(note?.content);
-    expect(noteText).toContain("Write 1 replacement dish");
+    expect(noteText).toContain("Write 2 replacement dishes");
     for (const r of run.rejected.filter((x) => x.call === 1))
       for (const reason of r.reasons) expect(noteText).toContain(reason.message);
+    // R-67: the infeasible dish's solver reasons are quoted next to the rejection reasons.
+    expect(noteText).toContain(`- ${INFEASIBLE_DISH}: `);
+    for (const reason of infeasible?.reasons ?? []) expect(noteText).toContain(reason.message);
     expect(s.recorder.requests[1]?.body.system).toEqual(s.recorder.requests[0]?.body.system);
 
     // DM-7: one record per call, reasons surfaced in validation_errors; one change set.
@@ -141,6 +145,14 @@ describe("G1 defect classes", () => {
     const s = scenario([batchResponse(defects), batchResponse(batchFixture("follow-up-batch"))]);
     const run = await generateRecipes(s.deps, f1DinnerRequest());
     expect(run.rejected.map((r) => r.dishName)).not.toContain(DEFECT_CLASSES[4]?.dish);
-    expect(run.calls).toBe(1);
+    // Two candidates and the infeasible dish: one follow-up for the missing candidate (R-67), as in
+    // the live 1.3.1 G4 run of 2026-09-27 (every dish survived, one was infeasible).
+    expect(run.calls).toBe(2);
+    expect(run.infeasible.map((d) => d.dish.name)).toEqual([INFEASIBLE_DISH]);
+    const second = s.recorder.requests[1]?.body.messages as Array<{ content: unknown }>;
+    const note = String(second.at(-1)?.content);
+    expect(note).toContain("Write 1 replacement dish");
+    expect(note).toContain(`- ${INFEASIBLE_DISH}: `);
+    expect(s.recorder.requests[1]?.body.max_tokens).toBe(recipeMaxTokens(1));
   });
 });
