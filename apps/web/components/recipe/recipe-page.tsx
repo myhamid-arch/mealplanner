@@ -3,7 +3,8 @@
 // meal stickers; components, each with its preparation variants as tabs (per 100 g cooked,
 // ingredients for 1 kg cooked, method, "Tonight: who gets which"); single-way components as
 // compact cards; reviews; "used in N meals". Admins: edit and retire household dishes
-// (SPEC-Q-10), and ask the assistant to revise (R-53 /chat?prompt=).
+// (SPEC-Q-10), ask the assistant to revise (R-53 /chat?prompt=), and, when opened with
+// `?date=&slot=`, "Use for <day> <slot>" (R-58, leaf-1.4.8 SPEC-Q-5).
 import Link from "next/link";
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { Button, Card, Chip, Dialog, EmptyState, LinkButton, StarRatingDisplay } from "../ui";
@@ -22,6 +23,7 @@ import { carbsOn, dayMonth, num, titleCase } from "../plan/logic";
 import { loadUsage, type Usage } from "./data";
 import { DishArt } from "./dish-art";
 import { EditSheet } from "./edit-sheet";
+import { UseFor, type UseForTarget } from "./use-for";
 
 interface RecipeData {
   basics: Basics;
@@ -393,7 +395,15 @@ function RetireButton({ dish, onDone }: { readonly dish: Dish; readonly onDone: 
   );
 }
 
-function RecipeBody({ data, reload }: { readonly data: RecipeData; readonly reload: () => void }) {
+function RecipeBody({
+  data,
+  reload,
+  useFor,
+}: {
+  readonly data: RecipeData;
+  readonly reload: () => void;
+  readonly useFor: UseForTarget | null;
+}) {
   const { dish, basics, usage } = data;
   const admin = basics.role === "admin";
   const own = dish.householdId !== null;
@@ -444,7 +454,16 @@ function RecipeBody({ data, reload }: { readonly data: RecipeData; readonly relo
           {dish.description !== "" && <p className="m-0 mt-1.5">{dish.description}</p>}
         </div>
         {admin && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-start gap-2">
+            {useFor !== null && (
+              <UseFor
+                dishId={dish.id}
+                dishName={dish.name}
+                retired={dish.status === "retired"}
+                basics={basics}
+                target={useFor}
+              />
+            )}
             {own && dish.status !== "retired" && (
               <EditSheet dish={dish} slots={basics.slots} onSaved={reload} />
             )}
@@ -475,10 +494,17 @@ function RecipeBody({ data, reload }: { readonly data: RecipeData; readonly relo
   );
 }
 
-export function RecipeScreen({ id }: { readonly id: string }) {
+export function RecipeScreen({
+  id,
+  useFor = null,
+}: {
+  readonly id: string;
+  /** From `?date=&slot=[&member=]` (SPEC-Q-5); null without them. */
+  readonly useFor?: UseForTarget | null;
+}) {
   const loaded = useLoad(() => loadRecipe(id), id);
   if (loaded.data !== null)
-    return <RecipeBody data={loaded.data} reload={() => void loaded.reload()} />;
+    return <RecipeBody data={loaded.data} reload={() => void loaded.reload()} useFor={useFor} />;
   if (loaded.error !== null)
     return /not found/i.test(loaded.error) ? (
       <EmptyState

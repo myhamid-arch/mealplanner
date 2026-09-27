@@ -1201,3 +1201,11 @@ export const KitchenFlagViewDto = z.object({
 export const KitchenFlagsDto = z.object({ flags: z.array(KitchenFlagViewDto) });
 
 export const PlanMealStatusBody = z.object({ status: z.enum(PLAN_MEAL_STATUSES) }).strict();
+
+// 1.4.8 (R-58) ------------------------------------------------------------------------------------
+
+/** Move a meal to the same slot on another planned draft day (UX-4 drag to move). */
+export const PlanMealMoveBody = z.object({ toDate: IsoDate }).strict();
+
+/** The moved meal first, then the meal it exchanged places with, if any. */
+export const PlanMealMoveResultDto = z.object({ changeSetId: Id, meals: z.array(PlanMealDto) });

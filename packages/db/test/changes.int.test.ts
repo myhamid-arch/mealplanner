@@ -172,6 +172,8 @@ describe.each([
         "recipe.revise",
         "plan.publish",
         "plan_meal.status",
+        // 1.4.8 (R-58)
+        "plan_meal.move",
       ].sort(),
     );
     const generators = opGenerators(database.db, household);

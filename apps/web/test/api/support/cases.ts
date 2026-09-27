@@ -391,6 +391,12 @@ export const CASES: Record<string, Case> = {
   "planMeals.status": async ({ app, w }) => ({
     input: { params: { id: (await freshMeal(app, w)).meal.id }, body: { status: "cooked" } },
   }),
+  // 1.4.8 (R-58): a meal of one fresh day onto the same slot of the next (an exchange).
+  "planMeals.move": async ({ app, w }) => {
+    const from = await freshMeal(app, w);
+    const to = await freshMeal(app, w);
+    return { input: { params: { id: from.meal.id }, body: { toDate: to.date } } };
+  },
 
   // Reviews and preferences
   "reviews.list": () => ({ input: { query: { limit: 20 } } }),
