@@ -19,8 +19,7 @@ export interface Step {
 }
 
 export type Part =
-  | { kind: "text"; text: string; key: string }
-  | { kind: "cards"; cards: Json[]; key: string };
+  { kind: "text"; text: string; key: string } | { kind: "cards"; cards: Json[]; key: string };
 
 export type Item =
   | { kind: "user"; id: string; text: string; createdAt: string }
@@ -130,11 +129,20 @@ export function stopNotice(reason: string): string | null {
 /** The stored rows as chat items, oldest first; a live turn is merged into the last one. */
 export function buildItems(rows: readonly Row[], labels: Labels, live: Live = IDLE): Item[] {
   const items: Item[] = [];
-  let turn: Extract<Item, { kind: "turn" }> | null = null;
-  const startTurn = (id: string) => {
-    turn = { kind: "turn", id, steps: [], parts: [], live: false, thinking: false, notice: null };
-    items.push(turn);
-    return turn;
+  type Turn = Extract<Item, { kind: "turn" }>;
+  let turn: Turn | null = null;
+  const newTurn = (id: string): Turn => {
+    const t: Turn = {
+      kind: "turn",
+      id,
+      steps: [],
+      parts: [],
+      live: false,
+      thinking: false,
+      notice: null,
+    };
+    items.push(t);
+    return t;
   };
   for (const row of rows) {
     if (row.role === "user") {
@@ -150,13 +158,20 @@ export function buildItems(rows: readonly Row[], labels: Labels, live: Live = ID
       });
       turn = null;
     } else if (row.role === "assistant") {
-      const t: Extract<Item, { kind: "turn" }> = turn ?? startTurn(row.id);
+      const t: Turn = turn ?? newTurn(row.id);
+      turn = t;
       for (const use of toolUses(row))
-        t.steps.push({ id: use.id, name: use.name, label: labels[use.name] ?? "Working…", ok: null });
+        t.steps.push({
+          id: use.id,
+          name: use.name,
+          label: labels[use.name] ?? "Working…",
+          ok: null,
+        });
       const text = assistantText(row);
       if (text.trim() !== "") t.parts.push({ kind: "text", text, key: row.id });
     } else {
-      const t: Extract<Item, { kind: "turn" }> = turn ?? startTurn(row.id);
+      const t: Turn = turn ?? newTurn(row.id);
+      turn = t;
       const results = toolResults(row);
       for (const s of t.steps) {
         const ok = results.get(s.id);
@@ -169,8 +184,7 @@ export function buildItems(rows: readonly Row[], labels: Labels, live: Live = ID
   const running = live.running || live.text !== "" || live.cards.length > 0 || live.notice !== null;
   if (!running) return items;
   const last = items.at(-1);
-  const t: Extract<Item, { kind: "turn" }> =
-    last?.kind === "turn" ? last : startTurn("live");
+  const t: Turn = last?.kind === "turn" ? last : newTurn("live");
   t.live = live.running;
   t.thinking = live.thinking && live.running;
   t.notice = live.notice;
@@ -195,7 +209,8 @@ export function reduce(
       const m = event.message;
       if (rows.some((r) => r.id === m.id)) return state;
       const next = [...rows, m];
-      if (m.role === "assistant") return { rows: next, live: { ...live, text: "", thinking: false } };
+      if (m.role === "assistant")
+        return { rows: next, live: { ...live, text: "", thinking: false } };
       if (m.role === "tool") return { rows: next, live: { ...live, cards: [] } };
       return { rows: next, live };
     }
@@ -225,7 +240,13 @@ export function reduce(
         },
       };
     case "error":
-      return { rows, live: { ...live, notice: event.message === "" ? STOP_NOTICES.error ?? null : event.message } };
+      return {
+        rows,
+        live: {
+          ...live,
+          notice: event.message === "" ? (STOP_NOTICES.error ?? null) : event.message,
+        },
+      };
     case "done":
       return {
         rows,

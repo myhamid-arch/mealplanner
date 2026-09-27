@@ -103,7 +103,8 @@ export function safeHref(href: string): string | null {
   return null;
 }
 
-const INLINE = /(\*\*([^*]+)\*\*|__([^_]+)__|`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\)|\*([^*\s][^*]*)\*|_([^_\s][^_]*)_)/;
+const INLINE =
+  /(\*\*([^*]+)\*\*|__([^_]+)__|`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\)|\*([^*\s][^*]*)\*|_([^_\s][^_]*)_)/;
 
 /** Inline Markdown to React nodes. Pure. */
 export function inline(text: string, key = "i"): ReactNode[] {
@@ -149,7 +150,13 @@ export function inline(text: string, key = "i"): ReactNode[] {
 }
 
 function lines(text: string, key: string): ReactNode[] {
-  return text.split("\n").flatMap((l, i) => (i === 0 ? inline(l, `${key}-${String(i)}`) : [<br key={`${key}-br-${String(i)}`} />, ...inline(l, `${key}-${String(i)}`)]));
+  return text
+    .split("\n")
+    .flatMap((l, i) =>
+      i === 0
+        ? inline(l, `${key}-${String(i)}`)
+        : [<br key={`${key}-br-${String(i)}`} />, ...inline(l, `${key}-${String(i)}`)],
+    );
 }
 
 /** Renders the assistant's Markdown. */
@@ -174,7 +181,10 @@ export function Markdown({ source }: { readonly source: string }) {
             );
           case "code":
             return (
-              <pre key={k} className="m-0 overflow-x-auto rounded-md bg-flour p-3 font-mono text-[13px]">
+              <pre
+                key={k}
+                className="m-0 overflow-x-auto rounded-md bg-flour p-3 font-mono text-[13px]"
+              >
                 {b.text}
               </pre>
             );

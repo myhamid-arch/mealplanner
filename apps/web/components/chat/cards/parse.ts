@@ -2,14 +2,15 @@
 // `packages/ai/src/agent/cards.ts` and the tools that fill them (1.3.5); `macro_table` rows follow
 // SPEC-Q-4. A card that does not parse is shown as "can't be shown", never as a crash.
 import { z } from "zod";
-import {
-  DescriptionDto,
-  JsonValue,
-  PlanMealDto,
-} from "@mealplanner/api-contract/contract";
+import { DescriptionDto, JsonValue, PlanMealDto } from "@mealplanner/api-contract/contract";
 import { FIT_STATUSES } from "@mealplanner/core/types";
 
-const Macro = z.object({ kcal: z.number(), protein: z.number(), carbs: z.number(), fat: z.number() });
+const Macro = z.object({
+  kcal: z.number(),
+  protein: z.number(),
+  carbs: z.number(),
+  fat: z.number(),
+});
 
 export const ProposalCardSchema = z.object({
   type: z.literal("proposal"),
@@ -150,7 +151,9 @@ export function parseCard(value: unknown): ParsedCard {
   const parsed = CardSchema.safeParse(value);
   if (parsed.success) return { ok: true, card: parsed.data };
   const type =
-    typeof value === "object" && value !== null && typeof (value as { type?: unknown }).type === "string"
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as { type?: unknown }).type === "string"
       ? (value as { type: string }).type
       : "unknown";
   return { ok: false, type };

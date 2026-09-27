@@ -16,7 +16,16 @@ function hash(s: string): number {
   return h >>> 0;
 }
 
-export function DishThumb({ id, size = 56 }: { readonly id: string; readonly size?: number }) {
+export function DishThumb({
+  id,
+  size = 56,
+  banner = false,
+}: {
+  readonly id: string;
+  readonly size?: number;
+  /** Full width, `size` px tall, square corners (the chat recipe card's header). */
+  readonly banner?: boolean;
+}) {
   const h = hash(id);
   const base = BASES[h % BASES.length] ?? "var(--basil)";
   const a = DOTS[(h >>> 3) % DOTS.length] ?? "var(--saffron)";
@@ -25,9 +34,9 @@ export function DishThumb({ id, size = 56 }: { readonly id: string; readonly siz
   return (
     <span
       aria-hidden
-      className="block shrink-0 rounded-[14px]"
+      className={`block shrink-0 ${banner ? "" : "rounded-[14px]"}`}
       style={{
-        width: size,
+        width: banner ? "100%" : size,
         height: size,
         backgroundColor: base,
         backgroundImage: `radial-gradient(circle at 35% 40%, ${a} 0 ${String(r)}px, transparent ${String(r + 1)}px), radial-gradient(circle at 65% 62%, ${b} 0 ${String(r + 2)}px, transparent ${String(r + 3)}px)`,
