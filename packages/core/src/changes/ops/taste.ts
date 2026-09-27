@@ -12,7 +12,7 @@ import {
 } from "../../types/index.js";
 import { defineOp, requireRow } from "../define.js";
 import { ChangeOpError, type ChangeTx } from "../tx.js";
-import { id } from "./common.js";
+import { id, slotKey } from "./common.js";
 
 const entityKey = z.string().trim().min(1).max(200);
 
@@ -117,6 +117,23 @@ function isProtectedExclusion(row: Pick<ExclusionRow, "reason" | "hard">): boole
   );
 }
 
+// 1.2.6 (R-62), OQ-9: an optional slot scope, stored sorted and de-duplicated so that equal scopes
+// compare equal in the unique key (leaf-1.2.6 SPEC-Q-4). Null or absent = every slot; absent stays
+// absent in the parsed op, so ops written before the scope existed parse to the same payload.
+const slotScope = z
+  .array(slotKey)
+  .min(1)
+  .max(20)
+  .transform((keys) => [...new Set(keys)].sort())
+  .nullable()
+  .optional();
+
+/** Equal slot scopes: both every slot, or the same set of slot keys. */
+const scopeKey = (keys: readonly string[] | null | undefined) =>
+  keys == null ? null : JSON.stringify([...new Set(keys)].sort());
+const sameScope = (a: readonly string[] | null | undefined, b: readonly string[] | null) =>
+  scopeKey(a) === scopeKey(b);
+
 const ExclusionAdd = z
   .object({
     memberId: id.nullable(),
@@ -124,30 +141,58 @@ const ExclusionAdd = z
     key: z.string().trim().min(1).max(120),
     reason: z.enum(EXCLUSION_REASONS),
     hard: z.boolean().default(true),
+    slotKeys: slotScope,
   })
   .strict()
-  .refine((p) => p.reason !== "allergy" || p.hard, "an allergy exclusion is always hard (DM-5)");
+  .refine((p) => p.reason !== "allergy" || p.hard, "an allergy exclusion is always hard (DM-5)")
+  .refine(
+    (p) => p.reason !== "allergy" || p.slotKeys == null,
+    "an allergy exclusion applies to every slot (02 §6, OQ-9)",
+  );
+
+/** The exclusion row with the same member, kind, key and slot scope, if any. */
+async function sameExclusion(
+  tx: ChangeTx,
+  p: {
+    memberId: string | null;
+    kind: ExclusionRow["kind"];
+    key: string;
+    slotKeys?: string[] | null | undefined;
+  },
+) {
+  const rows = await tx.find("exclusion", { memberId: p.memberId, kind: p.kind, key: p.key });
+  return rows.find((r) => sameScope(r.slotKeys, p.slotKeys ?? null));
+}
 
 /**
- * Adds an exclusion, or changes the reason/hardness of an existing one for the same key.
- * Protected when that change relaxes a protected exclusion (AGT-5).
+ * Adds an exclusion, or changes the reason/hardness of an existing one for the same key and slot
+ * scope. Protected when that change relaxes a protected exclusion (AGT-5).
  */
 export const exclusionAdd = defineOp({
   kind: "exclusion.add",
   area: "taste",
   schema: ExclusionAdd,
   protected: async (p, tx) => {
-    const [existing] = await tx.find("exclusion", {
-      memberId: p.memberId,
-      kind: p.kind,
-      key: p.key,
-    });
+    const existing = await sameExclusion(tx, p);
     return existing !== undefined && isProtectedExclusion(existing) && !isProtectedExclusion(p);
   },
-  title: (p) => `Exclude ${p.kind.replace("_", " ")} "${p.key}" (${p.reason})`,
-  apply: async (tx, { memberId, kind, key, reason, hard }) => {
+  title: (p) =>
+    `Exclude ${p.kind.replace("_", " ")} "${p.key}" (${p.reason})${
+      p.slotKeys == null ? "" : ` in ${p.slotKeys.join(", ")} only`
+    }`,
+  apply: async (tx, p) => {
+    const { memberId, kind, key, reason, hard } = p;
+    const slotKeys = p.slotKeys ?? null;
     await requireMemberOrHousehold("exclusion.add", tx, memberId);
-    const [existing] = await tx.find("exclusion", { memberId, kind, key });
+    if (reason === "allergy" && slotKeys !== null)
+      throw new ChangeOpError("exclusion.add", "an allergy exclusion applies to every slot");
+    if (slotKeys !== null) {
+      const known = new Set((await tx.find("slot_type", {})).map((s) => s.key));
+      const unknown = slotKeys.filter((k) => !known.has(k));
+      if (unknown.length > 0)
+        throw new ChangeOpError("exclusion.add", `no slot ${unknown.join(", ")} in this household`);
+    }
+    const existing = await sameExclusion(tx, p);
     if (existing === undefined) {
       await tx.insert("exclusion", {
         id: tx.newId(),
@@ -157,6 +202,7 @@ export const exclusionAdd = defineOp({
         key,
         reason,
         hard,
+        slotKeys,
       });
     } else if (existing.reason !== reason || existing.hard !== hard) {
       await tx.update("exclusion", { id: existing.id }, { reason, hard });

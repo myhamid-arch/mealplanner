@@ -100,9 +100,7 @@ describe("G3 follow-ups proposed from the F1 answers (R2-ONB-6)", () => {
       listProblems(["school_nut_free", "dinner_time", `training_kcal:${id("Adult B")}`], proposed),
     ).toEqual([]);
     const nut = proposed[0];
-    expect(nut?.question).toBe(
-      "Is the school nut-free? I'll keep nuts out of Child C1, Child C2 and Child C3's meals.",
-    );
+    expect(nut?.question).toBe("Is the school nut-free? I'll keep nuts out of the lunch boxes.");
     expect(proposed[1]?.question).toBe("Dinner at 19:30 — is that about right?");
     expect(proposed[2]?.question).toBe(
       "On training days, should Adult B's total calories go up, or stay the same?",
@@ -191,12 +189,54 @@ describe("G3 answers change the configuration (R-34, R-36)", () => {
           key: "contains_nuts",
           reason: "other",
           hard: true,
+          // OQ-9 (R-62): lunch boxes only.
+          slotKeys: ["packed_school_lunch"],
         },
       })),
     );
     await tx.applyAll(ops);
+    const rows = tx.rows("exclusion").filter((e) => e.key === "contains_nuts");
+    expect(rows.map((e) => e.slotKeys)).toEqual([
+      ["packed_school_lunch"],
+      ["packed_school_lunch"],
+      ["packed_school_lunch"],
+    ]);
     expect(proposeFollowups(configOf(tx)).map((f) => f.key)).not.toContain("school_nut_free");
     expect(followupOps(nut, "no", cfg).ops).toEqual([]);
+  });
+
+  it("G4 settled only once every school child's lunch box is nut-free (OQ-9)", async () => {
+    const { tx, id } = await household();
+    const nutRule = (memberId: string, slotKeys: string[] | null) => ({
+      kind: "exclusion.add" as const,
+      payload: {
+        memberId,
+        kind: "dietary_flag" as const,
+        key: "contains_nuts",
+        reason: "other" as const,
+        slotKeys,
+      },
+    });
+    const open = () => proposeFollowups(configOf(tx)).some((f) => f.key === "school_nut_free");
+    // Nuts kept out of one child's snacks only: that lunch box is not covered.
+    await tx.applyAll([nutRule(id("Child C1"), ["snack"])]);
+    expect(open()).toBe(true);
+    // C1's lunch box (scoped) and C2 everywhere (unscoped) are covered; C3 is still open.
+    await tx.applyAll([nutRule(id("Child C1"), ["packed_school_lunch"])]);
+    await tx.applyAll([nutRule(id("Child C2"), null)]);
+    expect(open()).toBe(true);
+    const cfg = configOf(tx);
+    const nut = proposeFollowups(cfg)[0] as Followup;
+    const { ops, summary } = followupOps(nut, "yes", cfg);
+    expect(ops).toEqual(
+      [nutRule(id("Child C3"), ["packed_school_lunch"])].map((o) => ({
+        ...o,
+        payload: { ...o.payload, hard: true },
+      })),
+    );
+    expect(summary).toBe("Nut-free school: no nuts in the lunch boxes");
+    await tx.applyAll(ops);
+    expect(open()).toBe(false);
   });
 
   it("G3 a dinner time choice updates the dinner slot; yes changes nothing", async () => {

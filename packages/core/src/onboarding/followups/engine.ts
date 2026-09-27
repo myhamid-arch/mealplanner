@@ -6,7 +6,6 @@
 // applies as one change set. Pure: no I/O, no clock (the caller passes the local dates).
 import type { ChangeOp } from "../../changes/index.js";
 import { DEFAULT_SLOTS, type HouseholdConfig } from "../../types/index.js";
-import { listJoin } from "../text.js";
 
 export const FOLLOWUP_STATUSES = ["answered", "dismissed"] as const;
 export type FollowupStatus = (typeof FOLLOWUP_STATUSES)[number];
@@ -59,7 +58,7 @@ export class FollowupError extends Error {
   }
 }
 
-/** Keeping nuts out of the school children's meals (R-56: member-level, no slot scope, W-8). */
+/** Keeping nuts out of the school lunch boxes (OQ-9: scoped to the packed school lunch, R-62). */
 export const NUT_FLAG = "contains_nuts";
 const SCHOOL_SLOT = "packed_school_lunch";
 const DINNER_SLOT = "dinner";
@@ -93,25 +92,30 @@ export function schoolChildren(cfg: FollowupConfig) {
   return activeMembers(cfg).filter((m) => attending.has(m.id));
 }
 
+/**
+ * The member's lunch box is already nut-free: a nut exclusion of theirs or the household's that
+ * applies in the packed school lunch (unscoped, or scoped to include it; OQ-9). R-34: every
+ * exclusion row filters, whatever its `hard` flag.
+ */
 function nutFreeFor(cfg: FollowupConfig, memberId: string): boolean {
-  // R-34: every exclusion row filters, whatever its `hard` flag.
   return cfg.exclusions.some(
     (e) =>
       e.kind === "dietary_flag" &&
       e.key === NUT_FLAG &&
-      (e.memberId === null || e.memberId === memberId),
+      (e.memberId === null || e.memberId === memberId) &&
+      (e.slotKeys == null || e.slotKeys.includes(SCHOOL_SLOT)),
   );
 }
 
 function schoolNutFree(cfg: FollowupConfig): Followup | null {
   const kids = schoolChildren(cfg);
   if (kids.length === 0 || kids.every((k) => nutFreeFor(cfg, k.id))) return null;
-  const names = listJoin(kids.map((k) => k.displayName));
   return {
     key: "school_nut_free",
     kind: "school_nut_free",
     memberId: null,
-    question: `Is the school nut-free? I'll keep nuts out of ${names}'s meals.`,
+    // FirstDaysPhone copy (OQ-9: lunch boxes only).
+    question: "Is the school nut-free? I'll keep nuts out of the lunch boxes.",
     choices: [
       { id: "yes", label: "Yes, nut-free" },
       { id: "no", label: "No" },
@@ -240,12 +244,7 @@ export function followupOps(
     case "school_nut_free": {
       if (choice !== "yes") return { ops: [], summary: "" };
       const ops: ChangeOp[] = schoolChildren(cfg)
-        .filter(
-          (k) =>
-            !cfg.exclusions.some(
-              (e) => e.kind === "dietary_flag" && e.key === NUT_FLAG && e.memberId === k.id,
-            ),
-        )
+        .filter((k) => !nutFreeFor(cfg, k.id))
         .map((k) => ({
           kind: "exclusion.add",
           payload: {
@@ -254,9 +253,10 @@ export function followupOps(
             key: NUT_FLAG,
             reason: "other",
             hard: true,
+            slotKeys: [SCHOOL_SLOT],
           },
         }));
-      return { ops, summary: "Nut-free school: no nuts for the school children" };
+      return { ops, summary: "Nut-free school: no nuts in the lunch boxes" };
     }
     case "dinner_time": {
       if (choice === "yes") return { ops: [], summary: "" };

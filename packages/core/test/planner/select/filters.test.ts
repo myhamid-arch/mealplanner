@@ -52,6 +52,7 @@ const exclusion = (over: Partial<ExclusionRow>): ExclusionRow => ({
   key: "contains_sesame",
   reason: "allergy",
   hard: true,
+  slotKeys: null, // 1.2.6 (R-62): every slot (OQ-9)
   ...over,
 });
 
@@ -115,8 +116,9 @@ describe("exclusions (SPEC-Q-6, R-34, R-36)", () => {
       exclusion({ kind: "ingredient", key: "chicken-thigh", reason: "dislike", hard: false }),
     ];
     const hh = new Household(cfg, pool);
-    expect(hh.exclusionsOf("c3").ingredientIds).toEqual(["ing:chicken-thigh"]);
-    expect(hh.exclusionsOf("c2").ingredientIds).toEqual([]);
+    // 1.2.6 (R-62): exclusions are read per slot (OQ-9).
+    expect(hh.exclusionsOf("c3", "dinner").ingredientIds).toEqual(["ing:chicken-thigh"]);
+    expect(hh.exclusionsOf("c2", "dinner").ingredientIds).toEqual([]);
   });
   it("applies household-level exclusions to every member", () => {
     const cfg = f1PlanConfig();
@@ -124,7 +126,8 @@ describe("exclusions (SPEC-Q-6, R-34, R-36)", () => {
       exclusion({ memberId: null, kind: "category", key: "seafood", reason: "religious" }),
     ];
     const hh = new Household(cfg, pool);
-    for (const m of ["adult_a", "c1"]) expect(hh.exclusionsOf(m).categories).toEqual(["seafood"]);
+    for (const m of ["adult_a", "c1"])
+      expect(hh.exclusionsOf(m, "dinner").categories).toEqual(["seafood"]);
   });
 
   it("a hard: false dislike exclusion removes the ingredient from that member's plates (R-34)", async () => {
@@ -209,6 +212,7 @@ describe("frequency (SPEC-Q-5)", () => {
     date,
     day: dayNumber(date),
     mealKey: `${date}|x|shared`,
+    slotKey: "dinner",
     dishId,
     memberIds,
     cuisineKey: d.cuisineKey,
@@ -217,18 +221,22 @@ describe("frequency (SPEC-Q-5)", () => {
     mainProtein: null,
     timeKey: "12",
   });
-  it("blocks the same dish for an attendee fewer than 6 days away, either direction", () => {
+  // 1.2.6 (R-62): dinner gap 7 (OQ-8); slot boundaries are in frequency.test.ts.
+  it("blocks the same dish for an attendee fewer than 7 days away at dinner, either direction", () => {
     expect(
-      frequencyReason(d, "2026-10-01", ["c1"], [served("2026-09-26", ["c1"])], [], pool),
+      frequencyReason(d, "2026-10-01", "dinner", ["c1"], [served("2026-09-26", ["c1"])], [], pool),
     ).not.toBeNull();
     expect(
-      frequencyReason(d, "2026-10-01", ["c1"], [served("2026-10-06", ["c1"])], [], pool),
+      frequencyReason(d, "2026-10-01", "dinner", ["c1"], [served("2026-10-06", ["c1"])], [], pool),
     ).not.toBeNull();
     expect(
-      frequencyReason(d, "2026-10-01", ["c1"], [served("2026-09-25", ["c1"])], [], pool),
+      frequencyReason(d, "2026-10-01", "dinner", ["c1"], [served("2026-09-25", ["c1"])], [], pool),
+    ).not.toBeNull();
+    expect(
+      frequencyReason(d, "2026-10-01", "dinner", ["c1"], [served("2026-09-24", ["c1"])], [], pool),
     ).toBeNull();
     expect(
-      frequencyReason(d, "2026-10-01", ["c2"], [served("2026-09-30", ["c1"])], [], pool),
+      frequencyReason(d, "2026-10-01", "dinner", ["c2"], [served("2026-09-30", ["c1"])], [], pool),
     ).toBeNull();
   });
   const rule = (over: Partial<FrequencyRuleRow>): FrequencyRuleRow => ({
@@ -247,18 +255,38 @@ describe("frequency (SPEC-Q-5)", () => {
     const other = served("2026-09-28", ["c1"], "other-dish");
     const other2 = served("2026-09-29", ["c1"], "other-dish-2");
     const max2 = rule({ maxPerWeek: 2 });
-    expect(frequencyReason(d, "2026-10-01", ["c1"], [other, other2], [max2], pool)).not.toBeNull();
-    expect(frequencyReason(d, "2026-10-05", ["c1"], [other, other2], [max2], pool)).toBeNull();
+    expect(
+      frequencyReason(d, "2026-10-01", "dinner", ["c1"], [other, other2], [max2], pool),
+    ).not.toBeNull();
+    expect(
+      frequencyReason(d, "2026-10-05", "dinner", ["c1"], [other, other2], [max2], pool),
+    ).toBeNull();
     const own = rule({ memberId: "c2", maxPerWeek: 1 });
-    expect(frequencyReason(d, "2026-10-01", ["c1"], [other], [own], pool)).toBeNull();
+    expect(frequencyReason(d, "2026-10-01", "dinner", ["c1"], [other], [own], pool)).toBeNull();
   });
   it("lets a household dish rule replace the default gap", () => {
     const short = rule({ entityType: "dish", entityKey: d.id, minGapDays: 2 });
     expect(
-      frequencyReason(d, "2026-10-01", ["c1"], [served("2026-09-28", ["c1"])], [short], pool),
+      frequencyReason(
+        d,
+        "2026-10-01",
+        "dinner",
+        ["c1"],
+        [served("2026-09-28", ["c1"])],
+        [short],
+        pool,
+      ),
     ).toBeNull();
     expect(
-      frequencyReason(d, "2026-10-01", ["c1"], [served("2026-09-30", ["c1"])], [short], pool),
+      frequencyReason(
+        d,
+        "2026-10-01",
+        "dinner",
+        ["c1"],
+        [served("2026-09-30", ["c1"])],
+        [short],
+        pool,
+      ),
     ).not.toBeNull();
   });
 });

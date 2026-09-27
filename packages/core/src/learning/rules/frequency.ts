@@ -3,6 +3,7 @@
 // Frequency rules are household-level (SPEC-Q-13).
 import type { FrequencyRuleRow } from "../../types/index.js";
 import {
+  defaultMinGapDays,
   FREQUENCY_MIN_SIGNALS,
   LESS_OFTEN_MIN_GAP_DAYS,
   MORE_OFTEN_MIN_GAP_DAYS,
@@ -62,6 +63,21 @@ function tagged(ctx: RuleContext, tag: string): Map<string, InsightReview[]> {
   return groupBy(reviews, (r) => ctx.dishOf(r)?.id);
 }
 
+/**
+ * 1.2.6 (R-14), OQ-8: the dish's current gap: the household rule's `min_gap_days`, else the
+ * planner's default from the slots it was served in (7 for main meals, 4 when only in snack and
+ * workout slots; 7 when it was not served).
+ */
+function usualGap(ctx: RuleContext, dishId: string): number {
+  const own = householdRule(ctx, dishId)?.minGapDays;
+  if (own != null) return own;
+  const slotKey = (slotTypeId: string) =>
+    ctx.input.config.slotTypes.find((s) => s.id === slotTypeId)?.key ?? "";
+  return defaultMinGapDays(
+    ctx.input.meals.filter((m) => m.dishId === dishId).map((m) => slotKey(m.slotTypeId)),
+  );
+}
+
 /** FBK-6 more_often and less_often. When both reach the threshold, neither is proposed. */
 export function moreOrLessOften(ctx: RuleContext): ProposalDraft[] {
   const more = tagged(ctx, "more_often");
@@ -83,7 +99,7 @@ export function moreOrLessOften(ctx: RuleContext): ProposalDraft[] {
       dish,
       gap,
       wantMore ? `Serve ${dish.name} more often` : `Serve ${dish.name} less often`,
-      `${reviews.length.toString()} reviews asked for ${dish.name} ${wantMore ? "more" : "less"} often. Allow it every ${gap.toString()} days${wantMore ? " instead of every 6" : " at most"}.`,
+      `${reviews.length.toString()} reviews asked for ${dish.name} ${wantMore ? "more" : "less"} often. Allow it every ${gap.toString()} days${wantMore ? ` instead of every ${usualGap(ctx, dishId).toString()}` : " at most"}.`,
       { reviewIds: reviewIds(reviews), count: reviews.length, metrics: {} },
     );
     if (draft !== undefined) out.push(draft);

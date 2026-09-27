@@ -171,15 +171,25 @@ export const exclusion = pgTable(
     key: text("key").notNull(),
     reason: exclusionReason("reason").notNull(),
     hard: boolean("hard").notNull(),
+    /** OQ-9 (02 §6): null = every slot; otherwise only meals of these slot keys. */
+    slotKeys: text("slot_keys").array(),
   },
   (t) => [
     index("exclusion_household_id_idx").on(t.householdId),
-    unique("exclusion_household_member_kind_key_key")
-      .on(t.householdId, t.memberId, t.kind, t.key)
+    // The same exclusion may be held once per scope (leaf-1.2.6 SPEC-Q-4; the op stores the scope
+    // sorted and de-duplicated, so equal scopes compare equal).
+    unique("exclusion_household_member_kind_key_scope_key")
+      .on(t.householdId, t.memberId, t.kind, t.key, t.slotKeys)
       .nullsNotDistinct(),
     memberFk("exclusion_member_fk", t.householdId, t.memberId),
     // 02 §6: hard is always true for allergy (DM-5).
     check("exclusion_allergy_is_hard", sql`${t.reason} <> 'allergy' OR ${t.hard}`),
+    // 02 §6, OQ-9: an allergy is never slot-scoped; a scope names at least one slot.
+    check("exclusion_allergy_unscoped", sql`${t.reason} <> 'allergy' OR ${t.slotKeys} IS NULL`),
+    check(
+      "exclusion_slot_keys_not_empty",
+      sql`${t.slotKeys} IS NULL OR cardinality(${t.slotKeys}) > 0`,
+    ),
   ],
 );
 

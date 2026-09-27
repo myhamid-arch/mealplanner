@@ -356,7 +356,8 @@ export const SPEC_COLUMNS: Record<string, readonly string[]> = {
     "source",
     "locked",
   ],
-  exclusion: ["household_id", "member_id", "kind", "key", "reason", "hard"],
+  // 1.2.6 (R-62): slot_keys (OQ-9).
+  exclusion: ["household_id", "member_id", "kind", "key", "reason", "hard", "slot_keys"],
   planning_weights: [
     "household_id",
     "macro_precision",
