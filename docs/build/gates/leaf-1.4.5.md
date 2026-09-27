@@ -4,20 +4,20 @@ OWNS: docs/decisions/leaf-1.4.5-*.md, apps/web/app/(app)/reviews/**, apps/web/ap
 
 Scope: Reviews, Insights, Chat UI, as specified in docs/spec (see 11-build-plan.md §5 and 13-revision-r2.md), built to match docs/mockups where it has UI.
 
-- [ ] G1: Playwright: quick rating and detailed review, proposal appears, accept, undo (stubbed model)
+- [x] G1: Playwright: quick rating and detailed review, proposal appears, accept, undo (stubbed model)
   CHECK: node scripts/verify/leaf-1.4.5.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.5 G1 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=bc28774acdb014e2eb98b43b02a00eb4eaeba0e69a0b1e0ed76d07449df22481; exit=0; EXPECT=matched; output-sha256=b1b1bb3dbb10f22a1ff419e211df5ac89cdd24f74829b127872fd7e976b9600f; output-bytes=1876; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G2: axe-core: no serious or critical violations on these screens
+- [x] G2: axe-core: no serious or critical violations on these screens
   CHECK: node scripts/verify/leaf-1.4.5.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.5 G2 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=1706ca616de76fb7c1fb096f3cd8422a710401f5655d38225ea49d6163da915c; exit=0; EXPECT=matched; output-sha256=9e9b138f4d1a4a07d4a282cd885a8752b494ce0fc40872952784d87b6fe940a5; output-bytes=2622; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G3: chat renders every AGT-7 card type from recorded tool results
+- [x] G3: chat renders every AGT-7 card type from recorded tool results
   CHECK: node scripts/verify/leaf-1.4.5.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.5 G3 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=3bb7db561b3e18814a5bf115d1f4e4ef144defb78850b6e37890a77be5c81aad; exit=0; EXPECT=matched; output-sha256=f7857f24a8ed70b8977ec5858ffd36060f9940fc8021f589ca7c8357f0f14b79; output-bytes=1928; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G4: architect visual review against QuickRatePhone, ReviewComposePhone, ReviewsFeed, Insights, Chat* mockups
   EVIDENCE: pending
