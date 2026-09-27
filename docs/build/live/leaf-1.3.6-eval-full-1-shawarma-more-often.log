@@ -1,0 +1,195 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" RUN_LLM_EVALS=1 node evals/agent/run.ts | utc: 2026-09-27T12:37:05Z | exit: 0 | commit: 20de36f535bae28bd7e63c07338c38db9f4da182 | full run 1
+# transcript: stored rows and port writes of case shawarma-more-often in full run 1
+{
+  "case": "shawarma-more-often",
+  "prompt": "We love the chicken shawarma wrap, put it on more often",
+  "model": "claude-fable-5-1",
+  "stopReason": "end_turn",
+  "grade": {
+    "id": "shawarma-more-often",
+    "pass": false,
+    "failures": [
+      "expected a frequency.set op"
+    ]
+  },
+  "rows": [
+    {
+      "id": "row-1",
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "We love the chicken shawarma wrap, put it on more often"
+        },
+        {
+          "type": "text",
+          "text": "Household digest (2026-09-27 12:39, Asia/Dubai):\nMembers:\n- Omar (id e0000000-0000-4000-8000-000000000064): targeted 2150 kcal / P 180 / C 200 / F 70\n- Sara (id e0000000-0000-4000-8000-000000000065): targeted 1655 kcal / P 130 / C 160 / F 55\n- Lina (id e0000000-0000-4000-8000-000000000066): untargeted\n- Adam (id e0000000-0000-4000-8000-000000000067): untargeted\n- Zayd (id e0000000-0000-4000-8000-000000000068): untargeted\nActive slots: breakfast [breakfast, shared], lunch [lunch, shared], dinner [dinner, shared], snack [snack, shared], packed school lunch [packed_school_lunch, individual], packed work lunch [packed_work_lunch, individual], pre workout [pre_workout, individual], post workout [post_workout, individual]\nWeights: macro precision 1, appeal 0.6, ingredient economy 0.4; AI recipes auto\nPending proposals: 1\nAssistant may apply requested changes: yes\nToday (2026-09-27): planned, 2 meal(s)"
+        }
+      ],
+      "createdAt": "2026-09-27T12:39:41.763Z"
+    },
+    {
+      "id": "row-2",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQSzwYKEAgSGAI4AUIIdGhpbmtpbmcSDGM0japV2GgL16N6KxoMD+69maa59UQ34nyFIjDjmxR6Io+jC7DaZJ+iq2BBf40bNLw634JbhMe8dpcKH7J+UDBRCTzh+8KYt/sP83Mq7AWhSa7qhWrwRo/VOmRdwdOwirVC5w/wLQCevTRQ20gawv2xOmYaVt527x7AWgxooB36H3J3RAYSdxItEkjeNcxQi7aVzAIExAMDzqO1LCgEryXp5NXzZhSW4saZUaZTZZcLT8gV/s/9XpwkWh78MGiyVconl0yATgF6PWh0aU5rX4YOTgw9LyNZ3nTm+FYOxbvTj0eC+6ZxxGE2CSISruI9kyuHNsm8Yrgg2DM+MvFR8nXKPP8lujQIWqd0Y2occUKRmqjGO7rooWAM2F6kq1H/utSli+qtvbhsh/hWagWX/GRFbhSl0j4ZIsKJ3u87lVCwj+79LF6WLlytw99UU3AGw4SgfaDtAA2878wibZO7vVUHm6TVFUPyLLbhfswWWpPt2bK1jegxf2nRlybQQAmrUYmt5JgBqNJqZnaz6J7nBIZ7Gw6D501gj9h/sWopfz035r3WqJwBtUErgdNz7MKf4Fpen0V5w9YAFDKTfktefw+AZw3URLW8qdvT9gnXuXisc8pXso42SizUbSC07WPmIWdWUSZGzd3m5k3j/67AimWy4z/mUv7yx++Bhf7pfH7rDO5w98YRqSufLrEahNqJPsqCV26q7div5gHfBUcV3/970b6GPZoSoWA6AjhVMBFUpGM6xZUXZWmpZt5Yrle3pEgD3smo4cCO0xyPpOcKLkYjUDaN0nldWPZkda74CWKA0h9NguFJiSqSjGIfmbbY64UcEbq+6cJKmhD76lgdL7akjnBkGadi2bfmemSfocBezMNw8HVPeve960eNCqUgMenceHPtP/k3g+ORxatIOTXwkz5bjG1ly3tMwKR54SgZVAgtDxesuY3sUz9T6pYV5eAUhrXdWGJTPcUlDHYoS8+vyiwedn0nSmb/H/+DMD1FFVeDwT1x1nFmDWK3qAI8vORKxy5aE82/VUhDEi2E0p0o0hipFe624nAy7odYKgeZHenRqAh4iy/r+ARlbA26QCX6RufZAuI6omkpGAE="
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01APj9N3zZzHQPeraMcYFDqb",
+          "name": "search_dishes",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "query": "chicken shawarma wrap",
+            "limit": 5
+          }
+        }
+      ],
+      "createdAt": "2026-09-27T12:39:53.269Z"
+    },
+    {
+      "id": "row-3",
+      "role": "tool",
+      "content": {
+        "results": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "toolu_01APj9N3zZzHQPeraMcYFDqb",
+            "content": "{\"total\":1,\"dishes\":[{\"id\":\"e0000000-0000-4000-8000-0000000003fd\",\"name\":\"Chicken shawarma wrap\",\"cuisine\":\"levantine\",\"slotKeys\":[\"lunch\",\"packed_school_lunch\",\"packed_work_lunch\",\"dinner\",\"post_workout\"]}]}"
+          }
+        ],
+        "cards": []
+      },
+      "createdAt": "2026-09-27T12:39:53.269Z"
+    },
+    {
+      "id": "row-4",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01GmKtjbvfAnCMqbX1DM5Wi1",
+          "name": "get_preferences",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {}
+        }
+      ],
+      "createdAt": "2026-09-27T12:39:55.649Z"
+    },
+    {
+      "id": "row-5",
+      "role": "tool",
+      "content": {
+        "results": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "toolu_01GmKtjbvfAnCMqbX1DM5Wi1",
+            "content": "{\"preferences\":[{\"member\":\"Omar\",\"entity\":\"cuisine:levantine\",\"score\":0.6,\"evidence\":4}]}"
+          }
+        ],
+        "cards": []
+      },
+      "createdAt": "2026-09-27T12:39:55.650Z"
+    },
+    {
+      "id": "row-6",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQSyAgKEAgSGAI4AUIIdGhpbmtpbmcSDCBysPCTXYiqb9+mCBoMrmdHufXtJZzk83/LIjA0kE/emG9JclzYnBgtRLmVWryoFDa0FNZJWW31z1GFTSCKqtAO/AJZvd12zllK55Iq5QflTvhC4va3KRxUhfbaY69sC0rY4p4WgY84iR/ax5E7kh5elJLGbnYS53Vi/DWrzZDpDNruDAx0mR3KC/6ka66v/pj33IjKds/TqRHOSJz8s5uOD/CLNFBFH+vm2si5gLy3Nb2Rc+D81V0YOv1cPvZN6dUy71gdCk5Xsay8pado/La5DHGxo+P0FCE4H+uh7/YcGo2SZtkO2MQhGhHSIIdGGA7yEGajcFjabeC6gNL3Eb83Q4C4e7BjpDe1lBd62aquFZXUgXldkg2WDqXbTlj607tNbzjPg7hj/XAQyBWBQDELOxBuvxgAk+8PMTbyKQ4/yjT0LX3JEJtx1WJ8UJSNel5TQcQIDeWNqWlJ05jhY0R5DakeeysNjUEFaHHNM+FMbt2x9xf8mlun6IOKmFgM/ssVnuBRGgX13CzhbWovxwdLdAsJ2XWOEKXETFRCsHJbciOUA+lVdsZezgF2Wyh46Czw1QoWbKNHfnMXFMFfHlXQwnYMqmegkECl+i01j1oYnLoJAPgNYB4+RhkRn9CKmymkrcG9r+ACTbrojivqGHzijcB+VhkwdwoaraN2Mj9HizvcY2vLCO3Z0/C0QK/26XQKvXrhw8daA0HckKUgY215YJKN+CLTzImQtJtDoN+ELyw0y/BODKpOn1kODwfG3p2MLnbTws1HPRTz5iyjPhej49W8pNZ1tsgOZ/0U4CYRVE3yyMBvMvoRDJlcC/KWeI/GeY+33sP4bPf3kZXYMZqWhnxxY+dRiLX42AZApSe1S/DGINnEGtSb2GAF4lVQi7dqArEWkttFYm5+gQU6DCFu0opvxCyY+hlkleWWA4fQvJF66IBjzn/H841AuA8aVifTOHyzPxayUFT6iv3YaTKLHULIKX+q3y1PdUEv30pqFW0efmUSSP7OCEWGRlmH7cYFMKcevc2Ftt90vhY0zmKN1juDK1LiQyyhNJEt7/riU7QP9E8vCY2vPmWs6nrmzdUFdO6nzwuHiKQHTBiuznFhjAphNaHzMAsWxH9g7yx4bwjwhKLCP4Iw2Q22TfP+VM3Oiz8e0nOxDJ+2nUXZ+mjYgcr5Ge+bKMwPplAmPxzQQ5MEua3Rd0vTTdUH+FJy67J6S0vonao6ZKSAngQ1/OTbhXBrvb1tCcwzbdgzR29ZEafeB5p4dhH2cNhaFc4z0wJKcYn/FexCkVrTbTXtczmX3GQgnJjPetEHC8UbjLaG3F4j78Jy5kQ7ldZMsXeoBtCJRhrOGUsKhLmBfxAx/RePWIP5qMOOMJD/OBPW3Me5M1026vlOQjr6fk8JWu4FHJNDTa3D9E1GY6QULKV2MeGFRd7oGAE="
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_018WiiyTdCKPCVdWJTZGVVgN",
+          "name": "apply_change",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "summary": "Household-level liking for Chicken shawarma wrap so it is planned more often",
+            "ops": [
+              {
+                "kind": "preference.set",
+                "payload": {
+                  "memberId": null,
+                  "entityType": "dish",
+                  "entityKey": "e0000000-0000-4000-8000-0000000003fd",
+                  "score": 0.8,
+                  "source": "explicit",
+                  "locked": true,
+                  "hard": "none"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "createdAt": "2026-09-27T12:40:01.686Z"
+    },
+    {
+      "id": "row-7",
+      "role": "tool",
+      "content": {
+        "results": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "toolu_018WiiyTdCKPCVdWJTZGVVgN",
+            "content": "{\"status\":\"applied\",\"changeSetId\":\"e0000000-0000-4000-8000-00000000032a\",\"changes\":[]}"
+          }
+        ],
+        "cards": [
+          {
+            "type": "applied_change",
+            "changeSetId": "e0000000-0000-4000-8000-00000000032a",
+            "summary": "Household-level liking for Chicken shawarma wrap so it is planned more often",
+            "descriptions": [],
+            "appliedAt": "2026-09-27T12:40:01.687Z"
+          }
+        ]
+      },
+      "createdAt": "2026-09-27T12:40:01.687Z"
+    },
+    {
+      "id": "row-8",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "Done: Chicken shawarma wrap now has a strong household-level liking (locked, so learned reviews won't override it). The planner will favour it in lunch, dinner, packed lunches and post-workout slots the next time it generates a plan.\n\nTwo things to keep in mind:\n\n- Macro precision still comes first (weight 1 vs appeal 0.6), so it will only be picked where the plates can hit Omar's and Sara's targets.\n- Variety rules still apply. If you want a firm floor, I can also set a frequency rule (for example at least once a week); tell me what cadence you have in mind and I'll set it.\n\nWant me to regenerate the upcoming week so it takes effect right away?"
+        }
+      ],
+      "createdAt": "2026-09-27T12:40:07.216Z"
+    }
+  ],
+  "writes": [
+    {
+      "port": "applyChange",
+      "input": {
+        "summary": "Household-level liking for Chicken shawarma wrap so it is planned more often",
+        "ops": [
+          {
+            "kind": "preference.set",
+            "payload": {
+              "memberId": null,
+              "entityType": "dish",
+              "entityKey": "e0000000-0000-4000-8000-0000000003fd",
+              "score": 0.8,
+              "source": "explicit",
+              "locked": true,
+              "hard": "none"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" RUN_LLM_EVALS=1 node evals/agent/run.ts | utc: 2026-09-27T12:45:21Z | exit: 0 | commit: 20de36f535bae28bd7e63c07338c38db9f4da182 | full run 2
+# transcript: stored rows and port writes of case shawarma-more-often in full run 2
+{
+  "case": "shawarma-more-often",
+  "prompt": "We love the chicken shawarma wrap, put it on more often",
+  "model": "claude-fable-5-1",
+  "stopReason": "end_turn",
+  "grade": {
+    "id": "shawarma-more-often",
+    "pass": false,
+    "failures": [
+      "expected a frequency.set op"
+    ]
+  },
+  "rows": [
+    {
+      "id": "row-1",
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "We love the chicken shawarma wrap, put it on more often"
+        },
+        {
+          "type": "text",
+          "text": "Household digest (2026-09-27 12:48, Asia/Dubai):\nMembers:\n- Omar (id e0000000-0000-4000-8000-000000000064): targeted 2150 kcal / P 180 / C 200 / F 70\n- Sara (id e0000000-0000-4000-8000-000000000065): targeted 1655 kcal / P 130 / C 160 / F 55\n- Lina (id e0000000-0000-4000-8000-000000000066): untargeted\n- Adam (id e0000000-0000-4000-8000-000000000067): untargeted\n- Zayd (id e0000000-0000-4000-8000-000000000068): untargeted\nActive slots: breakfast [breakfast, shared], lunch [lunch, shared], dinner [dinner, shared], snack [snack, shared], packed school lunch [packed_school_lunch, individual], packed work lunch [packed_work_lunch, individual], pre workout [pre_workout, individual], post workout [post_workout, individual]\nWeights: macro precision 1, appeal 0.6, ingredient economy 0.4; AI recipes auto\nPending proposals: 1\nAssistant may apply requested changes: yes\nToday (2026-09-27): planned, 2 meal(s)"
+        }
+      ],
+      "createdAt": "2026-09-27T12:48:04.490Z"
+    },
+    {
+      "id": "row-2",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQSnQYKEAgSGAI4AUIIdGhpbmtpbmcSDB6GorE7rSQWew9aQxoMRJtFg6VaSn+dKjXOIjB7/6odJu2aDILFwse4K78cxsIsUTZmSDoaaBjADwq7suew7kHGuXwaQwjgBoILmS8qugXCT3PhfYd1z8PfovKEzo19sB+8uuvtdUL69w7o6d7aV21d90OQuxE1w38BU056NgDrAAdZUkEJXw8plQZZZ+mStoFuJqaJScrMagWx61p7SZxMnL9e7Wzs/ddb6sG/mZf9QrXzBhj5OE0xmID9qo2vqgCILO8dC/jARK+AC7Mu+ZzQfU/7FpuL4LwCv2WJ+zpCkARcZdiBNR+lJL5w01murydloaMhR6UuCa7a7frKk4TyC3MS2EMhzbnnIELyZXpsrkph6JH1T3cglafzp0PoHxzF/AklKh41YKf3OSOz59NgOcr9ZEs0jLF+aX/7v2u8Ib1vUPAj2o09CENw+e/KgaRMoE/BPdzjOm793lM9IZuCkpWT1a4jh4qDoTtJB18BIaXZoyYJcErBDrt3Q01ymp7GNUi5XSAqYyHQ88b3wMwTcTjAWoW/qlUC70pAxrXLKNEod3CB2L4xBmKTQSASCONft0G+ydyV5jTaU5RHyC4kfrDUK36Ru87XEnLGYTrH0vvLcDA7A/kG4Sh+Bexhcx7Dn8SAfvXQCor4Bj0jOhESZjBtWdTIPhkFH/9Jsovd7eZzwufas7vP2MIMfIgNv/Uj0UfetR3lug9GR6iUL18QtgHt7n7MbpaDFkHdG3O/703rdIb57Vdl5pO6A8++xWEwgyssK3isurxbVm3ce0GPoDncOdDr6lES+5ZbZfo/k/rgQGwcvetI1fkM73Wpt6xcfaxe8QHOUh8vICSmkSu+rjzmBweT3T8jEe+trN0DgJy9v+MZOtW3YOHG6OfP4JdvUi4T+MEQgDEjEaYs3h+d7tumEkB3ykcyKfRXk0M3Nqj6i38OZeEQRB351InZco3p+8PTCW4B+KRqkNv9yLpuOWv+yacOBT/A14nCzd1vFNI4wS6JmR5dIzR6VTvy1c3wfia5z2Xr8BgB"
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01MEhqAWwcDuvnf4Mw1aWXeo",
+          "name": "search_dishes",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "query": "chicken shawarma wrap",
+            "limit": 5
+          }
+        }
+      ],
+      "createdAt": "2026-09-27T12:48:09.311Z"
+    },
+    {
+      "id": "row-3",
+      "role": "tool",
+      "content": {
+        "results": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "toolu_01MEhqAWwcDuvnf4Mw1aWXeo",
+            "content": "{\"total\":1,\"dishes\":[{\"id\":\"e0000000-0000-4000-8000-0000000003fd\",\"name\":\"Chicken shawarma wrap\",\"cuisine\":\"levantine\",\"slotKeys\":[\"lunch\",\"packed_school_lunch\",\"packed_work_lunch\",\"dinner\",\"post_workout\"]}]}"
+          }
+        ],
+        "cards": []
+      },
+      "createdAt": "2026-09-27T12:48:09.311Z"
+    },
+    {
+      "id": "row-4",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01PiikkBKR91wFMGEZdVH6kb",
+          "name": "get_preferences",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {}
+        }
+      ],
+      "createdAt": "2026-09-27T12:48:11.480Z"
+    },
+    {
+      "id": "row-5",
+      "role": "tool",
+      "content": {
+        "results": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "toolu_01PiikkBKR91wFMGEZdVH6kb",
+            "content": "{\"preferences\":[{\"member\":\"Omar\",\"entity\":\"cuisine:levantine\",\"score\":0.6,\"evidence\":4}]}"
+          }
+        ],
+        "cards": []
+      },
+      "createdAt": "2026-09-27T12:48:11.480Z"
+    },
+    {
+      "id": "row-6",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQS8wUKEAgSGAI4AUIIdGhpbmtpbmcSDJk2yyCin1qRGGX5PBoMEnKJ4M81A/RJZMqRIjBjvC9V0Bq0+33K0BJzSd7Qv6oBkAkrI1lAkmGSZotsxxhXyqzORl71PJG/feguWq0qkAUUUNbrSrcWIPBVqo6ZHkU7rvL8rKkbaf3keoIYyHvMkA12daX1k+oKoOExK2ptSTnhFvyvH7Qw9Rt2o/1KAWo4SCra+glx38sHBuNRAb3gRCdhRuB+h5LskY6f6JKRgESjFH48QTwcnrw6/Md7UOFThSpE/D0VBAcHGTUdjGeMB2HqGaE4AJ+rf0uoPA2dSX2m3ejvRErcuUWz6KsCiNicBxks0yv+swrvprG2BA8sfmrnh+HQTwvoBl8X1akqn34My8dxuINHodOrEXoRFskHUEYwfvHJdnpm9U8NZkad7putRPWbpuzgQ2tXbcIhWGEsRbWXmYsjUxEA5k6DtkTgGpy0ijOVsSV9bKf1SrFoUvl9FVFQZmFUljR63jnVysp9pziz0ElrbF6YbV1THwZuMBm1LftsaXbHjw4t6z1I2sUYJfHll73MhDHnD7B6ty2BDRmVqW1kzyN8CTQW6FL7fBS2vUzE1xmST1HqiLLYZs385esvkMwRHUQSdhRouzFJQxNjtCj/S3BiLWvV3RjaWvi7sDOvl6SiaVS6WFzorH6iebRDDrxaGRxdijNb0SLbvPiXNQ7+EyDIG6/R782mgpWBwr5dklmvPEQqzHsuHl0sJvztxI1fxp73duUzvfHALKbNxj0LrvtAkMhyJ87oa3S0B+3fnW16ym6zKoMFicwo4d47wc2McVRxZifDg5ZAsUTyvsutt895uhSRtg6KyMcUBVQ55w2FuALdgNgKSZnHpGSSA+z8sTjUk2NgRaq1PB8aeMbJXPN8WE4z+Ci+dsVIJy2YcmyH202mBU8nxWjo7DbcF3Xk6fYmgSZVv7QQLs5toFkvbzAFEqZaiD/16rx8TcOHKjK+GRYxQleGuRgB"
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01JCTMigeaHjpPE6XxGDyZJa",
+          "name": "get_household",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {}
+        }
+      ],
+      "createdAt": "2026-09-27T12:48:15.748Z"
+    },
+    {
+      "id": "row-7",
+      "role": "tool",
+      "content": {
+        "results": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "toolu_01JCTMigeaHjpPE6XxGDyZJa",
+            "content": "{\"members\":[{\"id\":\"e0000000-0000-4000-8000-000000000064\",\"displayName\":\"Omar\",\"birthYear\":1986,\"isTargeted\":true,\"targets\":{\"default\":{\"kcal\":2150,\"proteinG\":180,\"carbsG\":200,\"fatG\":70,\"satFatMaxG\":22,\"solubleFibreMinG\":10},\"training\":{\"kcal\":2390,\"proteinG\":180,\"carbsG\":260,\"fatG\":70,\"satFatMaxG\":22,\"solubleFibreMinG\":10}},\"tolerance\":{\"proteinG\":5,\"carbsG\":5,\"fatG\":2,\"kcal\":50,\"mode\":\"strict\"},\"training\":[{\"weekday\":0,\"sessionTime\":\"18:00:00\"},{\"weekday\":2,\"sessionTime\":\"18:00:00\"},{\"weekday\":4,\"sessionTime\":\"18:00:00\"}]},{\"id\":\"e0000000-0000-4000-8000-000000000065\",\"displayName\":\"Sara\",\"birthYear\":1989,\"isTargeted\":true,\"targets\":{\"default\":{\"kcal\":1655,\"proteinG\":130,\"carbsG\":160,\"fatG\":55,\"satFatMaxG\":18}},\"tolerance\":{\"proteinG\":5,\"carbsG\":5,\"fatG\":2,\"kcal\":50,\"mode\":\"strict\"},\"training\":[{\"weekday\":1,\"sessionTime\":\"07:00:00\"},{\"weekday\":3,\"sessionTime\":\"07:00:00\"},{\"weekday\":5,\"sessionTime\":\"07:00:00\"}]},{\"id\":\"e0000000-0000-4000-8000-000000000066\",\"displayName\":\"Lina\",\"birthYear\":2008,\"isTargeted\":false,\"targets\":null,\"tolerance\":null,\"training\":[]},{\"id\":\"e0000000-0000-4000-8000-000000000067\",\"displayName\":\"Adam\",\"birthYear\":2011,\"isTargeted\":false,\"targets\":null,\"tolerance\":null,\"training\":[]},{\"id\":\"e0000000-0000-4000-8000-000000000068\",\"displayName\":\"Zayd\",\"birthYear\":2016,\"isTargeted\":false,\"targets\":null,\"tolerance\":null,\"training\":[]}],\"logins\":[{\"userId\":\"e0000000-0000-4000-8000-0000000000c8\",\"name\":\"Omar\",\"role\":\"admin\",\"memberId\":\"e0000000-0000-4000-8000-000000000064\"},{\"userId\":\"e0000000-0000-4000-8000-0000000000c9\",\"name\":\"Sara\",\"role\":\"member\",\"memberId\":\"e0000000-0000-4000-8000-000000000065\"},{\"userId\":\"e0000000-0000-4000-8000-0000000000ca\",\"name\":\"Lina\",\"role\":\"member\",\"memberId\":\"e0000000-0000-4000-8000-000000000066\"},{\"userId\":\"e0000000-0000-4000-8000-0000000000cb\",\"name\":\"Kitchen\",\"role\":\"kitchen\",\"memberId\":null}],\"slots\":[{\"id\":\"e0000000-0000-4000-8000-00000000012c\",\"key\":\"breakfast\",\"sortOrder\":0,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-00000000012d\",\"key\":\"lunch\",\"sortOrder\":1,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-00000000012e\",\"key\":\"dinner\",\"sortOrder\":2,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-00000000012f\",\"key\":\"snack\",\"sortOrder\":3,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-000000000130\",\"key\":\"packed_school_lunch\",\"sortOrder\":4,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-000000000131\",\"key\":\"packed_work_lunch\",\"sortOrder\":5,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-000000000132\",\"key\":\"pre_workout\",\"sortOrder\":6,\"active\":true},{\"id\":\"e0000000-0000-4000-8000-000000000133\",\"key\":\"post_workout\",\"sortOrder\":7,\"active\":true}],\"exclusions\":[{\"id\":\"e0000000-0000-4000-8000-000000000190\",\"memberId\":\"e0000000-0000-4000-8000-000000000068\",\"kind\":\"ingredient\",\"key\":\"sesame-seeds\",\"reason\":\"allergy\",\"hard\":true}],\"weights\":{\"macroPrecision\":1,\"appeal\":0.6,\"ingredientEconomy\":0.4,\"variety\":0.3,\"fairness\":0.5,\"aiGeneration\":\"auto\"},\"presets\":[]}"
+          }
+        ],
+        "cards": []
+      },
+      "createdAt": "2026-09-27T12:48:15.748Z"
+    },
+    {
+      "id": "row-8",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQS2QYKEAgSGAI4AUIIdGhpbmtpbmcSDKhqmU+swe9hxnL3WRoMuWxqaPh41NavYTHVIjDXCsdShmk8eIlWbqGiqe7oBtZC9E8kh/DpLTSlegEAEOneZHBCinai/GxFWNxLoPsq9gXMK0+vrcmcNaP6a0sXAtT0Np52XHO6EVZv2bv+oniIHkDIjW7/gNTI+Wxea0A9nrAn95PnDAJiQYtK3t9501AYqh2CKQ5RCzNUIUf+ulV6b8e37PUPRLVXus/VB5TR3WAXpPbtLFaJcQ6Rb89xV6SkkBMGDCmHtAimWeq1F8TZ2i+N6luexbsAf+qn118MeEWQDHcWU+U6sbShqd4yN9NeO07vCM017j6uTfhgxqN/DYywN9s3q3uKF+n1ZdCnLC6zZcPJ0cGIfTiBayeMGv1NbyRYtrJzbaT/bk+WObHPsDY/2hiOn8q+DJXH0Jo/+4mWEi5sklwQ5tcPwSYo+iT+syo7pD8misSqbTI7Tolb7jBOeusSQK4OW+oa5YWCxQqXY/pmhx13y3qSSkfmR+q5Y+nXIHddVTAA9BSSOUrPHOkE/XpbSi8fPr4z+rAF++oefNfhUl10WP6Wqbgqqbdykk3JfDNjh+BRfymUJAjJDNbRtLbZnHHMyk1hkuPB1mdhGYtbbF3kwMpzWryrGnPEEZ53TzS92fjMRgvRmyOoCgkKf33XqSnDDuDkGMt9jqrit8a3RZgyw+5N7mZqGolShAFFd8OscihOkgVsItPrHxOpX3F75zWLfFi41dYkj+RPsxyvrwv4/xd3dZ/0vNba92F0w+Bl03f79q2yHLqq0rAHx8n9CbSra9MNi3GTWtQU73c8HCUeEbVRQjS+rLcN6mH9lflg+BR9KJq/r2nTYa42ziHfUOtPyza5lJjbFR6cOW2zoqKMGFdANu+9/n0fIpSPrDmO9fGE5STCLU6tahEN1TOoCODcGbf3pU/+MuxfPmC2cPMcdA4kZMc+ttrfeO6zY471kTsHE0JUcWR1TELdfb4noa5YBLE8vyucRUmgi5RlqHijCILB9qXjOGb/14SIn349ImtvZQCllsl4xPlBmfBZs4H2ArNxRQ51rPqdHOn0E58sg15/ODUnrAuScyjTsSriumpLX0McK8EvVXd8T6jyuxgB"
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01VmqYL4DS6hHMNT7VHi5neH",
+          "name": "apply_change",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "summary": "Household likes Chicken shawarma wrap: strong positive preference so the planner picks it more often",
+            "ops": [
+              {
+                "kind": "preference.set",
+                "payload": {
+                  "memberId": null,
+                  "entityType": "dish",
+                  "entityKey": "e0000000-0000-4000-8000-0000000003fd",
+                  "score": 0.8,
+                  "source": "explicit",
+                  "locked": true
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "createdAt": "2026-09-27T12:48:20.928Z"
+    },
+    {
+      "id": "row-9",
+      "role": "tool",
+      "content": {
+        "results": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "toolu_01VmqYL4DS6hHMNT7VHi5neH",
+            "content": "{\"status\":\"applied\",\"changeSetId\":\"e0000000-0000-4000-8000-00000000032a\",\"changes\":[]}"
+          }
+        ],
+        "cards": [
+          {
+            "type": "applied_change",
+            "changeSetId": "e0000000-0000-4000-8000-00000000032a",
+            "summary": "Household likes Chicken shawarma wrap: strong positive preference so the planner picks it more often",
+            "descriptions": [],
+            "appliedAt": "2026-09-27T12:48:20.929Z"
+          }
+        ]
+      },
+      "createdAt": "2026-09-27T12:48:20.929Z"
+    },
+    {
+      "id": "row-10",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "Done: the whole household now has a strong, locked preference for Chicken shawarma wrap (see the change card). It can appear in lunch, dinner, packed lunches and Omar's post-workout slot, so the planner has plenty of places to use it.\n\nTwo things to keep in mind:\n\n- Macro precision still comes first (weight 1 vs appeal 0.6), so it will only be chosen where the plates fit Omar's and Sara's targets.\n- The variety weight (0.3) stops any dish repeating too often. If you want it at least, say, twice a week regardless, I can add a frequency rule with a minimum gap of 3 days; just say so.\n\nThe change takes effect on the next generation. Want me to regenerate the coming week now?"
+        }
+      ],
+      "createdAt": "2026-09-27T12:48:26.699Z"
+    }
+  ],
+  "writes": [
+    {
+      "port": "applyChange",
+      "input": {
+        "summary": "Household likes Chicken shawarma wrap: strong positive preference so the planner picks it more often",
+        "ops": [
+          {
+            "kind": "preference.set",
+            "payload": {
+              "memberId": null,
+              "entityType": "dish",
+              "entityKey": "e0000000-0000-4000-8000-0000000003fd",
+              "score": 0.8,
+              "source": "explicit",
+              "locked": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
