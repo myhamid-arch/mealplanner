@@ -170,13 +170,14 @@ afterAll(async () => {
 
 /** The household's current year: signup keeps the default time zone, where it is this year. */
 const YEAR = new Date().getUTCFullYear();
-const readable = (iso: string, withYear = false) =>
-  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  }) + (withYear ? ` ${iso.slice(0, 4)}` : "");
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+/** "Mon 14 Dec" as the ChangeLog mockup writes dates ("20 Sep"), independently of the server. */
+const readable = (iso: string, withYear = false) => {
+  const d = new Date(`${iso}T00:00:00Z`);
+  const text = `${DAYS[d.getUTCDay()] ?? ""} ${String(d.getUTCDate())} ${MONTHS[d.getUTCMonth()] ?? ""}`;
+  return withYear ? `${text} ${iso.slice(0, 4)}` : text;
+};
 const ISO_DATE = /\b\d{4}-\d{2}-\d{2}\b/;
 
 type Render = (e: Entry) => string;
@@ -261,6 +262,9 @@ describe("W-14 change-log subjects", () => {
     );
     const dated = entries.find((x) => x.id === ids.dated);
     expect(dated?.detail).toBeUndefined();
+    // September is "Sep" (the mockup), not ICU's en-GB "Sept".
+    expect(dated?.summary).toContain(" Sep");
+    expect(dated?.summary).not.toContain("Sept");
     expect(dated?.summary).toBe(
       `Re-solve plates from ${readable(`${String(YEAR)}-09-27`)} to ${readable(`${String(YEAR + 1)}-01-03`, true)}`,
     );

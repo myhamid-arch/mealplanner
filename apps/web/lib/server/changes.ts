@@ -213,18 +213,17 @@ const WEEKDAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
  * are not shifted between time zones; `year` is the current year in the household's time zone.
  */
 export function withReadableDates(text: string, year: number): string {
-  return text.replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g, (iso, y: string) => {
-    const d = new Date(`${iso}T00:00:00Z`);
-    if (Number.isNaN(d.getTime())) return iso;
-    const day = d.toLocaleDateString("en-GB", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-      timeZone: "UTC",
-    });
+  return text.replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g, (iso, y: string, m: string, d: string) => {
+    const date = new Date(`${iso}T00:00:00Z`);
+    const month = MONTHS[Number(m) - 1];
+    if (Number.isNaN(date.getTime()) || month === undefined) return iso;
+    // Fixed names, not the locale's: ICU's en-GB writes "Sept", the mockup "Sep".
+    const day = `${WEEKDAY_NAMES[(date.getUTCDay() + 6) % 7] ?? ""} ${String(Number(d))} ${month}`;
     return Number(y) === year ? day : `${day} ${y}`;
   });
 }
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /** A field's label and how its values read. */
 type Field = { label: string; show: (v: unknown) => string };
