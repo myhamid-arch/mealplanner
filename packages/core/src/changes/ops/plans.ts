@@ -214,6 +214,35 @@ export const planUnlock = defineOp({
   },
 });
 
+/** BLD-8 R-52: send a day's plan to the kitchen (WeekPlan "Send to kitchen"). */
+export const planPublish = defineOp({
+  kind: "plan.publish",
+  area: "plans",
+  schema: z.object({ date: isoDate }).strict(),
+  title: (p) => `Send the plan for ${p.date} to the kitchen`,
+  apply: async (tx, { date }) => {
+    const [day] = await tx.find("plan_day", { date });
+    if (day === undefined) throw new ChangeOpError("plan.publish", `no plan for ${date}`);
+    if (day.status !== "draft")
+      throw new ChangeOpError("plan.publish", `the plan for ${date} is already ${day.status}`);
+    await tx.update("plan_day", { id: day.id }, { status: "published" });
+  },
+});
+
+/** BLD-8 R-52: mark a meal cooked or skipped, or back to planned (CookSheet "Mark cooked"). */
+export const planMealStatus = defineOp({
+  kind: "plan_meal.status",
+  area: "plans",
+  schema: z.object({ planMealId: id, status: z.enum(PLAN_MEAL_STATUSES) }).strict(),
+  title: (p) => `Mark meal ${p.status}`,
+  apply: async (tx, { planMealId, status }) => {
+    const meal = await requireMeal("plan_meal.status", tx, planMealId);
+    if (meal.status === status)
+      throw new ChangeOpError("plan_meal.status", `meal is already ${status}`);
+    await tx.update("plan_meal", { id: planMealId }, { status });
+  },
+});
+
 /** PLN-13: swap the dish of one meal; the caller supplies the re-solved plates and batches. */
 export const planSwapDish = defineOp({
   kind: "plan.swap_dish",

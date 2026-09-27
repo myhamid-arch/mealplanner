@@ -1369,6 +1369,48 @@ export const portionBiasesList = endpoint({
   response: list("biases", d.PortionBiasDto),
 });
 
+// BLD-8 R-52 (leaf 1.4.4) ------------------------------------------------------------------------
+
+export const cookSheetsFlags = endpoint({
+  id: "cookSheets.flags",
+  method: "GET",
+  path: `${V}/cook-sheets/{date}/flags`,
+  summary:
+    "Kitchen flags of a date with their substitution job and result (R2-UX-1; kitchen: own flags)",
+  tag: "plans",
+  auth: "household",
+  roles: ADMIN_KITCHEN,
+  params: z.object({ date: IsoDate }),
+  response: d.KitchenFlagsDto,
+});
+
+export const plansPublish = endpoint({
+  id: "plans.publish",
+  method: "POST",
+  path: `${V}/plans/{date}/publish`,
+  summary: "Send a day's plan to the kitchen (logged, undoable)",
+  tag: "plans",
+  auth: "household",
+  roles: ADMIN,
+  params: z.object({ date: IsoDate }),
+  response: ChangeSetRef,
+  errors: [422],
+});
+
+export const planMealsStatus = endpoint({
+  id: "planMeals.status",
+  method: "POST",
+  path: `${V}/plan-meals/{id}/status`,
+  summary: "Mark a meal cooked, skipped or planned (logged, undoable)",
+  tag: "plans",
+  auth: "household",
+  roles: ADMIN_KITCHEN,
+  params: byId,
+  body: d.PlanMealStatusBody,
+  response: z.object({ changeSetId: Id, meal: d.PlanMealDto }),
+  errors: [422],
+});
+
 export const ENDPOINTS = [
   signup,
   me,
@@ -1434,6 +1476,10 @@ export const ENDPOINTS = [
   platesOverride,
   cookSheetsGet,
   cookSheetsFlag,
+  // BLD-8 R-52 (leaf 1.4.4)
+  cookSheetsFlags,
+  plansPublish,
+  planMealsStatus,
   reviewsList,
   reviewsCreate,
   reviewsEdit,

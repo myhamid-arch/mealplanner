@@ -372,6 +372,14 @@ export const CASES: Record<string, Case> = {
           : { kind: "unclear", variantId: w.a.variantId, note: "which pan?" },
     },
   }),
+  // BLD-8 R-52 (leaf 1.4.4)
+  "cookSheets.flags": () => ({ input: { params: { date: "2026-11-02" } } }),
+  "plans.publish": async ({ app, w }) => ({
+    input: { params: { date: (await freshMeal(app, w)).date } },
+  }),
+  "planMeals.status": async ({ app, w }) => ({
+    input: { params: { id: (await freshMeal(app, w)).meal.id }, body: { status: "cooked" } },
+  }),
 
   // Reviews and preferences
   "reviews.list": () => ({ input: { query: { limit: 20 } } }),
