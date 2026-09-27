@@ -180,9 +180,11 @@ export function planReady(p: PlanReadyLike): PlanReady {
     const off = targeted.filter((m) => m.offTarget).length;
     facts.push(off === 0 ? "All meals on target" : `${plural(off, "meal")} off target`);
   }
+  // Lunch boxes, not meals: one shared packed lunch for three children is three lunches.
   const packed = new Map<string, number>();
   for (const m of p.meals)
-    if (m.isPacked) packed.set(m.slotLabel, (packed.get(m.slotLabel) ?? 0) + 1);
+    if (m.isPacked)
+      packed.set(m.slotLabel, (packed.get(m.slotLabel) ?? 0) + Math.max(1, m.attendees.length));
   for (const [label, n] of packed) facts.push(plural(n, label));
   const trainees = [...new Set(p.meals.filter((m) => m.isTraining).flatMap((m) => m.attendees))];
   if (trainees.length > 0)

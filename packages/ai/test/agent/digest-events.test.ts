@@ -110,26 +110,11 @@ const WEEK: PlanReadyLike = {
       offTarget: false,
     },
     {
+      // One shared lunch for three children: three lunch boxes.
       slotLabel: "Packed school lunch",
       isPacked: true,
       isTraining: false,
-      attendees: ["Layla"],
-      targeted: false,
-      offTarget: false,
-    },
-    {
-      slotLabel: "Packed school lunch",
-      isPacked: true,
-      isTraining: false,
-      attendees: ["Adam"],
-      targeted: false,
-      offTarget: false,
-    },
-    {
-      slotLabel: "Packed school lunch",
-      isPacked: true,
-      isTraining: false,
-      attendees: ["Zayd"],
+      attendees: ["Layla", "Adam", "Zayd"],
       targeted: false,
       offTarget: false,
     },
@@ -164,7 +149,10 @@ describe("planReady (W-9b, SPEC-Q-5)", () => {
     });
     expect(off.title).toBe("The plan from Monday to Tuesday is ready");
     expect(off.facts[0]).toBe("1 meal off target");
-    const kids = planReady({ dates: ["2026-10-04"], meals: WEEK.meals.slice(1, 2) });
+    const kids = planReady({
+      dates: ["2026-10-04"],
+      meals: WEEK.meals.slice(1, 2).map((m) => ({ ...m, attendees: ["Zayd"] })),
+    });
     expect(kids).toMatchObject({
       title: "Sunday's plan is ready",
       facts: ["1 packed school lunch"],
