@@ -29,5 +29,5 @@ Scope: Onboarding, Family, Settings, detail levels, as specified in docs/spec (s
   EXPECT: VERIFY leaf-1.4.3 G5 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=84afb387dc80b9169c5ba002d5bacb35ad1e7c8528bc27b6447044225bd0eaec; exit=0; EXPECT=matched; output-sha256=6fba1481a3988b60a83e8c719744a24e31727c7dea8ec69dde8b31e8adaba975; output-bytes=1423; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G6: architect visual review against Onboarding, DetailLevels, MemberSimple, MemberDetailed, ScheduleGrid, PlanningBalance, TastesDesktop mockups
-  EVIDENCE: pending
+- [x] G6: architect visual review against Onboarding, DetailLevels, MemberSimple, MemberDetailed, ScheduleGrid, PlanningBalance, TastesDesktop mockups
+  EVIDENCE: architect review 2026-09-27 at 81ebd31 (screenshots at 390/1280 px beside each mockup): layouts match with the recorded deviations (R-28 copy, W-5 preview panel omitted, one question per screen); finding: training-day sat fat/soluble fibre not carried from the typed answer (16/8 vs F1 22/10) and a mislabelled '(6 % of calories)' source, both fixed in 80e96e6 and re-checked at a14bfc4 (G4 fails with the fix reverted); G1-G5 re-pass on the merge with base 554cad5, with DATABASE_URL set and unset
