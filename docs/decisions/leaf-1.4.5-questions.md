@@ -86,6 +86,7 @@ Every exclusion filters, whatever `hard`; `hard` only protects it from being rel
 ## SPEC-Q-14 (request): OWNS for unit tests and gate fixtures
 
 The leaf's OWNS has one test file (`apps/web/e2e/chat.spec.ts`). Requested:
+
 - `apps/web/test/chat/**` — vitest unit tests for the Markdown renderer, the card parsers, the SSE turn reducer and (Option B) the recipe-op mapping;
 - `apps/web/e2e/chat/**` — gate fixtures: the recorded tool results for G3 and the scripted model stub that the verify script preloads into the web server for G1/G3 (ADR-1). No production code reads them.
 

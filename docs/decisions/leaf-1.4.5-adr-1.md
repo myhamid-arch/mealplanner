@@ -34,10 +34,10 @@ Concurrency: every gate has its own database, dist dir, ports and temp directory
 
 Measured on this container (a cold `next build` in each gate; the package build shared under the lock):
 
-| Run | G1 | G2 | G3 |
-|---|---|---|---|
-| alone | 81 s | — | 54 s |
-| G2 and G3 in parallel | — | 176 s | 119 s |
+| Run                   | G1   | G2    | G3    |
+| --------------------- | ---- | ----- | ----- |
+| alone                 | 81 s | —     | 54 s  |
+| G2 and G3 in parallel | —    | 176 s | 119 s |
 
 Each is over `gate-check`'s default 120 s once the gates run together. The architect is asked for `--timeout 1800` for this ledger (the value R-52 granted 1.4.4 for the same kind of gates) rather than cutting coverage.
 
