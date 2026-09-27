@@ -34,6 +34,7 @@ import {
   ROOT,
   runAsync,
   WEB,
+  withSlot,
 } from "./lib/node.mjs";
 import { tail } from "./lib/run.mjs";
 import { copyWorkspace, installCopy } from "./lib/workspace.mjs";
@@ -162,7 +163,11 @@ async function gateN3(report) {
   if (!(await buildWeb(report, distDir))) return;
   const server = await acquireServer(report, `${LABEL}-n3`);
   try {
-    const { r, tests, measures } = await runSpec(WEB, distDir, server, "node14_n3");
+    // Playwright runs of every gate on this machine share NODE_E2E_SLOTS slots (lib/node.mjs).
+    const slots = Math.max(1, Number(process.env.NODE_E2E_SLOTS ?? "2") || 2);
+    const { r, tests, measures } = await withSlot("e2e-run", slots, () =>
+      runSpec(WEB, distDir, server, "node14_n3"),
+    );
     const failed = tests.filter((t) => t.status !== "passed");
     if (r.code !== 0 || failed.length > 0)
       console.log(`----- sc5.e2e.ts output (exit ${String(r.code)}) -----\n${tail(r, 120)}`);
@@ -217,12 +222,14 @@ async function gateN3(report) {
         return;
       if (!(await buildWeb(report, ".next/node-1.4-n3-control", join(copy.dir, "apps/web"))))
         return;
-      const control = await runSpec(
-        join(copy.dir, "apps/web"),
-        ".next/node-1.4-n3-control",
-        server,
-        "node14_n3c",
-        "at 390 px",
+      const control = await withSlot("e2e-run", slots, () =>
+        runSpec(
+          join(copy.dir, "apps/web"),
+          ".next/node-1.4-n3-control",
+          server,
+          "node14_n3c",
+          "at 390 px",
+        ),
       );
       const status = (title) => control.tests.find((t) => t.title === title)?.status ?? "missing";
       const [onboarding, plan, cook] = FLOWS("390");

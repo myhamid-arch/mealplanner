@@ -94,6 +94,38 @@ function acquireLock(name) {
   }
 }
 
+/**
+ * Runs `fn` holding one of `slots` machine-wide slots named `name` (a counting semaphore over lock
+ * directories), so concurrent gates share the machine instead of overloading it. A slot left by a
+ * dead process is taken over.
+ */
+export async function withSlot(name, slots, fn) {
+  const deadline = Date.now() + 3 * 60 * 60_000;
+  for (;;) {
+    for (let i = 0; i < slots; i += 1) {
+      const lock = lockPath(`${name}-${String(i)}`);
+      try {
+        mkdirSync(lock);
+      } catch (error) {
+        if (error.code !== "EEXIST") throw error;
+        const pidFile = join(lock, "pid");
+        const holder = existsSync(pidFile) ? Number(readFileSync(pidFile, "utf8")) : NaN;
+        if (Number.isInteger(holder) && holder > 0 && !processAlive(holder))
+          rmSync(lock, { recursive: true, force: true });
+        continue;
+      }
+      writeFileSync(join(lock, "pid"), String(process.pid));
+      try {
+        return await fn();
+      } finally {
+        rmSync(lock, { recursive: true, force: true });
+      }
+    }
+    if (Date.now() > deadline) throw new Error(`timed out waiting for a ${name} slot`);
+    await new Promise((r) => setTimeout(r, 1000));
+  }
+}
+
 /** Runs `fn` (sync or async) holding the named cross-process lock; a dead holder's lock is taken over. */
 export async function withLock(name, fn) {
   const lock = acquireLock(name);
@@ -1107,6 +1139,7 @@ export async function runE2ESuite(report, { webDir, distDir, server }) {
   }
 
   const jobs = Math.max(1, Number(process.env.NODE_E2E_JOBS ?? "2") || 2);
+  const slots = Math.max(1, Number(process.env.NODE_E2E_SLOTS ?? "2") || 2);
   const queue = [...runs];
   const done = new Map();
   await Promise.all(
@@ -1114,7 +1147,10 @@ export async function runE2ESuite(report, { webDir, distDir, server }) {
       for (let run = queue.shift(); run !== undefined; run = queue.shift()) {
         const started = Date.now();
         try {
-          const out = await e2eRun({ webDir, distDir, server, spec: run.spec, tag: run.tag });
+          // Playwright runs of every gate on this machine share NODE_E2E_SLOTS slots (default 2).
+          const out = await withSlot("e2e-run", slots, () =>
+            e2eRun({ webDir, distDir, server, spec: run.spec, tag: run.tag }),
+          );
           done.set(run.label, { ...out, seconds: Math.round((Date.now() - started) / 1000) });
         } catch (error) {
           done.set(run.label, { error: String(error?.stack ?? error), tests: [], seconds: 0 });
