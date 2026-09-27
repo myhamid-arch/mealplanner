@@ -7,14 +7,7 @@ import * as c from "@mealplanner/api-contract/contract";
 import { generatePlan } from "@mealplanner/db/services/plans";
 import { callJson, startTestApp, type Caller, type TestApp } from "./support/app";
 import { createTestDatabase, type TestDatabase } from "./support/db";
-import {
-  acceptWithSignup,
-  addMembers,
-  invite,
-  ok,
-  signupAdmin,
-  type Login,
-} from "./support/world";
+import { acceptWithSignup, addMembers, invite, ok, signupAdmin, type Login } from "./support/world";
 
 const DATE = "2026-12-07";
 const UNPLANNED = "2026-12-20";
@@ -52,8 +45,7 @@ async function plan(login: Login & { householdId: string }, date: string): Promi
   return id;
 }
 
-const undo = (caller: Caller, id: string) =>
-  callJson(c.changeSetsUndo, { params: { id } }, caller);
+const undo = (caller: Caller, id: string) => callJson(c.changeSetsUndo, { params: { id } }, caller);
 
 beforeAll(async () => {
   db = await createTestDatabase();

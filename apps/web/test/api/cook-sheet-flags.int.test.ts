@@ -13,14 +13,7 @@ import { HANDLERS } from "../../../worker/src/jobs/handlers";
 import { runJob } from "../../../worker/src/runner";
 import { callJson, startTestApp, type Caller, type TestApp } from "./support/app";
 import { createTestDatabase, type TestDatabase } from "./support/db";
-import {
-  acceptWithSignup,
-  addMembers,
-  invite,
-  ok,
-  signupAdmin,
-  type Login,
-} from "./support/world";
+import { acceptWithSignup, addMembers, invite, ok, signupAdmin, type Login } from "./support/world";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../../../..");
 const DATE = "2026-12-14";
@@ -207,9 +200,9 @@ describe("GET /cook-sheets/{date}/flags (R-52, R2-UX-1)", () => {
   it("the kitchen sees only its own flags; members are refused; another date or household has none", async () => {
     const own = await flags(kitchen);
     expect(own.map((f) => f.reviewId)).toEqual([unavailableId]);
-    expect(
-      (await callJson(c.cookSheetsFlags, { params: { date: DATE } }, member)).status,
-    ).toBe(403);
+    expect((await callJson(c.cookSheetsFlags, { params: { date: DATE } }, member)).status).toBe(
+      403,
+    );
     expect(await flags(a, "2026-12-01")).toEqual([]);
     expect(await flags(b)).toEqual([]);
   });
