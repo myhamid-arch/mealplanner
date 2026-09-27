@@ -19,6 +19,7 @@ type Entry = {
   id: string;
   summary: string;
   undoneAt: string | null;
+  undo: { available: boolean; reason: string | null };
   detail?: { title: string; subject: string; changes: Change[] };
 };
 
@@ -217,6 +218,14 @@ describe("W-14 change-log subjects", () => {
     const raw = entries.find((x) => x.id === ids.raw);
     expect(raw?.summary).toBe("Block login");
     expect(raw?.detail?.title).toBe("Blocked Priya (kitchen)");
+  });
+
+  it("an undo blocked by a later change names that change by its resolved title", () => {
+    // The raw block (dated earlier) conflicts with the later block of the same login.
+    const raw = entries.find((x) => x.id === ids.raw);
+    expect(raw?.undo.available).toBe(false);
+    expect(raw?.undo.reason).toContain('"Blocked Priya (kitchen)"');
+    expect(raw?.undo.reason).not.toContain('"Block login"');
   });
 
   it("a vanished subject renders with the stored title and no detail", () => {

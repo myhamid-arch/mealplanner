@@ -36,12 +36,14 @@ import { ProblemError, notFound } from "./problem";
 import type { Runtime } from "./runtime";
 import { iso, plain } from "./serialize";
 
-function undoDto(u: UndoAvailability) {
+/** Undo availability; a conflicting change is named by its resolved title when it has one (W-14). */
+function undoDto(u: UndoAvailability, titles: ReadonlyMap<string, EntryDetail> = new Map()) {
   if (u.ok) return { available: true, reason: null };
   if (u.reason === "already_undone") return { available: false, reason: "Already undone" };
+  const named = u.conflicts.map((c) => `"${titles.get(c.changeSetId)?.title ?? c.summary}"`);
   return {
     available: false,
-    reason: `A later change touched the same settings: ${u.conflicts.map((c) => `"${c.summary}"`).join(", ")}`,
+    reason: `A later change touched the same settings: ${named.join(", ")}`,
   };
 }
 
@@ -60,11 +62,10 @@ export async function changeLog(
   const details =
     q.area === "support"
       ? new Map<string, EntryDetail>()
-      : await describeChangeSets(
-          rt,
-          ctx,
-          entries.map((e) => e.changeSet),
-        );
+      : await describeChangeSets(rt, ctx, [
+          ...entries.map((e) => e.changeSet),
+          ...(await conflictRows(rt, ctx, entries)),
+        ]);
   const changes =
     q.area === "support"
       ? []
@@ -79,7 +80,7 @@ export async function changeLog(
           appliedAt: e.changeSet.appliedAt.toISOString(),
           undoneAt: iso(e.changeSet.undoneAt),
           undoneByChangeSetId: e.changeSet.undoneByChangeSetId,
-          undo: undoDto(e.undo),
+          undo: undoDto(e.undo, details),
           ...(details.has(e.changeSet.id) ? { detail: details.get(e.changeSet.id) } : {}),
           at: e.changeSet.appliedAt,
         }));
@@ -851,6 +852,29 @@ export async function describeChangeSets(
     if (d !== null) out.set(row.id, d);
   }
   return out;
+}
+
+/** The change sets that block an entry's undo and are not themselves on this page. */
+async function conflictRows(
+  rt: Runtime,
+  ctx: HouseholdContext,
+  entries: ReadonlyArray<{ changeSet: ChangeSetRow; undo: UndoAvailability }>,
+): Promise<ChangeSetRow[]> {
+  const listed = new Set(entries.map((e) => e.changeSet.id));
+  const ids = [
+    ...new Set(
+      entries.flatMap((e) =>
+        !e.undo.ok && e.undo.reason === "conflict"
+          ? e.undo.conflicts.map((c) => c.changeSetId).filter((id) => !listed.has(id))
+          : [],
+      ),
+    ),
+  ];
+  if (ids.length === 0) return [];
+  return rt.db
+    .select()
+    .from(changeSet)
+    .where(and(eq(changeSet.householdId, ctx.householdId), inArray(changeSet.id, ids)));
 }
 
 export async function changeSetOne(rt: Runtime, caller: CallerContext, id: string) {

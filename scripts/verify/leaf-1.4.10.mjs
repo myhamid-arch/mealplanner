@@ -108,6 +108,7 @@ const CHANGE_LOG = [
   "the target change carries the mockup's chips: protein and calories, before and after",
   "the settings change and the undo carry before → after (the undo reversed)",
   "a change set stored as raw rows resolves from its JSON alone (no migration)",
+  "an undo blocked by a later change names that change by its resolved title",
   "a vanished subject renders with the stored title and no detail",
   "multi-subject change sets keep their stored summary",
   "negative control: two blocks of different logins have the same stored summary",
