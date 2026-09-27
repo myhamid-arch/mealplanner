@@ -1,9 +1,9 @@
-# Leaf 1.2.6 — spec questions and decisions (CP1)
+# Leaf 1.2.6 — spec questions and decisions
 
-Owner rulings OQ-8 and OQ-9 (R-62). Each item states the reading taken and why. Items marked
-**open** wait for the architect.
+Owner rulings OQ-8 and OQ-9 (R-62). Each item states the reading taken and why, and how the
+architect settled it (R-63).
 
-## SPEC-Q-1 (open, ARCHITECT QUESTION): a dish that fits both a main slot and a snack/workout slot
+## SPEC-Q-1 (settled by R-63: rule (a)): a dish that fits both a main slot and a snack/workout slot
 
 04 §6.3 gives the gap by slot kind: main-meal slots need a day difference ≥ 7, `snack`,
 `pre_workout` and `post_workout` ≥ 4. It does not say which gap applies between two servings of one
@@ -32,7 +32,9 @@ harness matches the architect's. Every slot-based rule (a–c) meets the median 
 but fails "every seed ≥ 5 %" on seed 1. Per the dispatch note, I stop here and do not tune the
 threshold.
 
-Recommendation if the rule stays slot-based: (a), the larger gap of the two slots. It is
+R-63 chose (a) and set the floor to "no seed below 0 %" (economy never adds ingredients).
+
+Recommendation at CP1 if the rule stays slot-based: (a), the larger gap of the two slots. It is
 symmetric, so planning order and the improvement pass agree, and it is the conservative reading of
 the owner's "main meals repeat a dish only after 6 full days" (a dish eaten as a main meal does not
 come back as a snack three days later).
@@ -60,18 +62,27 @@ scoped row for the same key may coexist; the planner applies their union. `exclu
 existing row of the same member, kind, key and scope updates its reason and hardness (as today); a
 different scope inserts a new row.
 
-## SPEC-Q-5: exclusion readers outside the planner
+## SPEC-Q-5 (accepted; amended at build, R-15 request): exclusion readers outside the planner
 
 The planner (`Household` contexts per slot) and the follow-up engine read the scope. Other readers
 of exclusion rows (AI recipe context and validation, the knowledge-graph substitute filter, the
 onboarding resolver) are not in this leaf and keep treating every row as applying everywhere. That
 over-restricts a scoped row, which is the safe side; allergy rows, the only ones the cook sheet's
-allergy banner reads, are never scoped. In core types `ExclusionRow.slotKeys` is optional (absent =
-null = every slot), so rows built without it keep their meaning.
+allergy banner reads, are never scoped.
 
-## SPEC-Q-6: insights default gap (FBK-6)
+Amended at build: `ExclusionRow.slotKeys` is required (`string[] | null`), not optional as planned.
+1.1.2's `packages/db/src/repos/entity-types.ts` asserts each core row type equals the Drizzle
+select type exactly. Rows built in code (the graph's SQL reader, test fixtures) set it; the planner
+and the follow-up engine still read a missing value as "every slot".
+
+## SPEC-Q-6 (granted as R-14): insights default gap (FBK-6)
 
 `packages/core/src/learning/rules/config.ts` (1.3.3) compares a proposed `min_gap_days` with its
 own `DEFAULT_MIN_GAP_DAYS = 6` to label a frequency proposal "more" or "less" often. With OQ-8 the
-default is 7 (main) or 4 (snack/workout). That file is outside this leaf's OWNS; I leave it
-unchanged and flag it for the architect.
+default is 7 (main) or 4 (snack/workout).
+
+Done under R-14: `config.ts` takes the planner's constants (`DEFAULT_MIN_GAP_DAYS` = 7 for the
+fingerprint's more/less direction, and `defaultMinGapDays(slotKeys)`). The proposal copy "instead
+of every N" was a literal 6 in `frequency.ts`; one line there now names the dish's current gap:
+its household rule's `min_gap_days`, else the default of the slots it was served in during the
+review window (4 only when every one is a snack or workout slot, else 7).
