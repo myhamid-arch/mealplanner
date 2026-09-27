@@ -53,7 +53,7 @@ export function f1Config(): HouseholdConfig {
       key: "contains_sesame",
       reason: "allergy",
       hard: true,
-      slotKeys: null,
+      slotKeys: null, // 1.2.6 (R-62): every slot (OQ-9)
     },
   ];
   const preferences = ["italian", "levantine", "american", "british", "indian"].map((key, i) =>

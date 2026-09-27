@@ -52,7 +52,7 @@ const exclusion = (over: Partial<ExclusionRow>): ExclusionRow => ({
   key: "contains_sesame",
   reason: "allergy",
   hard: true,
-  slotKeys: null,
+  slotKeys: null, // 1.2.6 (R-62): every slot (OQ-9)
   ...over,
 });
 
@@ -116,6 +116,7 @@ describe("exclusions (SPEC-Q-6, R-34, R-36)", () => {
       exclusion({ kind: "ingredient", key: "chicken-thigh", reason: "dislike", hard: false }),
     ];
     const hh = new Household(cfg, pool);
+    // 1.2.6 (R-62): exclusions are read per slot (OQ-9).
     expect(hh.exclusionsOf("c3", "dinner").ingredientIds).toEqual(["ing:chicken-thigh"]);
     expect(hh.exclusionsOf("c2", "dinner").ingredientIds).toEqual([]);
   });
