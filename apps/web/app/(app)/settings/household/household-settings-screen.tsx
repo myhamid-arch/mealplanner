@@ -385,7 +385,7 @@ function Settings({
                   ["Protein", `±${String(DEFAULT_TOLERANCE.proteinG)} g`],
                   ["Carbs", `±${String(DEFAULT_TOLERANCE.carbsG)} g`],
                   ["Fat", `±${String(DEFAULT_TOLERANCE.fatG)} g`],
-                  ["Calories", `±${String(DEFAULT_TOLERANCE.kcal)} a day`],
+                  ["Calories a day", `±${String(DEFAULT_TOLERANCE.kcal)}`],
                 ] as const
               ).map(([k, v]) => (
                 <div key={k} className="flex flex-col rounded-[12px] bg-flour px-3 py-2">
@@ -422,7 +422,13 @@ function Settings({
         </div>
         <FormError>{error}</FormError>
         <Notice>{status}</Notice>
-        <div className="sticky bottom-[calc(96px+env(safe-area-inset-bottom))] z-10 flex items-center justify-end gap-3 rounded-[16px] bg-card p-3 shadow-raised lg:bottom-4">
+        <div
+          className={`z-10 flex items-center justify-end gap-3 rounded-[16px] bg-card p-3 ${
+            dirty.length > 0
+              ? "sticky bottom-[calc(96px+env(safe-area-inset-bottom))] shadow-raised lg:bottom-4"
+              : "shadow-card"
+          }`}
+        >
           <span className="grow text-sm text-ink-soft" aria-live="polite">
             {dirty.length === 0
               ? "All changes saved."

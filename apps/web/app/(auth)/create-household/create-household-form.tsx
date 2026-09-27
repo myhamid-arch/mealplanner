@@ -152,17 +152,19 @@ export function CreateHouseholdForm() {
         <span>Week starts Monday</span>
         <span className="text-ink-soft md:ml-auto">Change any of these later in Settings</span>
       </div>
-      <FormError>
-        {error}
-        {emailTaken && (
-          <>
-            {" "}
-            <Link href="/sign-in" className="text-pomegranate-text underline">
-              Sign in instead
-            </Link>
-          </>
-        )}
-      </FormError>
+      {error !== null && (
+        <FormError>
+          {error}
+          {emailTaken && (
+            <>
+              {" "}
+              <Link href="/sign-in" className="text-pomegranate-text underline">
+                Sign in instead
+              </Link>
+            </>
+          )}
+        </FormError>
+      )}
       <div className="flex flex-col-reverse items-stretch gap-4 md:flex-row md:items-center md:justify-between">
         <Link href="/sign-in" className="min-h-11 content-center text-center font-extrabold">
           I already have an account

@@ -80,8 +80,11 @@ function StatusPill({ status }: { readonly status: keyof typeof STATUS }) {
   );
 }
 
+// One column template for the header and every row, so the columns line up (PeopleAccess:
+// login 230, eats as 130, role 150, status 130, last active 150, actions). Fractions shrink
+// together below 1280 px; the actions column is fixed so it never pushes the others.
 const GRID =
-  "lg:grid lg:grid-cols-[minmax(0,230px)_minmax(0,130px)_minmax(0,150px)_minmax(0,130px)_minmax(0,150px)_1fr] lg:items-center lg:gap-3";
+  "lg:grid lg:grid-cols-[minmax(0,23fr)_minmax(0,13fr)_minmax(0,15fr)_minmax(0,12fr)_minmax(0,14fr)_150px] lg:items-center lg:gap-3";
 
 export function PeopleAccessScreen({ viewerUserId }: { readonly viewerUserId: string }) {
   const load = useLoad<Data>(async () => {
@@ -246,9 +249,9 @@ export function PeopleAccessScreen({ viewerUserId }: { readonly viewerUserId: st
                 <li
                   key={l.userId}
                   data-testid={`login-${l.email}`}
-                  className={`flex flex-col gap-2 border-b border-flour px-5 py-3.5 last:border-b-0 ${GRID}`}
+                  className={`flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-flour px-5 py-3.5 last:border-b-0 ${GRID}`}
                 >
-                  <span className="flex min-w-0 items-center gap-2.5">
+                  <span className="flex w-full min-w-0 items-center gap-2.5 lg:w-auto">
                     <Avatar
                       name={l.name}
                       color={isAvatarColor(m?.color) ? m.color : null}
@@ -405,9 +408,9 @@ export function PeopleAccessScreen({ viewerUserId }: { readonly viewerUserId: st
                 <li
                   key={i.id}
                   data-testid={`invite-${i.code}`}
-                  className={`flex flex-col gap-2 border-b border-flour px-5 py-3.5 last:border-b-0 ${GRID}`}
+                  className={`flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-flour px-5 py-3.5 last:border-b-0 ${GRID}`}
                 >
-                  <span className="flex min-w-0 items-center gap-2.5">
+                  <span className="flex w-full min-w-0 items-center gap-2.5 lg:w-auto">
                     <Avatar
                       name={name}
                       color={isAvatarColor(m?.color) ? m.color : null}
@@ -568,17 +571,11 @@ export function PeopleAccessScreen({ viewerUserId }: { readonly viewerUserId: st
         onOpenChange={(open) => {
           if (!open) setInviteFor(null);
         }}
-        members={withoutLogin
-          .filter(
-            (m) =>
-              !openInvites.some((i) => i.memberId === m.memberId) ||
-              m.memberId === inviteFor?.memberId,
-          )
-          .map((m) => ({
-            memberId: m.memberId,
-            displayName: m.displayName,
-            color: m.member?.color ?? null,
-          }))}
+        members={withoutLogin.map((m) => ({
+          memberId: m.memberId,
+          displayName: m.displayName,
+          color: m.member?.color ?? null,
+        }))}
         initialMemberId={inviteFor?.memberId ?? null}
         onChanged={() => void load.reload()}
       />

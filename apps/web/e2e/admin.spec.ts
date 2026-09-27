@@ -9,7 +9,7 @@
 // (the gate's own database, already migrated), MAIL_DIR (where the SMTP stub writes each message
 // as JSON). Tests in a group run in order and share the logins they create.
 import { createHmac } from "node:crypto";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Browser, type BrowserContext, type Page } from "@playwright/test";
@@ -93,10 +93,27 @@ async function newContext(browser: Browser, viewport: { width: number; height: n
  * tests sign in more often than a person would, from one address, so each attempt waits for the
  * count to reset instead of meeting a 429.
  */
-const authBuckets = new Map<string, { count: number; last: number }>();
+// Kept in a file next to MAIL_DIR: Playwright restarts its worker after a failed test, and the
+// server's counts do not reset with it.
+const SHARED_FILE = MAIL_DIR === "" ? "" : join(MAIL_DIR, "..", "e2e-shared.json");
+
+function readShared(): Record<string, unknown> {
+  if (SHARED_FILE === "" || !existsSync(SHARED_FILE)) return {};
+  return JSON.parse(readFileSync(SHARED_FILE, "utf8")) as Record<string, unknown>;
+}
+
+function writeShared(key: string, value: unknown) {
+  if (SHARED_FILE === "") return;
+  writeFileSync(SHARED_FILE, JSON.stringify({ ...readShared(), [key]: value }));
+}
+
 async function authSlot(path: "/sign-in/email" | "/sign-in/magic-link") {
   const quietMs = 10_500;
-  const bucket = authBuckets.get(path) ?? { count: 0, last: 0 };
+  const buckets = (readShared().authBuckets ?? {}) as Record<
+    string,
+    { count: number; last: number }
+  >;
+  const bucket = buckets[path] ?? { count: 0, last: 0 };
   if (Date.now() - bucket.last >= quietMs) bucket.count = 0;
   if (bucket.count >= 3) {
     await new Promise((r) => setTimeout(r, Math.max(0, bucket.last + quietMs - Date.now())));
@@ -104,7 +121,7 @@ async function authSlot(path: "/sign-in/email" | "/sign-in/magic-link") {
   }
   bucket.count += 1;
   bucket.last = Date.now();
-  authBuckets.set(path, bucket);
+  writeShared("authBuckets", { ...buckets, [path]: bucket });
 }
 
 async function signInWithPassword(page: Page, email: string, password: string) {
@@ -535,23 +552,43 @@ const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 
 async function seriousViolations(page: Page) {
   const result = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
-  return result.violations
-    .filter((v) => v.impact === "serious" || v.impact === "critical")
-    .map(
-      (v) =>
-        `${v.id} (${String(v.impact)}): ${v.nodes
-          .map((n) => n.target.join(" "))
-          .slice(0, 5)
-          .join(", ")}`,
-    );
+  // Responsiveness (UX-1: 390 px is first-class) is checked on the same screens: a page wider
+  // than the viewport makes content unreachable without horizontal scrolling.
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  const layout =
+    overflow > 0 ? [`horizontal-scroll (serious): page is ${String(overflow)} px too wide`] : [];
+  return layout.concat(
+    result.violations
+      .filter((v) => v.impact === "serious" || v.impact === "critical")
+      .map(
+        (v) =>
+          `${v.id} (${String(v.impact)}): ${v.nodes
+            .map((n) => n.target.join(" "))
+            .slice(0, 5)
+            .join(", ")}`,
+      ),
+  );
 }
 
-type Screen = { name: string; open: (page: Page) => Promise<void> };
+/** A page flow that calls `scan(state)` at each state worth checking. */
+type Flow = {
+  name: string;
+  run: (page: Page, scan: (state: string) => Promise<void>) => Promise<void>;
+};
 
 test.describe("@G2 axe-core on every screen of the leaf", () => {
   // In order (the set-up runs first), but one screen's failure does not skip the others.
   test.describe.configure({ mode: "default" });
-  const run = `a11y${Date.now().toString(36)}`;
+  // One run id for every worker (Playwright loads this file again after a restart).
+  const run =
+    (readShared().g2Run as string | undefined) ??
+    (() => {
+      const id = `a11y${Date.now().toString(36)}`;
+      writeShared("g2Run", id);
+      return id;
+    })();
   const admin = {
     name: "Sara",
     email: `sara-${run}@example.com`,
@@ -560,8 +597,15 @@ test.describe("@G2 axe-core on every screen of the leaf", () => {
   };
   const operator = { email: `op-${run}@example.com`, password: "operator-password-1" };
   const twoStep = { email: `two-${run}@example.com`, password: "twostep-password-1", secret: "" };
+  // The set-up's results, kept in the shared file so a restarted worker still has them.
+  const shared = () =>
+    readShared() as { g2State?: string; g2InviteCode?: string; g2OpState?: string };
   let inviteCode = "";
   let state: string | undefined;
+  test.beforeEach(() => {
+    inviteCode = inviteCode === "" ? (shared().g2InviteCode ?? "") : inviteCode;
+    state ??= shared().g2State;
+  });
 
   test("@G2 set-up: a household with a member invite, an operator and a two-step account", async ({
     browser,
@@ -587,6 +631,22 @@ test.describe("@G2 axe-core on every screen of the leaf", () => {
       },
     });
     expect(joined.status()).toBe(200);
+    // Diagnostics and the console's AI and job views show rows (the worker is not running here):
+    // one AI call that hit max_tokens with validation errors, and one failed plan job.
+    await sql(
+      `INSERT INTO ai_generation (id, household_id, purpose, model, request_summary, response_raw,
+         input_tokens, output_tokens, cache_read_tokens, stop_reason, validation_errors, created_at)
+       SELECT gen_random_uuid(), id, 'recipe', 'claude-test-model', '{}', '{}', 12000, 3200, 9000,
+         'max_tokens', '["bad slug"]', now() FROM household WHERE name = $1`,
+      [admin.household],
+    );
+    await sql(
+      `INSERT INTO job (id, household_id, kind, payload, status, error, created_at, started_at, finished_at)
+       SELECT gen_random_uuid(), id, 'plan.generate', '{}', 'failed',
+         '{"message":"no feasible plate for Sara at lunch"}', now(), now(), now()
+         FROM household WHERE name = $1`,
+      [admin.household],
+    );
     // An operator: a login from another household, made a platform operator.
     await page.request.post("/api/auth/sign-out", { data: {} });
     const op = await page.request.post("/api/v1/signup", {
@@ -602,8 +662,10 @@ test.describe("@G2 axe-core on every screen of the leaf", () => {
       `INSERT INTO platform_operator (user_id, created_at) SELECT id, now() FROM "user" WHERE email = $1`,
       [operator.email],
     );
+    // Keep the operator's session for the console scans (no sign-in per scan, no rate limit).
+    writeShared("g2OpState", JSON.stringify(await ctx.storageState()));
+    await ctx.clearCookies();
     // A two-step account, for the TOTP step of the sign-in screen.
-    await page.request.post("/api/auth/sign-out", { data: {} });
     expect(
       (
         await page.request.post("/api/v1/signup", {
@@ -633,222 +695,194 @@ test.describe("@G2 axe-core on every screen of the leaf", () => {
     await signInWithPassword(page, admin.email, admin.password);
     await page.waitForURL("**/today");
     state = JSON.stringify(await ctx.storageState());
+    writeShared("g2State", state);
+    writeShared("g2InviteCode", inviteCode);
     await ctx.close();
   });
 
-  const signedOut: Screen[] = [
+  // Each flow opens a page once and scans every state it passes through, in both colour schemes.
+  const signedOut: Flow[] = [
     {
       name: "sign-in",
-      open: async (p) => {
+      run: async (p, scan) => {
         await p.goto("/sign-in");
-      },
-    },
-    {
-      name: "sign-in with an error and a sent link",
-      open: async (p) => {
-        await signInWithPassword(p, "nobody@example.com", "wrong-password");
-        await expect(alert(p)).toBeVisible();
-      },
-    },
-    {
-      name: "sign-in, two-step step",
-      open: async (p) => {
-        await signInWithPassword(p, twoStep.email, twoStep.password);
-        await expect(p.getByRole("heading", { name: "Two-step sign-in" })).toBeVisible();
-      },
-    },
-    {
-      name: "sign-in, forgot password",
-      open: async (p) => {
-        await p.goto("/sign-in");
+        await scan("sign-in");
         await p.getByRole("button", { name: "Forgot password?" }).click();
         await expect(p.getByRole("heading", { name: "Forgot your password?" })).toBeVisible();
+        await scan("sign-in, forgot password");
+        await p.getByRole("button", { name: "Back to sign in" }).click();
+        await p.getByLabel("Email", { exact: true }).fill("nobody@example.com");
+        await p.getByLabel("Password", { exact: true }).fill("wrong-password");
+        await clickSignIn(p);
+        await expect(alert(p)).toBeVisible();
+        await scan("sign-in with an error");
+        await p.getByLabel("Email", { exact: true }).fill(twoStep.email);
+        await p.getByLabel("Password", { exact: true }).fill(twoStep.password);
+        await clickSignIn(p);
+        await expect(p.getByRole("heading", { name: "Two-step sign-in" })).toBeVisible();
+        await scan("sign-in, two-step step");
       },
     },
     {
       name: "create household",
-      open: async (p) => {
+      run: async (p, scan) => {
         await p.goto("/create-household");
+        await scan("create household");
       },
     },
     {
       name: "invite accept",
-      open: async (p) => {
+      run: async (p, scan) => {
         await p.goto(`/invite/${inviteCode}`);
         await expect(p.getByRole("button", { name: "Join the household" })).toBeVisible();
-      },
-    },
-    {
-      name: "invite accept, invalid code",
-      open: async (p) => {
+        await scan("invite accept");
         await p.goto("/invite/ABCDEFGHJK");
         await expect(alert(p)).toBeVisible();
+        await scan("invite accept, invalid code");
       },
     },
     {
-      name: "reset password",
-      open: async (p) => {
+      name: "reset and signed-in notice",
+      run: async (p, scan) => {
         await p.goto("/reset-password?token=example-token");
-      },
-    },
-    {
-      name: "signed in, password removed",
-      open: async (p) => {
+        await scan("reset password");
         await p.goto("/signed-in?passwordRemoved=1");
+        await scan("signed in, password removed");
       },
     },
   ];
 
-  const admins: Screen[] = [
+  const admins: Flow[] = [
     {
       name: "account",
-      open: async (p) => {
+      run: async (p, scan) => {
         await p.goto("/account");
         await expect(p.getByRole("heading", { name: "My account" })).toBeVisible();
         await expect(p.getByText("Two-step sign-in")).toBeVisible();
-      },
-    },
-    {
-      name: "account, two-step set-up",
-      open: async (p) => {
-        await p.goto("/account");
+        await scan("account");
         await p.getByRole("button", { name: "Turn on" }).click();
         const d = p.getByRole("dialog", { name: "Turn on two-step sign-in" });
         await d.getByLabel("Your password").fill(admin.password);
         await d.getByRole("button", { name: "Continue" }).click();
         await expect(d.getByRole("img", { name: /QR code/ })).toBeVisible();
-      },
-    },
-    {
-      name: "diagnostics",
-      open: async (p) => {
+        await scan("account, two-step set-up");
         await p.goto("/account/diagnostics");
-        await expect(p.getByRole("heading", { name: "AI calls" })).toBeVisible();
+        await expect(p.getByRole("table", { name: "The last 50 AI calls" })).toContainText(
+          "max_tokens",
+        );
+        await expect(p.getByRole("table", { name: "Failed jobs" })).toContainText(
+          "no feasible plate",
+        );
+        await scan("diagnostics");
       },
     },
     {
       name: "people and access",
-      open: async (p) => {
+      run: async (p, scan) => {
         await p.goto("/access");
         await expect(p.getByText("Family members without a login")).toBeVisible();
-      },
-    },
-    {
-      name: "invite dialog",
-      open: async (p) => {
-        await p.goto("/access");
-        await p.getByRole("button", { name: "Invite someone" }).click();
-        await expect(p.getByRole("dialog", { name: "Invite someone" })).toBeVisible();
-      },
-    },
-    {
-      name: "invite dialog, link and QR",
-      open: async (p) => {
-        await p.goto("/access");
+        await scan("people and access");
+        await p.getByRole("button", { name: "More actions for Zayd" }).click();
+        await expect(p.getByRole("menu")).toBeVisible();
+        await scan("actions menu");
+        await p.getByRole("menuitem", { name: "Block…" }).click();
+        await expect(p.getByRole("dialog", { name: "Zayd's login" })).toBeVisible();
+        await scan("block dialog");
+        await p.keyboard.press("Escape");
         await p.getByRole("button", { name: "Invite someone" }).click();
         const d = p.getByRole("dialog", { name: "Invite someone" });
+        await expect(d).toBeVisible();
+        await scan("invite dialog");
         await d.getByRole("button", { name: /Doesn.t eat here \(staff\)/ }).click();
         await d.getByRole("button", { name: "Create invite link" }).click();
         await expect(p.getByRole("dialog", { name: "Invite ready" })).toBeVisible();
+        await scan("invite dialog, link and QR");
       },
     },
     {
-      name: "actions menu",
-      open: async (p) => {
-        await p.goto("/access");
-        await p.getByRole("button", { name: "More actions for Zayd" }).click();
-        await expect(p.getByRole("menu")).toBeVisible();
-      },
-    },
-    {
-      name: "block dialog",
-      open: async (p) => {
-        await p.goto("/access");
-        await p.getByRole("button", { name: "More actions for Zayd" }).click();
-        await p.getByRole("menuitem", { name: "Block…" }).click();
-        await expect(p.getByRole("dialog")).toBeVisible();
-      },
-    },
-    {
-      name: "household settings",
-      open: async (p) => {
+      name: "settings and change log",
+      run: async (p, scan) => {
         await p.goto("/settings/household");
         await expect(p.getByRole("heading", { name: "Who sees what" })).toBeVisible();
-      },
-    },
-    {
-      name: "change log",
-      open: async (p) => {
+        await scan("household settings");
         await p.goto("/changelog");
         await expect(p.getByRole("heading", { name: "Change log" })).toBeVisible();
+        await scan("change log");
       },
     },
   ];
 
-  const operators: Screen[] = ["Households", "Users", "AI usage", "System"].map((tab) => ({
-    name: `platform console, ${tab}`,
-    open: async (p) => {
-      await p.goto("/platform");
-      await p.getByRole("tab", { name: tab }).click();
-      await expect(p.getByRole("tab", { name: tab })).toHaveAttribute("aria-selected", "true");
-      await expect(p.getByRole("tabpanel").getByRole("heading").first()).toBeVisible();
+  const operators: Flow[] = [
+    {
+      name: "platform console",
+      run: async (p, scan) => {
+        await p.goto("/platform");
+        for (const tab of ["Households", "Users", "AI usage", "System"]) {
+          await p.getByRole("tab", { name: tab }).click();
+          await expect(p.getByRole("tab", { name: tab })).toHaveAttribute("aria-selected", "true");
+          await expect(p.getByRole("tabpanel").getByRole("heading").first()).toBeVisible();
+          await scan(`platform console, ${tab}`);
+        }
+      },
     },
-  }));
+  ];
 
-  for (const viewport of [PHONE, DESKTOP])
+  /** Scans the open page in light, then dark (the tokens follow prefers-color-scheme live). */
+  async function scanBothSchemes(page: Page, state: string, failures: string[]) {
     for (const scheme of ["light", "dark"] as const) {
-      const label = `${String(viewport.width)} px ${scheme}`;
-      test(`@G2 signed-out screens at ${label}`, async ({ browser }) => {
-        const failures: string[] = [];
-        for (const screen of signedOut) {
-          const ctx = await browser.newContext({
-            baseURL: `http://localhost:${process.env.PLAYWRIGHT_PORT ?? "3142"}`,
-            viewport,
-            colorScheme: scheme,
-          });
-          const page = await ctx.newPage();
-          await screen.open(page);
-          for (const v of await seriousViolations(page)) failures.push(`${screen.name}: ${v}`);
-          await ctx.close();
-        }
-        expect(failures).toEqual([]);
-      });
-      test(`@G2 admin screens at ${label}`, async ({ browser }) => {
-        const failures: string[] = [];
-        for (const screen of admins) {
-          const ctx = await browser.newContext({
-            baseURL: `http://localhost:${process.env.PLAYWRIGHT_PORT ?? "3142"}`,
-            viewport,
-            colorScheme: scheme,
-            storageState: JSON.parse(state ?? "{}") as { cookies: []; origins: [] },
-          });
-          const page = await ctx.newPage();
-          await screen.open(page);
-          for (const v of await seriousViolations(page)) failures.push(`${screen.name}: ${v}`);
-          await ctx.close();
-        }
-        expect(failures).toEqual([]);
-      });
-      test(`@G2 platform console at ${label}`, async ({ browser }) => {
-        const ctx = await browser.newContext({
-          baseURL: `http://localhost:${process.env.PLAYWRIGHT_PORT ?? "3142"}`,
-          viewport,
-          colorScheme: scheme,
-        });
-        const page = await ctx.newPage();
-        await signInWithPassword(page, operator.email, operator.password);
-        await page.waitForURL(/\/(today|platform)/);
-        const failures: string[] = [];
-        for (const screen of operators) {
-          await screen.open(page);
-          for (const v of await seriousViolations(page)) failures.push(`${screen.name}: ${v}`);
-        }
-        await ctx.close();
-        expect(failures).toEqual([]);
-      });
+      await page.emulateMedia({ colorScheme: scheme });
+      // Finite colour transitions (buttons' `transition-colors`) would be caught half-way.
+      await page.evaluate(() =>
+        Promise.all(
+          document
+            .getAnimations()
+            .filter((a) => a.effect?.getComputedTiming().endTime !== Infinity)
+            .map((a) => a.finished.catch(() => undefined)),
+        ),
+      );
+      for (const v of await seriousViolations(page)) failures.push(`${state} (${scheme}): ${v}`);
     }
+    await page.emulateMedia({ colorScheme: "light" });
+  }
 
-  test("@G2 negative control: the scan reports an unnamed button and low-contrast text", async ({
+  const base = () => `http://localhost:${process.env.PLAYWRIGHT_PORT ?? "3142"}`;
+  const storage = (json: string | undefined) =>
+    JSON.parse(json ?? "{}") as { cookies: []; origins: [] };
+
+  async function runFlows(
+    browser: Browser,
+    viewport: { width: number; height: number },
+    flows: readonly Flow[],
+    session: string | undefined,
+  ) {
+    const failures: string[] = [];
+    for (const flow of flows) {
+      const ctx = await browser.newContext({
+        baseURL: base(),
+        viewport,
+        ...(session === undefined ? {} : { storageState: storage(session) }),
+      });
+      const page = await ctx.newPage();
+      await flow.run(page, (state) => scanBothSchemes(page, state, failures));
+      await ctx.close();
+    }
+    expect(failures).toEqual([]);
+  }
+
+  for (const viewport of [PHONE, DESKTOP]) {
+    const label = `${String(viewport.width)} px, light and dark`;
+    test(`@G2 signed-out screens at ${label}`, async ({ browser }) => {
+      await runFlows(browser, viewport, signedOut, undefined);
+    });
+    test(`@G2 admin screens at ${label}`, async ({ browser }) => {
+      await runFlows(browser, viewport, admins, state);
+    });
+    test(`@G2 platform console at ${label}`, async ({ browser }) => {
+      await runFlows(browser, viewport, operators, shared().g2OpState);
+    });
+  }
+
+  test("@G2 negative control: the scan reports an unnamed button, low-contrast text and a page wider than the screen", async ({
     browser,
   }) => {
     const ctx = await newContext(browser);
@@ -861,11 +895,14 @@ test.describe("@G2 axe-core on every screen of the leaf", () => {
       const t = document.createElement("p");
       t.textContent = "Faint text nobody can read";
       t.style.cssText = "color:#B8A791;background:#FFF8EE;font-size:14px";
-      document.querySelector("main")?.append(b, t);
+      const wide = document.createElement("div");
+      wide.style.cssText = "width:2000px;height:1px";
+      document.querySelector("main")?.append(b, t, wide);
     });
     const found = await seriousViolations(page);
     expect(found.some((v) => v.startsWith("button-name"))).toBe(true);
     expect(found.some((v) => v.startsWith("color-contrast"))).toBe(true);
+    expect(found.some((v) => v.startsWith("horizontal-scroll"))).toBe(true);
     await ctx.close();
   });
 });

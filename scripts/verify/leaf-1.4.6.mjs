@@ -64,14 +64,14 @@ const G1_NEGATIVE = [
 ];
 const G2_TESTS = [
   "@G2 set-up: a household with a member invite, an operator and a two-step account",
-  ...["390 px light", "390 px dark", "1280 px light", "1280 px dark"].flatMap((v) => [
+  ...["390 px, light and dark", "1280 px, light and dark"].flatMap((v) => [
     `@G2 signed-out screens at ${v}`,
     `@G2 admin screens at ${v}`,
     `@G2 platform console at ${v}`,
   ]),
 ];
 const G2_NEGATIVE = [
-  "@G2 negative control: the scan reports an unnamed button and low-contrast text",
+  "@G2 negative control: the scan reports an unnamed button, low-contrast text and a page wider than the screen",
 ];
 
 const GATES = {
@@ -404,6 +404,9 @@ function startSmtp(dir) {
 // Playwright
 // ---------------------------------------------------------------------------------------------
 
+/** Test durations in ms from the last report read, for the timing lines. */
+const durations = new Map();
+
 /** Flattens Playwright's JSON report into { title → status }. */
 function results(reportFile) {
   const out = new Map();
@@ -414,6 +417,7 @@ function results(reportFile) {
       for (const t of spec.tests ?? []) {
         const last = t.results?.at(-1);
         out.set(spec.title, last?.status ?? "skipped");
+        durations.set(spec.title, last?.duration ?? 0);
       }
     for (const child of suite.suites ?? []) walk(child);
   };
@@ -442,7 +446,7 @@ async function playwright({ spec, grep, env, outDir }) {
         ...env,
         PLAYWRIGHT_JSON_OUTPUT_FILE: reportFile,
         PLAYWRIGHT_JSON_OUTPUT_NAME: reportFile,
-        PLAYWRIGHT_OUTPUT_DIR: join(outDir, "artefacts"),
+        PLAYWRIGHT_OUTPUT_DIR: join(outDir, `artefacts-${spec.replace(/\W/g, "")}`),
         PLAYWRIGHT_SKIP_BUILD: "1",
         NEXT_TELEMETRY_DISABLED: "1",
         ...(chromium() === undefined ? {} : { PLAYWRIGHT_CHROMIUM_EXECUTABLE: chromium() }),
@@ -528,7 +532,7 @@ function printFull(label, result, outDir) {
   console.log(`----- ${label}: full output (exit ${String(result.code)}) -----`);
   console.log(result.stdout);
   if (result.stderr.trim() !== "") console.log(result.stderr);
-  for (const file of findFiles(join(outDir, "artefacts"), "error-context.md"))
+  for (const file of findFiles(outDir, "error-context.md"))
     console.log(`----- ${file} -----\n${readFileSync(file, "utf8")}`);
   console.log(`----- end of ${label} -----`);
 }
@@ -594,10 +598,29 @@ async function main() {
       EMAIL_FROM: "Mise <no-reply@example.com>",
       MAIL_DIR: mailDir,
     };
+    // BLD-8 W-1 (G2): 1.4.2's shell e2e runs at the same time, against its own server without a
+    // database, from the same build.
+    const shellRun =
+      gate === "G2"
+        ? freePort().then((shellPort) =>
+            playwright({
+              spec: "e2e/shell.spec.ts",
+              grep: "@G2",
+              env: {
+                MISE_NEXT_DIST_DIR: distDir,
+                PLAYWRIGHT_PORT: String(shellPort),
+                DATABASE_URL: "",
+              },
+              outDir,
+            }),
+          )
+        : null;
     const e2e = await playwright({ spec: SPEC, grep: `@${gate}`, env, outDir });
     const failed = [...e2e.tests].filter(([, s]) => s !== "passed" && s !== "expected");
     if (e2e.code !== 0 || failed.length > 0) printFull(`${SPEC} @${gate}`, e2e, outDir);
     report.check(e2e.code === 0, `${SPEC} @${gate} exits 0`, tail(e2e, 40));
+    for (const [title, ms] of durations)
+      console.log(`time - ${(ms / 1000).toFixed(1)} s  ${title}`);
     for (const title of GATES[gate].required)
       report.check(
         e2e.tests.get(title) === "passed",
@@ -673,15 +696,8 @@ async function main() {
         "negative control: the same check rejects an account without a password",
       );
     } else {
-      // BLD-8 W-1: 1.4.2's shell e2e, against its own server without a database.
-      const shellPort = await freePort();
-      const shellEnv = { MISE_NEXT_DIST_DIR: distDir, PLAYWRIGHT_PORT: String(shellPort) };
-      const shell = await playwright({
-        spec: "e2e/shell.spec.ts",
-        grep: "@G2",
-        env: { ...shellEnv, DATABASE_URL: "" },
-        outDir,
-      });
+      const shell = await shellRun;
+      if (shell === null) throw new Error("the shell e2e did not start");
       const shellFailed = [...shell.tests].filter(([, s]) => s !== "passed");
       if (shell.code !== 0 || shellFailed.length > 0)
         printFull("e2e/shell.spec.ts @G2 (W-1)", shell, outDir);

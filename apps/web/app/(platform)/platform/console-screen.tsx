@@ -69,7 +69,13 @@ function Table({
   readonly children: ReactNode;
 }) {
   return (
-    <div className="overflow-x-auto rounded-[20px] bg-card shadow-card">
+    <div
+      // A table wider than a phone scrolls sideways; the region takes focus so keyboards can scroll it.
+      role="region"
+      aria-label={caption}
+      tabIndex={0}
+      className="relative w-full min-w-0 overflow-x-auto rounded-[20px] bg-card shadow-card"
+    >
       <table className="w-full min-w-[720px] border-collapse text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead className="bg-flour">
@@ -154,12 +160,15 @@ export function ConsoleScreen() {
           Sign out
         </button>
       </header>
-      <main id="main" className="mx-auto flex max-w-[1200px] flex-col gap-5 px-4 py-7 lg:px-9">
+      <main
+        id="main"
+        className="mx-auto flex w-full max-w-[1200px] min-w-0 flex-col gap-5 px-4 py-7 lg:px-9"
+      >
         <div
           role="tabpanel"
           id={`panel-${tab}`}
           aria-labelledby={`tab-${tab}`}
-          className="flex flex-col gap-5"
+          className="flex min-w-0 flex-col gap-5"
         >
           {load.status === "loading" ? (
             <SkeletonBlock label="Loading the console" lines={8} />
@@ -312,6 +321,12 @@ function HouseholdsPanel({
       )}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <section
+          aria-labelledby="find-user"
+          className="flex min-w-0 flex-col gap-3 rounded-[20px] bg-card p-5 shadow-card"
+        >
+          <UsersPanel headingId="find-user" compact />
+        </section>
+        <section
           aria-labelledby="support-note"
           className="flex flex-col gap-2 rounded-[20px] bg-card p-5 shadow-card"
         >
@@ -430,7 +445,13 @@ function DetailsDialog({
   );
 }
 
-function UsersPanel() {
+function UsersPanel({
+  headingId,
+  compact = false,
+}: {
+  readonly headingId?: string;
+  readonly compact?: boolean;
+}) {
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState<UserRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -455,7 +476,13 @@ function UsersPanel() {
 
   return (
     <>
-      <h1 className="text-[28px] lg:text-[34px]">Find a user</h1>
+      {compact ? (
+        <h2 id={headingId} className="text-[20px]">
+          Find a user
+        </h2>
+      ) : (
+        <h1 className="text-[28px] lg:text-[34px]">Find a user</h1>
+      )}
       <form
         onSubmit={(e) => {
           void search(e);
@@ -485,7 +512,7 @@ function UsersPanel() {
             {users.map((u) => (
               <li
                 key={u.id}
-                className="flex flex-wrap items-center gap-3 rounded-[16px] bg-card px-4 py-3 shadow-card"
+                className={`flex flex-wrap items-center gap-3 rounded-[16px] px-4 py-3 ${compact ? "bg-flour" : "bg-card shadow-card"}`}
               >
                 <span className="flex min-w-0 grow flex-col">
                   <span className="font-extrabold">

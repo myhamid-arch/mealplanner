@@ -417,7 +417,7 @@ export function AccountScreen({ passwordRemoved }: { readonly passwordRemoved: b
 
 function Frame({ children }: { readonly children: ReactNode }) {
   return (
-    <div className="mx-auto flex w-full max-w-[640px] flex-col gap-3.5">
+    <div className="mx-auto flex w-full max-w-[640px] flex-col gap-3.5 pb-16 lg:pb-0">
       <h1 className="text-[28px]">My account</h1>
       {children}
     </div>

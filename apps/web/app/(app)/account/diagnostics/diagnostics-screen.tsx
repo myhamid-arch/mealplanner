@@ -46,7 +46,13 @@ function Table({
   readonly children: ReactNode;
 }) {
   return (
-    <div className="overflow-x-auto rounded-[20px] bg-card shadow-card">
+    <div
+      // A table wider than a phone scrolls sideways; the region takes focus so keyboards can scroll it.
+      role="region"
+      aria-label={caption}
+      tabIndex={0}
+      className="relative w-full min-w-0 overflow-x-auto rounded-[20px] bg-card shadow-card"
+    >
       <table className="w-full min-w-[640px] border-collapse text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead className="bg-flour">
