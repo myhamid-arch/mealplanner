@@ -3,8 +3,9 @@
 // Every slot row is labelled SHARED or INDIVIDUAL, split members are marked "+ Omar: own dish"
 // (R2-MEAL-1/2), locked meals carry a lock. The header strip shows distinct ingredients, the share
 // of targeted meals on target, and cuisines. Admins plan or regenerate the unlocked meals, send
-// days to the kitchen (R-52), and open a meal to swap, lock or change it for one day.
-// Drag to move is out of v1 (R-52, W-5).
+// days to the kitchen (R-52), and open a meal to swap, lock, move or change it for one day.
+// Admins drag a meal to the same slot on another draft day, or use the meal sheet's "Move to…"
+// (UX-4, W-5 addendum; BLD-8 R-58; leaf-1.4.8 ADR-1, SPEC-Q-7).
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Button, Chip, EmptyState, Icon } from "../ui";
@@ -20,6 +21,7 @@ import {
   type PlanDay,
   type PlanMeal,
   type Schedules,
+  type TargetProfile,
 } from "./api";
 import { ExtraIconSvg, LoadError, Loading, loadBasics, type Basics } from "./common";
 import {
@@ -27,6 +29,10 @@ import {
   cuisineFamily,
   dayKindOf,
   dayMonth,
+  dayTarget,
+  mediumDay,
+  moveOptions,
+  unmovable,
   minutesOf,
   mondayOf,
   shortDay,
@@ -35,7 +41,8 @@ import {
   weekdayName,
   type FitStatus,
 } from "./logic";
-import { MealSheet } from "./meal-sheet";
+import { dropKey, useMealDrag, type DragSource, type DragState } from "./drag";
+import { MealSheet, type DayTargetOf, type MoveOf } from "./meal-sheet";
 import { useWide } from "./use-wide";
 
 interface WeekData {
@@ -47,6 +54,8 @@ interface WeekData {
   dishes: Map<string, DishSummary>;
   overrides: MealOverride[];
   schedules: Schedules | null;
+  /** Target profiles the viewer may read (W-7 day targets); none for kitchen users. */
+  targets: TargetProfile[];
 }
 
 async function loadWeek(week: string | null): Promise<WeekData> {
@@ -54,7 +63,7 @@ async function loadWeek(week: string | null): Promise<WeekData> {
   const monday = mondayOf(week ?? basics.today);
   const dates = weekDates(monday);
   const admin = basics.role === "admin";
-  const [plans, sheets, dishes, overrides, schedules] = await Promise.all([
+  const [plans, sheets, dishes, overrides, schedules, targets] = await Promise.all([
     api.call(c.plansList, { query: { from: dates[0] ?? monday, to: dates[6] ?? monday } }),
     Promise.all(dates.map((date) => api.call(c.cookSheetsGet, { params: { date } }))),
     api.call(c.dishesList, { query: {} }),
@@ -62,6 +71,12 @@ async function loadWeek(week: string | null): Promise<WeekData> {
       ? api.call(c.mealOverridesList, { query: { from: monday, to: addDays(monday, 6) } })
       : Promise.resolve({ overrides: [] }),
     admin ? api.call(c.schedulesGet, {}) : Promise.resolve(null),
+    basics.role === "kitchen"
+      ? Promise.resolve([])
+      : api
+          .call(c.targetsList, {})
+          .then((t) => t.targets)
+          .catch(() => []),
   ]);
   return {
     basics,
@@ -72,7 +87,18 @@ async function loadWeek(week: string | null): Promise<WeekData> {
     dishes: new Map((dishes.dishes ?? []).map((d) => [d.id, d])),
     overrides: overrides.overrides,
     schedules,
+    targets,
   };
+}
+
+/** Drag and drop on the week (admins; SPEC-Q-7). */
+interface Dnd {
+  drag: DragState | null;
+  /** The meal a cell can be dragged by, or null (several meals, locked, past, sent). */
+  sourceOf: (meals: readonly PlanMeal[]) => DragSource | null;
+  start: ReturnType<typeof useMealDrag>["start"];
+  consumeClick: () => boolean;
+  canDrop: (source: DragSource, date: string, slotTypeId: string) => boolean;
 }
 
 interface Row {
@@ -129,11 +155,13 @@ function Cell({
   data,
   onOpen,
   compact,
+  dnd,
 }: {
   readonly meals: readonly PlanMeal[];
   readonly data: WeekData;
   readonly onOpen: () => void;
   readonly compact: boolean;
+  readonly dnd: Dnd;
 }) {
   const shared = meals.find((m) => m.memberScope === "shared");
   const name = (id: string) => data.basics.members.find((m) => m.id === id)?.displayName ?? "";
@@ -158,12 +186,26 @@ function Cell({
   const worst = meals
     .flatMap((m) => m.plates.map((p) => p.fitStatus))
     .find((s): s is FitStatus => s === "infeasible" || s === "flexible_miss");
+  const source = dnd.sourceOf(meals);
+  const dragged = source !== null && dnd.drag?.source.mealId === source.mealId;
   return (
     <button
       type="button"
-      onClick={onOpen}
+      onClick={() => {
+        if (!dnd.consumeClick()) onOpen();
+      }}
+      onPointerDown={
+        source === null
+          ? undefined
+          : (e) => {
+              dnd.start(e, source);
+            }
+      }
+      aria-roledescription={source === null ? undefined : "draggable meal"}
+      aria-describedby={source === null ? undefined : "move-hint"}
       data-testid={`cell-${lead.date}-${lead.slotKey}`}
-      className="flex min-h-11 w-full flex-col items-stretch gap-0.5 rounded-[10px] bg-card p-2 text-left text-ink hover:bg-flour"
+      data-draggable={source === null ? undefined : "true"}
+      className={`flex min-h-11 w-full flex-col items-stretch gap-0.5 rounded-[10px] p-2 text-left text-ink hover:bg-flour ${source === null ? "" : "cursor-grab select-none"} ${dragged ? "bg-flour outline-2 outline-offset-1 outline-line-strong outline-dashed" : "bg-card"}`}
       style={{ boxShadow: `inset 0 -4px 0 ${TONE_BAR[tone] ?? "var(--olive)"}` }}
     >
       <span className="flex items-start justify-between gap-1">
@@ -221,12 +263,37 @@ function trainingLine(data: WeekData, date: string): string | null {
   return who.length === 0 ? "rest" : `${who.join(" · ")} trains`;
 }
 
+/** A drop target's look while a meal is dragged: dashed when allowed, solid under the pointer. */
+function dropClass(dnd: Dnd, date: string, slotTypeId: string): string {
+  const d = dnd.drag;
+  if (d === null || !dnd.canDrop(d.source, date, slotTypeId)) return "";
+  return d.over === dropKey(date, slotTypeId)
+    ? "rounded-[12px] outline-2 outline-offset-1 outline-tomato outline-solid"
+    : "rounded-[12px] outline-2 outline-offset-1 outline-tomato/60 outline-dashed";
+}
+
+function DropHint({
+  dnd,
+  date,
+  slotTypeId,
+}: {
+  readonly dnd: Dnd;
+  readonly date: string;
+  readonly slotTypeId: string;
+}) {
+  const d = dnd.drag;
+  if (d === null || !dnd.canDrop(d.source, date, slotTypeId)) return null;
+  return <span className="sr-only">Drop here to move to {mediumDay(date)}.</span>;
+}
+
 function Grid({
   data,
   onOpen,
+  dnd,
 }: {
   readonly data: WeekData;
   readonly onOpen: (meals: PlanMeal[]) => void;
+  readonly dnd: Dnd;
 }) {
   const rs = rows(data);
   return (
@@ -272,7 +339,13 @@ function Grid({
           {data.dates.map((d) => {
             const meals = mealsAt(data, d, r.slotTypeId);
             return (
-              <span key={d} role="cell" className="flex">
+              <span
+                key={d}
+                role="cell"
+                className={`flex ${dropClass(dnd, d, r.slotTypeId)}`}
+                data-drop={dropKey(d, r.slotTypeId)}
+              >
+                <DropHint dnd={dnd} date={d} slotTypeId={r.slotTypeId} />
                 {meals.length > 0 && cellShared(meals, r) !== r.shared && (
                   <span className="sr-only">
                     {cellShared(meals, r) ? "Shared this day. " : "Individual this day. "}
@@ -282,6 +355,7 @@ function Grid({
                   meals={meals}
                   data={data}
                   compact={false}
+                  dnd={dnd}
                   onOpen={() => {
                     onOpen(meals);
                   }}
@@ -298,9 +372,11 @@ function Grid({
 function DayList({
   data,
   onOpen,
+  dnd,
 }: {
   readonly data: WeekData;
   readonly onOpen: (meals: PlanMeal[]) => void;
+  readonly dnd: Dnd;
 }) {
   const rs = rows(data);
   return (
@@ -330,12 +406,30 @@ function DayList({
               <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
                 {rs.map((r) => {
                   const meals = mealsAt(data, d, r.slotTypeId);
-                  if (meals.length === 0) return null;
+                  if (meals.length === 0) {
+                    // While a meal of this row is dragged, an empty slot it may go to is shown.
+                    const drag = dnd.drag;
+                    if (drag === null || !dnd.canDrop(drag.source, d, r.slotTypeId)) return null;
+                    return (
+                      <li
+                        key={r.slotTypeId}
+                        data-drop={dropKey(d, r.slotTypeId)}
+                        className={`grid grid-cols-[96px_minmax(0,1fr)] items-center gap-2 text-[13px] ${dropClass(dnd, d, r.slotTypeId)}`}
+                      >
+                        <span className="font-extrabold">{r.label}</span>
+                        <span className="rounded-[10px] bg-flour/60 p-2 text-ink-muted">
+                          Move here
+                        </span>
+                      </li>
+                    );
+                  }
                   return (
                     <li
                       key={r.slotTypeId}
-                      className="grid grid-cols-[96px_minmax(0,1fr)] items-center gap-2 text-[13px]"
+                      data-drop={dropKey(d, r.slotTypeId)}
+                      className={`grid grid-cols-[96px_minmax(0,1fr)] items-center gap-2 text-[13px] ${dropClass(dnd, d, r.slotTypeId)}`}
                     >
+                      <DropHint dnd={dnd} date={d} slotTypeId={r.slotTypeId} />
                       <span className="font-extrabold">
                         {r.label}
                         <br />
@@ -345,6 +439,7 @@ function DayList({
                         meals={meals}
                         data={data}
                         compact
+                        dnd={dnd}
                         onOpen={() => {
                           onOpen(meals);
                         }}
@@ -418,7 +513,11 @@ function Legend({ data }: { readonly data: WeekData }) {
           {family}
         </span>
       ))}
-      <span className="lg:ml-auto">Select any meal to see its plates, swap it or lock it.</span>
+      <span className="lg:ml-auto" id="move-hint">
+        {data.basics.role === "admin"
+          ? "Click any meal to see plates, swap, lock, or move it. Drag to another day."
+          : "Select any meal to see its plates."}
+      </span>
     </div>
   );
 }
@@ -443,6 +542,99 @@ export function WeekPlanScreen({
   const [job, setJob] = useState<{ line: string } | null>(null);
   const [message, setMessage] = useState<{ text: string; error: boolean } | null>(null);
   const reload = loaded.reload;
+  const data0 = loaded.data;
+  const [moving, setMoving] = useState(false);
+
+  /** Where a meal may go, and why it may not (the server has the last word). */
+  const moveOf: MoveOf = useCallback(
+    (m: PlanMeal) => {
+      if (data0 === null) return { options: [], blocked: "Loading." };
+      return {
+        options: moveOptions(m, data0.days, data0.dates, data0.basics.today),
+        blocked: unmovable(m, data0.days.get(m.date), data0.basics.today),
+      };
+    },
+    [data0],
+  );
+  const dayTargetOf: DayTargetOf = useCallback(
+    (memberId: string, date: string) =>
+      data0 === null
+        ? null
+        : dayTarget(
+            data0.targets,
+            memberId,
+            date,
+            data0.schedules,
+            (data0.days.get(date)?.meals ?? []).flatMap((m) => m.plates),
+          ),
+    [data0],
+  );
+  const moved = useCallback(
+    async (text: string) => {
+      setOpen(null);
+      await reload();
+      setMessage({ text, error: false });
+    },
+    [reload],
+  );
+  const canDrop = (source: DragSource, date: string, slotTypeId: string): boolean => {
+    if (data0 === null || slotTypeId !== source.slotTypeId) return false;
+    const meal = data0.days.get(source.date)?.meals.find((m) => m.id === source.mealId);
+    return (
+      meal !== undefined &&
+      moveOptions(meal, data0.days, data0.dates, data0.basics.today).some(
+        (o) => o.date === date && o.kind !== "blocked",
+      )
+    );
+  };
+  const { drag, start, consumeClick } = useMealDrag({
+    canDrop,
+    onDrop: (source, date) => {
+      if (data0 === null) return;
+      const meal = data0.days.get(source.date)?.meals.find((m) => m.id === source.mealId);
+      const option =
+        meal === undefined
+          ? undefined
+          : moveOptions(meal, data0.days, [date], data0.basics.today)[0];
+      setMessage({ text: `Moving ${source.label} to ${mediumDay(date)}…`, error: false });
+      setMoving(true);
+      void api
+        .call(c.planMealsMove, { params: { id: source.mealId }, body: { toDate: date } })
+        .then(() =>
+          moved(
+            option?.kind === "swap"
+              ? `${source.label} is now on ${mediumDay(date)}; ${option.occupant ?? "the other meal"} moved to ${mediumDay(source.date)}.`
+              : `${source.label} moved to ${mediumDay(date)}.`,
+          ),
+        )
+        .catch(async (e: unknown) => {
+          await reload();
+          setMessage({ text: problemText(e), error: true });
+        })
+        .finally(() => {
+          setMoving(false);
+        });
+    },
+  });
+  const dnd: Dnd = {
+    drag,
+    start,
+    consumeClick,
+    canDrop,
+    sourceOf: (meals) => {
+      const only = meals.length === 1 ? meals[0] : undefined;
+      if (data0 === null || only === undefined || moving || data0.basics.role !== "admin")
+        return null;
+      if (unmovable(only, data0.days.get(only.date), data0.basics.today) !== null) return null;
+      if (only.memberScope === "shared" && only.splitMembers.length > 0) return null;
+      return {
+        mealId: only.id,
+        date: only.date,
+        slotTypeId: only.slotTypeId,
+        label: only.dishName,
+      };
+    },
+  };
   useEffect(() => {
     if (opened || meal === null || loaded.data === null) return;
     setOpened(true);
@@ -589,7 +781,11 @@ export function WeekPlanScreen({
       ) : (
         <>
           <Stats data={data} />
-          {wide ? <Grid data={data} onOpen={setOpen} /> : <DayList data={data} onOpen={setOpen} />}
+          {wide ? (
+            <Grid data={data} onOpen={setOpen} dnd={dnd} />
+          ) : (
+            <DayList data={data} onOpen={setOpen} dnd={dnd} />
+          )}
           <Legend data={data} />
         </>
       )}
@@ -613,7 +809,20 @@ export function WeekPlanScreen({
             setOpen(null);
             void runPlan([date], summary);
           }}
+          moveOf={moveOf}
+          onMoved={(text) => void moved(text)}
+          dayTargetOf={dayTargetOf}
         />
+      )}
+      {drag !== null && (
+        <span
+          aria-hidden
+          data-testid="drag-ghost"
+          className="pointer-events-none fixed z-50 max-w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-[10px] bg-card px-3 py-2 text-[13px] font-bold text-ink shadow-card motion-safe:scale-105"
+          style={{ left: drag.x, top: drag.y }}
+        >
+          {drag.source.label}
+        </span>
       )}
     </div>
   );

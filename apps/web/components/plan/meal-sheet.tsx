@@ -1,15 +1,25 @@
 "use client";
-// A meal of the week plan (WeekPlan "click any meal to see plates, swap or lock it"): its plates
-// per person with fit, and for admins lock / unlock and swap (PLN-13). A cell can hold several
-// meals: the shared dish and the own dishes of people taken out of it, or one dish per person in
-// an individual slot.
+// A meal of the week plan (WeekPlan "click any meal to see plates, swap, lock, or move it"): its
+// plates per person with fit and, where the viewer may read targets, the plate's calories of the
+// day target (W-7: the day kind's profile, never a sum of plate targets); for admins lock / unlock,
+// swap (PLN-13) and "Move to…" (UX-4, R-58). A cell can hold several meals: the shared dish and
+// the own dishes of people taken out of it, or one dish per person in an individual slot.
 import Link from "next/link";
 import { useState } from "react";
 import { Button, Chip, Icon, Sheet } from "../ui";
 import { api, c, problemText, type Member, type MealOverride, type PlanMeal } from "./api";
 import { ExtraIconSvg, FitBadge } from "./common";
-import { weekdayName } from "./logic";
+import { num, weekdayName, type MoveOption } from "./logic";
+import { MoveMenu } from "./move-menu";
 import { SwapSheet } from "./swap-sheet";
+
+/** The Move menu's days for a meal, or why it cannot move (from the week plan). */
+export type MoveOf = (meal: PlanMeal) => { options: MoveOption[]; blocked: string | null };
+/** A member's day target for a date (W-7), or null when the viewer may not read it. */
+export type DayTargetOf = (
+  memberId: string,
+  date: string,
+) => { kcal: number; label: string | null } | null;
 
 function MealBlock({
   meal,
@@ -18,6 +28,9 @@ function MealBlock({
   editable,
   onChanged,
   onSwap,
+  moveOf,
+  onMoved,
+  dayTargetOf,
 }: {
   readonly meal: PlanMeal;
   readonly members: readonly Member[];
@@ -26,6 +39,9 @@ function MealBlock({
   readonly editable: boolean;
   readonly onChanged: () => void;
   readonly onSwap: (meal: PlanMeal) => void;
+  readonly moveOf?: MoveOf;
+  readonly onMoved?: (text: string) => void;
+  readonly dayTargetOf?: DayTargetOf;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,6 +92,12 @@ function MealBlock({
               <Link href={`/today/plates/${p.id}`} className="grow font-bold">
                 {name(p.memberId)}
               </Link>
+              {p.target !== null && dayTargetOf?.(p.memberId, meal.date) != null && (
+                <span className="tabular font-mono text-xs text-ink-soft" data-testid="day-target">
+                  {num(p.target.kcal)} of {num(dayTargetOf(p.memberId, meal.date)?.kcal ?? 0)} kcal
+                  today
+                </span>
+              )}
               <FitBadge status={p.fitStatus} />
             </li>
           ))}
@@ -107,6 +129,14 @@ function MealBlock({
           </Button>
         </div>
       )}
+      {admin && editable && moveOf !== undefined && onMoved !== undefined && (
+        <MoveMenu
+          meal={meal}
+          options={moveOf(meal).options}
+          blockedReason={moveOf(meal).blocked}
+          onMoved={onMoved}
+        />
+      )}
       <Link
         href={`/recipes/${meal.dishId}`}
         className="inline-flex min-h-11 items-center self-start font-extrabold"
@@ -127,6 +157,9 @@ export function MealSheet({
   onOpenChange,
   onChanged,
   onReplan,
+  moveOf,
+  onMoved,
+  dayTargetOf,
 }: {
   readonly meals: readonly PlanMeal[];
   readonly members: readonly Member[];
@@ -137,6 +170,10 @@ export function MealSheet({
   readonly onOpenChange: (open: boolean) => void;
   readonly onChanged: () => void;
   readonly onReplan: (date: string, summary: string) => void;
+  readonly moveOf?: MoveOf;
+  /** A meal moved: the sheet closes and the week says what happened. */
+  readonly onMoved?: (text: string) => void;
+  readonly dayTargetOf?: DayTargetOf;
 }) {
   const [swapping, setSwapping] = useState<PlanMeal | null>(null);
   const first = meals[0];
@@ -168,6 +205,9 @@ export function MealSheet({
             editable={editable(m)}
             onChanged={onChanged}
             onSwap={setSwapping}
+            {...(moveOf === undefined ? {} : { moveOf })}
+            {...(onMoved === undefined ? {} : { onMoved })}
+            {...(dayTargetOf === undefined ? {} : { dayTargetOf })}
           />
         ))}
         {admin && editable(first) && shared === undefined && overrideFor(first) !== null && (

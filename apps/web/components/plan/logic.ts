@@ -441,3 +441,119 @@ export function dayProfile<P extends ProfileLike>(
 export function profileMacros(p: ProfileLike): MacroValues {
   return { kcal: p.kcal, protein: p.proteinG, carbs: p.carbsG, fat: p.fatG };
 }
+
+// The day target on Plan and Plate (W-7, BLD-8 R-58/R-60) ---------------------------------------
+
+/** A plate's slot target as far as the day target needs it. */
+export interface PlateTargetLike {
+  memberId: string;
+  target: MacroValues | null;
+}
+
+/**
+ * W-7: a member's day target for a date, from the day kind's target profile (the resolver's PLN-4
+ * steps 1–2 via `dayProfile`), never the sum of the plates' targets: those are R-28 re-targeted and
+ * sum to the day target only by chance (F1 Sunday: 2146 against 2150). `dayPlates` are the plates
+ * of that date; without schedules they only choose between the member's profiles.
+ */
+export function dayTarget(
+  profiles: readonly ProfileLike[],
+  memberId: string,
+  date: string,
+  schedules: ScheduleFacts | null,
+  dayPlates: readonly PlateTargetLike[],
+): { kcal: number; kind: string; label: string | null } | null {
+  const own = dayPlates.filter((p) => p.memberId === memberId && p.target !== null);
+  const slotSum = own.length === 0 ? null : sumMacros(own.map((p) => p.target ?? macrosZero()));
+  const profile = dayProfile(profiles, memberId, date, schedules, slotSum);
+  if (profile === null) return null;
+  // The day kind is known with the schedules (admins); otherwise only a training profile says it.
+  const kind =
+    schedules !== null
+      ? dayKindOf(schedules, memberId, date)
+      : profile.kind === "training"
+        ? "training"
+        : null;
+  return {
+    kcal: profile.kcal,
+    kind: profile.kind,
+    label: kind === null ? null : kind === "training" ? "training day" : "rest day",
+  };
+}
+
+function macrosZero(): MacroValues {
+  return { kcal: 0, protein: 0, carbs: 0, fat: 0 };
+}
+
+// Moving a meal to another day (UX-4, W-5 addendum; BLD-8 R-58, R-60; SPEC-Q-3, SPEC-Q-7) --------
+
+/** The parts of a plan meal and day the move rules read. */
+export interface MovableMeal {
+  id: string;
+  date: string;
+  slotTypeId: string;
+  memberScope: string;
+  dishName: string;
+  locked: boolean;
+  status: string;
+}
+export interface MoveDay {
+  date: string;
+  status: string;
+  meals: readonly MovableMeal[];
+}
+
+/** Why a meal cannot be moved (as the server would refuse it), or null when it can. */
+export function unmovable(
+  meal: MovableMeal,
+  day: MoveDay | undefined,
+  today: string,
+): string | null {
+  if (meal.date < today) return "It is in the past.";
+  if (meal.locked) return "It is locked. Unlock it to move it.";
+  if (meal.status !== "planned") return `It is already ${meal.status}.`;
+  if (day !== undefined && day.status !== "draft")
+    return "That day is already sent to the kitchen.";
+  return null;
+}
+
+export interface MoveOption {
+  date: string;
+  /** `move` onto an empty slot, `swap` with the meal there, or `blocked` with a reason. */
+  kind: "move" | "swap" | "blocked";
+  occupant: string | null;
+  reason: string | null;
+}
+
+/**
+ * The other days of `dates` a meal can go to: same slot and member scope, from today on. A day
+ * without a plan, a day sent to the kitchen, or a locked or finished meal there blocks the move.
+ */
+export function moveOptions(
+  meal: MovableMeal,
+  days: ReadonlyMap<string, MoveDay>,
+  dates: readonly string[],
+  today: string,
+): MoveOption[] {
+  return dates
+    .filter((d) => d !== meal.date && d >= today)
+    .map((date) => {
+      const day = days.get(date);
+      const blocked = (reason: string, occupant: string | null = null): MoveOption => ({
+        date,
+        kind: "blocked",
+        occupant,
+        reason,
+      });
+      if (day === undefined) return blocked("Not planned yet.");
+      if (day.status !== "draft") return blocked("Already sent to the kitchen.");
+      const there = day.meals.find(
+        (m) => m.slotTypeId === meal.slotTypeId && m.memberScope === meal.memberScope,
+      );
+      if (there === undefined) return { date, kind: "move", occupant: null, reason: null };
+      if (there.locked) return blocked(`${there.dishName} there is locked.`, there.dishName);
+      if (there.status !== "planned")
+        return blocked(`${there.dishName} there is already ${there.status}.`, there.dishName);
+      return { date, kind: "swap", occupant: there.dishName, reason: null };
+    });
+}

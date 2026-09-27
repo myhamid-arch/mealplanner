@@ -197,6 +197,96 @@ describe("GET /cook-sheets/{date}/flags (R-52, R2-UX-1)", () => {
     expect(log.find((e) => e.id === result?.changeSetId)?.actor).toBe("system");
   });
 
+  // Leaf 1.4.8 G2 (W-6, R-58/R-60): the substituted copy's cook sheet names the substitute. The
+  // copy is compared with its original variant by variant (the copy keeps the original's order):
+  // wherever the original named the flagged ingredient (display name or alias, whole word), the
+  // copy names the substitute; a variant that used it without naming it starts with the note.
+  // Longer names of other ingredients of the variant ("red onion" when onion is flagged) and the
+  // substitute's own name are not mentions.
+  it("the substituted cook sheet names the substitute in steps, labels and component names", async () => {
+    const f = (await flags(a)).find((x) => x.reviewId === unavailableId);
+    const result = f?.result;
+    const sub = result?.substituteName ?? "";
+    expect(sub).not.toBe("");
+    const [row] = (
+      await app.rt.db.execute<{ name: string; aliases: string[] }>(
+        sql`SELECT name, aliases FROM ingredient WHERE id = ${target.id}`,
+      )
+    ).rows;
+    const names = [row?.name ?? target.name, ...(row?.aliases ?? [])];
+    const escape = (n: string) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const mentions = new RegExp(
+      `(?<![\\p{L}\\p{N}])(?:${names.map(escape).join("|")})(?![\\p{L}\\p{N}])`,
+      "iu",
+    );
+    const nameOf = new Map(
+      (
+        await app.rt.db.execute<{ id: string; name: string }>(
+          sql`SELECT id::text, name FROM ingredient`,
+        )
+      ).rows.map((r) => [r.id, r.name]),
+    );
+    const lower = (x: string) => x.charAt(0).toLowerCase() + x.slice(1);
+    const note = `Use ${lower(sub)} wherever ${lower(target.name)} is mentioned.`;
+    type Tree = {
+      components: Array<{
+        name: string;
+        variants: Array<{
+          label: string;
+          steps: string[];
+          ingredients: Array<{ ingredientId: string }>;
+        }>;
+      }>;
+    };
+    const tree = async (id: string) =>
+      ok<Tree>(await callJson(c.dishesGet, { params: { id } }, a), "dish");
+    let checked = 0;
+    for (const m of result?.meals ?? []) {
+      const [pair] = (
+        await app.rt.db.execute<{ copy: string; original: string }>(
+          sql`SELECT pm.dish_id::text AS copy,
+                (SELECT d.id::text FROM dish d WHERE d.name = ${m.fromDishName}
+                   AND (d.household_id IS NULL OR d.household_id = ${a.householdId})
+                 ORDER BY d.household_id NULLS FIRST LIMIT 1) AS original
+              FROM plan_meal pm WHERE pm.id = ${m.planMealId}`,
+        )
+      ).rows;
+      if (pair === undefined) throw new Error(`meal ${m.planMealId} not found`);
+      const [copy, original] = [await tree(pair.copy), await tree(pair.original)];
+      original.components.forEach((oc, ci) => {
+        const cc = copy.components[ci];
+        oc.variants.forEach((ov, vi) => {
+          const cv = cc?.variants[vi];
+          if (!ov.ingredients.some((l) => l.ingredientId === target.id)) return;
+          checked += 1;
+          // Other ingredients' longer names and the substitute's name are masked before matching.
+          const keep = [
+            sub,
+            ...ov.ingredients
+              .filter((l) => l.ingredientId !== target.id)
+              .map((l) => nameOf.get(l.ingredientId) ?? ""),
+          ]
+            .filter((k) => k !== "" && mentions.test(k))
+            .sort((x, y) => y.length - x.length);
+          const bare = (x: string) =>
+            keep.reduce((t, k) => t.replace(new RegExp(escape(k), "giu"), "§"), x);
+          expect(bare(cv?.label ?? ""), `label of ${m.toDishName}`).not.toMatch(mentions);
+          expect(bare(cc?.name ?? ""), `component of ${m.toDishName}`).not.toMatch(mentions);
+          const steps = (cv?.steps ?? []).filter((x) => x !== note);
+          for (const step of steps) expect(bare(step), m.toDishName).not.toMatch(mentions);
+          const named = ov.steps.some((x) => mentions.test(bare(x)));
+          if (named)
+            expect(
+              (cv?.steps ?? []).some((x) => x.toLowerCase().includes(sub.toLowerCase())),
+              `${m.toDishName}: a step names ${sub}`,
+            ).toBe(true);
+          else expect(cv?.steps[0], `${m.toDishName}: the leading note`).toBe(note);
+        });
+      });
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
   it("the kitchen sees only its own flags; members are refused; another date or household has none", async () => {
     const own = await flags(kitchen);
     expect(own.map((f) => f.reviewId)).toEqual([unavailableId]);
