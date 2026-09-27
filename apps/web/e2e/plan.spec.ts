@@ -1570,45 +1570,31 @@ for (const v of VIEWPORTS)
 
 // G4: "Use for <day> <slot>" on the recipe page -----------------------------------------------------
 
-/** A dinner dish containing an ingredient flagged `contains_sesame` (Zayd's allergy). */
-async function sesameDish(api: APIRequestContext): Promise<{ id: string; name: string }> {
-  const ingredients = (
-    await json<{ ingredients: Array<{ id: string; dietaryFlags: string[] }> }>(
-      await api.get("/api/v1/ingredients?limit=500"),
-      "ingredients",
-    )
-  ).ingredients;
-  const sesame = new Set(
-    ingredients.filter((i) => i.dietaryFlags.includes("contains_sesame")).map((i) => i.id),
-  );
-  const dishes = (
-    await json<{ dishes: Array<{ id: string; name: string; isAdjuster: boolean }> }>(
-      await api.get("/api/v1/dishes?slot=dinner&status=active"),
-      "dishes",
-    )
-  ).dishes.filter((d) => !d.isAdjuster);
-  for (const d of dishes) {
-    const full = await json<{
-      components: Array<{ variants: Array<{ ingredients: Array<{ ingredientId: string }> }> }>;
-    }>(await api.get(`/api/v1/dishes/${d.id}`), "dish");
-    if (
-      full.components.every((c) =>
-        c.variants.every((x) => x.ingredients.some((i) => sesame.has(i.ingredientId))),
-      )
-    )
-      return { id: d.id, name: d.name };
-  }
-  throw new Error("no dinner dish contains sesame in every variant");
-}
-
-let strictWorld: {
+interface StrictWorld {
   state: Awaited<ReturnType<APIRequestContext["storageState"]>>;
   date: string;
-} | null = null;
-/** A second household whose one targeted member cannot be fed in tolerance (strict), planned. */
+  /** A dinner dish Nour may not eat: a core ingredient of a required component is excluded. */
+  excluded: { id: string; name: string; ingredient: string };
+  /** A dinner dish allowed but whose plate cannot meet Nour's strict (out-of-reach) targets. */
+  infeasible: { id: string; name: string };
+}
+let strictWorld: StrictWorld | null = null;
+
+type DishDetail = {
+  components: Array<{
+    required: boolean;
+    variants: Array<{ ingredients: Array<{ ingredientId: string }> }>;
+  }>;
+};
+
+/**
+ * A second household with one targeted member, Nour (strict, the default), planned one day; then
+ * one dinner dish is excluded for her (an ingredient every variant of a required component uses)
+ * and her targets are put out of reach, so every allowed dinner is infeasible for her.
+ */
 async function strictHousehold(playwright: {
   request: { newContext: (o: { baseURL: string }) => Promise<APIRequestContext> };
-}) {
+}): Promise<StrictWorld> {
   if (strictWorld !== null) return strictWorld;
   const api = await playwright.request.newContext({ baseURL: world.base });
   const tag = Math.random().toString(36).slice(2, 8);
@@ -1624,56 +1610,92 @@ async function strictHousehold(playwright: {
     "signup",
   );
   const nour = crypto.randomUUID();
-  await json(
-    await api.post("/api/v1/change-sets", {
-      data: {
-        summary: "test setup (strict)",
-        ops: [
-          {
-            kind: "member.create",
-            payload: {
-              id: nour,
-              displayName: "Nour",
-              color: "sea",
-              birthYear: 1990,
-              isTargeted: true,
-            },
-          },
-          {
-            kind: "target.set",
-            payload: {
-              memberId: nour,
-              kind: "default",
-              profile: { kcal: 2000, proteinG: 150, carbsG: 200, fatG: 65 },
-            },
-          },
-        ],
+  const apply = async (summary: string, ops: unknown[]) =>
+    json(await api.post("/api/v1/change-sets", { data: { summary, ops } }), summary);
+  await apply("test setup (strict)", [
+    {
+      kind: "member.create",
+      payload: { id: nour, displayName: "Nour", color: "sea", birthYear: 1990, isTargeted: true },
+    },
+    {
+      kind: "target.set",
+      payload: {
+        memberId: nour,
+        kind: "default",
+        profile: { kcal: 2000, proteinG: 150, carbsG: 200, fatG: 65 },
       },
-    }),
-    "setup",
-  );
+    },
+  ]);
   const date = addDays(mondayOf(world.today), 36);
   await plan(api, [date]);
-  // Now out of reach: every dinner is infeasible for Nour, who is strict (the default).
-  await json(
-    await api.post("/api/v1/change-sets", {
-      data: {
-        summary: "test: targets out of reach",
-        ops: [
-          {
-            kind: "target.set",
-            payload: {
-              memberId: nour,
-              kind: "default",
-              profile: { kcal: 9000, proteinG: 900, carbsG: 900, fatG: 300 },
-            },
-          },
-        ],
+  const dinner = (await days(api, date, date))[0]?.meals.find((m) => m.slotKey === "dinner");
+  if (dinner === undefined) throw new Error("no dinner in the strict household");
+  const alts = (
+    await json<{ alternatives: Array<{ dishId: string; dishName: string }> }>(
+      await api.get(`/api/v1/plan-meals/${dinner.id}/alternatives`),
+      "alternatives",
+    )
+  ).alternatives;
+  const detail = async (id: string) =>
+    json<DishDetail>(await api.get(`/api/v1/dishes/${id}`), "dish");
+  // The excluded dish: the first alternative with an ingredient in every variant of a required
+  // component (so no variant choice can avoid it).
+  let excluded: StrictWorld["excluded"] | null = null;
+  let banned = "";
+  for (const alt of alts) {
+    const d = await detail(alt.dishId);
+    for (const comp of d.components.filter((c) => c.required)) {
+      const sets = comp.variants.map((x) => new Set(x.ingredients.map((i) => i.ingredientId)));
+      const common = [...(sets[0] ?? [])].filter((id) => sets.every((set) => set.has(id)));
+      if (common[0] !== undefined) {
+        banned = common[0];
+        break;
+      }
+    }
+    if (banned !== "") {
+      const ing = await json<{ slug: string; name: string }>(
+        await api.get(`/api/v1/ingredients/${banned}`),
+        "ingredient",
+      );
+      excluded = { id: alt.dishId, name: alt.dishName, ingredient: ing.slug };
+      break;
+    }
+  }
+  if (excluded === null) throw new Error("no alternative has a required ingredient to exclude");
+  let infeasible: StrictWorld["infeasible"] | null = null;
+  for (const alt of alts) {
+    if (alt.dishId === excluded.id || alt.dishId === dinner.dishId) continue;
+    const d = await detail(alt.dishId);
+    const uses = d.components.some((c) =>
+      c.variants.some((x) => x.ingredients.some((i) => i.ingredientId === banned)),
+    );
+    if (!uses) {
+      infeasible = { id: alt.dishId, name: alt.dishName };
+      break;
+    }
+  }
+  if (infeasible === null) throw new Error("no alternative without the excluded ingredient");
+  await apply("test: an exclusion and targets out of reach", [
+    {
+      kind: "exclusion.add",
+      payload: {
+        memberId: nour,
+        kind: "ingredient",
+        key: excluded.ingredient,
+        reason: "allergy",
+        hard: true,
       },
-    }),
-    "targets",
-  );
-  strictWorld = { state: await api.storageState(), date };
+    },
+    {
+      kind: "target.set",
+      payload: {
+        memberId: nour,
+        kind: "default",
+        profile: { kcal: 9000, proteinG: 900, carbsG: 900, fatG: 300 },
+      },
+    },
+  ]);
+  strictWorld = { state: await api.storageState(), date, excluded, infeasible };
   await api.dispose();
   return strictWorld;
 }
@@ -1720,16 +1742,6 @@ for (const v of VIEWPORTS)
     );
     await expectFits(page, `recipe use-for ${v.name}`);
 
-    // Excluded: a dish with sesame (Zayd's allergy) is refused, with the reason.
-    const sesame = await sesameDish(world.admin);
-    await page.goto(`/recipes/${sesame.id}?date=${date}&slot=dinner`);
-    await page.getByRole("button", { name: label }).click();
-    await expect(page.getByTestId("use-for").getByRole("alert")).toContainText(
-      /not allowed for this meal/i,
-      { timeout: 120_000 },
-    );
-    expect((await mealOf(world.admin, date, "dinner")).dishId).toBe(good.dishId);
-
     // Without a date and slot there is no action; with a date that has no plan it says so.
     await page.goto(`/recipes/${good.dishId}`);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 60_000 });
@@ -1738,29 +1750,33 @@ for (const v of VIEWPORTS)
     await expect(page.getByText(/Nothing is planned for/)).toBeVisible({ timeout: 60_000 });
     await ctx.close();
 
-    // Infeasible for a strict member: refused, naming the member, macro and amount (R-60).
+    // In the strict household: an excluded dish and an infeasible one are refused, with the reason
+    // (exclusion; member, macro and amount for strict targets, R-60), and nothing changes.
     const strict = await strictHousehold(playwright);
     const s = await browser.newContext({
       storageState: strict.state,
       viewport: { width: v.width, height: v.height },
     });
     const sp = await s.newPage();
-    const sApi = s.request;
-    const sMeal = (
-      await json<{ days: Day[] }>(
-        await sApi.get(`/api/v1/plans?from=${strict.date}&to=${strict.date}`),
-        "plans",
-      )
-    ).days[0]?.meals.find((m) => m.slotKey === "dinner");
-    if (sMeal === undefined) throw new Error("no dinner in the strict household");
-    const other = alts.find((x) => x.dishId !== sMeal.dishId) ?? good;
+    const sDinner = async () =>
+      (await days(s.request, strict.date, strict.date))[0]?.meals.find(
+        (m) => m.slotKey === "dinner",
+      );
+    const before = await sDinner();
     const sLabel = `Use for ${new Date(`${strict.date}T00:00:00Z`).toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" })} dinner`;
-    await sp.goto(`/recipes/${other.dishId}?date=${strict.date}&slot=dinner`);
+    await sp.goto(`/recipes/${strict.excluded.id}?date=${strict.date}&slot=dinner`);
+    await sp.getByRole("button", { name: sLabel }).click();
+    await expect(sp.getByTestId("use-for").getByRole("alert")).toContainText(
+      /not allowed for this meal \(exclusions/i,
+      { timeout: 120_000 },
+    );
+    await sp.goto(`/recipes/${strict.infeasible.id}?date=${strict.date}&slot=dinner`);
     await sp.getByRole("button", { name: sLabel }).click();
     await expect(sp.getByTestId("use-for").getByRole("alert")).toContainText(
       /Nour's dinner would miss (protein|carbs|fat|calories) by \d+/,
       { timeout: 120_000 },
     );
+    expect((await sDinner())?.dishId).toBe(before?.dishId);
     await s.close();
   });
 
