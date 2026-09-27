@@ -1,0 +1,16 @@
+# cmd: ANTHROPIC_API_KEY="$MEALPLANNER_ANTHROPIC_API_KEY" node scripts/verify/leaf-1.3.1.mjs --gate G4 | utc: 2026-09-27T14:33:19Z | exit: 0 | commit: 7ddc7521784c73bf56e55fa190877846e8d64d19 | wall: 391 s | run 3 (merged base with leaf 1.2.6)
+ok   - @mealplanner/core builds with tsc
+ok   - @mealplanner/ai builds with tsc
+ok   - an Anthropic credential is configured (ANTHROPIC_API_KEY)
+model: claude-fable-5-1
+call: stop=end_turn in=706 out=20155 cacheRead=0
+call: stop=end_turn in=21393 out=18855 cacheRead=15501
+candidate: Shish Tawook Plate with Vermicelli Rice and Arabic Salad [Adult A in_tolerance, Adult B in_tolerance]
+candidate: Hammour Tikka with Jeera Rice, Garlic Palak and Mint Chutney [Adult A in_tolerance, Adult B in_tolerance]
+candidate: Lean Beef Meatballs with Spaghetti, Tomato-Basil Sauce and Green Beans [Adult A in_tolerance, Adult B in_tolerance]
+rejected: Shish Tawook Plate with Vermicelli Rice and Arabic Salad: variant_drift: component "Garlic yogurt sauce": variant "Thick labneh-garlic sauce" shares 10 % of its core ingredients by weight with "Yogurt-garlic sauce with olive oil" (needs at least 70 %); make it the same ingredients prepared differently, or a separate component
+rejected: Hammour Tikka with Jeera Rice, Garlic Palak and Mint Chutney: variant_drift: component "Jeera rice": variant "Brown basmati jeera rice" shares 3 % of its core ingredients by weight with "White basmati jeera rice" (needs at least 70 %); make it the same ingredients prepared differently, or a separate component
+rejected: Lean Beef Meatballs with Spaghetti, Tomato-Basil Sauce and Green Beans: variant_drift: component "Spaghetti": variant "Wholewheat spaghetti" shares 2 % of its core ingredients by weight with "Regular spaghetti" (needs at least 70 %); make it the same ingredients prepared differently, or a separate component; variant_drift: component "Tomato-basil sauce": variant "Roasted cherry tomato sauce" shares 11 % of its core ingredients by weight with "Simmered passata sauce" (needs at least 70 %); make it the same ingredients prepared differently, or a separate component
+ok   - 3 valid F1 dinner dishes generated (3 candidates in 2 call(s))
+ok   - every candidate solves in tolerance for both targeted adults
+VERIFY leaf-1.3.1 G4 PASSED

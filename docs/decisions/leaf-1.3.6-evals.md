@@ -115,3 +115,9 @@ The op reference in the same prompt does include `role.set (protected)`, so the 
 - `docs/build/live/leaf-1.3.6-eval-full-4.log` (14:00:59Z, exit 0): 29/29 = 100 %.
 
 No case failed, so none turned into a consistent failure.
+
+**After merging the base with leaf 1.2.6 (commit 7ddc752).** 1.2.6 adds `slotKeys` to `exclusion.add`, so the op reference in the prompt changed. Two more consecutive full runs on this head:
+- `docs/build/live/leaf-1.3.6-eval-full-5.log`: 29/29.
+- `docs/build/live/leaf-1.3.6-eval-full-6.log`: 29/29.
+
+1.3.1 G4 on the same head passed (`docs/build/live/leaf-1.3.6-1.3.1-G4-run3.log`: 3 candidates in 2 calls, first call 20 155 output tokens).
