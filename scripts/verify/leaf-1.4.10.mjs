@@ -38,6 +38,10 @@
 // cleared (R-50). Regression gates run as child processes, LEAF1410_REGRESSION_JOBS at a time
 // (default 2); a failure prints their output. 1.4.2's regression gates always run with
 // DATABASE_URL cleared (R-50). G4 captures for the architect (G5) go to $SCREENSHOT_DIR when set.
+// One regression runs alone: 1.2.6 G2 runs 1.2.5 G1–G4 (they need an idle machine, R-54) and
+// 1.2.2 G1–G5 (they delete and rebuild packages/core/dist/src/planner in place). G1 runs it last,
+// under a lock the ledger's gates share: it waits until G2–G4 have finished, and a gate started
+// meanwhile waits for it. With gates in parallel, G1 therefore ends after the others.
 import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import {
@@ -132,9 +136,14 @@ const REGRESSIONS = {
   G1: [
     ...["G1", "G2", "G3", "G4", "G5", "G6"].map((g) => ["leaf-1.2.3", g]),
     ["leaf-1.2.6", "G1"],
-    ["leaf-1.2.6", "G2"],
     ...["G1", "G2", "G3", "G4"].map((g) => ["leaf-1.4.8", g]),
   ],
+  /**
+   * Alone, after every other gate of this ledger has finished: 1.2.6 G2 runs 1.2.5 G1–G4, which
+   * need an idle machine (R-54), and 1.2.2 G1–G5, which delete and rebuild
+   * packages/core/dist/src/planner in place (a test importing it at that moment fails).
+   */
+  G1_EXCLUSIVE: [["leaf-1.2.6", "G2"]],
   G2: ["G1", "G2", "G3"].map((g) => ["leaf-1.3.4", g]),
   G3: [
     ...["G1", "G2", "G3"].map((g) => ["leaf-1.4.1", g]),
@@ -162,6 +171,66 @@ function processAlive(pid) {
   } catch (error) {
     return error.code === "EPERM";
   }
+}
+
+// A shared/exclusive lock between this ledger's gates (gate-check runs them in parallel). Every
+// gate holds it shared while it runs; G1's last step takes it exclusive, which waits until no
+// other gate holds it and keeps new gates from starting until it is released. Holders are pid
+// files; a dead holder's file is ignored and removed.
+const LEDGER_LOCK = createHash("sha256").update(ROOT).digest("hex").slice(0, 12);
+const SHARED_DIR = join(tmpdir(), `mealplanner-leaf1410-shared-${LEDGER_LOCK}`);
+const EXCLUSIVE = join(tmpdir(), `mealplanner-leaf1410-exclusive-${LEDGER_LOCK}.lock`);
+const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function exclusiveHolder() {
+  const file = join(EXCLUSIVE, "pid");
+  if (!existsSync(file)) return existsSync(EXCLUSIVE) ? -1 : null;
+  const pid = Number(readFileSync(file, "utf8"));
+  if (Number.isInteger(pid) && pid > 0 && processAlive(pid)) return pid;
+  rmSync(EXCLUSIVE, { recursive: true, force: true });
+  return null;
+}
+
+let sharedFile = null;
+async function acquireShared() {
+  mkdirSync(SHARED_DIR, { recursive: true });
+  for (;;) {
+    while (exclusiveHolder() !== null) await pause(1000);
+    sharedFile = join(SHARED_DIR, String(process.pid));
+    writeFileSync(sharedFile, String(process.pid));
+    if (exclusiveHolder() === null) return;
+    rmSync(sharedFile, { force: true });
+    sharedFile = null;
+  }
+}
+
+function releaseShared() {
+  if (sharedFile !== null) rmSync(sharedFile, { force: true });
+  sharedFile = null;
+}
+
+async function acquireExclusive() {
+  for (;;) {
+    try {
+      mkdirSync(EXCLUSIVE);
+      writeFileSync(join(EXCLUSIVE, "pid"), String(process.pid));
+      break;
+    } catch (error) {
+      if (error.code !== "EEXIST") throw error;
+      exclusiveHolder();
+      await pause(1000);
+    }
+  }
+  const others = () =>
+    (existsSync(SHARED_DIR) ? readdirSync(SHARED_DIR) : []).filter((f) => {
+      const pid = Number(f);
+      if (pid === process.pid) return false;
+      if (Number.isInteger(pid) && pid > 0 && processAlive(pid)) return true;
+      rmSync(join(SHARED_DIR, f), { force: true });
+      return false;
+    });
+  while (others().length > 0) await pause(2000);
+  return () => rmSync(EXCLUSIVE, { recursive: true, force: true });
 }
 
 /** A cross-process lock (atomic mkdir); a lock left by a dead process is taken over. */
@@ -629,6 +698,18 @@ async function gateG1(report) {
   const picked = /W-12 substitution: (.+)/.exec(int.output)?.[1];
   report.check(picked !== undefined, `the substitution replaced: ${picked ?? "(not reported)"}`);
   await regressions(report, REGRESSIONS.G1);
+  // Last, with nothing else of this ledger running (see REGRESSIONS.G1_EXCLUSIVE).
+  releaseShared();
+  const waited = Date.now();
+  const release = await acquireExclusive();
+  console.log(
+    `info - waited ${String(Math.round((Date.now() - waited) / 1000))} s for this ledger's other gates to finish`,
+  );
+  try {
+    await regressions(report, REGRESSIONS.G1_EXCLUSIVE);
+  } finally {
+    release();
+  }
 }
 
 async function gateG2(report) {
@@ -785,7 +866,12 @@ async function main() {
   console.log(`full output: ${logFile}`);
   const report = new Report(`${LABEL} ${gate}`);
   const started = Date.now();
-  await GATES[gate](report);
+  await acquireShared();
+  try {
+    await GATES[gate](report);
+  } finally {
+    releaseShared();
+  }
   console.log(
     `time - ${String(Math.round((Date.now() - started) / 1000))} s  gate ${gate} in total`,
   );
