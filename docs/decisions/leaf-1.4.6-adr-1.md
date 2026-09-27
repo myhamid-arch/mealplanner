@@ -1,6 +1,6 @@
 # leaf-1.4.6 ADR-1: how the screens talk to the auth library and the API
 
-Status: proposed at CP1
+Status: accepted at CP1 (R-48)
 Requirement: R2-ADM-1, R2-ADM-5, ARC-5, ARC-6, BLD-8 R-42, R-21 Q-8
 
 ## Decision

@@ -1,6 +1,6 @@
 # leaf-1.4.6 spec questions
 
-Each question records the reading taken (the more conservative one) and continues on it. Items marked **needs ruling** touch files outside this leaf's OWNS; they are also listed under "Requests" in the PR.
+Each question records the reading taken (the more conservative one) and continues on it. Outcomes at CP1 (BLD-8 R-45, R-48) are at the end. Items marked **needs ruling** touch files outside this leaf's OWNS; they are also listed under "Requests" in the PR.
 
 ## SPEC-Q-1: where Household settings lives — needs ruling (path)
 
@@ -68,3 +68,11 @@ Reading: after sign-in, `GET /me` decides: a platform operator with no membershi
 ## SPEC-Q-15: notification preference keys
 
 R2-ADM-5 names notification preferences; the API stores free keys. Reading: two keys, from the mockup: `meal_rating_reminder` ("After-meal rating reminder") and `assistant_proposals` ("New proposals from the assistant", admins only), default on when absent.
+
+## Outcomes at CP1 (R-45, R-48)
+
+- SPEC-Q-1: R-a granted. Household settings is at `/settings/household` (`apps/web/app/(app)/settings/household/**`). The tab strip is the shared `SETTINGS_TABS` (`nav.ts`) drawn by the `TabLinks` primitive; this leaf does not create `components/admin/settings-tabs.tsx`.
+- SPEC-Q-2: done on the base branch (R-45): Settings is also active on `/changelog`; `ROUTES.changelog` exists.
+- SPEC-Q-6: ruled against (R-48). InviteAccept has no "No password — email me a link each time" button; listed as a mockup deviation.
+- SPEC-Q-3 … 5, 7 … 15: accepted as recorded.
+- Dependencies applied on the base branch: `uqr` 0.1.3, dev `@axe-core/playwright` 4.13.0.

@@ -1,6 +1,6 @@
 # leaf-1.4.6 ADR-2: QR codes for invites and two-step sign-in set-up
 
-Status: proposed at CP1 (dependency request R-d)
+Status: accepted at CP1 (R-45, R-48; `uqr` 0.1.3 applied)
 Requirement: R2-ADM-2 (invite "sent as email, copy link or QR code"), R2-ADM-5 (TOTP set-up), leaf-1.4.1 SPEC-Q-4 ("the QR image is drawn by the UI (1.4.6)")
 
 ## Decision

@@ -1,6 +1,6 @@
 # leaf-1.4.6 ADR-3: how G1 and G2 are verified
 
-Status: proposed at CP1 (dependency request R-e)
+Status: accepted at CP1 (R-45, R-48; `@axe-core/playwright` 4.13.0 applied)
 Requirement: BLD-5 1.4.6 G1, G2; BLD-8 W-1
 
 `scripts/verify/leaf-1.4.6.mjs --gate G1|G2` imports only `scripts/verify/lib/*` and prints `VERIFY leaf-1.4.6 <gate> PASSED` only after every assertion, the negative controls included, holds. Gates run concurrently without sharing anything:
