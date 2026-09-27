@@ -7,17 +7,17 @@ Scope: Onboarding, Family, Settings, detail levels, as specified in docs/spec (s
 - [x] G1: Playwright at 390 and 1280 px: 5-question onboarding to first plan, family edits, settings (matches mockups)
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.3 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=e1a341a2c2f2517c0df8eeedac75783aff35b89cefb7885a328c219b46c56248; exit=0; EXPECT=matched; output-sha256=e09b282f209898eafd79907f5f7d2e9583fd005905ff88ac075aa44b247959e1; output-bytes=1311; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=e1a341a2c2f2517c0df8eeedac75783aff35b89cefb7885a328c219b46c56248; exit=0; EXPECT=matched; output-sha256=a84d49a7b919b6d8c2ea8c4a6eeadfdc03c03a7ef29a7859b5a26780e149727c; output-bytes=1311; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: axe-core: no serious or critical violations on these screens
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.3 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=6f1698c508f858fe77f91963f2ae23ae4c5ab60c32dd85a73454ad66148b6c19; exit=0; EXPECT=matched; output-sha256=a0f47ec426252379b959ad482774a3e5558014560d5a87c2a39b35037c4cd2a0; output-bytes=1042; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=6f1698c508f858fe77f91963f2ae23ae4c5ab60c32dd85a73454ad66148b6c19; exit=0; EXPECT=matched; output-sha256=cd75203a2f1e58564e4cb2df7f2b712c257a235e266ac855a44bbe6ad2d942e7; output-bytes=1042; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: R2-DL: auto tags visible, per-value override and back-to-auto, keep/reset prompt when lowering level
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.3 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=44cdb66bcae666e39993e5da66256ff85af5b1fc0bbb976e57f80b9ddf0ec034; exit=0; EXPECT=matched; output-sha256=ea8c63df896a766a5630f918966d14db3330c818a314832ddb9b150c74122ab0; output-bytes=2355; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=44cdb66bcae666e39993e5da66256ff85af5b1fc0bbb976e57f80b9ddf0ec034; exit=0; EXPECT=matched; output-sha256=76ce53ad520f03e590bebd14715ca97d31a200eedabb64b03db895f221049548; output-bytes=2355; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: inferSetup golden tests: F1 answers produce exactly the F1 configuration; sesame expands via flags; free-text parse stubbed (R2-ONB-3)
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G4
@@ -27,7 +27,7 @@ Scope: Onboarding, Family, Settings, detail levels, as specified in docs/spec (s
 - [x] G5: SC-6 at most 5 required answers to the first plan and SC-7 every review-screen Adjust link resolves
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G5
   EXPECT: VERIFY leaf-1.4.3 G5 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=84afb387dc80b9169c5ba002d5bacb35ad1e7c8528bc27b6447044225bd0eaec; exit=0; EXPECT=matched; output-sha256=54e65a8731699c6f80a06a60701e8e7042dd1decef07d4977d9a210c36401e13; output-bytes=1313; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=84afb387dc80b9169c5ba002d5bacb35ad1e7c8528bc27b6447044225bd0eaec; exit=0; EXPECT=matched; output-sha256=54f2b7595747ee885466fc4ab2fc119d325bd0c5cfc5857e439b4d5d8ea2c391; output-bytes=1313; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G6: architect visual review against Onboarding, DetailLevels, MemberSimple, MemberDetailed, ScheduleGrid, PlanningBalance, TastesDesktop mockups
   EVIDENCE: pending
