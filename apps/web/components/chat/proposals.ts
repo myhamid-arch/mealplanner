@@ -2,16 +2,19 @@
 // the chat cards: the payload is `{ title, ops }` and the evidence `{ reviewIds, count, metrics }`
 // (1.3.3); anything else is read defensively.
 import type { z } from "zod";
-import type { ProposalDto } from "@mealplanner/api-contract/contract";
+import type { JsonValue, ProposalDto } from "@mealplanner/api-contract/contract";
 
 export type Proposal = z.output<typeof ProposalDto>;
 
+export type Json = z.output<typeof JsonValue>;
+
 export interface ProposalOp {
+  [key: string]: Json;
   kind: string;
-  payload: Record<string, unknown>;
+  payload: { [key: string]: Json };
 }
 
-function isRecord(v: unknown): v is Record<string, unknown> {
+function isRecord(v: unknown): v is { [key: string]: Json } {
   return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
