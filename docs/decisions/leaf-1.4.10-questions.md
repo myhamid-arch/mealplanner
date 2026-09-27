@@ -64,10 +64,11 @@ household's own ingredient has the same problem, by code reading (not reproduced
 `catalogue` request in the same job. A change set that adds a private ingredient and a dish using
 it would sync the dish first, and it would fail on every retry, since the order does not change.
 
-Reading (pending the architect's answer at CP1): the guard covers the scope of the missing nodes,
-global and the dish's household, since it is the same code path; G2 tests the global case the gate
-names, and a unit test covers the household case. If the architect prefers the narrower fix, the
-guard is limited to global nodes and the household case is recorded as a finding.
+Answer at CP1 (R-70): include the household scope. The guard syncs the catalogue of each scope
+with a missing node, global first. Reproduced once the test existed: with the pre-fix `syncDishes`,
+the household case fails (`packages/graph/test/startup.int.test.ts`, and through the real
+`kg.sync` handler and `syncRequests` in `apps/web/test/api/kg-startup.int.test.ts`, where it fails
+on every attempt).
 
 ## SPEC-Q-7: which change-log entries get a named subject (W-14, G3)
 

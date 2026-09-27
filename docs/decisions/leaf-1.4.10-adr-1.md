@@ -1,6 +1,6 @@
 # Leaf 1.4.10 ADR-1: the graph start-up fix relies on PostgreSQL upsert waits, not job order
 
-Status: proposed at CP1.
+Status: accepted at CP1 (R-70), with the amendment below.
 
 ## Context
 
@@ -38,14 +38,26 @@ Why this is safe when the two jobs overlap (PostgreSQL 16, READ COMMITTED, the s
   missing after the catalogue sync, and the edge write fails as before: the guard does not hide
   real errors.
 
+## Amendment at CP1 (R-70): one node order
+
+Two catalogue syncs, or a dish sync's guarded catalogue sync beside the start-up catalogue job,
+insert the same node keys. Every node upsert in `sync.ts` now writes its rows sorted by
+(household, type, key) (`inKeyOrder`), so any two syncs meet at the same first contended row and
+the later one waits there; there is no lock-order cycle. G2 adds a run in which two catalogue syncs
+and the dish sync start together (concurrency 3): no `deadlock detected`, no retry, and the graph
+equals the rebuild's. `packages/graph/test/startup.int.test.ts` runs the same three syncs, each
+in its own transaction, five rounds over.
+
 ## Verification (G2)
 
 `apps/web/test/api/kg-startup.int.test.ts` runs `startWorker` at concurrency 2 on an empty graph
 with the seed library, three ways: the natural interleaving, the catalogue job held back until the
 dish job has run, and the catalogue job holding its transaction open (nodes written, not committed)
 while the dish job runs. Each must finish with no `retrying` or `failed` event, and the graph must
-equal the rebuild's (SPEC-Q-5). The same three runs with the pre-fix `syncDishes` (a verbatim
-test-only copy of `f7b041a`'s) must fail: the negative control.
+equal the rebuild's (SPEC-Q-5). The negative control runs the held and open-transaction
+interleavings with the pre-fix `syncDishes` (a verbatim test-only copy of `f7b041a`'s), and both
+must fail. The natural pre-fix run is reported, not asserted: it reproduced 6/6 at CP1, but a race
+is not a deterministic check.
 
 ## Consequences
 
