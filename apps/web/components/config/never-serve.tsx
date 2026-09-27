@@ -54,22 +54,43 @@ function isProtected(e: Exclusion): boolean {
   return e.reason === "allergy" || (e.hard && (e.reason === "medical" || e.reason === "religious"));
 }
 
-/** Groups rows of one person and reason into one line: "Sara · liver, kidneys — dislike". */
+/**
+ * 1.2.6 (R-62), OQ-9: a slot-scoped rule's scope, "in the packed school lunch only"; empty for a
+ * rule that applies to every meal.
+ */
+export function exclusionScope(e: Exclusion, data: HouseholdData): string {
+  if (e.slotKeys === null) return "";
+  const labels = e.slotKeys.map(
+    (k) => data.slots.find((s) => s.key === k)?.label.toLowerCase() ?? k.replace(/_/g, " "),
+  );
+  const joined =
+    labels.length <= 1
+      ? (labels[0] ?? "")
+      : `${labels.slice(0, -1).join(", ")} and ${labels.at(-1) ?? ""}`;
+  return `in the ${joined} only`;
+}
+
+/**
+ * Groups rows of one person, reason and slot scope into one line: "Sara · liver, kidneys —
+ * dislike"; a scoped group reads "Layla · nuts · in the packed school lunch only".
+ */
 function lines(rows: readonly Exclusion[], data: HouseholdData, names: Map<string, string>) {
   const groups = new Map<string, Exclusion[]>();
+  const scopeOf = (e: Exclusion) => (e.slotKeys === null ? "" : `|${e.slotKeys.join(",")}`);
   for (const e of rows) {
-    const key = `${e.memberId ?? "*"}|${e.reason}`;
+    const key = `${e.memberId ?? "*"}|${e.reason}${scopeOf(e)}`;
     groups.set(key, [...(groups.get(key) ?? []), e]);
   }
-  return [...groups.values()].map((group) => {
+  return [...groups.entries()].map(([key, group]) => {
     const head = group[0] as Exclusion;
     const who = head.memberId === null ? "Everyone" : (names.get(head.memberId) ?? "Someone");
     const what = [...new Set(group.map((e) => exclusionWhat(e, data)))].join(", ");
     const incl = group.length === 1 ? including(head, data) : "";
     return {
-      key: `${head.memberId ?? "*"}|${head.reason}`,
+      key,
       who,
       what: `${what}${incl}`,
+      scope: exclusionScope(head, data),
       head,
       group,
     };
@@ -129,7 +150,9 @@ export function NeverServeList({
           {lines(rows, data, names).map((line) => (
             <li
               key={line.key}
-              data-never-serve={`${line.who}|${line.head.reason}`}
+              data-never-serve={`${line.who}|${line.head.reason}${
+                line.head.slotKeys === null ? "" : `|${line.head.slotKeys.join(",")}`
+              }`}
               className={`flex flex-wrap items-center gap-2 rounded-lg px-3 py-2.5 ${
                 line.head.reason === "allergy"
                   ? "bg-pomegranate-tint text-pomegranate-text"
@@ -138,6 +161,9 @@ export function NeverServeList({
             >
               <span className="grow font-extrabold">
                 {line.who} · {line.what}
+                {line.scope === "" ? null : (
+                  <span className="font-semibold text-ink-soft"> · {line.scope}</span>
+                )}
               </span>
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-extrabold ${
@@ -150,9 +176,16 @@ export function NeverServeList({
               </span>
               <button
                 type="button"
-                onClick={() => void remove(line.group, `${line.who} · ${line.what}`)}
+                onClick={() =>
+                  void remove(
+                    line.group,
+                    `${line.who} · ${line.what}${line.scope === "" ? "" : ` · ${line.scope}`}`,
+                  )
+                }
                 className="min-h-11 rounded-md px-2 text-sm font-extrabold underline"
-                aria-label={`Remove ${line.who} · ${line.what}`}
+                aria-label={`Remove ${line.who} · ${line.what}${
+                  line.scope === "" ? "" : ` · ${line.scope}`
+                }`}
               >
                 Remove
               </button>
