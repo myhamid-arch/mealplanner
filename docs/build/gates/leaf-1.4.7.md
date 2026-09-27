@@ -1,6 +1,6 @@
 # Gates: leaf-1.4.7 Deferred scope W-5: onboarding parse, planning preview, first days
 
-OWNS: docs/decisions/leaf-1.4.7-*.md, packages/ai/src/onboarding/**, packages/ai/test/onboarding/**, packages/core/src/onboarding/followups/**, packages/core/test/onboarding/followups/**, apps/web/app/api/v1/onboarding/**, apps/web/app/api/v1/plans/preview/**, apps/web/app/api/v1/setup-followups/**, apps/web/lib/server/onboarding-parse.ts, apps/web/lib/server/plan-preview.ts, apps/web/lib/server/setup-followups.ts, apps/web/test/api/onboarding-parse.int.test.ts, apps/web/test/api/plans-preview.int.test.ts, apps/web/test/api/setup-followups.int.test.ts, apps/worker/src/jobs/plans-preview.ts, apps/web/app/(app)/getting-started/**, apps/web/components/setup/**, apps/web/e2e/setup.spec.ts, packages/db/src/migrations/0006_*, packages/db/src/migrations/meta/0006_snapshot.json, scripts/verify/leaf-1.4.7.mjs
+OWNS: docs/decisions/leaf-1.4.7-*.md, packages/ai/src/onboarding/**, packages/ai/test/onboarding/**, packages/core/src/onboarding/followups/**, packages/core/test/onboarding/followups/**, apps/web/app/api/v1/onboarding/**, apps/web/app/api/v1/plans/preview/**, apps/web/app/api/v1/setup-followups/**, apps/web/lib/server/onboarding-parse.ts, apps/web/lib/server/plan-preview.ts, apps/web/lib/server/setup-followups.ts, apps/web/test/api/onboarding-parse.int.test.ts, apps/web/test/api/plans-preview.int.test.ts, apps/web/test/api/setup-followups.int.test.ts, apps/worker/src/jobs/plans-preview.ts, apps/web/app/(app)/getting-started/**, apps/web/components/setup/**, apps/web/e2e/setup.spec.ts, packages/db/src/schema/setup.ts, packages/db/src/migrations/0006_*, packages/db/src/migrations/meta/0006_snapshot.json, scripts/verify/leaf-1.4.7.mjs
 
 Scope: The W-5 deferred scope (R-55): model-backed onboarding free-text parse (R2-ONB-3), the PlanningBalance "Next week, if you save" preview (UX-4), and the first-days follow-up questions with the "Getting set up" checklist (R2-ONB-6), as specified in docs/spec (see 11-build-plan.md §5 and §8 W-5, R-55) and matching docs/mockups.
 
@@ -26,4 +26,9 @@ Scope: The W-5 deferred scope (R-55): model-backed onboarding free-text parse (R
 
 - [ ] G5: architect visual review against PlanningBalance (preview panel) and FirstDaysPhone mockups
   MANUAL: architect compares screenshots at 390 and 1280 px with the mockups
+  EVIDENCE: pending
+
+- [ ] G6: live parse of the F1 answers through the real model matches the deterministic parse (owner handoff: needs ANTHROPIC_API_KEY)
+  CHECK: node scripts/verify/leaf-1.4.7.mjs --live
+  EXPECT: VERIFY leaf-1.4.7 LIVE PASSED
   EVIDENCE: pending
