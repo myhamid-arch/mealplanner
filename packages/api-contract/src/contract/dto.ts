@@ -1152,3 +1152,43 @@ export const FollowupAnswerDto = z.object({
   then: LinkDto.nullable(),
   followups: SetupFollowupsDto,
 });
+
+// BLD-8 R-52 (leaf 1.4.4) ------------------------------------------------------------------------
+
+/** One changed meal of a `plates.substitute` run (R2-UX-1). */
+export const SubstitutedMealDto = z.object({
+  planMealId: Id,
+  date: IsoDate,
+  slotLabel: z.string(),
+  fromDishName: z.string(),
+  toDishName: z.string(),
+});
+
+/** A kitchen flag of a date with its substitution job and result (R2-UX-1, SPEC-Q-1). */
+export const KitchenFlagViewDto = z.object({
+  reviewId: Id,
+  kind: z.enum(["unavailable", "unclear"]),
+  ingredientId: Id.nullable(),
+  ingredientName: z.string().nullable(),
+  variantId: Id.nullable(),
+  planMealId: Id.nullable(),
+  note: z.string().nullable(),
+  authorName: z.string(),
+  createdAt: Timestamp,
+  job: z
+    .object({ id: Id, status: z.enum(JOB_STATUSES), finishedAt: Timestamp.nullable() })
+    .nullable(),
+  result: z
+    .object({
+      substituteId: Id.nullable(),
+      substituteName: z.string().nullable(),
+      changeSetId: Id.nullable(),
+      meals: z.array(SubstitutedMealDto),
+      unresolved: z.array(Id),
+    })
+    .nullable(),
+});
+
+export const KitchenFlagsDto = z.object({ flags: z.array(KitchenFlagViewDto) });
+
+export const PlanMealStatusBody = z.object({ status: z.enum(PLAN_MEAL_STATUSES) }).strict();

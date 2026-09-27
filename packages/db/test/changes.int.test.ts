@@ -170,6 +170,8 @@ describe.each([
         "portion_bias.set",
         "recipe.generate",
         "recipe.revise",
+        "plan.publish",
+        "plan_meal.status",
       ].sort(),
     );
     const generators = opGenerators(database.db, household);

@@ -432,6 +432,12 @@ export function opGenerators(
       },
     }),
     "plan.lock": () => ({ kind: "plan.lock", payload: { planMealId: populated.planMealId } }),
+    // BLD-8 R-52: populate.ts plans 2026-10-05 as a draft day.
+    "plan.publish": () => ({ kind: "plan.publish", payload: { date: "2026-10-05" } }),
+    "plan_meal.status": (r) => ({
+      kind: "plan_meal.status",
+      payload: { planMealId: populated.planMealId, status: r() < 0.5 ? "cooked" : "skipped" },
+    }),
     "plan.unlock": () => ({
       kind: "plan.unlock",
       payload: { planMealId: populated.lockedMealId },
