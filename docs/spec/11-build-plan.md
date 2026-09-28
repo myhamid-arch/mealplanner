@@ -182,7 +182,7 @@ Each gate below becomes a ledger entry. Runnable gates use `CHECK: node scripts/
 - G3 No regression, measured: 1.2.3 G1 and G3–G5, 1.2.5 G1–G4, 1.2.6 G1–G2 and 1.4.10 G1 pass. SC-2 over seeds 1–10 is measured on the new code: median ≥ 8 % and every seed ≥ 0 % (1.2.3 G2 as re-set by R-63). SC-1's in-tolerance rate and the frequency-relaxed count are printed, beside the same figures on the pre-fix code.
 
 **1.4.11 Assistant button clearance at phone width (W-15; R-77)**
-- G1 Clearance (W-15, UX-4): with Playwright at 390 px and at 360 px, as an admin (the floating Assistant button shows), on `/account` and on a Plate page, each scrolled to the end, the button's box does not intersect the page's last control ("Delete my account", "See recipe"), and `elementFromPoint` at that control's centre hits the control. On a role without the assistant, the page keeps today's padding (no extra space). Negative control: the pre-fix padding fails the intersection check on both pages.
+- G1 Clearance (W-15, UX-4): with Playwright at 390 px and at 360 px, as an admin (the floating Assistant button shows), on `/account` and on a Plate page, each scrolled to the end, the button's box does not intersect the page's last control ("Delete my account", "See recipe"), and `elementFromPoint` at that control's centre hits the control. On a role without the assistant, the page keeps today's padding (no extra space). Negative control: with the pre-fix padding, the Plate's intersection is at least 20 px at both widths, and on `/account` the gap between the control and the button is under the 16 px margin (R-78).
 - G2 No regression: 1.4.2 G1–G2 and 1.4.9 G4 pass (the desktop breakpoint, W-10b, is unchanged), and axe-core reports no serious or critical findings on both pages at 390 px.
 - G3 (manual) Architect visual review of both pages at 390 px, scrolled to the end, against the shell mockups.
 
@@ -619,4 +619,11 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
 - **R-77 (W-15 owner; leaf 1.4.11).** W-15 gets its own leaf, 1.4.11 (§3, §4, §5; `gates/leaf-1.4.11.md`; node-1.4 integrates it). It is a product change in merged 1.4.2's `app-shell.tsx`, so it does not go to the architect as a test-only fix.
   - Cause: at < 1024 px, `main` keeps `pb-[calc(100px+safe-area)]`, which clears the tab bar only. The 58 px `AssistantButton` sits at `bottom-[calc(100px+safe-area)]`, so at the end of a page it covers the last 58 px on the right.
   - Direction: while the button shows, reserve its height and margin as bottom padding at the phone breakpoint, the phone counterpart of 1.4.9's W-10b desktop rule.
+- **R-78 (1.4.11 ARCHITECT QUESTION, the /account negative control).** Option A.
+  - 1.4.6's account `Frame` has `pb-16 lg:pb-0` (`account-screen.tsx:420`), so before the fix "Delete my account" already ends about 6 px clear of the button once the page is scrolled to the end. The 390 px capture at the 1.4.10 G5 review showed the overlap before the page reached the end.
+  - The Plate overlaps at the end: 58 × 52 px, measured by the builder.
+  - §5 G1's control is reworded:
+    - the Plate's pre-fix intersection is at least 20 px;
+    - on /account, the pre-fix gap is under the 16 px margin, where the fix gives at least 16 px.
+  - 1.4.6's padding stays, so roles without the assistant keep their layout.
 
