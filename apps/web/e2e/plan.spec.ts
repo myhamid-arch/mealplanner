@@ -1879,10 +1879,15 @@ test("@1.4.8-G5 the substituted cook sheet names the substitute (olive oil → c
   for (const v of VIEWPORTS) {
     const { ctx, page } = await as(browser, "kitchen", v);
     await page.goto(`/kitchen?date=${date}&meal=${changed.planMealId}`);
-    // An individual slot shows one article per person: take the one serving the copy.
+    // An individual slot shows one article per person: take the one serving the copy. Match the
+    // article's own heading, not its text: another meal's article can mention this dish (N1 run
+    // 2026-09-28 read the Labneh snack's card).
     const article = page
       .getByTestId("cook-meal")
-      .filter({ visible: true, hasText: changed.toDishName })
+      .filter({
+        visible: true,
+        has: page.getByRole("heading", { level: 2, name: changed.toDishName, exact: true }),
+      })
       .first();
     await expect(article).toBeVisible({ timeout: 60_000 });
     for (const b of touched) for (const step of b.steps) await expect(article).toContainText(step);
