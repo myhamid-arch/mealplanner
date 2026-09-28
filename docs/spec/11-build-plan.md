@@ -579,3 +579,13 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - Plans change once, at this leaf. SC-1 and SC-2 are re-measured on the new code (G3), and a seed where economy adds ingredients fails.
   - The node verify scripts (R-69) measure at run time, so they need no change.
 
+- **R-74 (1.2.7 CP1).** Approved.
+  - Requests granted as single-entry edits marked `1.2.7 (R-73)`:
+    - R-1: `cooksheet/build.ts` orders adjuster batches by slug.
+    - R-2: regenerate the `cooksheet.test.ts` snapshot, with the diff reported at CP2.
+    - R-3: `config.test.ts` uses the first of seeds 1–10 whose Monday plan serves an adjuster, and fails if none does.
+    - R-4 (a): `day-sums.test.ts` and `leaf-1.4.8.mjs` (the title match only) assert that the stored sum differs from the day target, without pinning 2146.
+    - R-5: `GENERATOR_VERSION` becomes `"1.2.7"`.
+  - SPEC-Q-1, 2, 4 and 5 accepted. The member key is the position in `cfg.members`, which is creation order, because `newId` is strictly increasing within a process.
+  - SPEC-Q-3 not accepted: G2 runs the worker's `plan.generate` handler (`runJob`) on each database.
+  - If G3 takes longer than node-1.2 N1's 1800 s per gate, the architect raises that timeout.
