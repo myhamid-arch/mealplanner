@@ -211,10 +211,15 @@ async function withLock(name, fn) {
 // ---------------------------------------------------------------------------------------------
 
 /** What the planner runs need: src, the seed library, F1 and the G1 harness (support.ts). */
+// Every file is listed: the pre-fix tree sits under node_modules/.cache, and tsc does not emit a
+// file there that is only imported.
 const ENTRY_POINTS = [
   "src",
+  "test/fixtures",
+  "test/planner/targets/config.ts",
   "test/planner/select/library.ts",
   "test/planner/select/f1.ts",
+  "test/planner/select/seed-files.ts",
   "test/planner/select/support.ts",
 ];
 
@@ -248,13 +253,19 @@ function extractPreFix(report, dir) {
 
 /** Compiles a core tree (`coreDir`: this checkout's or the pre-fix one) into `out`. */
 function compileCore(report, label, coreDir, out) {
-  const config = join(dirname(out), `tsconfig.${label}.json`);
+  const config = join(dirname(out), `tsconfig.${label.replaceAll(" ", "-")}.json`);
   const entries = ENTRY_POINTS.filter((p) => existsSync(join(coreDir, p)));
   writeFileSync(
     config,
     JSON.stringify({
       extends: join(coreDir, "tsconfig.json"),
-      compilerOptions: { rootDir: coreDir, outDir: out, declaration: false, sourceMap: false },
+      compilerOptions: {
+        rootDir: coreDir,
+        outDir: out,
+        declaration: false,
+        declarationMap: false,
+        sourceMap: false,
+      },
       include: entries.map((p) => join(coreDir, p)),
     }),
   );
