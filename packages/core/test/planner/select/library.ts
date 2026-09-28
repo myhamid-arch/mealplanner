@@ -154,6 +154,7 @@ export function toPlanDish(
 ): PlanDish {
   return {
     id: d.slug,
+    slug: d.slug,
     version: d.version,
     name: d.name,
     cuisineKey: d.cuisine,

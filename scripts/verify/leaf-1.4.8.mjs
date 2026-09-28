@@ -644,7 +644,8 @@ async function gateG3() {
     ["test/planner/targets/day-sums.test.ts"],
     [
       "every targeted member, every day and both day kinds: Σ slot kcal/P/C/F = the profile",
-      "reproduced: Sunday adult_a's plate targets sum to 2146, not the 2150 of his rest day",
+      // 1.2.7 (R-73): the case no longer pins 2146 (W-17 changed the plan once).
+      "reproduced: Sunday adult_a's plate targets do not sum to the 2150 of his rest day",
       "summing plate targets misses the day target on several member-days, not only Sunday",
     ],
   );

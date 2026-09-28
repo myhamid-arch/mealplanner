@@ -57,12 +57,22 @@ describe("household adjuster list (PLN-6, SPEC-Q-7)", () => {
     new Set(platesOf(plan).flatMap(({ plate }) => plate.solution.adjusters.map((a) => a.dishId)));
 
   it("never serves an adjuster the household disabled, nor any when adjusters are off", async () => {
-    const plan = (config: HouseholdConfig) =>
-      planDays(
-        { config, dates: [MONDAY], dishes: lib.dishes, adjusters: lib.adjusters },
-        { seed: 1 },
+    // 1.2.7 (R-73): the first of seeds 1–10 whose Monday plan serves an adjuster (W-17 changed
+    // the plans once); none serving one fails the test below.
+    let seed = 1;
+    let used = new Set<string>();
+    for (; seed <= 10; seed++) {
+      used = adjusterIds(
+        await planDays(
+          { config: f1PlanConfig(), dates: [MONDAY], dishes: lib.dishes, adjusters: lib.adjusters },
+          { seed },
+        ),
       );
-    const used = adjusterIds(await plan(f1PlanConfig()));
+      if (used.size > 0) break;
+    }
+    console.log(`adjuster list: seed ${String(seed)} serves ${[...used].join(", ") || "none"}`);
+    const plan = (config: HouseholdConfig) =>
+      planDays({ config, dates: [MONDAY], dishes: lib.dishes, adjusters: lib.adjusters }, { seed });
     expect(used.size).toBeGreaterThan(0);
     const disabled = f1PlanConfig();
     disabled.adjusters = [...used].map((dishId) => ({

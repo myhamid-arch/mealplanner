@@ -48,6 +48,8 @@ export type PlanComponent = Omit<ComponentForSolve, "variants"> & {
 };
 
 export type PlanDish = Omit<DishForSolve, "components"> & {
+  /** leaf-1.2.7 (R-73, W-17): the dish's natural key; seeded randomness and tie-breaks use it. */
+  slug: string;
   version: number;
   name: string;
   cuisineKey: string;
