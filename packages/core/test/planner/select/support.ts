@@ -133,11 +133,21 @@ export function surrogateIds(value: unknown): string[] {
 }
 
 /**
- * Fresh UUIDv7-shaped ids (RFC 9562 §5.7 layout) for `ids`, one each, whose sort order is the
- * reverse of the originals' (every id comparison flips) and whose remaining bits come from a
- * PRNG seeded with `salt` (every id hash changes).
+ * How fresh ids sort against the originals: `reverse` flips every id comparison; `preserve` keeps
+ * every comparison and changes only the ids' bits (the salted-prefix case of W-17).
  */
-export function freshIds(ids: readonly string[], salt: number): Map<string, string> {
+export type IdOrder = "reverse" | "preserve";
+
+/**
+ * Fresh UUIDv7-shaped ids (RFC 9562 §5.7 layout) for `ids`, one each: the timestamp field orders
+ * them (`order`) and the remaining bits come from a PRNG seeded with `salt`, so every id hash
+ * changes.
+ */
+export function freshIds(
+  ids: readonly string[],
+  salt: number,
+  order: IdOrder = "reverse",
+): Map<string, string> {
   const sorted = [...ids].sort();
   let state = salt >>> 0;
   const next = () => {
@@ -150,7 +160,7 @@ export function freshIds(ids: readonly string[], salt: number): Map<string, stri
   const hex = (n: number, width: number) => n.toString(16).padStart(width, "0").slice(-width);
   const out = new Map<string, string>();
   sorted.forEach((id, i) => {
-    const ms = 0x019000000000 + (sorted.length - 1 - i) * 7919;
+    const ms = 0x019000000000 + (order === "reverse" ? sorted.length - 1 - i : i) * 7919;
     const time = hex(ms, 12);
     const randA = hex(next() & 0xfff, 3);
     const variant = hex(0x8000 | (next() & 0x3fff), 4);
@@ -174,12 +184,23 @@ export function mapBack<T>(value: T, back: ReadonlyMap<string, string>): T {
   return walk(value) as T;
 }
 
+/** Meals whose dish differs between two plans of the same dates (meal by meal, in plan order). */
+export function mealsDiffering(a: PlanResult, b: PlanResult): number {
+  const dishes = (p: PlanResult) => p.days.flatMap((d) => d.meals.map((m) => m.dishId));
+  const x = dishes(a);
+  const y = dishes(b);
+  let n = Math.abs(x.length - y.length);
+  for (let i = 0; i < Math.min(x.length, y.length); i++) if (x[i] !== y[i]) n++;
+  return n;
+}
+
 /** A planner input with every surrogate id remapped (`freshIds`), and the way back. */
 export function remapInput(
   input: PlanInput,
   salt: number,
+  order: IdOrder = "reverse",
 ): { input: PlanInput; forward: Map<string, string>; back: Map<string, string> } {
-  const forward = freshIds(surrogateIds(input), salt);
+  const forward = freshIds(surrogateIds(input), salt, order);
   const back = new Map([...forward].map(([o, f]) => [f, o]));
   const visit = (id: string) => {
     const f = forward.get(id);
