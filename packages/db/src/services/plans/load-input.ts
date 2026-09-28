@@ -127,14 +127,41 @@ export async function toPlanDishes(
   };
   const componentsByDish = group(components, (c) => c.dishId);
   const variantsByComponent = group(variants, (v) => v.componentId);
-  const linesByVariant = group(lines, (l) => l.variantId);
+  // 1.2.7 (R-73, W-17): every order below comes from natural keys, never from ids. The planner
+  // reads it: pool order settles ties, component and variant order feed the solver, and line order
+  // feeds the nutrition sums and the reasons.
+  const slugOf = (ingredientId: string) => catalog.ingredients.get(ingredientId)?.slug ?? "";
+  const lineKey = (l: (typeof lines)[number]) =>
+    JSON.stringify([
+      slugOf(l.ingredientId),
+      l.rawGPerBatch,
+      l.isAbsorbedOil,
+      l.cookingLiquid,
+      l.yieldOverride,
+      l.roleNote,
+    ]);
+  const linesByVariant = new Map(
+    [...group(lines, (l) => l.variantId)].map(([id, own]) => [
+      id,
+      [...own].sort((a, b) => compareText(lineKey(a), lineKey(b))),
+    ]),
+  );
+  const variantKey = (v: (typeof variants)[number]) =>
+    JSON.stringify([
+      Number(!v.isDefault),
+      v.label,
+      catalog.methodKeyById.get(v.methodId) ?? "",
+      (linesByVariant.get(v.id) ?? []).map(lineKey),
+    ]);
   const out: PlanDish[] = [];
-  for (const d of [...dishRows].sort((a, b) => a.id.localeCompare(b.id))) {
+  // Library dishes before a household dish that reuses their slug (SPEC-Q-2).
+  const dishOrder = (d: DishRow) => JSON.stringify([d.slug, d.householdId === null ? 0 : 1]);
+  for (const d of [...dishRows].sort((a, b) => compareText(dishOrder(a), dishOrder(b)))) {
     const cuisineKey = catalog.cuisineKeyById.get(d.cuisineId);
     if (cuisineKey === undefined) continue;
     const state = { broken: false };
     const planComponents = [...(componentsByDish.get(d.id) ?? [])]
-      .sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id))
+      .sort((a, b) => a.sortOrder - b.sortOrder || compareText(a.name, b.name))
       .map((c) => ({
         id: c.id,
         name: c.name,
@@ -148,17 +175,17 @@ export async function toPlanDishes(
         unitWeightG: unitWeightOf(
           c.portioning,
           linesByVariant,
-          variantsByComponent.get(c.id) ?? [],
+          [...(variantsByComponent.get(c.id) ?? [])].sort((a, b) =>
+            compareText(variantKey(a), variantKey(b)),
+          ),
           catalog,
         ),
         required: c.required,
         variants: [...(variantsByComponent.get(c.id) ?? [])]
-          .sort((a, b) => Number(b.isDefault) - Number(a.isDefault) || a.id.localeCompare(b.id))
+          .sort((a, b) => compareText(variantKey(a), variantKey(b)))
           .flatMap((v) => {
             const method = catalog.methodKeyById.get(v.methodId);
-            const own = [...(linesByVariant.get(v.id) ?? [])].sort((a, b) =>
-              a.id.localeCompare(b.id),
-            );
+            const own = linesByVariant.get(v.id) ?? [];
             if (
               method === undefined ||
               own.length === 0 ||
@@ -212,6 +239,11 @@ export async function toPlanDishes(
     });
   }
   return out;
+}
+
+/** Code-unit order (not locale order), so the loader's order is the same on every machine. */
+function compareText(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
 }
 
 /**
@@ -345,7 +377,22 @@ export async function loadPlannedMeals(
   const dateOf = new Map(days.map((d) => [d.id, d.date]));
   const componentDish = new Map<string, string>();
   for (const d of byId.values()) for (const c of d.components) componentDish.set(c.id, d.id);
+  // 1.2.7 (R-73): a plate's items in their dish's component and variant order (adjusters by slug).
+  const itemKey = new Map<string, string>();
+  for (const d of byId.values())
+    d.components.forEach((c, ci) => {
+      c.variants.forEach((v, vi) => itemKey.set(v.id, JSON.stringify([d.slug, ci, vi])));
+    });
+  const byItem = (a: { variantId: string }, b: { variantId: string }) =>
+    compareText(itemKey.get(a.variantId) ?? "", itemKey.get(b.variantId) ?? "");
   const members = new Map(cfg.members.map((m) => [m.id, m]));
+  // 1.2.7 (R-73, W-17): plates and meals in natural order: members by their position in the
+  // configuration (SPEC-Q-1), slots by time, sort order and key.
+  const rank = new Map(cfg.members.map((m, i) => [m.id, i]));
+  const rankOf = (memberId: string) => rank.get(memberId) ?? cfg.members.length;
+  const slotRank = new Map(cfg.slotTypes.map((s, i) => [s.id, i]));
+  const scopeRank = (scope: string) =>
+    scope === "shared" ? cfg.members.length + 1 : rankOf(scope);
   const out: Array<PlannedMeal & { id: string }> = [];
   for (const m of meals) {
     const date = dateOf.get(m.planDayId);
@@ -354,9 +401,9 @@ export async function loadPlannedMeals(
     const stored = m.scoreBreakdown as unknown as Partial<StoredBreakdown>;
     const mealPlates: PlannedPlate[] = plates
       .filter((p) => p.planMealId === m.id)
-      .sort((a, b) => a.memberId.localeCompare(b.memberId))
+      .sort((a, b) => rankOf(a.memberId) - rankOf(b.memberId))
       .map((p) => {
-        const own = items.filter((i) => i.plateId === p.id);
+        const own = items.filter((i) => i.plateId === p.id).sort(byItem);
         const storedTarget = p.target as unknown as StoredTarget | null;
         const target = isUntargeted(storedTarget) ? null : storedTarget;
         const dev = p.deviation as unknown as Partial<StoredDeviation>;
@@ -443,7 +490,13 @@ export async function loadPlannedMeals(
       explain: meta?.explain ?? [],
     });
   }
-  return out.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  return out.sort(
+    (a, b) =>
+      compareText(a.date, b.date) ||
+      compareText(a.time, b.time) ||
+      (slotRank.get(a.slotTypeId) ?? 0) - (slotRank.get(b.slotTypeId) ?? 0) ||
+      scopeRank(a.memberScope) - scopeRank(b.memberScope),
+  );
 }
 
 export function addDays(date: string, days: number): string {

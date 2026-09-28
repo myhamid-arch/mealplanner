@@ -8,8 +8,9 @@
 // adds meal i's old or new version back. The result is exactly the change of the full total (the
 // unit test compares the two) at O(N) per trial instead of O(N²).
 import { IMPROVEMENT_ALTERNATIVES, SCORE_EPSILON } from "./config.js";
+import { bySlug } from "./pool.js";
 import { dayNumber, laterThan, type Served } from "./filters.js";
-import { mealKey, type MealSpec } from "./meals.js";
+import type { MealSpec } from "./meals.js";
 import type { MealParts, Run, ScoredMeal } from "./run.js";
 import { scoreDish } from "./score.js";
 import type { PlannedMeal } from "./types.js";
@@ -30,7 +31,7 @@ export function scoredMealOf(run: Run, m: PlannedMeal): ScoredMeal {
     date: m.date,
     attendees: m.plates.map((p) => p.memberId),
     timeKey: run.timeKeyOf(m.slotTypeId),
-    mealKey: mealKey(m.date, m.slotTypeId, m.memberScope),
+    mealKey: run.mealKey(m.date, m.slotTypeId, m.memberScope),
   };
 }
 
@@ -207,7 +208,7 @@ export function improvePass(run: Run, meals: PlannedMeal[], context: readonly Se
           c.eligible && c.dish.id !== meal.dishId && !run.frequencyBlocked(c.dish, spec, others),
       )
       .map((c) => ({ c, s: run.score(self, c.dish, c.plates, others).total }))
-      .sort((a, b) => b.s - a.s || (a.c.dish.id < b.c.dish.id ? -1 : 1))
+      .sort((a, b) => b.s - a.s || bySlug(a.c.dish, b.c.dish))
       .slice(0, IMPROVEMENT_ALTERNATIVES);
     if (alternatives.length === 0) continue;
 

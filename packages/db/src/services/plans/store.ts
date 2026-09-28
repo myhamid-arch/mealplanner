@@ -22,7 +22,8 @@ import {
 } from "./load-input.js";
 
 /** Bumped when the planner's stored meal format or search changes (`plan_day.generator_version`). */
-export const GENERATOR_VERSION = "1.4.1";
+// 1.2.7 (R-73): the search is keyed on natural keys (W-17).
+export const GENERATOR_VERSION = "1.2.7";
 
 export interface ChangeActorInput {
   actor: ChangeActor;

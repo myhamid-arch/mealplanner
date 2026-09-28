@@ -198,8 +198,11 @@ function cookMeal(plan: PlanResult, meal: PlannedMeal, catalog: CatalogContext):
     ...[...componentTotals.values()]
       .sort((a, b) => order(a.loc) - order(b.loc))
       .map((t) => batchOf("component", t.loc, t.g, t.n, catalog)),
+    // 1.2.7 (R-73): adjuster batches by dish slug, not id, so the sheet is the same on any database.
     ...[...adjusterTotals.values()]
-      .sort((a, b) => (a.loc.dish.id < b.loc.dish.id ? -1 : a.loc.dish.id > b.loc.dish.id ? 1 : 0))
+      .sort((a, b) =>
+        a.loc.dish.slug < b.loc.dish.slug ? -1 : a.loc.dish.slug > b.loc.dish.slug ? 1 : 0,
+      )
       .map((t) => batchOf("adjuster", t.loc, t.g, t.n, catalog)),
   ];
 
