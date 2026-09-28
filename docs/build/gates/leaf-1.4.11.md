@@ -4,15 +4,15 @@ OWNS: docs/decisions/leaf-1.4.11-*.md, apps/web/app/(shell)/_shell/app-shell.tsx
 
 Scope: W-15 (R-77): at phone width the floating Assistant button no longer covers a page's last content once the page is scrolled to the end, as specified in docs/spec (see 09-ux UX-4, 11-build-plan.md §5 and §8 W-15, R-77)
 
-- [ ] G1: clearance at 390 px and 360 px as admin on /account and a Plate page scrolled to the end: the Assistant button's box misses the last control and elementFromPoint at its centre hits it; roles without the assistant keep today's padding; negative control with the pre-fix padding
+- [x] G1: clearance at 390 px and 360 px as admin on /account and a Plate page scrolled to the end: the Assistant button's box misses the last control and elementFromPoint at its centre hits it; roles without the assistant keep today's padding; negative control with the pre-fix padding
   CHECK: node scripts/verify/leaf-1.4.11.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.11 G1 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=d1c5316b5bc5df07d3b6fb1bb3bd2183d5cf30bb6385a4add97abdedf76f4cd2; exit=0; EXPECT=matched; output-sha256=8c54e67ce26e586450077bc94fe573d5392d499be4598a099b62a85e2b457ca8; output-bytes=3572; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G2: no regression: 1.4.2 G1-G2 and 1.4.9 G4 pass; axe-core no serious or critical on both pages at 390 px
+- [x] G2: no regression: 1.4.2 G1-G2 and 1.4.9 G4 pass; axe-core no serious or critical on both pages at 390 px
   CHECK: node scripts/verify/leaf-1.4.11.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.11 G2 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=670039259300843b5603b7ab109dbcf70517b98ab54a02b2504e1ea5b98bcfd4; exit=0; EXPECT=matched; output-sha256=af9ff41c36e3a38391f906071c2851704e39f46bc73f79b38484df7f9621dab6; output-bytes=1167; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G3: architect visual review of both pages at 390 px scrolled to the end
   EVIDENCE: pending
