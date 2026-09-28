@@ -7,19 +7,19 @@ Scope: The owner's answers to OQ-8 and OQ-9 (R-62): main meals repeat a dish onl
 - [x] G1: repeat gaps: day difference below 7 blocked in main slots, below 4 in snack and workout slots; frequency_rule keeps days-apart meaning; boundary tests; F1 seeds 1-10 have no violation outside frequency_relaxed meals; negative control with the old 6-day rule
   CHECK: node scripts/verify/leaf-1.2.6.mjs --gate G1
   EXPECT: VERIFY leaf-1.2.6 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=a3294e51f9bca0169921242e9b165a920fc1222c2a874d0967524cf35be66e31; exit=0; EXPECT=matched; output-sha256=b7e8d5543123af2d40b5249c2db96c5c14401c6b4e3e7321e1320af803a6d57f; output-bytes=1794; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=a3294e51f9bca0169921242e9b165a920fc1222c2a874d0967524cf35be66e31; exit=0; EXPECT=matched; output-sha256=d6a1a722a7289a0547ca91aa5e5148ee52c8dfad5797cfe9f0133ea4472e3100; output-bytes=1765; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: SC-2 as re-set: 1.2.3 G2 (median >= 8 %, every seed >= 0 %, measured; R-63) passes; 1.2.3 G1/G3/G4/G5, 1.2.2 G1-G5 and 1.2.5 G1-G4 pass; SC-1 reported
   CHECK: node scripts/verify/leaf-1.2.6.mjs --gate G2
   EXPECT: VERIFY leaf-1.2.6 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=8ae6fbd3f054e0d03f25b03bbb5750efb7aad4e1f5b7c6bb693c269b55b8c5ad; exit=0; EXPECT=matched; output-sha256=2cad9ef12b34a57ed26454870d8d3a56fdb945dacd12a9dfc39e83f92693d474; output-bytes=1346; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=8ae6fbd3f054e0d03f25b03bbb5750efb7aad4e1f5b7c6bb693c269b55b8c5ad; exit=0; EXPECT=matched; output-sha256=244f15b395c7b0a6fada6912b9577ca1b758d83435413bd1a33a08c8c4de9a56; output-bytes=1347; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: slot-scoped exclusions: exclusion.slot_keys (migration 0007), applied only in those slots, allergy never scoped, op and change log carry the scope; 1.1.2 G1-G6 pass; negative controls (nut dish refused in the packed school lunch and allowed at dinner; scoped allergy rejected)
   CHECK: node scripts/verify/leaf-1.2.6.mjs --gate G3
   EXPECT: VERIFY leaf-1.2.6 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=eaff28050129050a652133153cba2588a35033c6cf5b6010b99f047d7feab541; exit=0; EXPECT=matched; output-sha256=b532577d54c55a6b38ee8aa35c3f3b07bc5fb8f4d1609d908982f0a7498a2404; output-bytes=1302; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=eaff28050129050a652133153cba2588a35033c6cf5b6010b99f047d7feab541; exit=0; EXPECT=matched; output-sha256=d4aaef5763f6c887d2361d6bcbc714c3e5de1abece890b1bf9bd974d8a3de918; output-bytes=1302; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: nut-free school follow-up writes packed_school_lunch-scoped contains_nuts exclusions per school child with the lunch-box copy; settled once all have it; 1.4.7 G1-G4 pass
   CHECK: node scripts/verify/leaf-1.2.6.mjs --gate G4
   EXPECT: VERIFY leaf-1.2.6 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=578dc13e051f537d39fbb64e42eaaa33a8efe915928b2c6c0254272ad5dae201; exit=0; EXPECT=matched; output-sha256=6d9605a3bdb017ca88f04bebd161c300546f262192bc3c26916018b90c7d6151; output-bytes=796; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=578dc13e051f537d39fbb64e42eaaa33a8efe915928b2c6c0254272ad5dae201; exit=0; EXPECT=matched; output-sha256=5e652e16314003b9ae73bd67c0f820bae6fd32a99ad3543d3b97e6cd1a72c590; output-bytes=795; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
