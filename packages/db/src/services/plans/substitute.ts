@@ -163,7 +163,14 @@ export function replaced(
             const row = catalogue.ingredients.get(id);
             if (row === undefined)
               throw new PlanServiceError("invalid", `ingredient ${id} missing`);
-            return { id, slug: row.slug, category: row.category, dietaryFlags: row.dietaryFlags };
+            // 1.4.10 (R-68): the display name travels with the copy (W-12).
+            return {
+              id,
+              slug: row.slug,
+              category: row.category,
+              dietaryFlags: row.dietaryFlags,
+              name: row.name,
+            };
           }),
         };
       }),

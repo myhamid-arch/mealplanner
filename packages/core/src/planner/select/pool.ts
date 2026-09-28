@@ -1,6 +1,7 @@
 // Facts about the candidate pool that scoring and filtering read repeatedly: core ingredients per
 // variant (PLN-9 economy, via the 1.3.2 definition), the main protein ingredient (variety,
-// SPEC-Q-9) and the slug → id map for exclusion keys (BLD-8 R-36).
+// SPEC-Q-9), the slug → id map for exclusion keys (BLD-8 R-36), and the display names and cuisine
+// labels the score reasons use (1.4.10 W-12, SPEC-Q-1).
 import { coreIngredients } from "../../learning/preferences/index.js";
 import type { PlanComponent, PlanDish, PlanVariant } from "./types.js";
 
@@ -20,6 +21,10 @@ export class Pool {
   /** Ingredient slug → id, over every variant in the pool (R-36). */
   readonly idBySlug = new Map<string, string>();
   readonly slugById = new Map<string, string>();
+  /** Ingredient id → catalogue display name, where the dish carries it (W-12). */
+  private readonly names = new Map<string, string>();
+  /** Cuisine key → `data/cuisines.json` label, where a dish carries it (W-12). */
+  private readonly cuisineLabels = new Map<string, string>();
 
   constructor(dishes: readonly PlanDish[], adjusters: readonly PlanDish[]) {
     for (const d of dishes) this.add(d, false);
@@ -31,11 +36,13 @@ export class Pool {
     const target = adjuster ? this.adjusters : this.dishes;
     if (this.dishes.has(dish.id) || this.adjusters.has(dish.id)) return;
     target.set(dish.id, dish);
+    if (dish.cuisineLabel !== undefined) this.cuisineLabels.set(dish.cuisineKey, dish.cuisineLabel);
     for (const component of dish.components)
       for (const variant of component.variants) {
         for (const i of variant.ingredients) {
           this.idBySlug.set(i.slug, i.id);
           this.slugById.set(i.id, i.slug);
+          if (i.name !== undefined) this.names.set(i.id, i.name);
         }
         const core = coreIngredients(
           variant.ingredients.map((i) => ({
@@ -52,6 +59,19 @@ export class Pool {
           mainProtein: component.role === "protein" ? heaviest(variant, core) : null,
         });
       }
+  }
+
+  /**
+   * The ingredient's catalogue display name. Without one (structural test dishes only), the slug
+   * made readable ("Beef mince extra lean"), never the raw slug or id (SPEC-Q-1).
+   */
+  nameOf(id: string): string {
+    return this.names.get(id) ?? readable(this.slugById.get(id) ?? id);
+  }
+
+  /** The cuisine's label ("Tex-Mex"); without one, the key made readable ("Tex mex"). */
+  cuisineLabelOf(key: string): string {
+    return this.cuisineLabels.get(key) ?? readable(key);
   }
 
   dish(id: string): PlanDish | undefined {
@@ -78,6 +98,12 @@ export class Pool {
     }
     return null;
   }
+}
+
+/** "beef-mince-extra-lean" → "Beef mince extra lean"; "tex_mex" → "Tex mex". */
+export function readable(key: string): string {
+  const words = key.replace(/[-_]+/g, " ").trim();
+  return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
 function heaviest(variant: PlanVariant, core: readonly string[]): string | null {

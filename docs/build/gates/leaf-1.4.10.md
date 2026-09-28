@@ -4,25 +4,25 @@ OWNS: docs/decisions/leaf-1.4.10-*.md, packages/core/src/planner/select/score.ts
 
 Scope: W-12, W-13 and W-14 (R-68): plain-language planner reasons on the Plate, the graph's start-up sync order, and change-log entries that name their subject and show before and after, as specified in docs/spec (see 11-build-plan.md §5 and §8 W-12, W-13, W-14, R-68)
 
-- [ ] G1: plain reasons: ingredient display names and cuisine labels in score reasons; no slug, snake_case key or id in any reason over F1 seeds 1-10; no replaced ingredient named after a substitution; 1.2.3 G1-G6, 1.2.6 G1-G2 and 1.4.8 G1-G4 pass; negative control with today's labels
+- [x] G1: plain reasons: ingredient display names and cuisine labels in score reasons; no slug, snake_case key or id in any reason over F1 seeds 1-10; no replaced ingredient named after a substitution; 1.2.3 G1-G6, 1.2.6 G1-G2 and 1.4.8 G1-G4 pass; negative control with today's labels
   CHECK: node scripts/verify/leaf-1.4.10.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.10 G1 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=2169a7a26e4d205f68a590b747253cbb7f912a451c1b189e03316f2957edaf68; exit=0; EXPECT=matched; output-sha256=350d33890f5ab4cb9f6fae2d578844785a0d59822da268f00ec03b8ee4de7b04; output-bytes=2517; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G2: graph start-up: both syncCatalogueGraph jobs at concurrency 2 on an empty graph with the F1 seed library: no missing-node failure and the graph equals kg:rebuild's; 1.3.4 G1-G3 pass; negative control: the pre-fix start-up fails (reproduced and recorded)
+- [x] G2: graph start-up: both syncCatalogueGraph jobs at concurrency 2 on an empty graph with the F1 seed library: no missing-node failure and the graph equals kg:rebuild's; 1.3.4 G1-G3 pass; negative control: the pre-fix start-up fails (reproduced and recorded)
   CHECK: node scripts/verify/leaf-1.4.10.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.10 G2 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=048685b7977647866f3a7ff8a45cd9823b861109913763ec12acc5ac9bf4f204; exit=0; EXPECT=matched; output-sha256=5e8ef07abeb877b4a993e9d3f4ebf4cc888ece5af592f5be9703a1a2ece8d994; output-bytes=2303; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G3: change-log subjects: entries name their subject and scalar before -> after, resolved at read time with no migration; a vanished subject falls back to the stored title; 1.4.1 G1-G3 and 1.4.6 G1-G2 pass; negative controls: two blocks of different logins differ, title-only rendering fails
+- [x] G3: change-log subjects: entries name their subject and scalar before -> after, resolved at read time with no migration; a vanished subject falls back to the stored title; 1.4.1 G1-G3 and 1.4.6 G1-G2 pass; negative controls: two blocks of different logins differ, title-only rendering fails
   CHECK: node scripts/verify/leaf-1.4.10.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.10 G3 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=b4bdd172ceaffd3bf30c1282046aea698e9248b136446295f5d8718a802edb30; exit=0; EXPECT=matched; output-sha256=58048c6a6c544981a75918c603206b23e906a1a2f1a25076556a132df686b4da; output-bytes=2252; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G4: Playwright 390/1280 plus axe-core (no serious or critical): Plate "Why this dinner" after a substitution and /changelog with a block, a target change and a settings change; 1.4.2 G1-G2 pass
+- [x] G4: Playwright 390/1280 plus axe-core (no serious or critical): Plate "Why this dinner" after a substitution and /changelog with a block, a target change and a settings change; 1.4.2 G1-G2 pass
   CHECK: node scripts/verify/leaf-1.4.10.mjs --gate G4
   EXPECT: VERIFY leaf-1.4.10 G4 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=307f7216284d6c831f985be2a6df9d77d300bef36b8f3dc557a2ead139594cae; exit=0; EXPECT=matched; output-sha256=046f4f0220758e675dde2eb30fcd623e54598d52ab71df74b9a0d7d82af0cab4; output-bytes=1352; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G5: architect visual review against PlatePhone and ChangeLog mockups
-  EVIDENCE: pending
+- [x] G5: architect visual review against PlatePhone and ChangeLog mockups
+  EVIDENCE: architect CP3 review 2026-09-28 of the builder's G4 captures at 4def4be (artifact JLCTNt2SVYqk16hMakkPAw, 390 and 1280 px) against the rendered PlatePhone and ChangeLog mockups. Plate "Why this dinner": the fit is in words ("Close to Sara's and Omar's targets"), ingredients use display names in lower case separated by semicolons, and the replaced ingredient is not named. ChangeLog: subjects are named ("Blocked Ravi (kitchen)", "Sara's protein target 130 → 140 g", "Household settings: time zone …"), with before/after chips (labelled; accessibility deviation accepted at CP1) and dates written "Mon 28 Sep". Round 1 found raw fit scores, comma-ambiguous lists and ISO dates; all are fixed. The floating-button overlap at 390 px is 1.4.2's shell (W-15), outside this leaf. PASS.

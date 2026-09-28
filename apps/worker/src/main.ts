@@ -43,7 +43,8 @@ export async function startWorker(rt: WorkerRuntime): Promise<void> {
 /**
  * KG-3: the global catalogue and the seed library in the graph. The catalogue loader runs before
  * the worker starts (deploy step) and may have changed them; the sync is idempotent (1.3.4 G1), so
- * it is queued on every start.
+ * it is queued on every start. The two jobs may run in either order or at once (W-13, leaf 1.4.10
+ * ADR-1): a dish sync creates the catalogue nodes its edges need when they are missing.
  */
 export async function syncCatalogueGraph(rt: WorkerRuntime): Promise<string[]> {
   const seed = await rt.db.select({ id: dish.id }).from(dish).where(isNull(dish.householdId));
