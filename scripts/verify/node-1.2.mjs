@@ -18,7 +18,8 @@
 //     OQ-8 repeat gaps, day 1's cook sheet against the plates' raw equivalents. SC-2 over seeds 1–10
 //     (economy 0.4 against 0): median ≥ 8 %, every seed ≥ 0 %. Negative controls: persisted plate
 //     grams tampered off tolerance fail SC-1, a repeated dish inside the gap fails the repeat
-//     check, SC-2 measured against itself fails. The script re-checks every figure, each re-check
+//     check, a flag of a kind that does not mean the miss (or without a reason) excuses no miss
+//     and no repeat (pre-CP2 findings 14, 15), SC-2 measured against itself fails. The script re-checks every figure, each re-check
 //     also run on a known-bad record.
 // N4  The full suite (scripts/verify/lib/node.mjs `gateN4`).
 import { mkdtempSync, rmSync } from "node:fs";
@@ -63,6 +64,7 @@ const TESTS = [
   "N3 SC-2 over seeds 1–10 through the job path: median ≥ 8 %, every seed ≥ 0 %",
   "N3 negative control: persisted plate grams tampered off tolerance fail SC-1",
   "N3 negative control: a repeated dish inside the gap fails the repeat check, also when every meal says relaxed without a persisted flag",
+  "N3 negative control: a flag of the wrong kind, or without a reason, excuses no SC-1 miss and no repeat",
   "N3 negative control: OQ-8 at its boundaries (main 6 and short 3 fail, main 7 and short 4 pass)",
   "N3 negative control: SC-2 measured against itself (0 %) fails",
 ];
@@ -179,6 +181,27 @@ function recheck(report, m) {
   report.check(
     gc?.violations > 0 && gc?.unbackedViolations > 0 && gc?.backedViolations === 0,
     "the repeated dish fails the repeat check, also when marked relaxed without a persisted flag",
+  );
+  const fc = one("flags-control");
+  const flagFigures = Object.fromEntries(Object.entries(fc ?? {}).filter(([k]) => k !== "check"));
+  console.log(
+    `       measured (negative control): missing*/plate* true = the miss still fails, repeats* = violations: ${JSON.stringify(flagFigures)}`,
+  );
+  report.check(
+    fc !== undefined &&
+      fc.missingNoCandidate === false &&
+      fc.plateFlexibleMiss === false &&
+      fc.repeatsBacked === 0 &&
+      fc.missingFrequencyRelaxed === true &&
+      fc.missingMemberDay === true &&
+      fc.plateFrequencyRelaxed === true &&
+      fc.missingBlankReason === true &&
+      fc.missingNoReason === true &&
+      fc.plateBlankReason === true &&
+      fc.plateNoReason === true &&
+      fc.repeatsBlankReason > 0 &&
+      fc.repeatsNoReason > 0,
+    "only a reasoned flag of a kind that means the miss excuses it (findings 14, 15); the right kind with a reason does",
   );
   const b = one("gaps-boundary");
   console.log(

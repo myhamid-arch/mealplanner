@@ -42,6 +42,8 @@ const LOCAL_URL = "postgres://postgres:postgres@localhost:5432/postgres";
  */
 export const SUITE_SLOTS = Math.max(1, Number(process.env.NODE_SUITE_SLOTS ?? "1") || 1);
 export const COPY_SLOTS = Math.max(1, Number(process.env.NODE_COPY_SLOTS ?? "2") || 2);
+/** Private compiles of the branch packages (N2), which leave dist/ alone. */
+export const BRANCH_SLOTS = Math.max(1, Number(process.env.NODE_BRANCH_SLOTS ?? "2") || 2);
 
 /**
  * The caller's NODE_OPTIONS without preloads or other flags: only the heap size is kept (this
@@ -562,15 +564,16 @@ function declarations(dir) {
 /**
  * Builds the branch packages on every run (pre-CP2 finding 10): each is compiled with its own
  * tsconfig into a private directory, and every declaration it emits must equal the published one
- * in its dist/, which consumers resolve. When they differ, the shared dist/ is rebuilt under the
- * build lock and compared again. The shared dist/ is never rewritten while it is already current,
- * so concurrent gates reading it are not disturbed.
+ * in its dist/, which consumers resolve. The private builds run under their own bounded slot and
+ * never touch dist/. The shared dist/ is read, and rebuilt (then compared again) when it differs,
+ * only inside the `packages-build` lock that `buildPackages` holds, so no gate compares against a
+ * dist/ that another gate is rewriting (finding 16).
  */
 async function buildBranch(report, names) {
   const out = mkdtempSync(join(tmpdir(), "node-gate-branch-build-"));
   try {
-    const compile = async () => {
-      const results = await Promise.all(
+    const compile = () =>
+      Promise.all(
         names.map(async (name) => {
           const dir = join(ROOT, "packages", name.split("/")[1]);
           const target = join(out, name.split("/")[1]);
@@ -586,35 +589,38 @@ async function buildBranch(report, names) {
             ],
             { cwd: dir, timeoutMs: 1_200_000 },
           );
-          const built = declarations(target);
-          const differ = built.filter((f) => {
-            const published = join(dir, "dist", f);
-            return (
-              !existsSync(published) ||
-              readFileSync(published, "utf8") !== readFileSync(join(target, f), "utf8")
-            );
-          });
-          return { name, r, built, differ };
+          return { name, dir, target, r };
         }),
       );
-      return results;
+    const compare = ({ name, dir, target, r }) => {
+      const built = declarations(target);
+      const differ = built.filter((f) => {
+        const published = join(dir, "dist", f);
+        return (
+          !existsSync(published) ||
+          readFileSync(published, "utf8") !== readFileSync(join(target, f), "utf8")
+        );
+      });
+      return { name, r, built, differ };
     };
-    let results = await compile();
-    if (results.some((x) => x.r.code === 0 && x.differ.length > 0)) {
-      const rebuilt = await withLock("packages-build", () =>
-        runAsync(
-          "pnpm",
-          ["exec", "turbo", "run", "build", "--force", ...names.flatMap((n) => ["--filter", n])],
-          { cwd: ROOT, timeoutMs: 1_200_000 },
-        ),
+    const compiled = await withSlot("branch-build", BRANCH_SLOTS, compile);
+    const { results, rebuilt } = await withLock("packages-build", async () => {
+      const first = compiled.map(compare);
+      if (!first.some((x) => x.r.code === 0 && x.differ.length > 0))
+        return { results: first, rebuilt: undefined };
+      const turbo = await runAsync(
+        "pnpm",
+        ["exec", "turbo", "run", "build", "--force", ...names.flatMap((n) => ["--filter", n])],
+        { cwd: ROOT, timeoutMs: 1_200_000 },
       );
+      return { results: (await compile()).map(compare), rebuilt: turbo };
+    });
+    if (rebuilt !== undefined)
       report.check(
         rebuilt.code === 0,
-        "the shared dist/ of the branch packages is rebuilt",
+        "the shared dist/ of the branch packages is rebuilt (under the build lock)",
         tail(rebuilt, 30),
       );
-      results = await compile();
-    }
     for (const x of results) {
       report.check(x.r.code === 0, `${x.name} builds (tsc -p tsconfig.json)`, tail(x.r, 40));
       report.check(

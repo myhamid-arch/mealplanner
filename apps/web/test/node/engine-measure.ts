@@ -232,6 +232,21 @@ export interface Sc1Result {
 }
 
 /**
+ * The planner's flag kinds (packages/core/src/planner/select/types.ts:135) that excuse an SC-1 miss:
+ * `infeasible_plate` and `flexible_miss` are written per plate that misses (week.ts:108-117);
+ * `no_candidate` is written when no dish passes the hard filters, so no plate exists
+ * (day.ts:497-505). `frequency_relaxed` and `member_day_kcal` excuse no plate (finding 14).
+ */
+export const PLATE_MISS_KINDS: readonly string[] = ["infeasible_plate", "flexible_miss"];
+
+/** A flag counts only with a persisted, non-blank reason (finding 11); a missing one counts as blank. */
+export function hasReason(f: Flag): boolean {
+  const reason: unknown = f.reason;
+  return typeof reason === "string" && reason.trim() !== "";
+}
+export const NO_PLATE_KINDS: readonly string[] = ["no_candidate"];
+
+/**
  * SC-1 from the persisted plates, with leaf 1.2.3's rules: every targeted member-meal the resolver
  * expects is in tolerance by this function's own arithmetic (P/C/F per meal, sat-fat cap, kcal in
  * the R-28 re-targeted window, which the stored target must equal), or is flagged with its reason
@@ -279,12 +294,22 @@ export function evaluateSc1(
         );
       }
     }
-  // A flag counts only with a persisted reason (pre-CP2 finding 11).
-  const reasoned = flags.filter((f) => f.reason.trim() !== "");
+  // A flag counts only with a persisted reason (pre-CP2 finding 11), and only when its kind means
+  // what it excuses (finding 14).
+  const reasoned = flags.filter(hasReason);
   const flagKey = (f: Flag) => `${f.date}|${String(f.slotKey)}|${String(f.memberId)}`;
-  const memberFlags = new Set(reasoned.filter((f) => f.memberId !== null).map(flagKey));
-  const mealFlags = new Set(
-    reasoned
+  const ofKinds = (kinds: readonly string[]) => reasoned.filter((f) => kinds.includes(f.kind));
+  // A plate that exists but misses: the planner flags it per plate (week.ts:108-117).
+  const plateFlags = new Set(ofKinds(PLATE_MISS_KINDS).map(flagKey));
+  // A plate that does not exist: no dish passed the hard filters (day.ts:497-505), for the member
+  // (individual meal) or for the whole meal (shared, memberId null).
+  const noPlateMember = new Set(
+    ofKinds(NO_PLATE_KINDS)
+      .filter((f) => f.memberId !== null)
+      .map(flagKey),
+  );
+  const noPlateMeal = new Set(
+    ofKinds(NO_PLATE_KINDS)
       .filter((f) => f.memberId === null && f.slotKey !== null)
       .map((f) => `${f.date}|${String(f.slotKey)}`),
   );
@@ -319,7 +344,7 @@ export function evaluateSc1(
         );
         const hit = hits[0];
         if (hits.length !== 1 || hit === undefined) {
-          const isFlagged = memberFlags.has(key) || mealFlags.has(`${date}|${t.slotKey}`);
+          const isFlagged = noPlateMember.has(key) || noPlateMeal.has(`${date}|${t.slotKey}`);
           if (hits.length === 0 && isFlagged) r.noPlateFlagged += 1;
           else r.failures.push(`${key}: ${String(hits.length)} plates and no flag`);
           dayFlagged = true;
@@ -347,7 +372,7 @@ export function evaluateSc1(
           );
         const reason = plate.deviation.flag;
         const hasDeviation = MACROS.every((m) => typeof plate.deviation[m] === "number");
-        const isFlagged = reason !== null && reason !== "" && hasDeviation && memberFlags.has(key);
+        const isFlagged = reason !== null && reason !== "" && hasDeviation && plateFlags.has(key);
         if (inTol) r.inTolerance += 1;
         else if (isFlagged) r.flagged += 1;
         else r.failures.push(`${key}: out of tolerance and not flagged`);
@@ -420,7 +445,7 @@ export function checkRepeatGaps(meals: readonly StoredMeal[], flags: readonly Fl
         f.date === m.date &&
         f.slotKey === m.slotKey &&
         f.memberId === (m.memberScope === "shared" ? null : m.memberScope) &&
-        f.reason.trim() !== "",
+        hasReason(f),
     );
   const sorted = [...meals].sort((a, b) => a.date.localeCompare(b.date));
   for (let i = 0; i < sorted.length; i += 1)

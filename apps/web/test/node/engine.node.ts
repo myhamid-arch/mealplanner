@@ -396,6 +396,118 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
     expect(backed.violations).toEqual([]);
   });
 
+  it("N3 negative control: a flag of the wrong kind, or without a reason, excuses no SC-1 miss and no repeat", async () => {
+    const k = kept();
+    const db = drizzle(k.pool);
+    const cfg = await householdConfig(db, ctx);
+    const meals = await readPlan(k.pool, k.main.householdId, F1_WEEK);
+    const per100g = await variantNutrients(k.pool, meals);
+    const sc1 = (ms: readonly StoredMeal[], flags: readonly Flag[]) =>
+      evaluateSc1(cfg, F1_WEEK, ms, per100g, flags).failures;
+    const noReason = (f: Flag): Flag => ({ ...f, reason: undefined as unknown as string });
+
+    // A missing plate (finding 14): one targeted member's plate of a shared meal is left out.
+    const targeted = new Set(cfg.members.filter((m) => m.isTargeted).map((m) => m.id));
+    const shared = meals.find(
+      (m) => m.memberScope === "shared" && m.plates.some((p) => targeted.has(p.memberId)),
+    );
+    const gone = shared?.plates.find((p) => targeted.has(p.memberId));
+    if (shared === undefined || gone === undefined) throw new Error("no shared targeted plate");
+    const missing = meals.map((m) =>
+      m.id === shared.id ? { ...m, plates: m.plates.filter((p) => p.id !== gone.id) } : m,
+    );
+    const missKey = `${shared.date}|${shared.slotKey}|${gone.memberId}`;
+    const missFails = (extra: Flag) =>
+      sc1(missing, [...k.main.flags, extra]).some((f) => f.startsWith(`${missKey}: 0 plates`));
+    const mealFlag = (kind: string): Flag => ({
+      kind,
+      date: shared.date,
+      slotKey: shared.slotKey,
+      memberId: null,
+      reason: "control",
+    });
+
+    // An out-of-tolerance plate: the plate the grams control tampered, now marked as a miss.
+    const tamperedFailure = sc1(meals, k.main.flags).find((f) =>
+      f.endsWith(": out of tolerance and not flagged"),
+    );
+    const [date, slotKey, memberId] = (tamperedFailure ?? "").split(":")[0]?.split("|") ?? [];
+    if (date === undefined || slotKey === undefined || memberId === undefined)
+      throw new Error("the grams control left no out-of-tolerance plate");
+    const marked = meals.map((m) =>
+      m.date === date && m.slotKey === slotKey
+        ? {
+            ...m,
+            plates: m.plates.map((p) =>
+              p.memberId === memberId
+                ? { ...p, deviation: { ...p.deviation, flag: "control" } }
+                : p,
+            ),
+          }
+        : m,
+    );
+    const plateKey = `${date}|${slotKey}|${memberId}`;
+    const plateFails = (extra: Flag) =>
+      sc1(marked, [...k.main.flags, extra]).some(
+        (f) => f === `${plateKey}: out of tolerance and not flagged`,
+      );
+    const plateFlag = (kind: string): Flag => ({
+      kind,
+      date,
+      slotKey,
+      memberId,
+      reason: "control",
+    });
+
+    // A repeat inside the gap (finding 15): the gaps control's tampered dinner, every meal marked
+    // relaxed, backed by flags of the right kind but without a reason.
+    const relaxed = meals.map((m) => ({ ...m, frequencyRelaxed: "marked by the control" }));
+    const backing = relaxed.map((m): Flag => ({
+      kind: "frequency_relaxed",
+      date: m.date,
+      slotKey: m.slotKey,
+      memberId: m.memberScope === "shared" ? null : m.memberScope,
+      reason: "control",
+    }));
+    const repeats = (flags: readonly Flag[]) =>
+      checkRepeatGaps(relaxed, [...k.main.flags, ...flags]).violations.length;
+
+    const figures = {
+      // Soundness: the right kind with a reason excuses.
+      missingNoCandidate: missFails(mealFlag("no_candidate")),
+      plateFlexibleMiss: plateFails(plateFlag("flexible_miss")),
+      repeatsBacked: repeats(backing),
+      // Finding 14: a reasoned flag of another kind does not.
+      missingFrequencyRelaxed: missFails(mealFlag("frequency_relaxed")),
+      missingMemberDay: missFails({ ...mealFlag("member_day_kcal"), memberId: gone.memberId }),
+      plateFrequencyRelaxed: plateFails(plateFlag("frequency_relaxed")),
+      // Finding 15: the right kind with a blank or missing reason does not.
+      missingBlankReason: missFails({ ...mealFlag("no_candidate"), reason: " " }),
+      missingNoReason: missFails(noReason(mealFlag("no_candidate"))),
+      plateBlankReason: plateFails({ ...plateFlag("flexible_miss"), reason: "" }),
+      plateNoReason: plateFails(noReason(plateFlag("flexible_miss"))),
+      repeatsBlankReason: repeats(backing.map((f) => ({ ...f, reason: "" }))),
+      repeatsNoReason: repeats(backing.map(noReason)),
+    };
+    measure({ check: "flags-control", ...figures });
+    expect(figures).toEqual({
+      missingNoCandidate: false,
+      plateFlexibleMiss: false,
+      repeatsBacked: 0,
+      missingFrequencyRelaxed: true,
+      missingMemberDay: true,
+      plateFrequencyRelaxed: true,
+      missingBlankReason: true,
+      missingNoReason: true,
+      plateBlankReason: true,
+      plateNoReason: true,
+      repeatsBlankReason: expect.any(Number) as number,
+      repeatsNoReason: expect.any(Number) as number,
+    });
+    expect(figures.repeatsBlankReason).toBeGreaterThan(0);
+    expect(figures.repeatsNoReason).toBeGreaterThan(0);
+  });
+
   it("N3 negative control: OQ-8 at its boundaries (main 6 and short 3 fail, main 7 and short 4 pass)", () => {
     const meal = (id: string, date: string, slotKey: string): StoredMeal => ({
       id,

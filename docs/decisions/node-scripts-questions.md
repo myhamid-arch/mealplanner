@@ -153,6 +153,23 @@ The first API call after sign-in therefore changes that row. It is not part of t
 12. **Change-log text.** The change-log entry is found by `data-testid="log-<id>"` and its source, not by badge or title text.
 13. **Contract tests.** N2's api-contract contract tests are apps/web's `g1-contract-matrix` and `g3-openapi` suites, because `packages/api-contract` has no tests of its own. This is stated in each node script's header and here. The ledgers' lines are the architect's.
 
+## Pre-CP2 findings 14–16 (architect, on 65727b7) and what changed
+
+14. **A flag excuses only the miss its kind means.**
+    - The planner's flag kinds are listed in `packages/core/src/planner/select/types.ts:135`.
+    - A missing plate is excused only by a reasoned `no_candidate`. That flag is written when no dish passes the hard filters, so no plate exists (`day.ts:497-505`). It may be for the member (individual meal) or the whole meal (shared, `memberId` null).
+    - An out-of-tolerance plate is excused only by a reasoned `infeasible_plate` or `flexible_miss` at its key. The planner writes these per plate that misses (`week.ts:108-117`).
+    - `frequency_relaxed` and `member_day_kcal` excuse no plate.
+    - A control on the persisted plan takes a missing targeted plate of a shared meal:
+      - "excused" by a reasoned `frequency_relaxed` or `member_day_kcal`, it fails;
+      - with a reasoned `no_candidate`, it passes.
+    - The same control takes the grams control's out-of-tolerance plate: with `frequency_relaxed` it fails, and with `flexible_miss` it passes.
+15. **A control for finding 11.** It goes through the same functions (`evaluateSc1`, `checkRepeatGaps`). A flag of the right kind with a blank or missing reason excuses neither kind of plate miss, and no repeat inside the gap.
+16. **`buildBranch` under concurrency.**
+    - The private tsc builds run under their own slot (`branch-build`, `NODE_BRANCH_SLOTS`, default 2) and never write `dist/`.
+    - The comparison with the shared `dist/`, and any forced rebuild with its re-comparison, run inside the `packages-build` lock that `buildPackages` holds.
+    - The rebuild path was exercised: one published `packages/db` declaration was corrupted, and N2 rebuilt `dist/` under the lock and then matched.
+
 ## Raised during the final rounds
 
 - **R-4 (ARCHITECT QUESTION): the `kg-startup` open-tx witness in 1.4.10 is racy.**
