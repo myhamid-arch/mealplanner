@@ -24,5 +24,5 @@ Scope: W-12, W-13 and W-14 (R-68): plain-language planner reasons on the Plate, 
   EXPECT: VERIFY leaf-1.4.10 G4 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=307f7216284d6c831f985be2a6df9d77d300bef36b8f3dc557a2ead139594cae; exit=0; EXPECT=matched; output-sha256=a30bac17f15894a036eeea30e598959458a44ac1dfc79e63fccfe546574831c0; output-bytes=1348; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G5: architect visual review against PlatePhone and ChangeLog mockups
-  EVIDENCE: pending
+- [x] G5: architect visual review against PlatePhone and ChangeLog mockups
+  EVIDENCE: architect CP3 review 2026-09-28 of the builder's G4 captures at 4def4be (artifact JLCTNt2SVYqk16hMakkPAw, 390 and 1280 px) against the rendered PlatePhone and ChangeLog mockups. Plate "Why this dinner": the fit is in words ("Close to Sara's and Omar's targets"), ingredients use display names in lower case separated by semicolons, and the replaced ingredient is not named. ChangeLog: subjects are named ("Blocked Ravi (kitchen)", "Sara's protein target 130 → 140 g", "Household settings: time zone …"), with before/after chips (labelled; accessibility deviation accepted at CP1) and dates written "Mon 28 Sep". Round 1 found raw fit scores, comma-ambiguous lists and ISO dates; all are fixed. The floating-button overlap at 390 px is 1.4.2's shell (W-15), outside this leaf. PASS.
