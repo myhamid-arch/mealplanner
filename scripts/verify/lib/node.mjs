@@ -805,7 +805,10 @@ const E2E_SPECS = [
   { file: "e2e/setup.spec.ts", env: "app", worker: () => true },
   { file: "e2e/chat.spec.ts", env: "chat" },
   { file: "e2e/admin.spec.ts", env: "admin" },
-  { config: "test/chat/playwright.config.ts", env: "updates" },
+  // Own configs that start `next start` themselves against a seeded database and the worker
+  // (leaf 1.4.9's Updates spec, leaf 1.4.10's follow-ups spec).
+  { config: "test/chat/playwright.config.ts", env: "own-config" },
+  { config: "test/followups/playwright.config.ts", env: "own-config" },
   { config: "e2e/node-1.4/playwright.config.ts", env: "node14" },
 ];
 
@@ -1047,7 +1050,9 @@ async function e2eRun({ webDir, distDir, server, spec, tag }) {
         if (kg.code !== 0) throw new Error(`kg-rebuild failed:\n${tail(kg, 30)}`);
       }
       const wantsWorker =
-        spec.env === "chat" || spec.env === "updates" || (spec.env === "app" && spec.worker(tag));
+        spec.env === "chat" ||
+        spec.env === "own-config" ||
+        (spec.env === "app" && spec.worker(tag));
       if (wantsWorker) {
         const worker = background(process.execPath, ["dist/src/main.js"], {
           cwd: WORKER,
@@ -1078,7 +1083,7 @@ async function e2eRun({ webDir, distDir, server, spec, tag }) {
         await waitForHttp(`http://localhost:${String(bare)}/offline`);
         env.PLAYWRIGHT_PORT_NO_MODEL = String(bare);
       }
-      if (spec.env === "updates") env.WORLD_FILE = join(scratch, "world.json");
+      if (spec.env === "own-config") env.WORLD_FILE = join(scratch, "world.json");
       if (spec.env === "admin") {
         const mailDir = join(scratch, "mail");
         mkdirSync(mailDir);
@@ -1089,8 +1094,8 @@ async function e2eRun({ webDir, distDir, server, spec, tag }) {
           MAIL_DIR: mailDir,
         });
       }
-      if (spec.env === "updates") {
-        // Its config starts `next start` itself and never builds (leaf 1.4.9).
+      if (spec.env === "own-config") {
+        // These configs start `next start` themselves and never build (leaves 1.4.9, 1.4.10).
         env.APP_URL = appUrl;
       }
     }

@@ -65,7 +65,7 @@ Each `node-1.<n>.mjs` holds its node's N2 negative control and its N3.
   - config, plan and setup: a seeded database, plus the worker except for config `@G3`, plus the graph rebuild for plan `@G3` and `@1.4.8-G5`;
   - chat: seeded database, worker, the scripted agent preload, `WORLD_FILE`, and the no-model server;
   - admin: a migrated database and an SMTP sink writing `MAIL_DIR`.
-- **Own configs.** `test/chat/playwright.config.ts` and `e2e/node-1.4/playwright.config.ts` each run whole.
+- **Own configs.** `test/chat/playwright.config.ts`, `test/followups/playwright.config.ts` (leaf 1.4.10) and `e2e/node-1.4/playwright.config.ts` each run whole.
 - **Coverage.** Coverage is computed, not listed by hand:
   - every `playwright.config.ts` under `apps/web` must be known;
   - every file the default config collects must be one of the runs;
