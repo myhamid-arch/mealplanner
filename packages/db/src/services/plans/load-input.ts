@@ -198,6 +198,7 @@ export async function toPlanDishes(
     if (state.broken || planComponents.some((c) => c.variants.length === 0)) continue;
     out.push({
       id: d.id,
+      slug: d.slug,
       version: d.version,
       name: d.name,
       cuisineKey,
