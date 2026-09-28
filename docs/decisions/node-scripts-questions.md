@@ -153,4 +153,20 @@ The first API call after sign-in therefore changes that row. It is not part of t
 12. **Change-log text.** The change-log entry is found by `data-testid="log-<id>"` and its source, not by badge or title text.
 13. **Contract tests.** N2's api-contract contract tests are apps/web's `g1-contract-matrix` and `g3-openapi` suites, because `packages/api-contract` has no tests of its own. This is stated in each node script's header and here. The ledgers' lines are the architect's.
 
+## Raised during the final rounds
+
+- **R-4 (ARCHITECT QUESTION): the `kg-startup` open-tx witness in 1.4.10 is racy.**
+  - node-1.4 N4 failed once, on cf6b357, at `apps/web/test/api/kg-startup.int.test.ts:298` (`seen.lockWait`).
+  - `openTx` hooks only the catalogue job, so the dish job can end its attempt before the catalogue nodes are written. When that happens, no lock wait ever occurs.
+  - Run alone, the test failed 1 of 8 times. With the proposed hook change, `-t "open-tx"` passed 16 of 16.
+  - The architect landed the fix on the base as W-18 (c459df5). It is not an edit on this branch.
+- **`e2e/plan.spec.ts:612` ECONNRESET: one occurrence, no root cause.**
+  - node-1.2 N4 failed once, on cbbcfe8. The GET at `:479` got `read ECONNRESET` from the built app.
+  - A keep-alive race was suspected: `next start` keeps Node's 5000 ms `keepAliveTimeout`, and the test died 6.0 s in. It did not reproduce. With a Playwright request context and a second GET at gaps of 4950–5050 ms, 0 of 21 requests were reset without the header, and 0 of 21 with `Connection: close`.
+  - The run kept no web-server output. The e2e runs now set `DEBUG=pw:webserver`, so a recurrence shows what the server did.
+  - It has not recurred in the six complete N4 runs since. The last four of them kept the server log.
+- **Suite summary lines** now state the requirement ("required: all passed, none skipped"). A failing suite used to print "…, none failed or skipped".
+
 **Observation, not a gate issue.** Three node-1.2 runs of the same F1 week at seed 1, on the same catalogue, persisted different plans: 10, 13 and 14 same-dish pairs. One of them relaxed a breakfast repeat to 6 days. Plan generation through the job is not reproducible run to run. N3 judges each run on its own terms.
+
+The architect attributes this to W-17, the plan's dependence on surrogate ids, which leaf 1.2.7 fixed (merged at 1361b96). I have not re-measured reproducibility since then.
