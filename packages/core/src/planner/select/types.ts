@@ -25,6 +25,8 @@ export type PlanIngredient = {
   slug: string;
   category: IngredientCategory;
   dietaryFlags: readonly string[];
+  /** 1.4.10 (R-68): the catalogue display name, for plain score reasons (W-12). */
+  name?: string;
 };
 
 export type PlanVariant = Omit<VariantForSolve, "ingredients"> & {
@@ -49,6 +51,8 @@ export type PlanDish = Omit<DishForSolve, "components"> & {
   version: number;
   name: string;
   cuisineKey: string;
+  /** 1.4.10 (R-68): the cuisine's `data/cuisines.json` label, for plain score reasons (W-12). */
+  cuisineLabel?: string;
   slotKeys: readonly string[];
   status: DishStatus;
   components: readonly PlanComponent[];

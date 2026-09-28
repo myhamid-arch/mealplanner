@@ -79,6 +79,45 @@ function actorOf(
   }
 }
 
+/** W-14: the entry's resolved title, or its stored summary when it does not resolve. */
+function titleOf(entry: Entry & { type: "change_set" }): string {
+  return entry.detail?.title ?? entry.summary;
+}
+
+type Change = NonNullable<(Entry & { type: "change_set" })["detail"]>["changes"][number];
+
+/**
+ * ChangeLog.dc.html's before → after chips: the old values struck through, then the new ones.
+ * Each value carries its label ("protein 130 g", not "P 130") so it reads on its own (a11y).
+ */
+function Chips({ changes }: { readonly changes: readonly Change[] }) {
+  const side = (pick: (c: Change) => string | null) =>
+    changes
+      .flatMap((c) => {
+        const v = pick(c);
+        return v === null ? [] : [`${c.label} ${v}`];
+      })
+      .join(" · ");
+  const before = side((c) => c.before);
+  const after = side((c) => c.after);
+  return (
+    <span className="flex flex-wrap items-center gap-2.5 font-mono text-[13px]">
+      {before !== "" && (
+        <span className="rounded-lg bg-pomegranate-tint px-2.5 py-1.5 text-pomegranate-text">
+          <span className="sr-only">Before: </span>
+          <del>{before}</del>
+        </span>
+      )}
+      {after !== "" && (
+        <span className="rounded-lg bg-basil-tint px-2.5 py-1.5 text-basil-text">
+          <span className="sr-only">After: </span>
+          {after}
+        </span>
+      )}
+    </span>
+  );
+}
+
 export function ChangeLogScreen({ viewerUserId }: { readonly viewerUserId: string }) {
   const [filter, setFilter] = useState<FilterKey>("all");
   const load = useLoad<Data>(async () => {
@@ -105,7 +144,7 @@ export function ChangeLogScreen({ viewerUserId }: { readonly viewerUserId: strin
     setUndoing(entry.id);
     try {
       await api.call(changeSetsUndo, { params: { id: entry.id } });
-      setStatus(`Undone: ${entry.summary}.`);
+      setStatus(`Undone: ${titleOf(entry)}.`);
     } catch (err) {
       setError(problemMessage(err));
     } finally {
@@ -165,8 +204,9 @@ export function ChangeLogScreen({ viewerUserId }: { readonly viewerUserId: strin
             const at = entry.type === "change_set" ? entry.appliedAt : entry.at;
             const title =
               entry.type === "change_set"
-                ? entry.summary
+                ? titleOf(entry)
                 : `Viewed ${entry.path.replace(/^\/api\/v1\/platform\/households\/[^/]+\/support\//, "")}`;
+            const changes = entry.type === "change_set" ? (entry.detail?.changes ?? []) : [];
             const detail =
               entry.type === "support_view"
                 ? entry.undo.reason
@@ -198,6 +238,7 @@ export function ChangeLogScreen({ viewerUserId }: { readonly viewerUserId: strin
                       {title}
                     </span>
                   </span>
+                  {changes.length > 0 && <Chips changes={changes} />}
                   {detail !== null && <span className="text-sm text-ink-soft">{detail}</span>}
                 </div>
                 {entry.type === "change_set" && (
@@ -207,7 +248,7 @@ export function ChangeLogScreen({ viewerUserId }: { readonly viewerUserId: strin
                     className="shrink-0 self-start"
                     disabled={!canUndo || undoing !== null}
                     loading={undoing === entry.id}
-                    aria-label={`Undo: ${entry.summary}`}
+                    aria-label={`Undo: ${title}`}
                     onClick={() => {
                       void undo(entry);
                     }}

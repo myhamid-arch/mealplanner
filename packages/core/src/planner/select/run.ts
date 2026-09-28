@@ -344,16 +344,19 @@ export class Run {
         previous = s;
     }
     return {
-      window: { ingredients: windowIngredients, cuisineMealDays: cuisineDates.size },
+      window: { ingredients: windowIngredients, cuisineMealDays: cuisineDates.size, days: n },
       previous: previous === null ? null : this.previousOf(previous),
     };
   }
 
   previousOf(s: Served): NonNullable<MealContext["previous"]> {
+    const slot = this.cfg.slotTypes.find((t) => t.key === s.slotKey);
     return {
       cuisineKey: s.cuisineKey,
       mainProtein: s.mainProtein,
       dishName: this.pool.dish(s.dishId)?.name ?? s.dishId,
+      // W-12: reasons name the previous meal by its slot ("the lunch before it").
+      mealLabel: (slot?.label ?? "meal").toLowerCase(),
     };
   }
 
@@ -370,9 +373,11 @@ export class Run {
     });
   }
 
+  /** Plain reasons (W-12): catalogue display names and cuisine labels, never slugs or keys. */
   private readonly labels = {
-    ingredient: (id: string) => this.pool.slugById.get(id) ?? id,
+    ingredient: (id: string) => this.pool.nameOf(id),
     member: (id: string) => this.household.member(id).displayName,
+    cuisine: (key: string) => this.pool.cuisineLabelOf(key),
   };
 
   /** The meal as the frequency filter and the economy window see it. */

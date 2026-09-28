@@ -26,16 +26,96 @@ export type ScoreInput = {
     ingredients: ReadonlySet<string>;
     /** Other meal-days in the window, sharing an attendee, with the same cuisine. */
     cuisineMealDays: number;
+    /** The window's length in days (`economy_window_days`), for the reasons' wording (W-12). */
+    days?: number;
   };
-  /** The previous meal of the day sharing an attendee (SPEC-Q-9); null if none. */
-  previous: { cuisineKey: string; mainProtein: string | null; dishName: string } | null;
+  /**
+   * The previous meal of the day sharing an attendee (SPEC-Q-9); null if none. Reasons name it by
+   * its slot (`mealLabel`, "lunch") when given, not by its dish name: dish names often name their
+   * ingredients, and a substituted copy keeps the original name (W-12).
+   */
+  previous: {
+    cuisineKey: string;
+    mainProtein: string | null;
+    dishName: string;
+    mealLabel?: string;
+  } | null;
   weights: Pick<
     PlanWeights,
     "macroPrecision" | "appeal" | "ingredientEconomy" | "variety" | "fairness"
   >;
-  /** Display names for reasons. */
-  label?: { ingredient?: (id: string) => string; member?: (id: string) => string };
+  /** Display names for reasons: ingredient ids, member ids and cuisine keys (W-12). */
+  label?: Labels;
 };
+
+type Labels = {
+  ingredient?: (id: string) => string;
+  member?: (id: string) => string;
+  cuisine?: (key: string) => string;
+};
+
+/**
+ * First words of catalogue names that stay capitalised mid-sentence (demonyms and place names in
+ * data/ingredients.v1.json): "Greek yogurt", but "chicken breast" (W-12, CP3 finding 3).
+ */
+export const PROPER_FIRST_WORDS: ReadonlySet<string> = new Set([
+  "Akkawi",
+  "Arabic",
+  "Atlantic",
+  "Brazil",
+  "Brussels",
+  "Egyptian",
+  "English",
+  "French",
+  "Greek",
+  "Nabulsi",
+  "Swiss",
+  "Worcestershire",
+]);
+
+/** A display name as it reads inside a sentence: "Lemon juice" → "lemon juice", "Greek yogurt" kept. */
+export function midSentence(name: string): string {
+  const first = /^[^\s,(]+/.exec(name)?.[0] ?? "";
+  return PROPER_FIRST_WORDS.has(first) ? name : name.charAt(0).toLowerCase() + name.slice(1);
+}
+
+/**
+ * A list in plain English: "a", "a and b", "a, b and c"; when an item has a comma of its own
+ * ("chicken breast, skinless"), items are separated by semicolons so none reads as two (CP3
+ * finding 3): "lemon juice; chicken breast, skinless; and garlic".
+ */
+export function listOf(items: readonly string[]): string {
+  if (items.length <= 1) return items.join("");
+  if (items.length === 2 && !items.some((i) => i.includes(","))) return items.join(" and ");
+  const sep = items.some((i) => i.includes(",")) ? "; " : ", ";
+  return `${items.slice(0, -1).join(sep)}${sep === "; " ? "; and " : " and "}${items.at(-1) ?? ""}`;
+}
+
+/** A plate counts as close to its target from this fit (1 = dead centre; CP3 finding 2). */
+export const CLOSE_FIT = 0.75;
+
+const possessive = (name: string) => (name.endsWith("s") ? `${name}'` : `${name}'s`);
+
+/**
+ * How close the targeted plates are, in words, never as a score (UX-7, CP3 finding 2):
+ * "Close to Omar's and Sara's targets", or "Furthest from Omar's target; close to Sara's".
+ */
+function fitReason(
+  targeted: ReadonlyArray<{ memberId: string; fit: number }>,
+  memberName: (id: string) => string,
+): string {
+  const close = targeted.filter((p) => p.fit >= CLOSE_FIT).map((p) => memberName(p.memberId));
+  if (close.length === targeted.length)
+    return `Close to ${listOf(close.map(possessive))} target${close.length === 1 ? "" : "s"}`;
+  const worst = [...targeted].sort((a, b) => a.fit - b.fit)[0];
+  const furthest = `Furthest from ${possessive(memberName(worst?.memberId ?? ""))} target`;
+  return close.length === 0 ? furthest : `${furthest}; close to ${listOf(close.map(possessive))}`;
+}
+
+/** "this week" for the default 7-day window, else "in these N days" (1.4.10 SPEC-Q-3). */
+function windowPhrase(days: number | undefined): string {
+  return days === undefined || days === 7 ? "this week" : `in these ${String(days)} days`;
+}
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 const round3 = (x: number) => Math.round(x * 1000) / 1000;
@@ -81,7 +161,7 @@ export function economyOf(
 }
 
 export function varietyOf(
-  input: Pick<ScoreInput, "dish" | "mainProtein" | "window" | "previous">,
+  input: Pick<ScoreInput, "dish" | "mainProtein" | "window" | "previous" | "label">,
 ): {
   value: number;
   penalties: string[];
@@ -89,14 +169,23 @@ export function varietyOf(
   const penalties: string[] = [];
   let v = 1;
   const { dish, previous } = input;
+  const cuisine = (input.label?.cuisine ?? ((key: string) => key))(dish.cuisineKey);
+  // The previous meal as the reasons name it: "the lunch", or its dish name in structural tests.
+  const earlier =
+    previous === null
+      ? ""
+      : previous.mealLabel === undefined
+        ? previous.dishName
+        : `the ${previous.mealLabel}`;
   if (previous !== null && previous.cuisineKey === dish.cuisineKey) {
     v -= VARIETY_SAME_CUISINE_AS_PREVIOUS;
-    penalties.push(`Same cuisine (${dish.cuisineKey}) as ${previous.dishName} before it`);
+    penalties.push(`Also ${cuisine}, like ${earlier} before it`);
   }
   if (input.window.cuisineMealDays >= VARIETY_CUISINE_REPEAT_LIMIT) {
     v -= VARIETY_CUISINE_THIRD_TIME;
+    const n = input.window.cuisineMealDays;
     penalties.push(
-      `${dish.cuisineKey} already on ${String(input.window.cuisineMealDays)} other days in the window`,
+      `${cuisine} food is already on ${String(n)} other ${n === 1 ? "day" : "days"} ${windowPhrase(input.window.days)}`,
     );
   }
   if (
@@ -105,7 +194,7 @@ export function varietyOf(
     previous.mainProtein === input.mainProtein
   ) {
     v -= VARIETY_SAME_MAIN_PROTEIN;
-    penalties.push(`Same main protein as ${previous.dishName}`);
+    penalties.push(`Same main protein as ${earlier} before it`);
   }
   return { value: Math.max(0, v), penalties };
 }
@@ -131,20 +220,21 @@ export function scoreDish(input: ScoreInput): ScoreBreakdown {
 
   const reasons: string[] = [];
   const targeted = input.plates.filter((p) => p.targeted);
-  if (targeted.length > 0)
-    reasons.push(
-      `Macro fit ${targeted.map((p) => `${memberName(p.memberId)} ${p.fit.toFixed(2)}`).join(", ")}`,
-    );
+  if (targeted.length > 0) reasons.push(fitReason(targeted, memberName));
   const liked = input.plates.filter((p) => p.appeal >= 0.25);
   const disliked = input.plates.filter((p) => p.appeal <= -0.25);
   if (liked.length > 0)
-    reasons.push(`Liked by ${liked.map((p) => memberName(p.memberId)).join(", ")}`);
+    reasons.push(`Liked by ${listOf(liked.map((p) => memberName(p.memberId)))}`);
   if (disliked.length > 0)
-    reasons.push(`Less liked by ${disliked.map((p) => memberName(p.memberId)).join(", ")}`);
+    reasons.push(`Less liked by ${listOf(disliked.map((p) => memberName(p.memberId)))}`);
+  const when = windowPhrase(input.window.days);
+  // Display names read as prose; structural callers without names get the raw ids as a list.
+  const named = input.label?.ingredient !== undefined;
+  const ingredients = (ids: readonly string[]) =>
+    named ? listOf(ids.map((id) => midSentence(ingredientName(id)))) : ids.join(", ");
   if (econ.reused.length > 0)
-    reasons.push(`Reuses ${econ.reused.map(ingredientName).join(", ")} from the window`);
-  if (econ.added.length > 0)
-    reasons.push(`New this window: ${econ.added.map(ingredientName).join(", ")}`);
+    reasons.push(`Reuses ${ingredients(econ.reused)} from other meals ${when}`);
+  if (econ.added.length > 0) reasons.push(`New ${when}: ${ingredients(econ.added)}`);
   if (econ.kitchenPenalty > 0)
     reasons.push(
       `Kitchen cooks more than ${String(KITCHEN_FREE_VARIANTS)} variants of a component`,

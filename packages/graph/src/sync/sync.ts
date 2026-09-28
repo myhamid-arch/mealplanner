@@ -1,5 +1,9 @@
 // KG-3: the `kg.sync` requests, the nightly library recompute and the full rebuild. Each runs in one
 // transaction and is idempotent (upsert by natural keys; each request replaces the edge set it owns).
+// W-13 (leaf 1.4.10 ADR-1): a dish sync first creates the catalogue nodes its edges need when they
+// are missing, so it never depends on a concurrent catalogue sync having committed; and every node
+// upsert writes its rows in one order, (household, type, key), so two syncs that write the same
+// nodes wait on each other instead of deadlocking.
 import { INGREDIENT_CATEGORIES } from "@mealplanner/core/types";
 import { deriveGlobalCatalogue, deriveHouseholdCatalogue } from "../derive/catalogue.js";
 import { DISH_EDGE_TYPES, deriveDish, flavourNode, isSyncedDish } from "../derive/dish.js";
@@ -11,6 +15,7 @@ import {
   type GraphSnapshot,
   type GraphSyncStore,
   type KgEdgeInput,
+  type KgNodeInput,
   type KgNodeType,
   type NodeRef,
 } from "../types/index.js";
@@ -28,6 +33,31 @@ export type KgSyncRequest =
 
 /** Nodes created on reference and removed when nothing references them (SPEC-Q-9). */
 const ON_DEMAND: readonly KgNodeType[] = ["FlavourTag", "SlotType"];
+
+/** Nodes that only the catalogue syncs create (global, or a household's own ingredients). */
+const CATALOGUE_TYPES: readonly KgNodeType[] = [
+  "Ingredient",
+  "IngredientCategory",
+  "Cuisine",
+  "Method",
+];
+
+const scopeOf = (householdId: string | null) => householdId ?? "";
+
+/** Node rows in (household, type, key) order: the one order every sync upserts in (ADR-1). */
+function inKeyOrder(nodes: readonly KgNodeInput[]): KgNodeInput[] {
+  const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+  return [...nodes].sort(
+    (a, b) =>
+      cmp(scopeOf(a.householdId), scopeOf(b.householdId)) ||
+      cmp(a.type, b.type) ||
+      cmp(a.key, b.key),
+  );
+}
+
+async function upsertNodes(tx: GraphSyncStore, nodes: readonly KgNodeInput[]): Promise<void> {
+  await tx.upsertNodes(inKeyOrder(nodes));
+}
 
 export async function syncGraph(
   store: GraphSyncStore,
@@ -65,7 +95,7 @@ async function deleteMissing(
 async function syncGlobalCatalogue(tx: GraphSyncStore, source: KgSource) {
   const input = await source.catalogue();
   const derived = deriveGlobalCatalogue(input);
-  await tx.upsertNodes(derived.nodes);
+  await upsertNodes(tx, derived.nodes);
   const ingredients = await tx.nodesOfType("Ingredient", null);
   await tx.replaceEdges(
     { types: ["IN_CATEGORY", "SUBSTITUTES_FOR"], srcs: ingredients },
@@ -83,7 +113,7 @@ async function syncHouseholdCatalogue(tx: GraphSyncStore, source: KgSource, hous
     householdId,
     await source.householdIngredients(householdId),
   );
-  await tx.upsertNodes(derived.nodes);
+  await upsertNodes(tx, derived.nodes);
   const ingredients = await tx.nodesOfType("Ingredient", householdId);
   await tx.replaceEdges({ types: ["IN_CATEGORY"], srcs: ingredients }, derived.edges);
   await deleteMissing(tx, "Ingredient", householdId, new Set(derived.nodes.map((n) => n.key)));
@@ -98,21 +128,65 @@ async function syncDishes(
   const bundles = new Map(
     (await source.dishes(householdId, dishIds)).map((b) => [b.dish.id, b] as const),
   );
+  const derivedById = new Map<string, ReturnType<typeof deriveDish>>();
+  for (const dishId of new Set(dishIds)) {
+    const bundle = bundles.get(dishId);
+    if (isSyncedDish(bundle)) derivedById.set(dishId, deriveDish(bundle));
+  }
+  await ensureCatalogue(
+    tx,
+    source,
+    [...derivedById.values()].flatMap((d) => d.edges),
+  );
   for (const dishId of new Set(dishIds)) {
     const dishRef = ref("Dish", dishId, householdId);
     const before = await tx.partsOf(dishRef);
-    const bundle = bundles.get(dishId);
-    if (!isSyncedDish(bundle)) {
+    const derived = derivedById.get(dishId);
+    if (derived === undefined) {
       await tx.deleteNodes([...before, dishRef]);
       continue;
     }
-    const derived = deriveDish(bundle);
-    await tx.upsertNodes(derived.nodes);
+    await upsertNodes(tx, derived.nodes);
     await tx.replaceEdges({ types: DISH_EDGE_TYPES, srcs: derived.owned }, derived.edges);
     const owned = new Set(derived.owned.map((r) => `${r.type}\u0000${r.key}`));
     await tx.deleteNodes(before.filter((n) => !owned.has(`${n.type}\u0000${n.key}`)));
   }
   await tx.deleteOrphans(ON_DEMAND);
+}
+
+/**
+ * W-13: the catalogue nodes `edges` point to, created first when any is missing. The global
+ * catalogue sync runs when a global node is missing, then a household's own catalogue sync for each
+ * household with a missing node (SPEC-Q-6). A node that the catalogue itself does not have stays
+ * missing, and the edge write that needs it fails as before.
+ */
+async function ensureCatalogue(
+  tx: GraphSyncStore,
+  source: KgSource,
+  edges: readonly KgEdgeInput[],
+): Promise<void> {
+  const id = (r: NodeRef) => `${scopeOf(r.householdId)}\u0000${r.type}\u0000${r.key}`;
+  const wanted = new Map<string, NodeRef>();
+  for (const e of edges)
+    for (const r of [e.src, e.dst]) if (CATALOGUE_TYPES.includes(r.type)) wanted.set(id(r), r);
+  if (wanted.size === 0) return;
+  const found = new Set<string>();
+  for (const type of CATALOGUE_TYPES) {
+    const keys = [
+      ...new Set([...wanted.values()].filter((r) => r.type === type).map((r) => r.key)),
+    ];
+    if (keys.length > 0)
+      for (const n of await tx.nodesByKey(type, keys))
+        found.add(id(ref(type, n.key, n.householdId)));
+  }
+  const missing = [...wanted.entries()].filter(([k]) => !found.has(k)).map(([, r]) => r);
+  if (missing.length === 0) return;
+  if (missing.some((r) => r.householdId === null)) await syncGlobalCatalogue(tx, source);
+  const households = new Set(
+    missing.flatMap((r) => (r.householdId === null ? [] : [r.householdId])),
+  );
+  for (const householdId of [...households].sort())
+    await syncHouseholdCatalogue(tx, source, householdId);
 }
 
 async function syncMembers(
@@ -122,7 +196,7 @@ async function syncMembers(
   memberIds: readonly string[],
 ) {
   const found = await source.members(householdId, memberIds);
-  await tx.upsertNodes(found.map(memberNode));
+  await upsertNodes(tx, found.map(memberNode));
   const present = new Set(found.map((m) => m.id));
   await tx.deleteNodes(
     memberIds.filter((id) => !present.has(id)).map((id) => ref("Member", id, householdId)),
@@ -152,7 +226,7 @@ async function syncPreferences(
   const flavours = [
     ...new Set(drafts.filter((d) => d.target.type === "FlavourTag").map((d) => d.target.key)),
   ];
-  await tx.upsertNodes(flavours.map(flavourNode));
+  await upsertNodes(tx, flavours.map(flavourNode));
 
   // Resolve each target to the node visible to this household (KG-2); skip targets not in the graph.
   const targets = new Map<string, NodeRef>();
