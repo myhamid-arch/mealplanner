@@ -1108,6 +1108,8 @@ async function e2eRun({ webDir, distDir, server, spec, tag }) {
       SETUP_SCREENSHOT_DIR: join(scratch, "shots"),
       SCREENSHOT_DIR: join(scratch, "shots"),
       LEAF143_TRACE_DIR: join(scratch, "trace"),
+      // The web server's own output (Playwright drops it otherwise), shown when a run fails.
+      DEBUG: "pw:webserver",
       ...(chromium() === undefined ? {} : { PLAYWRIGHT_CHROMIUM_EXECUTABLE: chromium() }),
     };
     if (spec.env === "shell") {
@@ -1295,7 +1297,7 @@ export async function runE2ESuite(report, { webDir, distDir, server }) {
       tests.length > 0;
     if (!ok)
       console.log(
-        `----- ${run.label} (exit ${String(out?.r?.code)}) -----\n${out?.error ?? tail(out.r, 80)}\n${(out?.processes ?? []).map((o) => o.slice(-3000)).join("\n")}`,
+        `----- ${run.label} (exit ${String(out?.r?.code)}) -----\n${out?.error ?? tail(out.r, 200)}\n${(out?.processes ?? []).map((o) => o.slice(-3000)).join("\n")}`,
       );
     report.check(
       ok,
