@@ -7,17 +7,17 @@ Scope: API, auth, worker, SSE, as specified in docs/spec (see 11-build-plan.md Â
 - [x] G1: every endpoint has a contract test and an authorisation-matrix test including cross-household denial (ARC-5, ARC-6)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.1 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=18666222dcb1d6c12046cffe7ad0ad31b15b201c9321e8432241f741c1c26f11; exit=0; EXPECT=matched; output-sha256=f1d4303b2e539e4d8ee95feaa5126b061f5bb1e2b6cba0d8d0238857c8cb2f15; output-bytes=3178; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=18666222dcb1d6c12046cffe7ad0ad31b15b201c9321e8432241f741c1c26f11; exit=0; EXPECT=matched; output-sha256=85f1660b2b37a54ff8e19850b541b8c1c7104f2111775891cd6d7fc62d8a2227; output-bytes=3178; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: a plan job runs in the worker and streams progress over SSE to a test client (ARC-7)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.1 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=d3cbf8d120eaf3246897d77f0239ff95ecaf2be31604b9180ee03fefeaadca37; exit=0; EXPECT=matched; output-sha256=7dbd6f1fe37cbdf1c285badca344be77ae40d3b474ee612a93c56d889f0c2282; output-bytes=4719; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=d3cbf8d120eaf3246897d77f0239ff95ecaf2be31604b9180ee03fefeaadca37; exit=0; EXPECT=matched; output-sha256=0d9ea0905710afff06325f9d7f5ace3efbf0f0e50818a2ce00622754179cbe24; output-bytes=4719; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: OpenAPI document generated and valid
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.1 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=74255a58a0a14257647dd81e0a3bae0ec0f1d9ba25c1b687d48af4000545aa5d; exit=0; EXPECT=matched; output-sha256=0461705beb7694c53f1e5a306cbf2f6b1899773930c3089cbf3273e17870fc09; output-bytes=1553; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=74255a58a0a14257647dd81e0a3bae0ec0f1d9ba25c1b687d48af4000545aa5d; exit=0; EXPECT=matched; output-sha256=8caeb3c7df62c45adc0599367a0d452ea83e4868a949e278cc9c5e0da62c2f8c; output-bytes=1554; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: block revokes all sessions immediately (next request 401); invites single-use with expiry; TOTP enforced when required (R2-ADM)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G4
