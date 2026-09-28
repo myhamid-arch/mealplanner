@@ -38,3 +38,11 @@ that the swapped `main` computes the pre-fix `100px`, so the control measures re
 check must then report that the button covers the last control on both pages. This avoids a second
 `next build` of a patched working tree, which would either race the other gates' builds or leave the
 tree modified if the gate were killed.
+
+## R-78 (answer to the ARCHITECT QUESTION on the /account negative control)
+
+Measured with the pre-fix class lists, scrolled to the end: "See recipe" overlaps the button by
+58 × 52 px at both widths, but "Delete my account" already ends about 6 px clear of it, because
+1.4.6's account `Frame` has its own `pb-16` below `lg`. Option A: the Plate keeps the ≥ 20 px
+intersection control; on `/account` the control is the gap between the control's bottom and the
+button's top, under 16 px before the fix and at least 16 px after it, with both gaps printed.

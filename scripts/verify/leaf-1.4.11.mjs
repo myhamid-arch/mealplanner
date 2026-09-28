@@ -8,11 +8,13 @@
 //     on the admin's Plate (today's dinner, planned by the worker), scrolled to the end: the
 //     Assistant button's bounding box does not intersect "Delete my account" / "See recipe", and
 //     elementFromPoint at the control's centre hits the control. A member (/account, own Plate) and
-//     a kitchen user (/account) have no button and keep the pre-fix 100 px. Negative control: the
-//     pre-fix class lists of the shell's `main` and outer `div`, read here from git at
-//     PRE_FIX_COMMIT and passed to the spec, put on the same pages make the button cover the
-//     control by at least 20 px high (CP1 amendment 1) on both pages at both widths. The source
-//     checks below make sure the control reads the real pre-fix padding and the fix is in place.
+//     a kitchen user (/account) have no button and keep the pre-fix 100 px. On /account the fix
+//     leaves at least a 16 px gap above the button. Negative control (R-78): the pre-fix class
+//     lists of the shell's `main` and outer `div`, read here from git at PRE_FIX_COMMIT and passed
+//     to the spec, put on the same pages make the button cover "See recipe" by at least 20 px high
+//     (CP1 amendment 1) and leave "Delete my account" under 16 px from the button (1.4.6's own
+//     padding keeps it just clear), at both widths. Both gaps are printed. The source checks below
+//     make sure the control reads the real pre-fix padding and the fix is in place.
 // G2  No regression: axe-core at 390 px on both pages scrolled to the end, light and dark (tests
 //     tagged @G2; negative control: a known-bad page is reported), then 1.4.2 G1–G2 and 1.4.9 G4
 //     through their own verify scripts as child processes (each must print its PASSED marker).
@@ -67,12 +69,10 @@ const E2E = {
           `@G1 at ${v} px as an admin, ${p} scrolled to the end: the Assistant button misses the last control`,
       ),
     ),
-    ...VIEWPORTS.flatMap((v) =>
-      PAGES.map(
-        (p) =>
-          `@G1 negative control at ${v} px, ${p}: with the pre-fix padding the button covers the last control`,
-      ),
-    ),
+    ...VIEWPORTS.flatMap((v) => [
+      `@G1 negative control at ${v} px, account: with the pre-fix padding the gap to the button is under the 16 px margin`,
+      `@G1 negative control at ${v} px, plate: with the pre-fix padding the button covers the last control by at least 20 px`,
+    ]),
     "@G1 without the assistant (member), account at 390 px keeps the pre-fix padding",
     "@G1 without the assistant (member), plate at 390 px keeps the pre-fix padding",
     "@G1 without the assistant (kitchen), account at 390 px keeps the pre-fix padding",

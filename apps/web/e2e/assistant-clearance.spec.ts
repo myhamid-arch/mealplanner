@@ -5,8 +5,9 @@
 //   @G1  at 390 and 360 px as an admin, on /account and on a Plate, scrolled to the end: the
 //        button's box misses the last control ("Delete my account", "See recipe") and
 //        elementFromPoint at the control's centre hits it; a member and a kitchen user keep the
-//        pre-fix padding. Negative control: the pre-fix classes on the same page make the button
-//        cover the control by at least 20 px (CP1 amendment 1).
+//        pre-fix padding; on /account the control ends at least 16 px above the button. Negative
+//        control (R-78): the pre-fix classes on the same page make the button cover "See recipe"
+//        by at least 20 px (CP1 amendment 1) and leave "Delete my account" under 16 px from it.
 //   @G2  axe-core at 390 px on both pages scrolled to the end: no serious or critical violations.
 //        Negative control: the same helper reports a known-bad page.
 // Captures for the architect (G3) go to $SCREENSHOT_DIR when it is set.
@@ -34,8 +35,10 @@ const PHONE = VIEWPORTS[0];
 const PREFIX_MAIN_CLASS = process.env.PREFIX_MAIN_CLASS ?? "";
 const PREFIX_SHELL_CLASS = process.env.PREFIX_SHELL_CLASS ?? "";
 const SCREENSHOT_DIR = process.env.SCREENSHOT_DIR;
-/** CP1 amendment 1: the pre-fix overlap must be substantial, not a 1–2 px graze. */
+/** CP1 amendment 1: the Plate's pre-fix overlap must be substantial, not a 1–2 px graze. */
 const MIN_OVERLAP_PX = 20;
+/** The margin the fix keeps between the last control and the button (SPEC-Q-1; R-78). */
+const MARGIN_PX = 16;
 
 type State = Awaited<ReturnType<APIRequestContext["storageState"]>>;
 type Who = "admin" | "member" | "kitchen";
@@ -349,6 +352,8 @@ interface Measure {
   button: { x: number; y: number; width: number; height: number };
   control: { x: number; y: number; width: number; height: number };
   overlap: { width: number; height: number };
+  /** The control's bottom edge to the button's top edge (negative when they overlap). */
+  gap: number;
   /** elementFromPoint at the control's centre is the control or inside it. */
   hitsControl: boolean;
   hitDescription: string;
@@ -382,6 +387,7 @@ async function measure(page: Page, target: Target): Promise<Measure> {
         button: bb,
         control: cb,
         overlap,
+        gap: bb.y - (cb.y + cb.height),
         hitsControl: hit !== null && (hit === c || c.contains(hit)),
         hitDescription: describe(hit),
       };
@@ -391,7 +397,7 @@ async function measure(page: Page, target: Target): Promise<Measure> {
 }
 
 const fmt = (m: Measure) =>
-  `button y ${m.button.y.toFixed(1)}–${(m.button.y + m.button.height).toFixed(1)}, control y ${m.control.y.toFixed(1)}–${(m.control.y + m.control.height).toFixed(1)} x ${m.control.x.toFixed(1)}–${(m.control.x + m.control.width).toFixed(1)}, overlap ${m.overlap.width.toFixed(1)}×${m.overlap.height.toFixed(1)}, hit ${m.hitDescription}`;
+  `button y ${m.button.y.toFixed(1)}–${(m.button.y + m.button.height).toFixed(1)}, control y ${m.control.y.toFixed(1)}–${(m.control.y + m.control.height).toFixed(1)} x ${m.control.x.toFixed(1)}–${(m.control.x + m.control.width).toFixed(1)}, overlap ${m.overlap.width.toFixed(1)}×${m.overlap.height.toFixed(1)}, gap ${m.gap.toFixed(1)}, hit ${m.hitDescription}`;
 
 async function capture(page: Page, name: string): Promise<void> {
   if (SCREENSHOT_DIR === undefined || SCREENSHOT_DIR === "") return;
@@ -430,36 +436,54 @@ for (const v of VIEWPORTS)
         );
         expect(m.overlap.width * m.overlap.height, `no intersection: ${fmt(m)}`).toBe(0);
         expect(m.hitsControl, `elementFromPoint hits the control: ${fmt(m)}`).toBe(true);
+        // R-78: on /account the fix keeps at least the margin between the control and the button.
+        if (target === ACCOUNT)
+          expect(
+            m.gap,
+            `the gap is at least ${String(MARGIN_PX)} px: ${fmt(m)}`,
+          ).toBeGreaterThanOrEqual(MARGIN_PX);
         if (v === PHONE) await capture(page, `${target.name}-${v.name}-after`);
       } finally {
         await ctx.close();
       }
     });
 
+// Negative control (R-78): with the pre-fix class lists the button covers the Plate's "See recipe"
+// by at least 20 px; on /account 1.4.6's own bottom padding already keeps "Delete my account" just
+// clear of it at the end of the page, so there the control is the gap under the 16 px margin.
 for (const v of VIEWPORTS)
   for (const target of TARGETS)
-    test(`@G1 negative control at ${v.name} px, ${target.name}: with the pre-fix padding the button covers the last control`, async ({
-      browser,
-    }) => {
-      const { ctx, page } = await open(browser, "admin", v, target);
-      try {
-        expect(await applyPreFix(page), "the pre-fix class computes to 100 px").toBe("100px");
-        await settled(page);
-        const m = await measure(page, target);
-        console.log(`  ${target.name} ${v.name} px, pre-fix: ${fmt(m)}`);
-        expect(m.scrollHeight, "the page is taller than the viewport").toBeGreaterThan(
-          m.innerHeight,
-        );
-        expect(m.overlap.width, `the button covers the control: ${fmt(m)}`).toBeGreaterThan(0);
-        expect(
-          m.overlap.height,
-          `the overlap is at least ${String(MIN_OVERLAP_PX)} px high: ${fmt(m)}`,
-        ).toBeGreaterThanOrEqual(MIN_OVERLAP_PX);
-        if (v === PHONE) await capture(page, `${target.name}-${v.name}-before`);
-      } finally {
-        await ctx.close();
-      }
-    });
+    test(
+      target === PLATE
+        ? `@G1 negative control at ${v.name} px, plate: with the pre-fix padding the button covers the last control by at least ${String(MIN_OVERLAP_PX)} px`
+        : `@G1 negative control at ${v.name} px, account: with the pre-fix padding the gap to the button is under the ${String(MARGIN_PX)} px margin`,
+      async ({ browser }) => {
+        const { ctx, page } = await open(browser, "admin", v, target);
+        try {
+          expect(await applyPreFix(page), "the pre-fix class computes to 100 px").toBe("100px");
+          await settled(page);
+          const m = await measure(page, target);
+          console.log(`  ${target.name} ${v.name} px, pre-fix: ${fmt(m)}`);
+          expect(m.scrollHeight, "the page is taller than the viewport").toBeGreaterThan(
+            m.innerHeight,
+          );
+          if (target === PLATE) {
+            expect(m.overlap.width, `the button covers the control: ${fmt(m)}`).toBeGreaterThan(0);
+            expect(
+              m.overlap.height,
+              `the overlap is at least ${String(MIN_OVERLAP_PX)} px high: ${fmt(m)}`,
+            ).toBeGreaterThanOrEqual(MIN_OVERLAP_PX);
+          } else {
+            expect(m.gap, `the gap is under ${String(MARGIN_PX)} px: ${fmt(m)}`).toBeLessThan(
+              MARGIN_PX,
+            );
+          }
+          if (v === PHONE) await capture(page, `${target.name}-${v.name}-before`);
+        } finally {
+          await ctx.close();
+        }
+      },
+    );
 
 for (const [who, target] of [
   ["member", ACCOUNT],
