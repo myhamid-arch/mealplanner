@@ -81,6 +81,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
     1.4.8 Plan follow-ups: move, substitutes, day sums .... gates/leaf-1.4.8.md
     1.4.9 Chat and setup follow-ups (W-9, W-10) ........... gates/leaf-1.4.9.md
     1.4.10 Plain reasons, graph start-up, change-log subjects gates/leaf-1.4.10.md
+    1.4.11 Assistant button clearance at phone width (W-15) gates/leaf-1.4.11.md
 ```
 
 ## 4. Leaf dispatch table (BLD-4)
@@ -113,6 +114,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 | 1.4.8 | `apps/web/app/(app)/plan/**`, `apps/web/app/(app)/recipes/**`, `apps/web/components/plan/**`, `apps/web/components/recipe/**`, `apps/web/e2e/plan.spec.ts` (transferred from merged 1.4.4), `apps/web/app/api/v1/plan-meals/[id]/move/**`, `apps/web/lib/server/plan-move.ts`, `apps/web/test/api/plan-move.int.test.ts`, `packages/db/src/services/plans/{substitute,move}.ts`, `packages/db/test/plans/**` (new), `apps/web/test/api/cook-sheet-flags.int.test.ts` (transferred), `packages/core/src/planner/targets/**`, `packages/core/test/planner/targets/**` (W-7 only), `scripts/verify/leaf-1.4.8.mjs` (R-58) | 1.4.4 | judgment | 8 |
 | 1.4.9 | `packages/ai/src/agent/{cards,events}.ts`, `packages/ai/test/agent/digest-*.test.ts`, `apps/worker/src/jobs/chat-events.ts`, `apps/web/test/api/chat-events-*.int.test.ts`, `apps/web/components/chat/cards/**`, `apps/web/test/chat/**`, `packages/core/src/onboarding/{parse-people,text,infer}.ts`, `packages/core/test/onboarding/**` (not `followups/**`), `apps/web/app/(shell)/_shell/{assistant-button,app-shell}.tsx`, `scripts/verify/leaf-1.4.9.mjs` (transferred from merged 1.3.5, 1.4.5, 1.4.3, 1.4.2; R-61) | 1.4.5, 1.4.7 | judgment | 9 |
 | 1.4.10 | `packages/core/src/planner/select/{score,run,pool}.ts`, `packages/core/test/planner/select/reasons*.test.ts`, `apps/web/components/plan/plate-detail.tsx`, `apps/worker/src/main.ts`, `packages/graph/src/sync/**`, `packages/graph/test/startup*.test.ts`, `apps/web/test/api/kg-startup*.int.test.ts`, `apps/web/lib/server/changes.ts`, `apps/web/app/(app)/changelog/**`, `apps/web/test/api/change-log-detail*.int.test.ts`, `apps/web/test/followups/**`, `scripts/verify/leaf-1.4.10.mjs`, `docs/decisions/leaf-1.4.10-*.md` (transferred from merged 1.2.3, 1.2.6, 1.3.4, 1.4.1, 1.4.6, 1.4.8; R-68) | 1.4.8, 1.4.9, 1.3.6 | judgment | 6 |
+| 1.4.11 | `apps/web/app/(shell)/_shell/app-shell.tsx` (transferred from merged 1.4.2 and 1.4.9), `apps/web/e2e/assistant-clearance*.spec.ts`, `scripts/verify/leaf-1.4.11.mjs`, `docs/decisions/leaf-1.4.11-*.md` (R-77) | 1.4.10 | mechanical | 11 |
 
 **Shared manifests.** `package.json` files, `pnpm-lock.yaml` and workspace config belong to 1.1.1, which declares every dependency named in ARC-1 up front. A later leaf that needs a new dependency lists it in its return report, and the architect adds it on the integration branch before merging that leaf. Builders never edit files outside their OWNS.
 
@@ -178,6 +180,11 @@ Each gate below becomes a ledger entry. Runnable gates use `CHECK: node scripts/
 - G1 Id independence (W-17, PLN-11): for each seed 1–10, the F1 week is planned twice in core. The second time, every surrogate id is consistently remapped to a fresh UUIDv7-shaped string: dishes, components, variants, adjusters, members, slot types, and the config rows that reference them. Mapped back, the two plans are identical: the dish per meal, plate grams, flags and reasons. For each seed, a different seed still changes the plan. Negative control: today's id-keyed jitter fails the comparison.
 - G2 Job path: `plan.generate` for the F1 week at seed 1 runs on two separately seeded databases, each migrated, seeded and loaded with F1 from zero (not clones of one template). The persisted rows, as (date, slot key, member name, dish slug, plate grams, flags), are identical. Negative control: the same comparison reports a one-dish difference.
 - G3 No regression, measured: 1.2.3 G1 and G3–G5, 1.2.5 G1–G4, 1.2.6 G1–G2 and 1.4.10 G1 pass. SC-2 over seeds 1–10 is measured on the new code: median ≥ 8 % and every seed ≥ 0 % (1.2.3 G2 as re-set by R-63). SC-1's in-tolerance rate and the frequency-relaxed count are printed, beside the same figures on the pre-fix code.
+
+**1.4.11 Assistant button clearance at phone width (W-15; R-77)**
+- G1 Clearance (W-15, UX-4): with Playwright at 390 px and at 360 px, as an admin (the floating Assistant button shows), on `/account` and on a Plate page, each scrolled to the end, the button's box does not intersect the page's last control ("Delete my account", "See recipe"), and `elementFromPoint` at that control's centre hits the control. On a role without the assistant, the page keeps today's padding (no extra space). Negative control: the pre-fix padding fails the intersection check on both pages.
+- G2 No regression: 1.4.2 G1–G2 and 1.4.9 G4 pass (the desktop breakpoint, W-10b, is unchanged), and axe-core reports no serious or critical findings on both pages at 390 px.
+- G3 (manual) Architect visual review of both pages at 390 px, scrolled to the end, against the shell mockups.
 
 **1.4.7 Deferred scope W-5 (R-55)**
 - G1 Onboarding parse (R2-ONB-3): `POST /api/v1/onboarding/parse` returns typed `people` / `targets` / `neverEat` results from recorded model responses through 1.3.1's structured-output client; a model answer that fails the schema is refused, not repaired; 503 without a credential, and the onboarding page then keeps the deterministic parse; admin only. Live-model accuracy is a credential handoff (ABANDON with the owner command), never faked.
@@ -609,3 +616,7 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - the root `engines.node` floor rises to `>=22.13.0`.
   - Verified by the architect: both images built from a clean export, the worker image built from a working copy with a context of 11.7 MB, and `docker compose up` on a fresh volume came up healthy. The worker migrated and seeded 62 dishes, 18 adjusters and 363 ingredients, `/` redirected to `/today`, and `/sign-in`, `/onboarding` and `/offline` returned 200.
   - These are single-entry edits in merged 1.1.1's `package.json` and 1.4.1's Dockerfiles. Root R2 builds the images, so this cannot recur unseen.
+- **R-77 (W-15 owner; leaf 1.4.11).** W-15 gets its own leaf, 1.4.11 (§3, §4, §5; `gates/leaf-1.4.11.md`; node-1.4 integrates it). It is a product change in merged 1.4.2's `app-shell.tsx`, so it does not go to the architect as a test-only fix.
+  - Cause: at < 1024 px, `main` keeps `pb-[calc(100px+safe-area)]`, which clears the tab bar only. The 58 px `AssistantButton` sits at `bottom-[calc(100px+safe-area)]`, so at the end of a page it covers the last 58 px on the right.
+  - Direction: while the button shows, reserve its height and margin as bottom padding at the phone breakpoint, the phone counterpart of 1.4.9's W-10b desktop rule.
+
