@@ -62,6 +62,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
     1.2.4 Seed dish library ............................... gates/leaf-1.2.4.md
     1.2.5 Deterministic solver limit (W-4) ................ gates/leaf-1.2.5.md
     1.2.6 Owner rulings: repeat gaps, slot-scoped exclusions gates/leaf-1.2.6.md
+    1.2.7 Id-independent plan search (W-17) ........... gates/leaf-1.2.7.md
   1.3 Intelligence ....................................... gates/node-1.3.md
     1.3.1 Claude client + recipe generator ................ gates/leaf-1.3.1.md
     1.3.2 Reviews + preference learning ................... gates/leaf-1.3.2.md
@@ -95,6 +96,7 @@ Fixtures live in `packages/core/test/fixtures/` (owned by leaf 1.1.2, `types`). 
 | 1.2.4 | `data/seed-dishes/**`, `data/adjusters.json`, `scripts/verify/leaf-1.2.4.mjs`, `packages/core/src/nutrition/atwater.ts`, `packages/core/src/nutrition/index.ts` (export only), `packages/core/test/nutrition/atwater.test.ts` (R-30) | 1.1.3, 1.2.2 | judgment | 4 |
 | 1.2.5 | `packages/core/src/planner/solver/**`, `packages/core/test/planner/solver/**`, `scripts/verify/leaf-1.2.5.mjs` | 1.2.3 | measured | 4 |
 | 1.2.6 | `packages/core/src/planner/select/{config,filters}.ts`, `packages/core/test/planner/select/frequency*.test.ts`, `packages/core/test/planner/select/exclusion-scope*.test.ts`, `scripts/verify/leaf-1.2.3.mjs` (G2 threshold and aggregation only), `packages/db/src/schema/feedback.ts` (exclusion `slot_keys` only), `packages/db/src/migrations/0007_*` + snapshot, `packages/core/src/onboarding/followups/engine.ts`, `packages/core/test/onboarding/followups/**`, `scripts/verify/leaf-1.2.6.mjs` (transferred from merged 1.2.3, 1.1.2, 1.4.7; R-62) | 1.4.7 | judgment | 9 |
+| 1.2.7 | `packages/core/src/planner/select/**` (transferred from merged 1.2.3, 1.2.6, 1.4.10), `packages/core/test/planner/select/support.ts`, `packages/core/test/planner/select/library.ts`, `packages/core/test/planner/select/f1.ts`, `packages/core/test/planner/select/id-independence*.test.ts`, `packages/db/src/services/plans/load-input.ts` (transferred from merged 1.4.1), `packages/db/test/plans/id-independence*.int.test.ts`, `scripts/verify/leaf-1.2.7.mjs`, `docs/decisions/leaf-1.2.7-*.md` (R-73) | 1.4.10 | measured | 10 |
 | 1.3.2 | `packages/core/src/learning/preferences/**`, `packages/core/src/learning/portions/**`, `packages/core/test/learning/prefs/**`, `packages/db/src/services/reviews/**`, `packages/db/test/reviews/**`, `packages/db/src/schema/review-revision.ts`, `packages/db/src/migrations/0002_*`, `packages/db/src/migrations/meta/**`, `scripts/verify/leaf-1.3.2.mjs` (plus the single-entry edits granted in R-26) | 1.1.2 | judgment | 3 |
 | 1.2.3 | `packages/core/src/planner/select/**`, `packages/core/src/planner/cooksheet/**`, `packages/core/src/planner/solver/**` (R-38, performance only), `packages/core/test/planner/solver/**` (R-38), `packages/core/src/planner/index.ts`, `packages/core/test/planner/select/**`, `scripts/verify/leaf-1.2.3.mjs` | 1.2.2, 1.2.4 | judgment | 5 |
 | 1.3.1 | `packages/ai/src/client/**`, `packages/ai/src/recipes/**`, `packages/ai/test/recipes/**`, `scripts/verify/leaf-1.3.1.mjs` | 1.1.2, 1.2.2 | judgment | 4 |
@@ -171,6 +173,11 @@ Each gate below becomes a ledger entry. Runnable gates use `CHECK: node scripts/
 - G2 Budget (R-38, PLN-11): worst day ≤ 4.0 s CPU and week ≤ 30 s wall on an idle machine, measured and printed.
 - G3 Quality: over seeds 1–10 of the F1 week, the median plan objective is within 0.5 % of the 0.25 s wall-clock baseline measured idle on the same machine, and SC-1's in-tolerance rate is not lower. Both measured, baseline included.
 - G4 No regression: 1.2.3 G1, G3, G4, G5 and 1.2.2 G1–G5 pass; 1.2.3 G2 is reported (W-3 open).
+
+**1.2.7 Id-independent plan search (W-17; R-73)**
+- G1 Id independence (W-17, PLN-11): for each seed 1–10, the F1 week is planned twice in core. The second time, every surrogate id is consistently remapped to a fresh UUIDv7-shaped string: dishes, components, variants, adjusters, members, slot types, and the config rows that reference them. Mapped back, the two plans are identical: the dish per meal, plate grams, flags and reasons. For each seed, a different seed still changes the plan. Negative control: today's id-keyed jitter fails the comparison.
+- G2 Job path: `plan.generate` for the F1 week at seed 1 runs on two separately seeded databases, each migrated, seeded and loaded with F1 from zero (not clones of one template). The persisted rows, as (date, slot key, member name, dish slug, plate grams, flags), are identical. Negative control: the same comparison reports a one-dish difference.
+- G3 No regression, measured: 1.2.3 G1 and G3–G5, 1.2.5 G1–G4, 1.2.6 G1–G2 and 1.4.10 G1 pass. SC-2 over seeds 1–10 is measured on the new code: median ≥ 8 % and every seed ≥ 0 % (1.2.3 G2 as re-set by R-63). SC-1's in-tolerance rate and the frequency-relaxed count are printed, beside the same figures on the pre-fix code.
 
 **1.4.7 Deferred scope W-5 (R-55)**
 - G1 Onboarding parse (R2-ONB-3): `POST /api/v1/onboarding/parse` returns typed `people` / `targets` / `neverEat` results from recorded model responses through 1.3.1's structured-output client; a model answer that fails the schema is refused, not repaired; 503 without a credential, and the onboarding page then keeps the deterministic parse; admin only. Live-model accuracy is a credential handoff (ABANDON with the owner command), never faked.
@@ -559,3 +566,16 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - Its OWNS: those scripts, `packages/db/test/node/**`, `apps/web/test/node/**`, `apps/web/e2e/node-1.4/**` and `docs/decisions/node-scripts-*.md`.
   - Its gates are the node ledgers' N2–N4, met through `gate-check`. N1 (reverify the children) and N5 (manual) stay with the architect.
   - node-1.4's N1 waits for 1.4.10, but its N2–N4 can be written and run before then.
+- **W-17 (the plan depends on surrogate ids; reported by the node-scripts builder, root-caused by the architect).** Three `plan.generate` runs of the F1 week at seed 1, each on a freshly seeded database, persisted three different plans: 10, 13 and 14 same-dish pairs, and one relaxed breakfast repeat.
+  - Cause: `packages/core/src/planner/select/day.ts:83` hashes `slot.id` and `dish.id` into the seeded pre-score jitter, and the beam tie-break hashes a path built from dish ids (`day.ts:224,250,447`). Ids are UUIDv7s made at seed time (`packages/db/src/schema/ids.ts`), so every fresh database is a hidden second seed.
+  - Reproduced in core with no database: prefixing every dish id with a constant salt, which keeps their order, changes 54–58 of 78 meals and relaxes a breakfast repeat.
+  - Nothing reads the clock or `Math.random`, and query order is fixed.
+  - 1.2.3 G4 and 1.2.5 G1 passed because they compare runs over one id set.
+  - This violates PLN-11 ("deterministic for a fixed seed") in substance: the seed must be the only source of variation.
+  - Fix: key the seeded randomness and every tie-break on natural keys (dish slug, slot key, member order), never on surrogate ids. Owner: leaf 1.2.7 (R-73).
+- **R-73 (leaf 1.2.7 "Id-independent plan search").** Added under node 1.2 (§3, §4, §5; `gates/leaf-1.2.7.md`; node-1.2 integrates it). It closes W-17.
+  - Ownership: `packages/core/src/planner/select/**` transfers from merged 1.2.3, 1.2.6 and 1.4.10, and `load-input.ts` from merged 1.4.1.
+  - `PlanDish` gains its natural key (the dish slug). Other constructors of `PlanDish` and its config types that must change (`apps/worker/src/jobs/plans-preview.ts`, `packages/db/src/services/plans/{meal,generate,substitute}.ts`, their tests) are single-entry requests at CP1.
+  - Plans change once, at this leaf. SC-1 and SC-2 are re-measured on the new code (G3), and a seed where economy adds ingredients fails.
+  - The node verify scripts (R-69) measure at run time, so they need no change.
+
