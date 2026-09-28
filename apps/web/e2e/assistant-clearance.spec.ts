@@ -302,7 +302,14 @@ async function scrollToEnd(page: Page): Promise<void> {
   );
   // Two frames, so layout and paint have caught up before measuring.
   await page.evaluate(
-    () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(null)))),
+    () =>
+      new Promise((r) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            r(null);
+          });
+        });
+      }),
   );
 }
 
@@ -352,7 +359,6 @@ async function measure(page: Page, target: Target): Promise<Measure> {
   await scrollToEnd(page);
   const control = await target.control(page).elementHandle();
   const button = await assistantButton(page).elementHandle();
-  if (control === null || button === null) throw new Error("control or button missing");
   return page.evaluate(
     ([c, b]) => {
       const box = (e: Element) => {
@@ -369,7 +375,7 @@ async function measure(page: Page, target: Target): Promise<Measure> {
       const describe = (e: Element | null) =>
         e === null
           ? "nothing"
-          : `${e.tagName.toLowerCase()}${e.getAttribute("aria-label") ? ` [${String(e.getAttribute("aria-label"))}]` : ""} "${(e.textContent ?? "").trim().slice(0, 40)}"`;
+          : `${e.tagName.toLowerCase()}${e.getAttribute("aria-label") ? ` [${String(e.getAttribute("aria-label"))}]` : ""} "${e.textContent.trim().slice(0, 40)}"`;
       return {
         scrollHeight: document.documentElement.scrollHeight,
         innerHeight: window.innerHeight,
