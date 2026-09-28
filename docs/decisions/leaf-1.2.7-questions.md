@@ -1,7 +1,9 @@
 # Leaf 1.2.7 spec questions
 
 Each question records the reading this leaf builds on (BLD-7 rule 6: the more conservative one) until
-the architect rules.
+the architect rules. CP1 rulings: SPEC-Q-1, 2, 4 and 5 accepted; SPEC-Q-3 not accepted (below).
+CP1 amendment 3: G1's negative control runs the pre-fix planner under both a reversed-order remap
+and an order-preserving one (the salted-prefix case).
 
 ## SPEC-Q-1: the member's natural key
 
@@ -28,6 +30,10 @@ runs `generatePlan`, the service the `plan.generate` handler calls, with the han
 `requestDishes`; without a credential that requests nothing, and the plan and its rows are the ones
 `generatePlan` persists. If the architect wants the worker's own handler run (`runJob` with
 `planGenerate` on a worker runtime per database), the verify script can do it inside OWNS.
+
+**Ruling (CP1): not accepted.** The verify script runs the worker's own handler (`runJob` with
+`HANDLERS["plan.generate"]`, one worker runtime per database, no model) on two databases of its
+own, and compares the persisted rows; the db int test stays as the lower-level check.
 
 ## SPEC-Q-4: what G1 compares
 
