@@ -568,6 +568,7 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - node-1.4's N1 waits for 1.4.10, but its N2–N4 can be written and run before then.
 - **W-17 (the plan depends on surrogate ids; reported by the node-scripts builder, root-caused by the architect).** Three `plan.generate` runs of the F1 week at seed 1, each on a freshly seeded database, persisted three different plans: 10, 13 and 14 same-dish pairs, and one relaxed breakfast repeat.
   - Cause: `packages/core/src/planner/select/day.ts:83` hashes `slot.id` and `dish.id` into the seeded pre-score jitter, and the beam tie-break hashes a path built from dish ids (`day.ts:224,250,447`). Ids are UUIDv7s made at seed time (`packages/db/src/schema/ids.ts`), so every fresh database is a hidden second seed.
+  - Correction (1.2.7 CP3): library dishes' ids are deterministic (`seedId("dish", slug)`, `packages/db/src/seed/load.ts`), so on two fresh databases the ids that differ are the slot and member ids `loadFixture` makes (and household dishes'). The meal key's `slot.id` and member id were the cross-database cause; dish ids matter under any id renaming, which 1.2.7 G1 covers.
   - Reproduced in core with no database: prefixing every dish id with a constant salt, which keeps their order, changes 54–58 of 78 meals and relaxes a breakfast repeat.
   - Nothing reads the clock or `Math.random`, and query order is fixed.
   - 1.2.3 G4 and 1.2.5 G1 passed because they compare runs over one id set.
@@ -590,3 +591,10 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - SPEC-Q-3 not accepted: G2 runs the worker's `plan.generate` handler (`runJob`) on each database.
   - If G3 takes longer than node-1.2 N1's 1800 s per gate, the architect raises that timeout.
 - **W-18 (flaky 1.4.10 open-tx witness; reported by the node-scripts builder, fixed by the architect).** `apps/web/test/api/kg-startup.int.test.ts` `openTx` held only the catalogue job, so the dish job could end its first attempt before the catalogue nodes were written. No backend then waited on a lock, and `lockWait` stayed false, in about 1 run of 8 (node-1.4 N4). The W-13 fix held in every run. Now the dish job starts only once the catalogue nodes are written and not yet committed. This is a single test-only edit in merged 1.4.10's file: `-t "open-tx"` passed 12 of 12 (the fixed test plus its pre-fix negative control), and leaf-1.4.10 G2 passed.
+- **R-75 (1.2.7 CP2: G3 wall time).** Leaf 1.2.7's G3 reruns other leaves' full gates (1.4.10 G1 with its nested regressions and e2e, and 1.2.6 G2). It took 3627 s alone and about 3980 s with G1 and G2 running alongside. node-1.2's N1 therefore reruns its children with `--timeout 5400` instead of 1800. G3 is not trimmed.
+- **R-76 (1.2.7 CP3, merged in 4b40a55).** The architect reverified the leaf with `DATABASE_URL` unset and then set, gates concurrent: ALL MET 3/0/0 both times. Full CI passed: format, build, lint, typecheck, unit, integration.
+  - Mutations:
+    - `dish.id` restored in the jitter key: G1 fails (4 of 9 tests). G2 passes, because library dish ids are the same on every database (see the W-17 correction), so this is not a G2 test.
+    - The slot id in place of the slot key in `Run.mealKey`: G1 fails and G2 fails (4 assertions, service level and worker handler).
+  - W-17 is closed.
+

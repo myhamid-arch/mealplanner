@@ -17,10 +17,6 @@ export type MealSpec = {
 
 export const SHARED_SCOPE = "shared";
 
-export function mealKey(date: string, slotTypeId: string, memberScope: string): string {
-  return `${date}|${slotTypeId}|${memberScope}`;
-}
-
 /**
  * Meals of one date in planning order (PLN-11): shared meals in time order, then individual meals
  * per member (members in configuration order), each member's in time order.

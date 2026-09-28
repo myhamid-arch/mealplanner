@@ -11,9 +11,10 @@ import {
   SCORE_EPSILON,
 } from "./config.js";
 import { dayNumber, type Served } from "./filters.js";
-import { mealKey, mealsOfDate, type MealSpec } from "./meals.js";
+import { mealsOfDate, type MealSpec } from "./meals.js";
 import type { Candidate, Run } from "./run.js";
 import { scoreUpperBound } from "./bound.js";
+import { bySlug } from "./pool.js";
 import { economyOf, appealOf } from "./score.js";
 import type {
   PlanDish,
@@ -40,7 +41,11 @@ type Choice =
       relaxed: null;
     };
 
+/** `path`: the slugs of the state's dishes in meal order, the beam's tie-break key (W-17). */
 type State = { choices: Choice[]; served: Served[]; total: number; path: string };
+
+/** A locked meal's path step when its dish is not in the pool (every state takes the same step). */
+const LOCKED_PATH = "(locked)";
 
 export type DayOutput = {
   flags: PlanFlag[];
@@ -78,9 +83,11 @@ export function preScore(
     w.fairness,
   );
   const economy = economyOf(run.pool.coreOf(variants), window, {}).value;
+  // W-17 (R-73): keyed on natural keys only (the meal's date, slot key and member position, and
+  // the dish slug), so the plan does not depend on the database's surrogate ids.
   const jitter =
     PRE_SCORE_JITTER *
-    seededUnit(run.seed, `${mealKey(spec.date, spec.slot.id, spec.memberScope)}|${dish.id}`);
+    seededUnit(run.seed, `${run.mealKey(spec.date, spec.slot.id, spec.memberScope)}|${dish.slug}`);
   return w.appeal * appeal + w.ingredientEconomy * economy + jitter;
 }
 
@@ -90,7 +97,7 @@ export function rankedPool(run: Run, spec: MealSpec, history: readonly Served[])
   return run
     .eligiblePool(spec)
     .map((dish) => ({ dish, s: preScore(run, spec, dish, window) }))
-    .sort((a, b) => b.s - a.s || (a.dish.id < b.dish.id ? -1 : a.dish.id > b.dish.id ? 1 : 0))
+    .sort((a, b) => b.s - a.s || bySlug(a.dish, b.dish))
     .map((x) => x.dish);
 }
 
@@ -218,6 +225,10 @@ function plannedMeal(run: Run, choice: Choice & { locked: null }): PlannedMeal {
 
 type Meta = { date: string; attendees: readonly string[]; timeKey: string; mealKey: string };
 
+/**
+ * Beam order: summed score, then a seeded tie-break on the state's path of dish slugs (W-17), then
+ * the path itself; equal paths keep their expansion order (stable sort).
+ */
 function compareChildren(seed: number): (a: State, b: State) => number {
   return (a, b) =>
     b.total - a.total ||
@@ -247,7 +258,7 @@ function childOf(
     choices: [...state.choices, choice],
     served: [...state.served, served],
     total: state.total + score.total,
-    path: `${state.path}/${candidate.dish.id}`,
+    path: `${state.path}/${candidate.dish.slug}`,
   };
 }
 
@@ -412,13 +423,15 @@ export async function planDay(
 ): Promise<PlannedMeal[]> {
   opts.onProgress?.({ type: "day_started", date });
   const specs = mealsOfDate(run.cfg, date);
-  const lockedByKey = new Map(locked.map((m) => [mealKey(m.date, m.slotTypeId, m.memberScope), m]));
+  const lockedByKey = new Map(
+    locked.map((m) => [run.mealKey(m.date, m.slotTypeId, m.memberScope), m]),
+  );
   let states: State[] = [{ choices: [], served: [], total: 0, path: "" }];
 
   // Locked meals whose slot no longer exists for the date are kept too (PLN-13).
-  const specKeys = new Set(specs.map((s) => mealKey(date, s.slot.id, s.memberScope)));
+  const specKeys = new Set(specs.map((s) => run.mealKey(date, s.slot.id, s.memberScope)));
   for (const m of locked) {
-    const key = mealKey(m.date, m.slotTypeId, m.memberScope);
+    const key = run.mealKey(m.date, m.slotTypeId, m.memberScope);
     if (specKeys.has(key)) continue;
     const served = run.served(m.date, m.slotTypeId, m.memberScope, m.dishId, m.plates);
     states = states.map((s) => ({
@@ -432,7 +445,7 @@ export async function planDay(
   }
 
   for (const spec of specs) {
-    const key = mealKey(date, spec.slot.id, spec.memberScope);
+    const key = run.mealKey(date, spec.slot.id, spec.memberScope);
     const timeKey = run.timeKeyOf(spec.slot.id);
     const fixed = lockedByKey.get(key);
     if (fixed !== undefined) {
@@ -444,7 +457,7 @@ export async function planDay(
         ],
         served: [...s.served, served],
         total: s.total + fixed.scoreBreakdown.total,
-        path: `${s.path}/${fixed.dishId}`,
+        path: `${s.path}/${run.pool.dish(fixed.dishId)?.slug ?? LOCKED_PATH}`,
       }));
       continue;
     }

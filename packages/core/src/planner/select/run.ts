@@ -14,7 +14,7 @@ import {
   suitsSlot,
   type Served,
 } from "./filters.js";
-import { mealKey, type MealSpec } from "./meals.js";
+import { SHARED_SCOPE, type MealSpec } from "./meals.js";
 import { Household } from "./members.js";
 import { Pool, servedVariantIds } from "./pool.js";
 import { appealUpperBound } from "./bound.js";
@@ -78,6 +78,9 @@ export class Run {
   private readonly evaluatedByMeal = new Map<string, Candidate[]>();
   private readonly targets = new Map<string, Map<string, SlotTarget>>();
   private readonly weights = new Map<string, PlanWeights>();
+  /** Slot type id → slot key, and member id → position in `cfg.members` (W-17 natural keys). */
+  private readonly slotKeys: Map<string, string>;
+  private readonly memberRanks: Map<string, number>;
 
   constructor(
     readonly cfg: HouseholdConfig,
@@ -87,6 +90,28 @@ export class Run {
   ) {
     this.pool = new Pool(dishes, adjusters);
     this.household = new Household(cfg, this.pool);
+    this.slotKeys = new Map(cfg.slotTypes.map((s) => [s.id, s.key]));
+    this.memberRanks = new Map(cfg.members.map((m, i) => [m.id, i]));
+  }
+
+  /**
+   * W-17 (R-73): a meal's key from natural keys only: the date, the slot key, and `shared` or the
+   * member's position in `cfg.members` (archived members included, so positions stay put). The
+   * seeded jitter hashes it, meals of one slot are ordered by it (`laterThan`), and it identifies
+   * the meal in the search, so no surrogate id reaches a hash, a comparator or an identity. A slot
+   * or member missing from the configuration (a stale meal handed in by a core caller; the loader
+   * drops meals of unknown slots) has no natural key and keeps its id.
+   */
+  mealKey(date: string, slotTypeId: string, memberScope: string): string {
+    const slot = this.slotKeys.get(slotTypeId) ?? `id:${slotTypeId}`;
+    const rank = this.memberRanks.get(memberScope);
+    const scope =
+      memberScope === SHARED_SCOPE
+        ? SHARED_SCOPE
+        : rank === undefined
+          ? `id:${memberScope}`
+          : `member:${String(rank).padStart(4, "0")}`;
+    return `${date}|${slot}|${scope}`;
   }
 
   weightsOn(date: string): PlanWeights {
@@ -227,7 +252,7 @@ export class Run {
 
   /** The candidate's plates at the resolver's targets, with PLN-9 §6.4 merging (cached). */
   evaluate(meal: MealSpec, dish: PlanDish): Candidate {
-    const mealId = `${mealKey(meal.date, meal.slot.id, meal.memberScope)}|${meal.attendees.join(",")}`;
+    const mealId = `${this.mealKey(meal.date, meal.slot.id, meal.memberScope)}|${meal.attendees.join(",")}`;
     const key = `${mealId}|${dish.id}`;
     const hit = this.candidateCache.get(key);
     if (hit !== undefined) return hit;
@@ -289,7 +314,7 @@ export class Run {
   evaluated(meal: MealSpec): readonly Candidate[] {
     return (
       this.evaluatedByMeal.get(
-        `${mealKey(meal.date, meal.slot.id, meal.memberScope)}|${meal.attendees.join(",")}`,
+        `${this.mealKey(meal.date, meal.slot.id, meal.memberScope)}|${meal.attendees.join(",")}`,
       ) ?? []
     );
   }
@@ -393,7 +418,7 @@ export class Run {
     return {
       date,
       day: dayNumber(date),
-      mealKey: mealKey(date, slotTypeId, memberScope),
+      mealKey: this.mealKey(date, slotTypeId, memberScope),
       // 1.2.6 (R-62): the slot of the meal, for its repeat gap (OQ-8).
       slotKey: this.cfg.slotTypes.find((s) => s.id === slotTypeId)?.key ?? "",
       dishId,

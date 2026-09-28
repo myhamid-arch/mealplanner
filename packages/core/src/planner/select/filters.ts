@@ -12,6 +12,7 @@ export type Served = {
   date: string;
   /** `dayNumber(date)`. */
   day: number;
+  /** The meal's identity from natural keys (`Run.mealKey`: date, slot key, member position). */
   mealKey: string;
   /** The meal's slot key: its repeat gap (OQ-8). */
   slotKey: string;
@@ -28,7 +29,8 @@ export type Served = {
 
 /**
  * SPEC-Q-9 "previous meal": the later of two meals by slot time; equal times (individual meals of
- * one slot) are ordered by meal key, so the choice never depends on list order.
+ * one slot) are ordered by meal key, so the choice never depends on list order. The meal key holds
+ * the member's position, not the member's id, so neither does it depend on ids (W-17).
  */
 export function laterThan(a: Served, b: Served): boolean {
   return a.timeKey > b.timeKey || (a.timeKey === b.timeKey && a.mealKey > b.mealKey);

@@ -44,7 +44,9 @@ describe("W-7: slot targets sum to the day target (F1, full week)", () => {
   });
 });
 
-describe("W-7: the 2146 vs 2150 case (F1 seed 1)", () => {
+// 1.2.7 (R-73): the plan changed once with W-17's natural keys (2146 became 2147), so the case
+// asserts what W-7 is about, a stored sum that misses the day target, and prints the sum.
+describe("W-7: the stored sum vs 2150 case (F1 seed 1)", () => {
   let plan: PlanResult;
   beforeAll(async () => {
     plan = await planF1([...F1_WEEK]);
@@ -55,10 +57,12 @@ describe("W-7: the 2146 vs 2150 case (F1 seed 1)", () => {
       .filter((x) => x.meal.date === date && x.plate.memberId === memberId)
       .reduce((a, x) => a + (x.plate.target?.kcal ?? 0), 0);
 
-  it("reproduced: Sunday adult_a's plate targets sum to 2146, not the 2150 of his rest day", () => {
+  it("reproduced: Sunday adult_a's plate targets do not sum to the 2150 of his rest day", () => {
     const sunday = F1_WEEK[6];
     expect(profile("adult_a", sunday)).toMatchObject({ kind: "default", p: { kcal: 2150 } });
-    expect(Math.round(storedSum(sunday, "adult_a"))).toBe(2146);
+    const stored = Math.round(storedSum(sunday, "adult_a"));
+    console.log(`W-7: Sunday adult_a's stored plate targets sum to ${String(stored)} kcal`);
+    expect(stored).not.toBe(2150);
     // The resolver's own targets on those plates do sum to 2150.
     const resolver = platesOf(plan)
       .filter((x) => x.meal.date === sunday && x.plate.memberId === "adult_a")

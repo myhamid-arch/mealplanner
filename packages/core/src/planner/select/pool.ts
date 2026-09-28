@@ -100,6 +100,15 @@ export class Pool {
   }
 }
 
+/**
+ * W-17 (R-73): dishes in slug order, the planner's tie-break between dishes. Equal slugs (a household
+ * dish reusing a library slug) compare equal, and a stable sort keeps the input order, which the
+ * loader fixes from natural keys.
+ */
+export function bySlug(a: PlanDish, b: PlanDish): number {
+  return a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0;
+}
+
 /** "beef-mince-extra-lean" → "Beef mince extra lean"; "tex_mex" → "Tex mex". */
 export function readable(key: string): string {
   const words = key.replace(/[-_]+/g, " ").trim();
