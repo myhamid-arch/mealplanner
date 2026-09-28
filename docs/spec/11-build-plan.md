@@ -598,3 +598,14 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - The slot id in place of the slot key in `Run.mealKey`: G1 fails and G2 fails (4 assertions, service level and worker handler).
   - W-17 is closed.
 
+- **W-19 (the Docker images did not build; found by the architect preparing root R2, fixed by the architect).** A fresh `docker compose up --build`, the setup SC-1 to SC-5 are defined on (§6 root), failed on any machine. No gate had ever built the images; leaf 1.4.1's gates run the apps from the workspace.
+  - Both Dockerfiles used `node:22.12-bookworm-slim`, but the locked `@eslint/js@10.0.1` requires Node `^22.13.0`, so `pnpm install --frozen-lockfile` stopped with ERR_PNPM_UNSUPPORTED_ENGINE. CI and development run Node 22.22.
+  - The web image then failed in `next build`'s type check: `apps/web/test/api/plans-preview.int.test.ts` imports `apps/worker/dist`, and the web Dockerfile built only web's own dependencies.
+  - The Dockerfiles' `COPY --exclude=**/.next` did not keep `apps/web/.next/verify-*` (8.8 GB of gate output) out of the build context.
+  - Fix:
+    - both Dockerfiles use `node:22.22-bookworm-slim`;
+    - the web image also builds `@mealplanner/worker...`;
+    - a root `.dockerignore` excludes installs, build output and gate artefacts;
+    - the root `engines.node` floor rises to `>=22.13.0`.
+  - Verified by the architect: both images built from a clean export, the worker image built from a working copy with a context of 11.7 MB, and `docker compose up` on a fresh volume came up healthy. The worker migrated and seeded 62 dishes, 18 adjusters and 363 ingredients, `/` redirected to `/today`, and `/sign-in`, `/onboarding` and `/offline` returned 200.
+  - These are single-entry edits in merged 1.1.1's `package.json` and 1.4.1's Dockerfiles. Root R2 builds the images, so this cannot recur unseen.
