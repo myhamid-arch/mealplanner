@@ -19,6 +19,7 @@ import { Button } from "../../../components/ui/button";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { SkeletonBlock } from "../../../components/ui/skeleton";
 import { TabLinks } from "../../../components/ui/tab-links";
+import { withReadableDates } from "./readable-dates";
 
 type Entry = z.output<typeof ChangeLogEntryDto>;
 
@@ -79,9 +80,12 @@ function actorOf(
   }
 }
 
-/** W-14: the entry's resolved title, or its stored summary when it does not resolve. */
+/**
+ * W-14: the entry's resolved title, or its stored summary when it does not resolve, with its dates
+ * readable ("Mon 28 Sep", CP3 finding 4; the API's summary keeps ISO dates).
+ */
 function titleOf(entry: Entry & { type: "change_set" }): string {
-  return entry.detail?.title ?? entry.summary;
+  return entry.detail?.title ?? withReadableDates(entry.summary, new Date().getFullYear());
 }
 
 type Change = NonNullable<(Entry & { type: "change_set" })["detail"]>["changes"][number];

@@ -8,6 +8,7 @@ import { sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import * as c from "@mealplanner/api-contract/contract";
 import { newId } from "@mealplanner/db/schema";
+import { withReadableDates } from "../../app/(app)/changelog/readable-dates";
 import { DESCRIBED_OP_KINDS } from "../../lib/server/changes";
 import { callJson, startTestApp, type Caller, type TestApp } from "./support/app";
 import { createTestDatabase, type TestDatabase } from "./support/db";
@@ -182,7 +183,7 @@ const ISO_DATE = /\b\d{4}-\d{2}-\d{2}\b/;
 
 type Render = (e: Entry) => string;
 /** The change-log screen's title: the resolved title, or the stored summary. */
-const SCREEN: Render = (e) => e.detail?.title ?? e.summary;
+const SCREEN: Render = (e) => e.detail?.title ?? withReadableDates(e.summary, YEAR);
 /** Negative control: the pre-leaf title-only rendering. */
 const TITLE_ONLY: Render = (e) => e.summary;
 
@@ -262,10 +263,10 @@ describe("W-14 change-log subjects", () => {
     );
     const dated = entries.find((x) => x.id === ids.dated);
     expect(dated?.detail).toBeUndefined();
-    // September is "Sep" (the mockup), not ICU's en-GB "Sept".
-    expect(dated?.summary).toContain(" Sep");
-    expect(dated?.summary).not.toContain("Sept");
-    expect(dated?.summary).toBe(
+    // The screen reads it with readable dates; September is "Sep" (the mockup), not ICU's "Sept".
+    const shownDated = SCREEN(dated as Entry);
+    expect(shownDated).not.toContain("Sept");
+    expect(shownDated).toBe(
       `Re-solve plates from ${readable(`${String(YEAR)}-09-27`)} to ${readable(`${String(YEAR + 1)}-01-03`, true)}`,
     );
     const shown = entries.flatMap((e) => [
@@ -277,11 +278,26 @@ describe("W-14 change-log subjects", () => {
     expect(shown.filter((t) => ISO_DATE.test(t))).toEqual([]);
   });
 
-  it("negative control: the stored summary, as the log showed it before, has an ISO date", async () => {
+  it("the API's summary is the stored summary, byte for byte (CP3 round 2)", async () => {
+    const rows = await app.rt.db.execute(
+      sql`SELECT id, summary FROM change_set WHERE household_id = ${admin.householdId}`,
+    );
+    const stored = new Map(
+      (rows.rows as Array<{ id: string; summary: string }>).map((r) => [r.id, r.summary]),
+    );
+    const logged = entries.filter((e) => e.type === "change_set");
+    expect(logged.length).toBeGreaterThan(10);
+    expect(logged.filter((e) => e.summary !== stored.get(e.id)).map((e) => e.summary)).toEqual([]);
+    expect(ISO_DATE.test(entries.find((x) => x.id === ids.dated)?.summary ?? "")).toBe(true);
+  });
+
+  it("negative control: the round-1 summary (readable dates in the API) is not the stored text", async () => {
     const rows = await app.rt.db.execute(
       sql`SELECT summary FROM change_set WHERE id = ${ids.dated ?? ""}`,
     );
-    expect(ISO_DATE.test((rows.rows[0] as { summary: string }).summary)).toBe(true);
+    const stored = (rows.rows[0] as { summary: string }).summary;
+    expect(ISO_DATE.test(stored)).toBe(true);
+    expect(withReadableDates(stored, YEAR)).not.toBe(stored);
   });
 
   it("a vanished subject renders with the stored title and no detail", () => {

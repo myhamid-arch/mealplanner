@@ -35,6 +35,7 @@ import { afterChangeSet } from "./followups";
 import { enqueueJob } from "./jobs";
 import { ProblemError, notFound } from "./problem";
 import type { Runtime } from "./runtime";
+import { withReadableDates } from "../../app/(app)/changelog/readable-dates";
 import { iso, plain } from "./serialize";
 
 /** Undo availability; a conflicting change is named by its resolved title when it has one (W-14). */
@@ -89,7 +90,9 @@ export async function changeLog(
           actor: e.changeSet.actor,
           actorUserId: e.changeSet.actorUserId,
           source: e.changeSet.source,
-          summary: withReadableDates(e.changeSet.summary, year),
+          // The stored summary, byte for byte: data for API clients (ISO dates); the screen
+          // shows readable dates (CP3 round 2).
+          summary: e.changeSet.summary,
           areas: e.areas,
           appliedAt: e.changeSet.appliedAt.toISOString(),
           undoneAt: iso(e.changeSet.undoneAt),
@@ -206,24 +209,6 @@ const num = (v: unknown) =>
   typeof v === "number" ? String(Math.round(v * 100) / 100) : (str(v) ?? "none");
 const onOff = (v: unknown) => (v === true ? "on" : v === false ? "off" : (str(v) ?? "none"));
 const WEEKDAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-/**
- * CP3 finding 4: ISO dates in an entry's title or summary read as "Mon 28 Sep" (ChangeLog mockup),
- * with the year only when it is not the household's current year. Calendar dates (plan dates)
- * are not shifted between time zones; `year` is the current year in the household's time zone.
- */
-export function withReadableDates(text: string, year: number): string {
-  return text.replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g, (iso, y: string, m: string, d: string) => {
-    const date = new Date(`${iso}T00:00:00Z`);
-    const month = MONTHS[Number(m) - 1];
-    if (Number.isNaN(date.getTime()) || month === undefined) return iso;
-    // Fixed names, not the locale's: ICU's en-GB writes "Sept", the mockup "Sep".
-    const day = `${WEEKDAY_NAMES[(date.getUTCDay() + 6) % 7] ?? ""} ${String(Number(d))} ${month}`;
-    return Number(y) === year ? day : `${day} ${y}`;
-  });
-}
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /** A field's label and how its values read. */
 type Field = { label: string; show: (v: unknown) => string };
