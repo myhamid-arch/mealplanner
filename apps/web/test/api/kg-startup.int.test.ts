@@ -219,10 +219,17 @@ const HELD: Hook = async (rt, request, run) => {
  * dish sync waits on the uncommitted catalogue nodes; the pre-fix one fails at once).
  */
 function openTx(seen: { lockWait: boolean }): Hook {
+  // W-18: the dish job starts only once the catalogue nodes are written and not yet committed.
+  // Unhooked, it could finish before they were written, and no backend ever waited on a lock.
+  let written = false;
   return async (rt, request, run) => {
-    if (request.kind !== "catalogue") return run();
+    if (request.kind !== "catalogue") {
+      await waitFor(() => Promise.resolve(written), 30_000);
+      return run();
+    }
     await rt.graph.transaction(async (tx) => {
       await syncGraph(tx, rt.kgSource, request);
+      written = true;
       await waitFor(() => dishStarted(rt), 30_000);
       const until = Date.now() + 2_000;
       while (Date.now() < until && !(await dishAttemptEnded(rt))) {
