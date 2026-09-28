@@ -12,7 +12,7 @@ Scope: API, auth, worker, SSE, as specified in docs/spec (see 11-build-plan.md Â
 - [x] G2: a plan job runs in the worker and streams progress over SSE to a test client (ARC-7)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.1 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=d3cbf8d120eaf3246897d77f0239ff95ecaf2be31604b9180ee03fefeaadca37; exit=0; EXPECT=matched; output-sha256=0d9ea0905710afff06325f9d7f5ace3efbf0f0e50818a2ce00622754179cbe24; output-bytes=4719; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=d3cbf8d120eaf3246897d77f0239ff95ecaf2be31604b9180ee03fefeaadca37; exit=0; EXPECT=matched; output-sha256=3d1c453e9c8f4c0e6db569edd167ae88ffb8c204c254954377601c527907cdf0; output-bytes=4719; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: OpenAPI document generated and valid
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G3
