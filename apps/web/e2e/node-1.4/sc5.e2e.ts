@@ -62,30 +62,35 @@ test.afterAll(async () => {
   for (const stop of cleanup.reverse()) await stop();
 });
 
-/** axe-core in light and dark once the finite animations have ended: no serious or critical finding. */
+/** The serious and critical axe-core findings on the page as it is (the one filter every check uses). */
+async function axeFindings(page: Page): Promise<string[]> {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined)),
+    ),
+  );
+  const result = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+    .analyze();
+  return result.violations
+    .filter((v) => v.impact === "serious" || v.impact === "critical")
+    .map(
+      (v) =>
+        `${v.id} (${String(v.impact)}): ${v.nodes
+          .map((n) => n.target.join(" "))
+          .slice(0, 3)
+          .join(" | ")}`,
+    );
+}
+
+/** axe-core in light and dark: no serious or critical finding. */
 async function axe(page: Page, where: string): Promise<void> {
   for (const colorScheme of ["light", "dark"] as const) {
     await page.emulateMedia({ colorScheme });
-    await page.evaluate(() =>
-      Promise.all(
-        document
-          .getAnimations()
-          .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
-          .map((a) => a.finished.catch(() => undefined)),
-      ),
-    );
-    const result = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .analyze();
-    const bad = result.violations
-      .filter((v) => v.impact === "serious" || v.impact === "critical")
-      .map(
-        (v) =>
-          `${v.id} (${String(v.impact)}): ${v.nodes
-            .map((n) => n.target.join(" "))
-            .slice(0, 3)
-            .join(" | ")}`,
-      );
+    const bad = await axeFindings(page);
     measure({ check: "axe", where, colorScheme, serious: bad.length });
     expect(bad, `${where} (${colorScheme})`).toEqual([]);
   }
@@ -227,8 +232,9 @@ for (const vp of VIEWPORTS) {
         unitSystem: household.unitSystem,
         meals: day?.meals.length ?? 0,
       });
-      expect(steps.size).toBeGreaterThan(0);
-      expect(steps.size).toBeLessThanOrEqual(5);
+      // After the fifth question, "See what I worked out" led to the summary (asserted above):
+      // exactly five distinct question screens came before it.
+      expect(steps.size).toBe(5);
       expect(household.timezone).toBe("Asia/Dubai");
       expect(household.countryCode).toBe("AE");
       expect(household.unitSystem).toBe("metric");
@@ -257,14 +263,34 @@ for (const vp of VIEWPORTS) {
     });
 
     test(`SC-5 the cook sheet at ${vp.name} px`, async () => {
-      await page.goto(`/kitchen?date=${hh.date}`);
+      // The day's shared dinner as the API plans it: its card (by its own heading) shows the dish
+      // and the batch it makes in grams, as the plan says (finding 9).
+      const sheet = await json<{
+        meals: {
+          planMealId: string;
+          dishName: string;
+          batches: { totalCookedG: number }[];
+        }[];
+      }>(page, `/api/v1/cook-sheets/${hh.date}`);
+      const dinner = sheet.meals.find((m) => m.planMealId === hh.dinnerId);
+      const batch = dinner?.batches[0];
+      expect(dinner?.dishName).toBe(hh.dinnerName);
+      expect(batch).toBeDefined();
+      const makes = `makes ${String(Math.round(batch?.totalCookedG ?? 0))} g`;
+      await page.goto(`/kitchen?date=${hh.date}&meal=${hh.dinnerId}`);
       await expect(page.getByRole("heading", { name: "Plating table" }).first()).toBeVisible({
         timeout: 60_000,
       });
-      const text = (await page.locator("main").textContent()) ?? "";
-      const quantities = text.match(/\d[\d,.]*\s?(?:kg|g)\b/g) ?? [];
-      measure({ check: "cooksheet", width: vp.name, quantities: quantities.length });
-      expect(quantities.length).toBeGreaterThan(0);
+      const card = page
+        .getByTestId("cook-meal")
+        .filter({
+          visible: true,
+          has: page.getByRole("heading", { level: 2, name: hh.dinnerName, exact: true }),
+        })
+        .first();
+      await expect(card).toBeVisible();
+      await expect(card).toContainText(makes);
+      measure({ check: "cooksheet", width: vp.name, dish: hh.dinnerName, makes });
       await axe(page, `cook sheet at ${vp.name}`);
     });
 
@@ -310,15 +336,14 @@ for (const vp of VIEWPORTS) {
       const entry = log2.entries.find((e) => e.id === changeSetId);
       expect(entry?.source).toBe("proposal_accept");
       await page.goto("/changelog");
-      const badge = page.getByText(/^Proposal accepted by you$/);
-      await expect(badge.first()).toBeVisible({ timeout: 60_000 });
+      // Found by the change set's id (R-70 amendment 1, finding 12): no title or badge text.
+      await expect(page.getByTestId(`log-${changeSetId}`)).toBeVisible({ timeout: 60_000 });
       await axe(page, `change log at ${vp.name}`);
       measure({
         check: "chat",
         width: vp.name,
         changeSetId,
         source: entry?.source,
-        badges: await badge.count(),
       });
       expect(model.failures, model.failures.join("\n")).toEqual([]);
     });
@@ -342,11 +367,13 @@ test("SC-5 the recorded model answered every request, and no live call was made"
 });
 
 test("negative control: axe reports a known-bad page", async ({ page }) => {
+  // Only serious findings (no critical one): an empty link name, low contrast, no title. The same
+  // helper as every real check reads it, so narrowing its filter to critical makes this fail.
   await page.setContent(
-    `<html lang="en"><body><main><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw="><button></button><a href="#"></a></main></body></html>`,
+    `<html lang="en"><head></head><body><main><a href="/x"></a><p style="color:#bbbbbb;background:#ffffff">Too faint to read</p></main></body></html>`,
   );
-  const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
-  const bad = result.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
-  measure({ check: "axe-control", serious: bad.length, ids: bad.map((v) => v.id) });
-  expect(bad.length).toBeGreaterThan(0);
+  const bad = await axeFindings(page);
+  const ids = bad.map((line) => line.split(" ")[0]);
+  measure({ check: "axe-control", serious: bad.length, ids });
+  expect(ids).toEqual(expect.arrayContaining(["link-name", "color-contrast"]));
 });

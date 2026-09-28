@@ -26,6 +26,7 @@ import {
   sc2Aggregate,
   variantNutrients,
   type Flag,
+  type StoredMeal,
 } from "./engine-measure";
 import { requiredEnv, signInInProcess, startWorker } from "./support";
 
@@ -79,11 +80,14 @@ async function jobOutcome(pool: pg.Pool, jobId: string, ms = 900_000) {
     );
     const status = rows[0]?.status;
     if (status === "succeeded") {
-      const { rows: done } = await pool.query<{ payload: { result?: { flags?: Flag[] } } }>(
+      // The `done` event's payload is the job's result (apps/worker/src/runner.ts).
+      const { rows: done } = await pool.query<{ payload: { flags?: unknown } }>(
         "SELECT payload FROM job_event WHERE job_id = $1 AND type = 'done' ORDER BY seq DESC LIMIT 1",
         [jobId],
       );
-      return done[0]?.payload.result ?? null;
+      const flags = done[0]?.payload.flags;
+      if (!Array.isArray(flags)) throw new Error(`job ${jobId}: its result carries no flags list`);
+      return { flags: flags as Flag[] };
     }
     if (status === "failed" || status === "cancelled")
       throw new Error(`job ${jobId} ${status}: ${JSON.stringify(rows[0]?.error)}`);
@@ -149,7 +153,7 @@ async function planRun(seed: number, economy: number): Promise<Run> {
         name,
         url,
         householdId: queued.householdId,
-        flags: result?.flags ?? [],
+        flags: result.flags,
         seconds: Math.round((Date.now() - started) / 1000),
         drop,
       };
@@ -253,6 +257,8 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
       meals: rows[0]?.meals,
       plates: rows[0]?.plates,
       seconds: runs.map((r) => r.seconds),
+      flags: k.main.flags.length,
+      flagKinds: [...new Set(k.main.flags.map((f) => f.kind))],
     });
   });
 
@@ -265,21 +271,24 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
       cfg,
       F1_WEEK,
       meals,
-      await variantNutrients(db, ctx, meals),
+      await variantNutrients(k.pool, meals),
       k.main.flags,
     );
     measure({ check: "sc1", ...result, failures: result.failures.slice(0, 20) });
     expect(result.failures).toEqual([]);
     expect(result.total).toBeGreaterThan(0);
     expect(result.inTolerance + result.flagged + result.noPlateFlagged).toBe(result.total);
-    expect(result.maxStoredDiff).toBeLessThanOrEqual(0.001);
+    expect(result.storedDrift).toBe(0);
   });
 
   it("N3 the OQ-8 repeat gaps hold on the persisted plan", async () => {
     const k = kept();
-    const result = checkRepeatGaps(await readPlan(k.pool, k.main.householdId, F1_WEEK));
+    const result = checkRepeatGaps(
+      await readPlan(k.pool, k.main.householdId, F1_WEEK),
+      k.main.flags,
+    );
     measure({ check: "gaps", ...result });
-    expect(result.violations).toEqual([]);
+    expect(result.violations, result.violations.join("\n")).toEqual([]);
     expect(result.pairs).toBeGreaterThan(0);
   });
 
@@ -337,19 +346,20 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
       cfg,
       F1_WEEK,
       meals,
-      await variantNutrients(db, ctx, meals),
+      await variantNutrients(k.pool, meals),
       k.main.flags,
     );
     measure({
       check: "sc1-control",
       failures: result.failures.length,
       maxStoredDiff: result.maxStoredDiff,
+      storedDrift: result.storedDrift,
     });
     expect(result.failures.some((f) => f.includes("out of tolerance and not flagged"))).toBe(true);
-    expect(result.maxStoredDiff).toBeGreaterThan(0.001);
+    expect(result.storedDrift).toBeGreaterThan(0);
   });
 
-  it("N3 negative control: a repeated dish inside the gap fails the repeat check", async () => {
+  it("N3 negative control: a repeated dish inside the gap fails the repeat check, also when every meal says relaxed without a persisted flag", async () => {
     const k = kept();
     const meals = await readPlan(k.pool, k.main.householdId, F1_WEEK);
     // A dinner two days after another dinner gets that dinner's dish (both are main meals: gap 7).
@@ -361,9 +371,65 @@ describe("node-1.2 N3 engine (worker plan.generate)", () => {
       first?.dishId,
       second?.id,
     ]);
-    const result = checkRepeatGaps(await readPlan(k.pool, k.main.householdId, F1_WEEK));
-    measure({ check: "gaps-control", violations: result.violations.length });
-    expect(result.violations.length).toBeGreaterThan(0);
+    const tampered = await readPlan(k.pool, k.main.householdId, F1_WEEK);
+    const plain = checkRepeatGaps(tampered, k.main.flags);
+    // Every meal marked relaxed, with no persisted flag behind it (pre-CP2 finding 2).
+    const allRelaxed = tampered.map((m) => ({ ...m, frequencyRelaxed: "marked by the control" }));
+    const unbacked = checkRepeatGaps(allRelaxed, k.main.flags);
+    // Soundness: the same marks backed by persisted flags with a reason are accepted.
+    const backing = allRelaxed.map((m) => ({
+      kind: "frequency_relaxed",
+      date: m.date,
+      slotKey: m.slotKey,
+      memberId: m.memberScope === "shared" ? null : m.memberScope,
+      reason: "control",
+    }));
+    const backed = checkRepeatGaps(allRelaxed, [...k.main.flags, ...backing]);
+    measure({
+      check: "gaps-control",
+      violations: plain.violations.length,
+      unbackedViolations: unbacked.violations.length,
+      backedViolations: backed.violations.length,
+    });
+    expect(plain.violations.length).toBeGreaterThan(0);
+    expect(unbacked.violations.length).toBeGreaterThan(0);
+    expect(backed.violations).toEqual([]);
+  });
+
+  it("N3 negative control: OQ-8 at its boundaries (main 6 and short 3 fail, main 7 and short 4 pass)", () => {
+    const meal = (id: string, date: string, slotKey: string): StoredMeal => ({
+      id,
+      date,
+      slotTypeId: slotKey,
+      slotKey,
+      dishId: "dish",
+      memberScope: "shared",
+      locked: false,
+      attendees: ["member"],
+      frequencyRelaxed: null,
+      plates: [],
+      batches: [],
+    });
+    const pair = (slotKey: string, apart: number) =>
+      checkRepeatGaps(
+        [
+          meal("a", "2026-10-01", slotKey),
+          meal("b", `2026-10-${String(1 + apart).padStart(2, "0")}`, slotKey),
+        ],
+        [],
+      ).violations.length;
+    const figures = {
+      main6: pair("dinner", 6),
+      main7: pair("dinner", 7),
+      short3: pair("snack", 3),
+      short4: pair("snack", 4),
+      mixed4: checkRepeatGaps(
+        [meal("a", "2026-10-01", "snack"), meal("b", "2026-10-05", "lunch")],
+        [],
+      ).violations.length,
+    };
+    measure({ check: "gaps-boundary", ...figures });
+    expect(figures).toEqual({ main6: 1, main7: 0, short3: 1, short4: 0, mixed4: 1 });
   });
 
   it("N3 negative control: SC-2 measured against itself (0 %) fails", () => {

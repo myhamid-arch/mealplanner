@@ -7,6 +7,10 @@
 //     that depends on them typechecks against their dist/ declarations; the api-contract contract
 //     tests pass. Negative control: in a disposable copy, the published `PlanResult.flags` of the
 //     planner (dist declaration) is renamed and @mealplanner/db's typecheck fails.
+//     The api-contract contract tests are apps/web's test/api/g1-contract-matrix.int.test.ts and
+//     g3-openapi.int.test.ts: packages/api-contract has no tests of its own (pre-CP2 finding 13).
+//     Every run builds the branch packages (tsc, into a private directory) and requires the
+//     declarations they emit to equal the published ones in dist/ (finding 10).
 // N3  apps/web/test/node/engine.node.ts on a fresh database of the gate's own (migrated from zero,
 //     catalogue, F1), used as the template of one database per plan run (SPEC-Q-5). Each run queues
 //     `plan.generate` through the API route and the real worker runs it. From the persisted plan of
@@ -58,7 +62,8 @@ const TESTS = [
   "N3 day 1's cook sheet from the persisted plan: raw totals equal the sum of plate raw equivalents",
   "N3 SC-2 over seeds 1–10 through the job path: median ≥ 8 %, every seed ≥ 0 %",
   "N3 negative control: persisted plate grams tampered off tolerance fail SC-1",
-  "N3 negative control: a repeated dish inside the gap fails the repeat check",
+  "N3 negative control: a repeated dish inside the gap fails the repeat check, also when every meal says relaxed without a persisted flag",
+  "N3 negative control: OQ-8 at its boundaries (main 6 and short 3 fail, main 7 and short 4 pass)",
   "N3 negative control: SC-2 measured against itself (0 %) fails",
 ];
 
@@ -68,9 +73,9 @@ const sc1Ok = (m) =>
   m.total > 0 &&
   m.failures.length === 0 &&
   m.inTolerance + m.flagged + m.noPlateFlagged === m.total &&
-  m.maxStoredDiff <= 0.001;
+  m.storedDrift === 0;
 const gapsOk = (m) => m !== undefined && m.pairs > 0 && m.violations.length === 0;
-const cookOk = (m) => m !== undefined && m.batches > 0 && m.failures.length === 0;
+const cookOk = (m) => m !== undefined && m.batches > 0 && m.lines > 0 && m.failures.length === 0;
 const median = (xs) => {
   const s = [...xs].sort((a, b) => a - b);
   const mid = Math.floor(s.length / 2);
@@ -87,7 +92,7 @@ function recheck(report, m) {
   const one = (check) => m.find((r) => r.check === check);
   const runs = one("runs");
   console.log(
-    `       measured: ${String(runs?.runs)} plan.generate runs by the worker (${(runs?.seconds ?? []).join(", ")} s); seed 1 persisted ${String(runs?.days)} days, ${String(runs?.meals)} meals, ${String(runs?.plates)} plates`,
+    `       measured: ${String(runs?.runs)} plan.generate runs by the worker (${(runs?.seconds ?? []).join(", ")} s); seed 1 persisted ${String(runs?.days)} days, ${String(runs?.meals)} meals, ${String(runs?.plates)} plates, and its job result ${String(runs?.flags)} flag(s) (${(runs?.flagKinds ?? []).join(", ") || "none"})`,
   );
   report.check(
     runs?.runs === 20 && runs?.days === 7,
@@ -99,7 +104,7 @@ function recheck(report, m) {
     `       measured SC-1: ${String(sc1?.inTolerance)} of ${String(sc1?.total)} targeted member-meals in tolerance, ${String(sc1?.flagged)} flagged with a reason, ${String(sc1?.noPlateFlagged)} flagged without a plate, ${String(sc1?.failures?.length)} unflagged misses; ${String(sc1?.memberDays)} member-days`,
   );
   console.log(
-    `       measured: largest |recomputed − stored per-plate total| ${String(sc1?.maxStoredDiff)} (${String(sc1?.maxStoredDiffAt)})`,
+    `       measured: largest |recomputed − stored per-plate total| ${String(sc1?.maxStoredDiff)} (${String(sc1?.maxStoredDiffAt)}); ${String(sc1?.storedDrift)} plate(s) beyond the 0.001-per-100 g rounding of the nutrition cache`,
   );
   report.check(
     sc1Ok(sc1),
@@ -110,8 +115,8 @@ function recheck(report, m) {
     "negative control of the re-check: an unflagged miss is rejected",
   );
   report.check(
-    !sc1Ok({ ...sc1, maxStoredDiff: 0.5 }),
-    "negative control of the re-check: a stored total 0.5 off its items is rejected",
+    !sc1Ok({ ...sc1, storedDrift: 1 }),
+    "negative control of the re-check: one plate whose stored total drifts from its items is rejected",
   );
 
   const gaps = one("gaps");
@@ -132,6 +137,10 @@ function recheck(report, m) {
   report.check(
     !cookOk({ ...cook, failures: ["x"] }),
     "negative control of the re-check: one differing line is rejected",
+  );
+  report.check(
+    !cookOk({ ...cook, lines: 0 }),
+    "negative control of the re-check: a sheet with no ingredient lines is rejected",
   );
 
   const sc2 = one("sc2");
@@ -163,9 +172,21 @@ function recheck(report, m) {
       !sc1Ok({ ...sc1, failures: new Array(tampered?.failures ?? 0).fill("x") }),
     "the tampered persisted plate fails SC-1",
   );
+  const gc = one("gaps-control");
+  console.log(
+    `       measured (negative control): with every meal marked relaxed and no persisted flag, ${String(gc?.unbackedViolations)} violation(s); with backing flags, ${String(gc?.backedViolations)}`,
+  );
   report.check(
-    one("gaps-control")?.violations > 0,
-    "the repeated dish inside the gap fails the repeat check",
+    gc?.violations > 0 && gc?.unbackedViolations > 0 && gc?.backedViolations === 0,
+    "the repeated dish fails the repeat check, also when marked relaxed without a persisted flag",
+  );
+  const b = one("gaps-boundary");
+  console.log(
+    `       measured OQ-8 boundaries (violations): main at 6 days ${String(b?.main6)}, at 7 ${String(b?.main7)}; short at 3 ${String(b?.short3)}, at 4 ${String(b?.short4)}; snack then lunch at 4 ${String(b?.mixed4)}`,
+  );
+  report.check(
+    b?.main6 === 1 && b?.main7 === 0 && b?.short3 === 1 && b?.short4 === 0 && b?.mixed4 === 1,
+    "OQ-8 boundaries: 6 and 3 days fail, 7 and 4 pass, a mixed pair uses the larger gap",
   );
   report.check(one("sc2-control")?.self?.pass === false, "SC-2 against itself fails");
 }

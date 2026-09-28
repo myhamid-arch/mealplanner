@@ -130,3 +130,27 @@ The first API call after sign-in therefore changes that row. It is not part of t
   - The "Read as" chip row is `<div aria-live="polite" aria-label="Read as">` with no role. While it is empty (question 1 before anything is typed), axe reports `aria-prohibited-attr` as serious.
   - The fix is `role="group"` or no `aria-label`.
   - 1.4.3's G2 scans question 1 only after it is filled, so it does not see this.
+
+## Pre-CP2 findings (architect, on 0b3e881) and what changed
+
+1. **OQ-8 constants.** The checker hard-codes the owner's gaps: day difference ≥ 7 for main meals, ≥ 4 for snack and workout slots, and the larger gap of the pair. Boundary controls check that a main pair at 6 days and a short pair at 3 fail, and 7 and 4 pass.
+2. **Relaxed repeats.** A repeat inside the gap passes only when the later meal's relaxation is persisted as a `frequency_relaxed` flag with a reason (date, slot, scope). A control marks every meal relaxed with no flag and must fail; the same marks with backing flags pass.
+   - This finding surfaced a defect in my test. The job's flags were read from `payload.result`, but the `done` event's payload is the result itself, so every run's flags read as empty. The flags are now read from the payload, and the test fails when a job result carries no flags list.
+3. **Independent nutrition.** Per-100 g values come by SQL from `dish_nutrition_cache`, not through `loadPlanPool`.
+   - The cache is written by the catalogue loader's nutrition recompute and stores values to 0.001.
+   - Every comparison therefore allows exactly the rounding bound, Σ cooked g × 0.0005 / 100 per plate, accumulated over the member-day for the R-28 window. Measured on the merged head: largest difference 0.0028 g, 0 plates beyond the bound.
+   - A planner that scales its per-100 g values by 1.1 breaks the stored-total check by orders of magnitude more than that bound.
+4. **Axe control.** The known-bad page goes through the same helper as every real check. It has only serious findings (empty link name, low contrast), so narrowing the helper to critical-only makes the control fail.
+5. **Onboarding.** The spec asserts that "See what I worked out" after question 5 lands on the summary, and counts exactly 5 distinct question screens. The "six questions" re-check is removed.
+6. **SC-3.** "Before" is measured before the first review. At least one other member must be on the meal.
+7. **get_preferences.** The tool result sent to the model must carry the dish and `-0.8`.
+8. **SC-4 control (node-1.3).** The difference must be `member` rows only.
+9. **Cook sheets.**
+   - node-1.2 requires ingredient lines > 0.
+   - node-1.4 finds the shared dinner's card by its own heading. The card must show the batch as the API plans it ("makes N g").
+10. **N2 builds the branch packages on every run.** Each is compiled with its own tsconfig into a private directory. The declarations it emits must equal the published ones in `dist/`, which is rebuilt under the build lock only when they differ.
+11. **Flags need a reason.** A flag without a reason no longer excuses a missing plate or a miss.
+12. **Change-log text.** The change-log entry is found by `data-testid="log-<id>"` and its source, not by badge or title text.
+13. **Contract tests.** N2's api-contract contract tests are apps/web's `g1-contract-matrix` and `g3-openapi` suites, because `packages/api-contract` has no tests of its own. This is stated in each node script's header and here. The ledgers' lines are the architect's.
+
+**Observation, not a gate issue.** Three node-1.2 runs of the same F1 week at seed 1, on the same catalogue, persisted different plans: 10, 13 and 14 same-dish pairs. One of them relaxed a breakfast repeat to 6 days. Plan generation through the job is not reproducible run to run. N3 judges each run on its own terms.

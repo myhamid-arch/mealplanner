@@ -1,11 +1,13 @@
 // node-1.2 N3 measurements over a persisted plan (R-69, R-70): everything is read back from the
 // database the worker wrote (plan_day, plan_meal, plate, plate_item, cook_batch, job), never from
-// the planner in memory. Per-100 g values come from the household's dish pool as the database
-// describes it (`loadPlanPool`), and the targets from the stored household configuration.
-import { resolveSlotTargets, selectConfig, type PlanDish } from "@mealplanner/core/planner";
+// the planner in memory. Per-100 g values are read by SQL from `dish_nutrition_cache` (written by
+// the catalogue loader's nutrition recompute), not through the planner's loader (`loadPlanPool`),
+// so a planner that miscomputes nutrition disagrees with this checker (pre-CP2 finding 3). The
+// targets come from the stored household configuration.
+import { resolveSlotTargets } from "@mealplanner/core/planner";
 import type { HouseholdConfig, HouseholdContext } from "@mealplanner/core/types";
 import { loadHouseholdConfig } from "@mealplanner/db/services/config";
-import { cookSheetFor, loadPlanPool } from "@mealplanner/db/services/plans";
+import { cookSheetFor } from "@mealplanner/db/services/plans";
 import type pg from "pg";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 
@@ -31,6 +33,7 @@ export interface StoredMeal {
   slotTypeId: string;
   slotKey: string;
   dishId: string;
+  memberScope: string;
   locked: boolean;
   attendees: string[];
   frequencyRelaxed: string | null;
@@ -58,10 +61,11 @@ export async function readPlan(
     slot_type_id: string;
     slot_key: string;
     dish_id: string;
+    member_scope: string;
     locked: boolean;
     score_breakdown: { meal?: { attendees?: string[]; frequencyRelaxed?: string | null } };
   }>(
-    `SELECT m.id, d.date::text AS date, m.slot_type_id, s.key AS slot_key, m.dish_id, m.locked,
+    `SELECT m.id, d.date::text AS date, m.slot_type_id, s.key AS slot_key, m.dish_id, m.member_scope, m.locked,
             m.score_breakdown
        FROM plan_meal m
        JOIN plan_day d ON d.id = m.plan_day_id
@@ -110,6 +114,7 @@ export async function readPlan(
     slotTypeId: m.slot_type_id,
     slotKey: m.slot_key,
     dishId: m.dish_id,
+    memberScope: m.member_scope,
     locked: m.locked,
     attendees: m.score_breakdown.meal?.attendees ?? [],
     frequencyRelaxed: m.score_breakdown.meal?.frequencyRelaxed ?? null,
@@ -141,26 +146,53 @@ export async function readPlan(
   }));
 }
 
-/** Per-100 g cooked nutrients of every variant the plan uses, from the database's dish pool. */
+/** Per-100 g cooked nutrients of every variant the plan uses, read from `dish_nutrition_cache`. */
 export async function variantNutrients(
-  db: NodePgDatabase,
-  ctx: HouseholdContext,
+  pool: pg.Pool,
   meals: readonly StoredMeal[],
 ): Promise<Map<string, Totals>> {
-  const pool = await loadPlanPool(db, ctx, { includeDishIds: meals.map((m) => m.dishId) });
-  const out = new Map<string, Totals>();
-  const add = (d: PlanDish) => {
-    for (const c of d.components)
-      for (const v of c.variants)
-        out.set(v.id, Object.fromEntries(NUTRIENTS.map((k) => [k, v.per100g[k]])) as Totals);
-  };
-  for (const d of pool.byId.values()) add(d);
-  return out;
+  const ids = [
+    ...new Set(meals.flatMap((m) => m.plates.flatMap((p) => p.items.map((i) => i.variantId)))),
+  ];
+  const { rows } = await pool.query<{
+    variant_id: string;
+    kcal: string;
+    protein: string;
+    carbs: string;
+    fat: string;
+    sat_fat: string;
+    fibre: string;
+  }>(
+    `SELECT variant_id, kcal::text, protein::text, carbs::text, fat::text, sat_fat::text, fibre::text
+       FROM dish_nutrition_cache WHERE variant_id = ANY($1::uuid[])`,
+    [ids],
+  );
+  return new Map(
+    rows.map((r) => [
+      r.variant_id,
+      {
+        kcal: Number(r.kcal),
+        protein: Number(r.protein),
+        carbs: Number(r.carbs),
+        fat: Number(r.fat),
+        satFat: Number(r.sat_fat),
+        fibre: Number(r.fibre),
+      },
+    ]),
+  );
 }
+
+/**
+ * `dish_nutrition_cache` stores per-100 g values to 0.001 (numeric scale 3), so a recomputed plate
+ * total can differ from the planner's unrounded one by at most Σ cooked g × 0.0005 / 100 per
+ * nutrient: the bound every comparison below allows, and nothing more.
+ */
+const CACHE_HALF_STEP = 0.0005;
 
 function recompute(plate: StoredPlate, per100g: Map<string, Totals>) {
   const n = Object.fromEntries(NUTRIENTS.map((k) => [k, 0])) as Totals;
   const missing: string[] = [];
+  const bound = (plate.items.reduce((g, i) => g + i.cookedG, 0) * CACHE_HALF_STEP) / 100 + EPS;
   for (const item of plate.items) {
     const v = per100g.get(item.variantId);
     if (v === undefined) {
@@ -169,7 +201,7 @@ function recompute(plate: StoredPlate, per100g: Map<string, Totals>) {
     }
     for (const k of NUTRIENTS) n[k] += (v[k] * item.cookedG) / 100;
   }
-  return { n, missing };
+  return { n, missing, bound };
 }
 
 interface Target {
@@ -194,6 +226,8 @@ export interface Sc1Result {
   /** Largest |recomputed − stored actual| over every plate and nutrient (R-70 amendment 2). */
   maxStoredDiff: number;
   maxStoredDiffAt: string;
+  /** Plates whose stored total differs from their items by more than the rounding bound. */
+  storedDrift: number;
   memberDays: number;
 }
 
@@ -219,27 +253,38 @@ export function evaluateSc1(
     failures: [],
     maxStoredDiff: 0,
     maxStoredDiffAt: "",
+    storedDrift: 0,
     memberDays: 0,
   };
   // The stored totals of every plate (targeted or not) against its items.
   for (const meal of meals)
     for (const plate of meal.plates) {
-      const { n, missing } = recompute(plate, per100g);
+      const { n, missing, bound } = recompute(plate, per100g);
       for (const v of missing)
         r.failures.push(`${meal.date} ${meal.slotKey}: variant ${v} unknown`);
+      let drifted = false;
       for (const k of NUTRIENTS) {
         const stored = plate.actual[k];
         const diff = typeof stored === "number" ? Math.abs(stored - n[k]) : Infinity;
+        if (diff > bound) drifted = true;
         if (diff > r.maxStoredDiff) {
           r.maxStoredDiff = diff;
           r.maxStoredDiffAt = `${meal.date} ${meal.slotKey} ${plate.memberId} ${k}`;
         }
       }
+      if (drifted) {
+        r.storedDrift += 1;
+        r.failures.push(
+          `${meal.date} ${meal.slotKey} ${plate.memberId}: stored total differs from its items by more than ${bound.toFixed(4)}`,
+        );
+      }
     }
+  // A flag counts only with a persisted reason (pre-CP2 finding 11).
+  const reasoned = flags.filter((f) => f.reason.trim() !== "");
   const flagKey = (f: Flag) => `${f.date}|${String(f.slotKey)}|${String(f.memberId)}`;
-  const memberFlags = new Set(flags.filter((f) => f.memberId !== null).map(flagKey));
+  const memberFlags = new Set(reasoned.filter((f) => f.memberId !== null).map(flagKey));
   const mealFlags = new Set(
-    flags
+    reasoned
       .filter((f) => f.memberId === null && f.slotKey !== null)
       .map((f) => `${f.date}|${String(f.slotKey)}`),
   );
@@ -258,6 +303,7 @@ export function evaluateSc1(
         .sort((a, b) => slotOrder(a.slotTypeId).localeCompare(slotOrder(b.slotTypeId)));
       const tolKcal = cfg.tolerances.find((t) => t.memberId === member)?.kcal ?? 50;
       let d = 0;
+      let dBound = 0;
       let band = 0;
       let total = 0;
       let dayFlagged = false;
@@ -280,19 +326,21 @@ export function evaluateSc1(
           continue;
         }
         const { meal, plate } = hit;
-        const { n } = recompute(plate, per100g);
+        const { n, bound } = recompute(plate, per100g);
+        const tolEps = bound + EPS;
         const devs: Record<string, number> = {};
         for (const m of MACROS) devs[m] = macroOf(n, m, t.carbBasis) - t[m];
         const windowKcal = t.kcal - d;
         devs.kcal = n.kcal - windowKcal;
         const inTol =
-          MACROS.every((m) => Math.abs(devs[m] ?? Infinity) <= t.tol[m] + EPS) &&
-          Math.abs(devs.kcal) <= band + EPS &&
-          (t.satFatMax === undefined || n.satFat <= t.satFatMax + EPS);
+          MACROS.every((m) => Math.abs(devs[m] ?? Infinity) <= t.tol[m] + tolEps) &&
+          Math.abs(devs.kcal) <= band + tolEps + dBound &&
+          (t.satFatMax === undefined || n.satFat <= t.satFatMax + tolEps);
         const stored = plate.target as unknown as Target;
         if (
           !meal.locked &&
-          (Math.abs(stored.kcal - windowKcal) > 1e-6 || Math.abs(stored.tol.kcal - band) > 1e-6)
+          (Math.abs(stored.kcal - windowKcal) > dBound + EPS ||
+            Math.abs(stored.tol.kcal - band) > 1e-6)
         )
           r.failures.push(
             `${key}: stored target ${String(stored.kcal)}±${String(stored.tol.kcal)} is not the R-28 window ${windowKcal.toFixed(1)}±${String(band)}`,
@@ -309,6 +357,7 @@ export function evaluateSc1(
         if (plate.fitStatus !== "in_tolerance" && !isFlagged)
           r.failures.push(`${key}: status ${plate.fitStatus} without a flag`);
         d += n.kcal - t.kcal;
+        dBound += bound;
         total += n.kcal;
       }
       const target = own.reduce((s, t) => s + t.kcal, 0);
@@ -322,7 +371,9 @@ export function evaluateSc1(
         );
       if (
         dayFlagged &&
-        !flags.some((f) => f.kind === "member_day_kcal" && f.date === date && f.memberId === member)
+        !reasoned.some(
+          (f) => f.kind === "member_day_kcal" && f.date === date && f.memberId === member,
+        )
       )
         r.failures.push(`${date} ${member}: member-day with a flagged slot is not flagged`);
     }
@@ -334,11 +385,17 @@ function dayNumber(date: string): number {
   return Math.round(Date.parse(`${date}T00:00:00Z`) / 86_400_000);
 }
 
-/** OQ-8 (R-62/R-63): the repeat gap of a slot, and of a pair (the larger). */
+/**
+ * OQ-8 as the owner ruled it (R-62, R-63), written here rather than read from the planner's
+ * constants (pre-CP2 finding 1): a main meal repeats a dish only at a day difference of 7 or more,
+ * a snack or workout meal at 4 or more; a pair uses the larger gap of its two slots.
+ */
+export const OWNER_MAIN_GAP_DAYS = 7;
+export const OWNER_SHORT_GAP_DAYS = 4;
+export const OWNER_SHORT_SLOT_KEYS: readonly string[] = ["snack", "pre_workout", "post_workout"];
+
 export function repeatGap(slotKey: string): number {
-  return selectConfig.SHORT_GAP_SLOT_KEYS.includes(slotKey)
-    ? selectConfig.SHORT_MIN_GAP_DAYS
-    : selectConfig.MAIN_MIN_GAP_DAYS;
+  return OWNER_SHORT_SLOT_KEYS.includes(slotKey) ? OWNER_SHORT_GAP_DAYS : OWNER_MAIN_GAP_DAYS;
 }
 
 export interface GapResult {
@@ -348,11 +405,23 @@ export interface GapResult {
 }
 
 /**
- * Two meals serving the same dish to a shared attendee must be at least the pair's gap apart
- * (day difference), unless the later one records that frequency was relaxed.
+ * Two meals serving the same dish to a shared attendee must be at least the pair's gap apart (day
+ * difference). The only exception is a later meal whose relaxation the plan persisted as a
+ * `frequency_relaxed` flag with a reason (pre-CP2 finding 2); a meal marked relaxed without one is
+ * a violation.
  */
-export function checkRepeatGaps(meals: readonly StoredMeal[]): GapResult {
+export function checkRepeatGaps(meals: readonly StoredMeal[], flags: readonly Flag[]): GapResult {
   const r: GapResult = { pairs: 0, relaxed: 0, violations: [] };
+  const backed = (m: StoredMeal) =>
+    m.frequencyRelaxed !== null &&
+    flags.some(
+      (f) =>
+        f.kind === "frequency_relaxed" &&
+        f.date === m.date &&
+        f.slotKey === m.slotKey &&
+        f.memberId === (m.memberScope === "shared" ? null : m.memberScope) &&
+        f.reason.trim() !== "",
+    );
   const sorted = [...meals].sort((a, b) => a.date.localeCompare(b.date));
   for (let i = 0; i < sorted.length; i += 1)
     for (let j = i + 1; j < sorted.length; j += 1) {
@@ -368,12 +437,12 @@ export function checkRepeatGaps(meals: readonly StoredMeal[]): GapResult {
       const apart = dayNumber(b.date) - dayNumber(a.date);
       if (apart >= gap) continue;
       const later = apart === 0 ? [a, b] : [b];
-      if (later.some((m) => m.frequencyRelaxed !== null)) {
+      if (later.some(backed)) {
         r.relaxed += 1;
         continue;
       }
       r.violations.push(
-        `${a.dishId}: ${a.date} ${a.slotKey} and ${b.date} ${b.slotKey} are ${String(apart)} day(s) apart (gap ${String(gap)})`,
+        `${a.dishId}: ${a.date} ${a.slotKey} and ${b.date} ${b.slotKey} are ${String(apart)} day(s) apart (gap ${String(gap)})${later.some((m) => m.frequencyRelaxed !== null) ? ", relaxed without a persisted flag" : ""}`,
       );
     }
   return r;

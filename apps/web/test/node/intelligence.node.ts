@@ -75,6 +75,8 @@ let dishId: string;
 let planMealId: string;
 let proposalId: string;
 let conversationId = "";
+/** SC-3's figures before the first review (set by the negative-control test, which runs first). */
+let before: { scoreBefore: number; appealBefore: number; others: string[]; othersBefore: number[] };
 /** Stops what the tests started, last first. */
 const cleanup: (() => Promise<void>)[] = [];
 const snapshot = () => snapshotDatabase(database.pool, EXCLUDED);
@@ -231,6 +233,20 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
   });
 
   it("N3 negative control: one 1★ review gives no proposal", async () => {
+    // "Before" is measured before the first review, so SC-3 sees both reviews' effect (finding 6).
+    const db = drizzle(database.pool);
+    const members = Object.values(f1.members).filter((m) => m !== memberId);
+    const { rows: plated } = await database.pool.query<{ member_id: string }>(
+      "SELECT member_id FROM plate WHERE plan_meal_id = $1",
+      [planMealId],
+    );
+    const others = plated.map((p) => p.member_id).filter((m) => members.includes(m));
+    before = {
+      scoreBefore: await prefsScore(),
+      appealBefore: await appealOf(db, ctx, planMealId, memberId),
+      others,
+      othersBefore: await Promise.all(others.map((m) => appealOf(db, ctx, planMealId, m))),
+    };
     await reviewOnce();
     await runInsights();
     const pending = await pendingProposals();
@@ -240,15 +256,7 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
 
   it("N3 SC-3: a second 1★ review lowers the member's dish appeal and insights.run proposes the dislike", async () => {
     const db = drizzle(database.pool);
-    const members = Object.values(f1.members).filter((m) => m !== memberId);
-    const { rows: plated } = await database.pool.query<{ member_id: string }>(
-      "SELECT member_id FROM plate WHERE plan_meal_id = $1",
-      [planMealId],
-    );
-    const others = plated.map((p) => p.member_id).filter((m) => members.includes(m));
-    const scoreBefore = await prefsScore();
-    const appealBefore = await appealOf(db, ctx, planMealId, memberId);
-    const othersBefore = await Promise.all(others.map((m) => appealOf(db, ctx, planMealId, m)));
+    const { scoreBefore, appealBefore, others, othersBefore } = before;
     await reviewOnce();
     const scoreAfter = await prefsScore();
     const appealAfter = await appealOf(db, ctx, planMealId, memberId);
@@ -273,12 +281,14 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
       scoreAfter,
       appealBefore,
       appealAfter,
+      others: others.length,
       othersUnchanged: JSON.stringify(othersBefore) === JSON.stringify(othersAfter),
       pending: pending.length,
       proposals: mine.length,
     });
     expect(appealAfter).toBeLessThan(appealBefore);
     expect(scoreAfter).toBeLessThan(scoreBefore);
+    expect(others.length).toBeGreaterThan(0);
     expect(othersAfter).toEqual(othersBefore);
     expect(mine.length).toBe(1);
     proposalId = mine[0]?.id ?? "";
@@ -332,11 +342,13 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
     measure({
       check: "get_preferences",
       requests: model.requests.length,
-      resultCarriesDish: sent.includes(dishId),
+      resultCarriesDish: sent.includes(dishId) && sent.includes("-0.8"),
       failures: model.failures,
     });
     expect(model.failures, model.failures.join("\n")).toEqual([]);
+    // The tool result the app sent to the model carries the dish at -0.8 (finding 7).
     expect(sent).toContain(dishId);
+    expect(sent).toContain("-0.8");
     expect(reply).toContain("-0.8");
   });
 
@@ -400,8 +412,10 @@ describe("node-1.3 N3 intelligence (built app, worker, recorded model)", () => {
     const undo = await adminApi("POST", `/change-sets/${entry?.id ?? ""}/undo`);
     expect(undo.status).toBe(200);
     const diff = diffSnapshots(before, await snapshot());
-    measure({ check: "sc4-control", restoreDiff: diff.length });
+    const onlyMember = diff.every((line) => line.startsWith("member "));
+    measure({ check: "sc4-control", restoreDiff: diff.length, onlyMember });
     expect(diff.length).toBeGreaterThan(0);
+    expect(onlyMember, diff.join("\n")).toBe(true);
   });
 
   it("N3 the recorded model answered every request from its recordings, and no live call was made", () => {

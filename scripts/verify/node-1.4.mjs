@@ -7,10 +7,14 @@
 //     workspace package that depends on them typechecks against their dist/ declarations; the
 //     api-contract contract tests pass. Negative control: in a disposable copy, `GenerateBody.seed`
 //     in the contract becomes a string and @mealplanner/web's typecheck fails.
+//     The api-contract contract tests are apps/web's test/api/g1-contract-matrix.int.test.ts and
+//     g3-openapi.int.test.ts: packages/api-contract has no tests of its own (pre-CP2 finding 13).
+//     Every run builds the branch packages (tsc, into a private directory) and requires the
+//     declarations they emit to equal the published ones in dist/ (finding 10).
 // N3  SC-5 in Playwright (apps/web/e2e/node-1.4/sc5.e2e.ts) at 390 px and 1280 px with axe-core
 //     (no serious or critical finding, light and dark), against this gate's `next build` and the
-//     real worker on a fresh database, with recorded model responses (SPEC-Q-6): onboarding (at
-//     most five questions, UAE, metric) to a first plan, the plan, the cook sheet, a review, a chat
+//     real worker on a fresh database, with recorded model responses (SPEC-Q-6): onboarding (five
+//     questions, then the summary; UAE, metric) to a first plan, the plan, the cook sheet, a review, a chat
 //     proposal accepted and in the change log. Negative controls: axe reports a known-bad page (in
 //     the spec); in a disposable copy without the cook sheet's route (apps/web/app/(app)/kitchen),
 //     the same spec's cook-sheet flow fails while the flow before it still passes.
@@ -111,26 +115,24 @@ function recheck(report, m) {
     const one = (check) => m.find((r) => r.check === check && r.width === w);
     const onb = one("onboarding");
     console.log(
-      `       measured at ${w} px: ${String(onb?.questions)} onboarding questions (${String(onb?.requiredInputs)} required inputs), ${String(onb?.timezone)}, ${String(onb?.countryCode)}, ${String(onb?.unitSystem)}; first plan ${String(onb?.meals)} meals; plan shows ${String(one("plan")?.dishes)} dishes; cook sheet ${String(one("cooksheet")?.quantities)} quantities in g/kg; ${String(one("review")?.stored)} review stored; accepted proposal ${String(one("chat")?.changeSetId)} (${String(one("chat")?.source)})`,
+      `       measured at ${w} px: ${String(onb?.questions)} onboarding questions (${String(onb?.requiredInputs)} required inputs), ${String(onb?.timezone)}, ${String(onb?.countryCode)}, ${String(onb?.unitSystem)}; first plan ${String(onb?.meals)} meals; plan shows ${String(one("plan")?.dishes)} dishes; cook sheet shows ${String(one("cooksheet")?.dish)} with "${String(one("cooksheet")?.makes)}"; ${String(one("review")?.stored)} review stored; accepted proposal ${String(one("chat")?.changeSetId)} (${String(one("chat")?.source)})`,
     );
     const ok = (o) =>
       o !== undefined &&
-      o.questions > 0 &&
-      o.questions <= 5 &&
+      o.questions === 5 &&
       o.timezone === "Asia/Dubai" &&
       o.countryCode === "AE" &&
       o.unitSystem === "metric" &&
       o.meals > 0;
-    report.check(ok(onb), `${w} px: at most five questions, UAE and metric, a first plan`);
     report.check(
-      !ok({ ...onb, questions: 6 }),
-      `${w} px: negative control of the re-check: six questions are rejected`,
+      ok(onb),
+      `${w} px: five questions before the summary, UAE and metric, a first plan`,
     );
     report.check(
-      one("cooksheet")?.quantities > 0 &&
+      /^makes \d+ g$/.test(one("cooksheet")?.makes ?? "") &&
         one("review")?.stored === 1 &&
         one("chat")?.source === "proposal_accept",
-      `${w} px: the cook sheet shows metric quantities, the review is stored, the accepted proposal is in the log`,
+      `${w} px: the cook sheet shows the planned dinner and its batch in grams, the review is stored, the accepted proposal is in the log`,
     );
   }
   const axe = m.filter((r) => r.check === "axe");
@@ -147,7 +149,10 @@ function recheck(report, m) {
   console.log(
     `       measured (negative control): axe on the known-bad page: ${(control?.ids ?? []).join(", ")}`,
   );
-  report.check(control?.serious > 0, "negative control: axe reports the known-bad page");
+  report.check(
+    ["link-name", "color-contrast"].every((id) => (control?.ids ?? []).includes(id)),
+    "negative control: the axe helper reports the known-bad page's serious findings",
+  );
   const model = m.find((r) => r.check === "model");
   console.log(
     `       measured: ${String(model?.requests)} model request(s): ${String(model?.parse)} onboarding parse, ${String(model?.chat)} chat; ${String(model?.failures?.length)} unrecorded`,

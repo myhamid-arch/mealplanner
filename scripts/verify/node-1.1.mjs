@@ -7,6 +7,10 @@
 //     that depends on them typechecks against their dist/ declarations; the api-contract contract
 //     tests pass. Negative control: in a disposable copy, `ReviewRow.rating` in core's entity types
 //     becomes a string and @mealplanner/db's typecheck fails.
+//     The api-contract contract tests are apps/web's test/api/g1-contract-matrix.int.test.ts and
+//     g3-openapi.int.test.ts: packages/api-contract has no tests of its own (pre-CP2 finding 13).
+//     Every run builds the branch packages (tsc, into a private directory) and requires the
+//     declarations they emit to equal the published ones in dist/ (finding 10).
 // N3  On a fresh, empty database of the gate's own: migrations 0000 onward, the catalogue, F1
 //     (packages/db/test/node/foundation.node.ts). A change set across members, targets, exclusions
 //     and settings is applied and undone through the changes service, then through the built web

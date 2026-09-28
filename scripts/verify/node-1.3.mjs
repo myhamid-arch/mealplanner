@@ -7,6 +7,10 @@
 //     depends on them typechecks against their dist/ declarations; the api-contract contract tests
 //     pass. Negative control: in a disposable copy, the published `ApplyOutcome.appliedAt` of
 //     @mealplanner/ai (dist declaration) becomes a number and @mealplanner/web's typecheck fails.
+//     The api-contract contract tests are apps/web's test/api/g1-contract-matrix.int.test.ts and
+//     g3-openapi.int.test.ts: packages/api-contract has no tests of its own (pre-CP2 finding 13).
+//     Every run builds the branch packages (tsc, into a private directory) and requires the
+//     declarations they emit to equal the published ones in dist/ (finding 10).
 // N3  apps/web/test/node/intelligence.node.ts against the built web app and the real worker on a
 //     fresh database of the gate's own (migrated from zero, catalogue, F1), with recorded model
 //     responses served over ANTHROPIC_BASE_URL (SPEC-Q-6; no credential, no live call): SC-3
@@ -66,6 +70,7 @@ const sc3Ok = (m) =>
   m !== undefined &&
   m.appealAfter < m.appealBefore &&
   m.scoreAfter < m.scoreBefore &&
+  m.others > 0 &&
   m.othersUnchanged === true &&
   m.proposals === 1;
 const sc4Ok = (m) =>
@@ -83,7 +88,7 @@ function recheck(report, m) {
   const control = one("sc3-control");
   const sc3 = one("sc3");
   console.log(
-    `       measured SC-3: after one 1★ review ${String(control?.pending)} pending proposal(s); after two: dish score ${String(sc3?.scoreBefore)} → ${String(sc3?.scoreAfter)}, plate appeal ${String(sc3?.appealBefore)} → ${String(sc3?.appealAfter)}, other members unchanged ${String(sc3?.othersUnchanged)}, ${String(sc3?.proposals)} dislike proposal(s)`,
+    `       measured SC-3: after one 1★ review ${String(control?.pending)} pending proposal(s); after two: dish score ${String(sc3?.scoreBefore)} → ${String(sc3?.scoreAfter)}, plate appeal ${String(sc3?.appealBefore)} → ${String(sc3?.appealAfter)}, ${String(sc3?.others)} other member(s) on the meal unchanged ${String(sc3?.othersUnchanged)}, ${String(sc3?.proposals)} dislike proposal(s)`,
   );
   report.check(control?.pending === 0, "one 1★ review gives no proposal");
   report.check(
@@ -132,7 +137,9 @@ function recheck(report, m) {
     `       measured (negative control): ${String(sc4c?.restoreDiff)} row(s) differ after the undo without one before-image`,
   );
   report.check(
-    sc4c?.restoreDiff > 0 && !sc4Ok({ ...sc4, restoreDiff: sc4c?.restoreDiff }),
+    sc4c?.restoreDiff > 0 &&
+      sc4c?.onlyMember === true &&
+      !sc4Ok({ ...sc4, restoreDiff: sc4c?.restoreDiff }),
     "the undo without one before-image fails the check",
   );
   const model = one("model");

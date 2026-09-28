@@ -544,8 +544,100 @@ function exportedTypes(manifest, pkgDir, subpath) {
   return join(pkgDir, types.replace("*", star));
 }
 
+/** Every `.d.ts` under `dir`, relative to it. */
+function declarations(dir) {
+  const out = [];
+  const walk = (d) => {
+    if (!existsSync(d)) return;
+    for (const entry of readdirSync(d, { withFileTypes: true })) {
+      const path = join(d, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else if (entry.name.endsWith(".d.ts")) out.push(relative(dir, path));
+    }
+  };
+  walk(dir);
+  return out.sort();
+}
+
+/**
+ * Builds the branch packages on every run (pre-CP2 finding 10): each is compiled with its own
+ * tsconfig into a private directory, and every declaration it emits must equal the published one
+ * in its dist/, which consumers resolve. When they differ, the shared dist/ is rebuilt under the
+ * build lock and compared again. The shared dist/ is never rewritten while it is already current,
+ * so concurrent gates reading it are not disturbed.
+ */
+async function buildBranch(report, names) {
+  const out = mkdtempSync(join(tmpdir(), "node-gate-branch-build-"));
+  try {
+    const compile = async () => {
+      const results = await Promise.all(
+        names.map(async (name) => {
+          const dir = join(ROOT, "packages", name.split("/")[1]);
+          const target = join(out, name.split("/")[1]);
+          rmSync(target, { recursive: true, force: true });
+          const r = await runAsync(
+            process.execPath,
+            [
+              join(ROOT, "node_modules/typescript/bin/tsc"),
+              "-p",
+              "tsconfig.json",
+              "--outDir",
+              target,
+            ],
+            { cwd: dir, timeoutMs: 1_200_000 },
+          );
+          const built = declarations(target);
+          const differ = built.filter((f) => {
+            const published = join(dir, "dist", f);
+            return (
+              !existsSync(published) ||
+              readFileSync(published, "utf8") !== readFileSync(join(target, f), "utf8")
+            );
+          });
+          return { name, r, built, differ };
+        }),
+      );
+      return results;
+    };
+    let results = await compile();
+    if (results.some((x) => x.r.code === 0 && x.differ.length > 0)) {
+      const rebuilt = await withLock("packages-build", () =>
+        runAsync(
+          "pnpm",
+          ["exec", "turbo", "run", "build", "--force", ...names.flatMap((n) => ["--filter", n])],
+          { cwd: ROOT, timeoutMs: 1_200_000 },
+        ),
+      );
+      report.check(
+        rebuilt.code === 0,
+        "the shared dist/ of the branch packages is rebuilt",
+        tail(rebuilt, 30),
+      );
+      results = await compile();
+    }
+    for (const x of results) {
+      report.check(x.r.code === 0, `${x.name} builds (tsc -p tsconfig.json)`, tail(x.r, 40));
+      report.check(
+        x.built.length > 0 && x.differ.length === 0,
+        `${x.name}: all ${String(x.built.length)} declarations it builds equal the published ones in dist/`,
+        x.differ.slice(0, 20).join("\n"),
+      );
+    }
+    return results.every((x) => x.r.code === 0 && x.differ.length === 0);
+  } finally {
+    rmSync(out, { recursive: true, force: true });
+  }
+}
+
 export async function gateN2(report, node) {
   if (!(await buildPackages(report))) return;
+  if (
+    !(await buildBranch(
+      report,
+      node.branchPackages.map((p) => `@mealplanner/${p}`),
+    ))
+  )
+    return;
   const names = node.branchPackages.map((p) => `@mealplanner/${p}`);
   const consumers = consumersOf(names);
   console.log(`       branch packages: ${names.join(", ")}`);
