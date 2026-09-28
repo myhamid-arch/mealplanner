@@ -31,11 +31,12 @@ W-10b rule is untouched; 1.4.9 G4 re-runs in G2).
 ## SPEC-Q-4: the negative control's "pre-fix padding" (G1)
 
 Reading: the pre-fix class lists of `main` and of the shell's outer `div` are read from git at
-`b6a2d7a` (the last commit that changed `app-shell.tsx` before this leaf) and put on the same
+this leaf's base commit `83d0811` (where `app-shell.tsx` is as 1.4.9 left it at `b6a2d7a`) and put on the same
 elements of the same page, in the same build, before the same intersection check runs. Every pre-fix
 class is still in the new build's CSS (the non-assistant roles use it), and the spec first asserts
 that the swapped `main` computes the pre-fix `100px`, so the control measures real layout. The
-check must then report that the button covers the last control on both pages. This avoids a second
+check must then report that the button covers the last control (amended for `/account` by R-78,
+below). This avoids a second
 `next build` of a patched working tree, which would either race the other gates' builds or leave the
 tree modified if the gate were killed.
 
