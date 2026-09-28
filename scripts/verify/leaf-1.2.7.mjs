@@ -897,7 +897,7 @@ async function gateG2(report) {
         `worker plan.generate on each: ${String(x.length)} persisted plates, identical (date, slot key, member name, dish slug, plate grams, flags)`,
         diff.slice(0, 20).join("\n"),
       );
-      const flagged = x.filter((r) => r.flags[0] !== "in_tolerance" || r.flags[2] !== null).length;
+      const flagged = x.filter((r) => r.flags[1] !== null || r.flags[2] !== null).length;
       console.log(
         `info - worker path: ${String(x.length)} plates, ${String(flagged)} flagged or frequency-relaxed`,
       );
