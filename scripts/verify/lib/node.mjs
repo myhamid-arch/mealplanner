@@ -424,7 +424,7 @@ export function judgeTests(report, label, r) {
     .join(", ");
   report.check(
     r.code === 0 && r.tests.length > 0 && notPassed.length === 0 && brokenFiles.length === 0,
-    `${label}: ${String(r.tests.length)} tests (${summary || "none"}), none skipped or failed`,
+    `${label}: ${String(r.tests.length)} tests (${summary || "none"}) (required: none skipped or failed)`,
     notPassed.length > 0 || brokenFiles.length > 0
       ? [
           ...notPassed.map((t) => `--- [${t.status}] ${t.fullName}\n${t.failure}`),
@@ -880,7 +880,7 @@ function reportSuite(report, label, results) {
     .join("\n");
   report.check(
     verdict.ok,
-    `${label}: ${String(verdict.passed)} of ${String(verdict.total)} tests passed in ${String(results.length)} packages, none failed or skipped`,
+    `${label}: ${String(verdict.passed)} of ${String(verdict.total)} tests passed in ${String(results.length)} packages (required: all passed, none skipped)`,
     `${verdict.problems.join("\n")}\n${failedOutput}`.slice(0, 30_000),
   );
   return verdict;
@@ -1308,7 +1308,7 @@ export async function runE2ESuite(report, { webDir, distDir, server }) {
   }
   report.check(
     total > 0 && passed === total,
-    `web e2e suite: ${String(passed)} of ${String(total)} tests passed in ${String(runs.length)} runs, none skipped`,
+    `web e2e suite: ${String(passed)} of ${String(total)} tests passed in ${String(runs.length)} runs (required: all passed, none skipped)`,
   );
 }
 
