@@ -14,5 +14,5 @@ Scope: W-15 (R-77): at phone width the floating Assistant button no longer cover
   EXPECT: VERIFY leaf-1.4.11 G2 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=670039259300843b5603b7ab109dbcf70517b98ab54a02b2504e1ea5b98bcfd4; exit=0; EXPECT=matched; output-sha256=648f082cdf9e35b73af95df261bfd2c4e53cb49ddc069d44c5bbed77854b9c7b; output-bytes=1168; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [ ] G3: architect visual review of both pages at 390 px scrolled to the end
-  EVIDENCE: pending
+- [x] G3: architect visual review of both pages at 390 px scrolled to the end
+  EVIDENCE: architect CP3 review 2026-09-28 of the builder's G1 captures at 8e16ccc (artifact Xjw1yhjqEduXx7mSTNygcn, 390 x 844, admin, scrolled to the end). Plate: before, the Assistant button covers "See recipe" (the W-15 defect); after, "Rate this meal" and "See recipe" sit fully above the button with clear space. /account: after, "Delete my account" and "Sign out" clear the button by a wide margin (1.4.6's pb-16 plus this leaf's 74 px, R-78). Tab bar, cards and button placement are unchanged; nothing else moved.
