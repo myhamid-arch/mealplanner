@@ -188,7 +188,8 @@ export type PreferenceHardness = (typeof PREFERENCE_HARDNESS)[number];
 export const FREQUENCY_ENTITY_TYPES = ["dish", "ingredient", "cuisine", "method"] as const;
 export type FrequencyEntityType = (typeof FREQUENCY_ENTITY_TYPES)[number];
 
-export const EXCLUSION_KINDS = ["ingredient", "category", "dietary_flag"] as const;
+/** R-83 (W-23): `dish` excludes one dish, keyed by its id (a practical-tag proposal, FBK-3). */
+export const EXCLUSION_KINDS = ["ingredient", "category", "dietary_flag", "dish"] as const;
 export type ExclusionKind = (typeof EXCLUSION_KINDS)[number];
 
 export const EXCLUSION_REASONS = ["allergy", "religious", "dislike", "medical", "other"] as const;

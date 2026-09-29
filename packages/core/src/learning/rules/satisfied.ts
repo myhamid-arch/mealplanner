@@ -9,6 +9,18 @@ export interface SatisfactionState {
   verifiedIngredientIds: ReadonlySet<string>;
 }
 
+/** Whether a row's slot scope (null = every slot) covers an op's scope. */
+function scopeCovers(row: readonly string[] | null, op: readonly string[] | null): boolean {
+  if (row === null) return true;
+  if (op === null) return false;
+  return op.every((k) => row.includes(k));
+}
+
+function sameScope(a: readonly string[] | null, b: readonly string[] | null): boolean {
+  if (a === null || b === null) return a === b;
+  return a.length === b.length && a.every((k) => b.includes(k));
+}
+
 const SCORE_EPSILON = 1e-3;
 const SHARE_EPSILON = 1e-3;
 
@@ -37,16 +49,23 @@ function opSatisfied(op: ParsedChangeOp, state: SatisfactionState): boolean {
       const p = op.payload;
       // R-49: an op that changes the reason or hardness of the member's own row for the key
       // changes its protection (DM-5, AGT-5), so it is not satisfied by that row.
+      // The op updates only the row of the same slot scope (`exclusion.add`, 1.2.6).
       const own = config.exclusions.find(
-        (row) => row.memberId === p.memberId && row.kind === p.kind && row.key === p.key,
+        (row) =>
+          row.memberId === p.memberId &&
+          row.kind === p.kind &&
+          row.key === p.key &&
+          sameScope(row.slotKeys, p.slotKeys ?? null),
       );
       if (own !== undefined && (own.reason !== p.reason || own.hard !== p.hard)) return false;
-      // Any exclusion of the key already keeps it off the member's plates.
+      // Any exclusion of the key whose scope covers the op's already keeps it off the member's
+      // plates there (R-83): an unscoped row covers every slot, a scoped row only its own slots.
       return config.exclusions.some(
         (row) =>
           (row.memberId === p.memberId || row.memberId === null) &&
           row.kind === p.kind &&
-          row.key === p.key,
+          row.key === p.key &&
+          scopeCovers(row.slotKeys, p.slotKeys ?? null),
       );
     }
     case "frequency.set": {

@@ -1,5 +1,6 @@
 // PLN-9 §6.3 hard filters, applied before solving: plannable status, slot suitability, exclusions
-// (SPEC-Q-6, R-34), `hard = never` preferences, and frequency (SPEC-Q-5, OQ-8).
+// (SPEC-Q-6, R-34; dish exclusions R-83), `hard = never` preferences, and frequency (SPEC-Q-5,
+// OQ-8).
 import { weekdayOf, type FrequencyRuleRow, type SlotTypeRow } from "../../types/index.js";
 import { variantAllowed, type MemberCtx } from "../solver/index.js";
 import { MAIN_MIN_GAP_DAYS, SHORT_GAP_SLOT_KEYS, SHORT_MIN_GAP_DAYS } from "./config.js";
@@ -96,6 +97,20 @@ export function neverReason(
     }
   }
   return null;
+}
+
+/**
+ * R-83 (W-23): an attendee has a `dish` exclusion of this dish that covers the slot (a slot-scoped
+ * one, such as a practical-tag proposal for packed slots, leaves the dish in the other slots).
+ */
+export function dishExclusionReason(
+  dish: PlanDish,
+  attendees: readonly string[],
+  slotKey: string,
+  household: Household,
+): string | null {
+  const member = attendees.find((m) => household.excludesDish(m, slotKey, dish.id));
+  return member === undefined ? null : `${member} has ${dish.name} excluded at ${slotKey}`;
 }
 
 const DAY_NUMBERS = new Map<string, number>();

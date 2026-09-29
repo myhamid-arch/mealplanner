@@ -148,6 +148,10 @@ const ExclusionAdd = z
   .refine(
     (p) => p.reason !== "allergy" || p.slotKeys == null,
     "an allergy exclusion applies to every slot (02 §6, OQ-9)",
+  )
+  .refine(
+    (p) => p.kind !== "dish" || id.safeParse(p.key).success,
+    "a dish exclusion's key is the dish id (R-83)",
   );
 
 /** The exclusion row with the same member, kind, key and slot scope, if any. */
@@ -184,6 +188,9 @@ export const exclusionAdd = defineOp({
     const { memberId, kind, key, reason, hard } = p;
     const slotKeys = p.slotKeys ?? null;
     await requireMemberOrHousehold("exclusion.add", tx, memberId);
+    // R-83: a dish exclusion names a dish the household can see (its own, or a seed dish).
+    if (kind === "dish")
+      await requireRow("exclusion.add", `dish ${key}`, tx.get("dish", { id: key }));
     if (reason === "allergy" && slotKeys !== null)
       throw new ChangeOpError("exclusion.add", "an allergy exclusion applies to every slot");
     if (slotKeys !== null) {

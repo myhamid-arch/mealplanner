@@ -4,6 +4,7 @@ import { RuleContext } from "./context.js";
 import { plateMisses, targetedQuantity } from "./distribution.js";
 import { dishDislike, ingredientDislike, variantDislike } from "./dislikes.js";
 import { moreOrLessOften, neverAgain, observedFrequency } from "./frequency.js";
+import { practicalNotes, practicalPacking } from "./practical.js";
 import { recipeNotes, recipeRevisionProposals } from "./recipe-notes.js";
 import { RECIPE_REVISION_OP } from "./config.js";
 import type { InsightInput, ProposalDraft, RuleOutput } from "./types.js";
@@ -30,7 +31,8 @@ export function runRules(input: InsightInput): RuleOutput {
     ...aiIngredient(ctx),
     ...targetedQuantity(ctx),
     ...recipeRevisionProposals(ctx, RECIPE_REVISION_OP),
+    ...practicalPacking(ctx),
   ];
-  const notes = RECIPE_REVISION_OP === null ? recipeNotes(ctx) : [];
+  const notes = [...(RECIPE_REVISION_OP === null ? recipeNotes(ctx) : []), ...practicalNotes(ctx)];
   return { candidates, notes };
 }

@@ -59,6 +59,17 @@ export const RECIPE_REVISION_OP: string | null = "recipe.revise";
 export const AI_INGREDIENT_MIN_MEALS = 3;
 export const AI_ESTIMATE_SOURCE = "ai_estimate";
 
+/**
+ * FBK-3 practical tags (W-23, R-82, R-83): the packing tags, counted together on meals in packed
+ * slots, propose a `dish` exclusion scoped to the household's packed slots; `took_too_long` has
+ * no slot meaning and becomes a digest note (leaf-1.3.7 SPEC-Q-4, SPEC-Q-5).
+ */
+export const PACKING_TAGS: readonly string[] = ["hard_to_pack", "went_soggy_in_box", "cold_is_bad"];
+export const SLOW_TAG = "took_too_long";
+export const PRACTICAL_MIN_REVIEWS = 2;
+/** Not protected (AGT-5, SPEC-Q-7): a practical exclusion is advisory, never an allergy or a rule. */
+export const PRACTICAL_EXCLUSION_REASON = "other";
+
 /** FBK-6. */
 export const FREQUENCY_MIN_SIGNALS = 2;
 export const MORE_OFTEN_MIN_GAP_DAYS = 3;
@@ -113,6 +124,7 @@ export const PRIORITY = {
   recipeNotes: 2,
   aiIngredient: 2,
   targetedQuantity: 2,
+  practical: 2,
 } as const;
 
 /** Review ids kept in one proposal's evidence (the most recent); `count` keeps the full size. */

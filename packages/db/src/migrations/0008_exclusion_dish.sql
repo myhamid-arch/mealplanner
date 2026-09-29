@@ -1,0 +1,1 @@
+ALTER TYPE "public"."exclusion_kind" ADD VALUE 'dish';
