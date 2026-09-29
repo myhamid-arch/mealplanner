@@ -133,7 +133,8 @@ async function rootVitest(report, ctx, file, titles) {
 
 /** The F1 set-up check every flow ran: the API-built household equals loadFixture(F1). */
 function reportSetup(report, m) {
-  const setup = m.find((r) => r.check === "setup");
+  // SC-2 records the comparison with its runs, the other gates with their set-up.
+  const setup = m.find((r) => r.check === "setup") ?? m.find((r) => r.check === "runs");
   const compared = setup?.compared ?? {};
   console.log(
     `       measured F1 (API-built, compared with loadFixture(F1) by natural key): ${Object.entries(

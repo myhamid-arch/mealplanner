@@ -2,11 +2,11 @@
 // configuration from `POST /change-sets` with the ops `loadFixture` builds from F1
 // (packages/db/src/services/config/fixtures.ts) except the admin's `access.link_member`, which the
 // API applies through `POST /access/{userId}/link-member`, and the other logins through invites
-// bound to their role and member. No SQL writes anything.
+// bound to their role and member. Nothing is written to the stack's database by SQL.
 //
 // `f1Differences` then compares the stored configuration with an oracle: `loadFixture(F1)` in a
-// throwaway database of the same PostgreSQL server (migrated and seeded, then dropped), with ids,
-// timestamps and emails replaced by natural keys. The oracle never touches the stack's database.
+// separate database on the stack's PostgreSQL server (migrated and seeded; the stack's teardown
+// removes it with the volume), with ids, timestamps and emails replaced by natural keys.
 import { randomBytes } from "node:crypto";
 import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
@@ -320,7 +320,8 @@ export async function f1Differences(
     };
   } finally {
     await oracle.end();
-    await admin.query(`DROP DATABASE IF EXISTS "${oracleName}" WITH (FORCE)`);
+    // The oracle database stays: it lives in the gate's own compose stack, whose volume the
+    // teardown removes (dropping it WITH (FORCE) killed a connection the test process still held).
     await admin.end();
   }
 }
