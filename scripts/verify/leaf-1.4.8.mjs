@@ -47,6 +47,7 @@ import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { lockIsStale } from "./lib/lock.mjs";
 import { Report } from "./lib/report.mjs";
 import { run, tail } from "./lib/run.mjs";
 
@@ -65,15 +66,6 @@ function sleepMs(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
-function processAlive(pid) {
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch (error) {
-    return error.code === "EPERM";
-  }
-}
-
 /** A cross-process lock (atomic mkdir); a lock left by a dead process is taken over. */
 function withLock(name, fn) {
   const lock = join(
@@ -88,9 +80,8 @@ function withLock(name, fn) {
       break;
     } catch (error) {
       if (error.code !== "EEXIST") throw error;
-      const pidFile = join(lock, "pid");
-      const holder = existsSync(pidFile) ? Number(readFileSync(pidFile, "utf8")) : NaN;
-      if (Number.isInteger(holder) && holder > 0 && !processAlive(holder)) {
+      // W-21: a dead holder, or none recorded (killed between mkdir and the pid write).
+      if (lockIsStale(lock)) {
         rmSync(lock, { recursive: true, force: true });
         continue;
       }

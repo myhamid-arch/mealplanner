@@ -44,6 +44,7 @@ import { createServer } from "node:net";
 import { dirname, join, resolve } from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { lockIsStale } from "./lib/lock.mjs";
 import { Report } from "./lib/report.mjs";
 import { run, tail } from "./lib/run.mjs";
 
@@ -126,10 +127,9 @@ const SHARED_DIR = join(tmpdir(), `mealplanner-leaf127-shared-${ROOT_HASH}`);
 const EXCLUSIVE = join(tmpdir(), `mealplanner-leaf127-exclusive-${ROOT_HASH}.lock`);
 
 function exclusiveHolder() {
-  const file = join(EXCLUSIVE, "pid");
-  if (!existsSync(file)) return existsSync(EXCLUSIVE) ? -1 : null;
-  const pid = Number(readFileSync(file, "utf8"));
-  if (Number.isInteger(pid) && pid > 0 && processAlive(pid)) return pid;
+  if (!existsSync(EXCLUSIVE)) return null;
+  // W-21: a dead holder, or none recorded (killed between mkdir and the pid write), is stale.
+  if (!lockIsStale(EXCLUSIVE)) return -1;
   rmSync(EXCLUSIVE, { recursive: true, force: true });
   return null;
 }
@@ -189,9 +189,8 @@ async function withLock(name, fn) {
       break;
     } catch (error) {
       if (error.code !== "EEXIST") throw error;
-      const pidFile = join(lock, "pid");
-      const holder = existsSync(pidFile) ? Number(readFileSync(pidFile, "utf8")) : NaN;
-      if (Number.isInteger(holder) && holder > 0 && !processAlive(holder)) {
+      // W-21: a dead holder, or none recorded (killed between mkdir and the pid write).
+      if (lockIsStale(lock)) {
         rmSync(lock, { recursive: true, force: true });
         continue;
       }

@@ -31,11 +31,13 @@ import {
   readFileSync,
   rmSync,
   statSync,
+  writeFileSync,
 } from "node:fs";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { lockIsStale } from "./lib/lock.mjs";
 import { Report } from "./lib/report.mjs";
 import { run, tail } from "./lib/run.mjs";
 
@@ -162,8 +164,15 @@ async function buildPackagesLocked() {
   for (;;) {
     try {
       mkdirSync(lock);
+      writeFileSync(join(lock, "pid"), String(process.pid));
       break;
-    } catch {
+    } catch (error) {
+      if (error.code !== "EEXIST") throw error;
+      // W-21: a lock whose gate was killed is taken over instead of timing out the next gate.
+      if (lockIsStale(lock)) {
+        rmSync(lock, { recursive: true, force: true });
+        continue;
+      }
       if (Date.now() > deadline)
         return { code: 1, stdout: "", stderr: `build lock ${lock} held for 15 minutes` };
       await sleep(250);
