@@ -16,7 +16,8 @@ export interface AppShellProps {
 
 /**
  * App shell (UX-3): a left rail at ≥ 1024 px; below that, a bottom tab bar and, for admins, a
- * floating assistant button (hidden at ≥ 1024 px, where the rail has Assistant). Role-aware parts take the viewer; nothing here fetches data.
+ * floating assistant button (hidden at ≥ 1024 px, where the rail has Assistant), for which `main`
+ * reserves space at the bottom. Role-aware parts take the viewer; nothing here fetches data.
  * Pure; `AppShell` in app-shell-client.tsx supplies the path from the router.
  */
 export function AppShellFrame({ viewer, pathname, children, panel }: AppShellProps) {
@@ -35,10 +36,13 @@ export function AppShellFrame({ viewer, pathname, children, panel }: AppShellPro
       <div className="hidden lg:block">
         <Rail viewer={viewer} pathname={pathname} />
       </div>
+      {/* Below 1024 px the bottom padding clears the tab bar (100 px). While the floating
+          Assistant button shows, it also clears the button (58 px, above the tab bar) and a 16 px
+          margin, so the page's last control scrolls clear of it (W-15, leaf 1.4.11). */}
       <main
         id="main"
         tabIndex={-1}
-        className="min-w-0 grow px-4 pt-5 pb-[calc(100px+env(safe-area-inset-bottom))] outline-none lg:px-8 lg:py-7"
+        className={`min-w-0 grow px-4 pt-5 ${assistant ? "pb-[calc(174px+env(safe-area-inset-bottom))]" : "pb-[calc(100px+env(safe-area-inset-bottom))]"} outline-none lg:px-8 lg:py-7`}
       >
         {children}
       </main>

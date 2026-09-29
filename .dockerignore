@@ -1,0 +1,10 @@
+# W-19: keep local installs, build output and gate artefacts out of the image build context
+# (the Dockerfiles' COPY --exclude did not keep apps/web/.next/verify-* out).
+.git
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/test-results
+**/playwright-report
+docs/build/live

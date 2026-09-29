@@ -6,7 +6,7 @@
 # Runtime configuration: DATABASE_URL, DATA_DIR (defaults to the image's data/), ANTHROPIC_API_KEY
 # (optional; without it AI generation reports itself unavailable), ANTHROPIC_MODEL,
 # AI_RECIPE_DAILY_LIMIT, WORKER_CONCURRENCY, LOG_LEVEL.
-FROM node:22.12-bookworm-slim AS base
+FROM node:22.22-bookworm-slim AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
 WORKDIR /app
