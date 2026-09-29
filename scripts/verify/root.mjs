@@ -83,8 +83,8 @@ async function stackGate(report, gate, body) {
   const relay = await startRelay(await hostGateway());
   const scratch = mkdtempSync(join(tmpdir(), `root-${gate.toLowerCase()}-`));
   try {
-    await withStack(report, gate, relay, (stack) =>
-      body({
+    await withStack(report, gate, relay, async (stack) => {
+      await body({
         stack,
         scratch,
         measureFile: join(scratch, "measure.jsonl"),
@@ -95,10 +95,11 @@ async function stackGate(report, gate, body) {
           NODE_MEASURE_FILE: join(scratch, "measure.jsonl"),
           DATABASE_URL: "",
         },
-      }),
-    );
+      });
+      relay.endOfTest();
+    });
     console.log(
-      `       measured: the relay forwarded ${String(relay.stats.forwarded)} model connection(s) from the containers, refused ${String(relay.stats.refused)} (no recorded server yet), ${String(relay.stats.errors.length)} error(s)`,
+      `       measured: the relay forwarded ${String(relay.stats.forwarded)} model connection(s) from the containers, refused ${String(relay.stats.refused)} (no recorded server yet), ${String(relay.stats.errors.length)} error(s); ${String(relay.stats.afterTest)} refused after the test ended`,
     );
     report.check(
       relay.stats.refused === 0 && relay.stats.errors.length === 0,
