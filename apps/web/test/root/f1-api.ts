@@ -1,7 +1,8 @@
 // F1 through the running stack (SPEC-Q-1): the household and its admin from `POST /signup`, its
 // configuration from `POST /change-sets` with the ops `loadFixture` builds from F1
-// (packages/db/src/services/config/fixtures.ts), and the other logins through invites bound to
-// their role and member. No SQL writes anything.
+// (packages/db/src/services/config/fixtures.ts) except the admin's `access.link_member`, which the
+// API applies through `POST /access/{userId}/link-member`, and the other logins through invites
+// bound to their role and member. No SQL writes anything.
 //
 // `f1Differences` then compares the stored configuration with an oracle: `loadFixture(F1)` in a
 // throwaway database of the same PostgreSQL server (migrated and seeded, then dropped), with ids,
@@ -41,11 +42,7 @@ async function ok(call: Api, method: string, path: string, body: unknown, status
 }
 
 /** The ops of `loadFixture`'s one change set for F1 (F1 has no custom slots, presets or dishes). */
-function f1Ops(
-  members: Record<string, string>,
-  slots: Record<string, string>,
-  adminUserId: string,
-): ChangeOp[] {
+function f1Ops(members: Record<string, string>, slots: Record<string, string>): ChangeOp[] {
   const ops: ChangeOp[] = [];
   const member = (key: string) => {
     const id = members[key];
@@ -70,20 +67,20 @@ function f1Ops(
         isTargeted: m.targets !== undefined,
         appetite: m.appetite,
       },
-    } as ChangeOp);
+    });
     if (m.targets !== undefined) {
       ops.push({
         kind: "target.set",
         payload: { memberId, kind: "default", profile: m.targets.default },
-      } as ChangeOp);
+      });
       if (m.targets.training !== undefined)
         ops.push({
           kind: "target.set",
           payload: { memberId, kind: "training", profile: m.targets.training },
-        } as ChangeOp);
+        });
     }
     if (m.tolerance !== undefined)
-      ops.push({ kind: "tolerance.set", payload: { memberId, ...m.tolerance } } as ChangeOp);
+      ops.push({ kind: "tolerance.set", payload: { memberId, ...m.tolerance } });
     if (m.training.length > 0)
       ops.push({
         kind: "training.set",
@@ -95,7 +92,7 @@ function f1Ops(
             intensity: d.intensity ?? null,
           })),
         },
-      } as ChangeOp);
+      });
   }
   const active = new Set<string>(F1.slots.active);
   for (const s of DEFAULT_SLOTS)
@@ -103,7 +100,7 @@ function f1Ops(
       ops.push({
         kind: "slot.update",
         payload: { slotTypeId: slot(s.key), active: active.has(s.key) },
-      } as ChangeOp);
+      });
   for (const s of F1.schedules)
     ops.push({
       kind: "slot_schedule.set",
@@ -112,7 +109,7 @@ function f1Ops(
         slotTypeId: slot(s.slot),
         days: s.weekdays.map((weekday) => ({ weekday, attends: s.attends })),
       },
-    } as ChangeOp);
+    });
   for (const [keys, score] of [
     [F1.cuisines.liked, 0.5],
     [F1.cuisines.disliked, -0.5],
@@ -120,8 +117,14 @@ function f1Ops(
     for (const key of keys)
       ops.push({
         kind: "preference.set",
-        payload: { memberId: null, entityType: "cuisine", entityKey: key, score, source: "explicit" },
-      } as ChangeOp);
+        payload: {
+          memberId: null,
+          entityType: "cuisine",
+          entityKey: key,
+          score,
+          source: "explicit",
+        },
+      });
   for (const e of F1.exclusions)
     ops.push({
       kind: "exclusion.add",
@@ -132,13 +135,7 @@ function f1Ops(
         reason: e.reason,
         hard: true,
       },
-    } as ChangeOp);
-  const adminKey = F1.users.find((u) => u.role === "admin")?.member;
-  if (adminKey !== undefined)
-    ops.push({
-      kind: "access.link_member",
-      payload: { userId: adminUserId, memberId: member(adminKey) },
-    } as ChangeOp);
+    });
   return ops;
 }
 
@@ -148,8 +145,9 @@ function tagged(email: string, tag: string): string {
   return `${local ?? "x"}+${tag}@${domain ?? "f1.example"}`;
 }
 
-/** Builds F1 through the stack's API. `tag` keeps the logins' emails unique per household. */
-export async function buildF1(tag: string): Promise<F1Household> {
+/** Builds F1 through the stack's API. `label` (plus a random suffix) keeps the logins' emails unique. */
+export async function buildF1(label: string): Promise<F1Household> {
+  const tag = `${label}-${randomBytes(3).toString("hex")}`;
   const adminUser = F1.users.find((u) => u.role === "admin");
   if (adminUser === undefined) throw new Error("F1 has no admin");
   const admin = await signup(tagged(adminUser.email, tag), adminUser.name, F1.household.name);
@@ -176,9 +174,18 @@ export async function buildF1(tag: string): Promise<F1Household> {
     adminApi,
     "POST",
     "/change-sets",
-    { summary: `Fixture ${F1.id} configuration`, ops: f1Ops(members, slots, admin.userId) },
+    { summary: `Fixture ${F1.id} configuration`, ops: f1Ops(members, slots) },
     201,
   );
+  // The admin eats as their member: `access.link_member` is applied through its own endpoint.
+  if (adminUser.member !== undefined)
+    await ok(
+      adminApi,
+      "POST",
+      `/access/${admin.userId}/link-member`,
+      { memberId: members[adminUser.member] },
+      200,
+    );
   const logins: Record<string, SignedUp> = { [adminUser.key]: admin };
   for (const u of F1.users) {
     if (u.key === adminUser.key) continue;
@@ -250,16 +257,33 @@ export async function canonicalHousehold(db: pg.Pool, householdId: string) {
   };
 }
 
+/** A value for a difference line (JSON.stringify gives undefined for undefined). */
+function show(v: unknown): string {
+  const text = JSON.stringify(v) as string | undefined;
+  return (text ?? "undefined").slice(0, 300);
+}
+
 /** Paths where two canonical values differ. */
 function differences(a: unknown, b: unknown, path = ""): string[] {
   if (JSON.stringify(a) === JSON.stringify(b)) return [];
-  if (a !== null && b !== null && typeof a === "object" && typeof b === "object" && !Array.isArray(a) && !Array.isArray(b)) {
+  if (
+    a !== null &&
+    b !== null &&
+    typeof a === "object" &&
+    typeof b === "object" &&
+    !Array.isArray(a) &&
+    !Array.isArray(b)
+  ) {
     const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
     return [...keys].flatMap((k) =>
-      differences((a as Record<string, unknown>)[k], (b as Record<string, unknown>)[k], `${path}.${k}`),
+      differences(
+        (a as Record<string, unknown>)[k],
+        (b as Record<string, unknown>)[k],
+        `${path}.${k}`,
+      ),
     );
   }
-  return [`${path || "."}: API ${JSON.stringify(a)?.slice(0, 300)} vs fixture ${JSON.stringify(b)?.slice(0, 300)}`];
+  return [`${path || "."}: API ${show(a)} vs fixture ${show(b)}`];
 }
 
 /**

@@ -82,7 +82,10 @@ async function agentChangeSet(known: ReadonlySet<string>) {
   const entries = await changeLog();
   const fresh = entries.filter(
     (e) =>
-      e.type === "change_set" && !known.has(e.id) && e.actor === "agent" && e.source === "agent_apply",
+      e.type === "change_set" &&
+      !known.has(e.id) &&
+      e.actor === "agent" &&
+      e.source === "agent_apply",
   );
   expect(fresh.length, JSON.stringify(entries.slice(0, 5))).toBe(1);
   return fresh[0];

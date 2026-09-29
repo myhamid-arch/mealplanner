@@ -71,9 +71,7 @@ export function normalizeLedger(text) {
     .replace(/\r\n/g, "\n")
     .split("\n")
     .map((line) =>
-      line
-        .replace(/^(\s+)EVIDENCE:.*$/, "$1EVIDENCE: *")
-        .replace(/^(\s*)- \[[ xX]\] /, "$1- [?] "),
+      line.replace(/^(\s+)EVIDENCE:.*$/, "$1EVIDENCE: *").replace(/^(\s*)- \[[ xX]\] /, "$1- [?] "),
     )
     .join("\n");
 }
@@ -125,11 +123,15 @@ export function reusable(cache, node, tree) {
 }
 
 /** The nodes a run on `tree` must still run, in order. */
-export const nodesToRun = (cache, tree) => NODES.filter((n) => reusable(cache, n, tree) === undefined);
+export const nodesToRun = (cache, tree) =>
+  NODES.filter((n) => reusable(cache, n, tree) === undefined);
 
 export function recordPass(file, entry) {
   const cache = readCache(file);
-  cache.entries = [...cache.entries.filter((e) => !(e.node === entry.node && e.tree === entry.tree)), entry];
+  cache.entries = [
+    ...cache.entries.filter((e) => !(e.node === entry.node && e.tree === entry.tree)),
+    entry,
+  ];
   writeCache(file, cache);
 }
 
@@ -173,10 +175,12 @@ function controls(report) {
       otherTree !== tree && a.length === NODES.length,
       `negative control (a): four passes cached under another tree (${otherTree.slice(0, 12)}, HEAD's parent) are not reused on ${tree.slice(0, 12)}: ${String(a.length)} of 4 nodes still to run`,
     );
-    for (const node of NODES)
-      recordPass(file, { node, tree, command: commandOf(node), exit: 0 });
+    for (const node of NODES) recordPass(file, { node, tree, command: commandOf(node), exit: 0 });
     const b = nodesToRun(readCache(file), tree);
-    report.check(b.length === 0, `control (b): the same passes under the current tree are reused: ${String(b.length)} of 4 nodes to run`);
+    report.check(
+      b.length === 0,
+      `control (b): the same passes under the current tree are reused: ${String(b.length)} of 4 nodes to run`,
+    );
     const otherCommand = {
       entries: [{ node: NODES[0], tree, command: `${commandOf(NODES[0])} --timeout 120`, exit: 0 }],
     };
@@ -256,8 +260,15 @@ export async function gateR1(report, cacheFile = CACHE_FILE) {
       const after = dirtyReasons();
       const treeAfter = currentTree();
       const met = r.code === 0 && /^ALL MET \(/m.test(r.last);
-      console.log(`       ${node} gate-check, last lines:\n${lastLines(r.last, 30).replace(/^/gm, "         ")}`);
-      if (!report.check(met, `${node}: gate-check --reverify exits 0 with ALL MET (${String(seconds)} s, exit ${String(r.code)})`))
+      console.log(
+        `       ${node} gate-check, last lines:\n${lastLines(r.last, 30).replace(/^/gm, "         ")}`,
+      );
+      if (
+        !report.check(
+          met,
+          `${node}: gate-check --reverify exits 0 with ALL MET (${String(seconds)} s, exit ${String(r.code)})`,
+        )
+      )
         continue;
       const clean = before.length === 0 && after.length === 0 && tree === treeAfter;
       report.check(

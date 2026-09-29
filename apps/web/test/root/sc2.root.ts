@@ -7,13 +7,18 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type pg from "pg";
 import { measure } from "../../../../packages/db/test/node/support";
-import type { RecordedModel } from "../node/recorded-model";
+import { loadRecordings, type RecordedModel } from "../node/recorded-model";
 import { coreIngredients, sc2Aggregate } from "../node/engine-measure";
 import { assertF1, canonicalHousehold } from "./f1-api";
 import { ECONOMY, F1_WEEK, finishRun, planOf, queueRun, type Run } from "./engine-runs";
 import { pool, recordedModel } from "./stack";
 
 const SEEDS = Array.from({ length: 10 }, (_, i) => i + 1);
+
+/** The worker's insight synthesis, answered from the recording (recorded/product-parse.json). */
+const SYNTHESIS = "insights.run: synthesis keeps the rule candidates as they are";
+const SYNTHESIS_ONLY = () =>
+  loadRecordings("product-parse", {}).filter((r) => r.name === SYNTHESIS);
 
 let db: pg.Pool;
 let model: RecordedModel;
@@ -22,7 +27,9 @@ let repeat: Run;
 
 beforeAll(async () => {
   db = pool(6);
-  model = await recordedModel([]);
+  // plan.generate with AI recipes off calls no model. The worker's scheduled insights runs ask for
+  // a synthesis, answered by the node gates' recorded synthesis; any other request is a failure.
+  model = await recordedModel(SYNTHESIS_ONLY());
 });
 
 afterAll(async () => {
@@ -32,7 +39,8 @@ afterAll(async () => {
 
 const find = (seed: number, economy: number) => {
   const r = runs.find((x) => x.seed === seed && x.economy === economy);
-  if (r === undefined) throw new Error(`no run for seed ${String(seed)} economy ${String(economy)}`);
+  if (r === undefined)
+    throw new Error(`no run for seed ${String(seed)} economy ${String(economy)}`);
   return r;
 };
 
@@ -42,19 +50,23 @@ describe("root SC-2 (compose stack)", () => {
       ...SEEDS.flatMap((seed) => [ECONOMY, 0].map((economy) => ({ seed, economy }))),
       { seed: 1, economy: ECONOMY },
     ];
-    // Households are built one at a time; the worker takes the queued jobs in turn.
+    // Households are built one at a time; the worker takes the queued jobs in turn. The first
+    // is compared with loadFixture(F1); every other one's stored configuration, as built and
+    // before its weights change, must equal the first's by natural key.
+    let compared: Record<string, number> = {};
+    let want = "";
+    const differing: string[] = [];
     const queued = [];
     for (const [i, p] of plan.entries())
-      queued.push(await queueRun(`sc2r${String(i)}`, p.seed, p.economy));
-    const first = queued[0];
-    if (first === undefined) throw new Error("nothing queued");
-    const compared = await assertF1(db, first.f1);
-    // Every other household's stored configuration equals the first's, by natural key.
-    const want = JSON.stringify(await canonicalHousehold(db, first.f1.householdId));
-    const differing = [];
-    for (const q of queued.slice(1))
-      if (JSON.stringify(await canonicalHousehold(db, q.f1.householdId)) !== want)
-        differing.push(q.f1.householdId);
+      queued.push(
+        await queueRun(`sc2r${String(i)}`, p.seed, p.economy, async (f1) => {
+          const canonical = JSON.stringify(await canonicalHousehold(db, f1.householdId));
+          if (i === 0) {
+            compared = await assertF1(db, f1);
+            want = canonical;
+          } else if (canonical !== want) differing.push(f1.householdId);
+        }),
+      );
     expect(differing).toEqual([]);
     const done: Run[] = [];
     for (const q of queued) done.push(await finishRun(db, q));
@@ -109,8 +121,15 @@ describe("root SC-2 (compose stack)", () => {
     expect(self.pass).toBe(false);
   });
 
-  it("SC-2 the recorded model received no request it could not answer", () => {
-    measure({ check: "model", requests: model.requests.length, failures: model.failures });
-    expect(model.failures).toEqual([]);
+  it("SC-2 the recorded model answered every request (insight syntheses only), and no live call was made", () => {
+    const syntheses = model.answered.get(SYNTHESIS) ?? 0;
+    measure({
+      check: "model",
+      requests: model.requests.length,
+      syntheses,
+      failures: model.failures,
+    });
+    expect(model.failures, model.failures.join("\n")).toEqual([]);
+    expect(model.requests.length).toBe(syntheses);
   });
 });

@@ -38,9 +38,10 @@ happens but its pass is not cached.
 
 SC-6 asks for "at most 5 questions … counting required inputs". The gate asserts exactly what the
 product asks: 5 question screens before the review, both when every question is answered and when
-every question is skipped; when skipped, 0 required answers and a first plan still exists
-(R2-ONB-2); when answered, at most 5 required answers (the count is printed). leaf-1.4.3's
-`sc6Problems` computes the figures.
+every question is skipped, with 0 required answers in both runs (R2-ONB-2: every question can be
+skipped; leaf-1.4.3's `sc6Problems` counts a question as required when it has a required input or
+offers no Skip), and a first plan after both. Measured on a compose stack while building the gate:
+5 screens and 0 required answers, answered and skipped.
 
 ## SPEC-Q-5: SC-5 follows node-1.4's flow in a root spec
 

@@ -70,7 +70,10 @@ async function stackGate(report, gate, body) {
     drift.join("\n"),
   );
   const mutated = copiesMatchSources((file) =>
-    readFileSync(join(ROOT, file), "utf8").replace("median(reductions) >= 0.08", "median(reductions) >= 0.07").replace("m.proposals === 1", "m.proposals >= 1").replace("axe.length >= 20", "axe.length >= 2"),
+    readFileSync(join(ROOT, file), "utf8")
+      .replace("median(reductions) >= 0.08", "median(reductions) >= 0.07")
+      .replace("m.proposals === 1", "m.proposals >= 1")
+      .replace("axe.length >= 20", "axe.length >= 2"),
   );
   report.check(
     mutated.length === 3,
@@ -110,11 +113,20 @@ async function stackGate(report, gate, body) {
 
 /** A vitest root test file against the stack: every test passes, the required ones by title. */
 async function rootVitest(report, ctx, file, titles) {
-  const r = await vitestRun(WEB, ["--config", "test/root/vitest.config.ts", file], ctx.env, 14_400_000);
+  const r = await vitestRun(
+    WEB,
+    ["--config", "test/root/vitest.config.ts", file],
+    ctx.env,
+    14_400_000,
+  );
   judgeTests(report, `apps/web/${file} against the compose stack`, r);
   requireTitles(report, r.tests, titles);
   const unexpected = r.tests.filter((t) => !titles.includes(t.title));
-  report.check(unexpected.length === 0, "no test outside the required list", unexpected.map((t) => t.title).join("\n"));
+  report.check(
+    unexpected.length === 0,
+    "no test outside the required list",
+    unexpected.map((t) => t.title).join("\n"),
+  );
   return readMeasurements(ctx.measureFile);
 }
 
@@ -123,7 +135,9 @@ function reportSetup(report, m) {
   const setup = m.find((r) => r.check === "setup");
   const compared = setup?.compared ?? {};
   console.log(
-    `       measured F1 (API-built, compared with loadFixture(F1) by natural key): ${Object.entries(compared)
+    `       measured F1 (API-built, compared with loadFixture(F1) by natural key): ${Object.entries(
+      compared,
+    )
       .map(([k, v]) => `${k} ${String(v)}`)
       .join(", ")}`,
   );
@@ -136,12 +150,12 @@ function reportSetup(report, m) {
 function reportModel(report, m, { requests } = {}) {
   const model = m.find((r) => r.check === "model");
   console.log(
-    `       measured: ${String(model?.requests)} model request(s) to the recorded server, ${String(model?.failures?.length)} unanswered`,
+    `       measured: ${String(model?.requests)} model request(s) to the recorded server${model?.syntheses === undefined ? "" : ` (${String(model.syntheses)} insight syntheses)`}, ${String(model?.failures?.length)} unanswered`,
   );
   report.check(
     model !== undefined &&
       model.failures.length === 0 &&
-      (requests === undefined || requests(model.requests)),
+      (requests === undefined || requests(model.requests, model)),
     "the recorded model answered every request; no live call",
     JSON.stringify(model?.failures ?? "no record"),
   );
@@ -153,7 +167,7 @@ const SC1_TESTS = [
   "SC-1 F1 through the stack's API, and plan.generate by its worker persists the 7-day plan (seed 1, economy 0.4, AI recipes off)",
   "SC-1 from the persisted plates: every targeted member-meal in tolerance or flagged with its reason",
   "SC-1 negative control: persisted plate grams tampered off tolerance fail SC-1",
-  "SC-1 the recorded model received no request it could not answer",
+  "SC-1 the recorded model answered every request (insight syntheses only), and no live call was made",
 ];
 
 async function gateSc1(report) {
@@ -170,7 +184,10 @@ async function gateSc1(report) {
     console.log(
       `       measured SC-1: ${String(sc1?.inTolerance)} of ${String(sc1?.total)} targeted member-meals in tolerance, ${String(sc1?.flagged)} flagged with a reason, ${String(sc1?.noPlateFlagged)} flagged without a plate, ${String(sc1?.failures?.length)} unflagged misses; ${String(sc1?.memberDays)} member-days; largest |recomputed − stored per-plate total| ${String(sc1?.maxStoredDiff)}`,
     );
-    report.check(sc1Ok(sc1), "SC-1 (re-checked by node-1.2's rule): every targeted member-meal in tolerance or flagged; stored totals match their items");
+    report.check(
+      sc1Ok(sc1),
+      "SC-1 (re-checked by node-1.2's rule): every targeted member-meal in tolerance or flagged; stored totals match their items",
+    );
     report.check(
       !sc1Ok({ ...sc1, failures: ["x: out of tolerance and not flagged"] }),
       "negative control of the re-check: an unflagged miss is rejected",
@@ -181,10 +198,14 @@ async function gateSc1(report) {
     );
     report.check(
       tampered?.failures > 0 &&
-        !sc1Ok({ ...sc1, failures: new Array(tampered?.failures ?? 0).fill("x"), storedDrift: tampered?.storedDrift }),
+        !sc1Ok({
+          ...sc1,
+          failures: new Array(tampered?.failures ?? 0).fill("x"),
+          storedDrift: tampered?.storedDrift,
+        }),
       "negative control: the tampered persisted plate fails SC-1",
     );
-    reportModel(report, m, { requests: (n) => n === 0 });
+    reportModel(report, m, { requests: (n, model) => n === model.syntheses });
   });
 }
 
@@ -195,7 +216,7 @@ const SC2_TESTS = [
   "SC-2 seed 1 repeated in another household persists the same plan",
   "SC-2 over seeds 1–10 through the stack's job path: median ≥ 8 %, every seed ≥ 0 %",
   "SC-2 negative control: SC-2 measured against itself (0 %) fails",
-  "SC-2 the recorded model received no request it could not answer",
+  "SC-2 the recorded model answered every request (insight syntheses only), and no live call was made",
 ];
 
 async function gateSc2(report) {
@@ -209,8 +230,13 @@ async function gateSc2(report) {
     );
     report.check(runs?.runs === 21, "21 runs (20 for SC-2, 1 repeat)");
     const rep = one("repeat");
-    console.log(`       measured: seed 1 repeated in another household: ${String(rep?.differing)} of ${String(rep?.meals)} meals differ`);
-    report.check(rep?.meals > 0 && rep?.differing === 0, "the repeated seed-1 plan equals the first (sharing one stack biases nothing)");
+    console.log(
+      `       measured: seed 1 repeated in another household: ${String(rep?.differing)} of ${String(rep?.meals)} meals differ`,
+    );
+    report.check(
+      rep?.meals > 0 && rep?.differing === 0,
+      "the repeated seed-1 plan equals the first (sharing one stack biases nothing)",
+    );
     const sc2 = one("sc2");
     for (const s of sc2?.perSeed ?? [])
       console.log(
@@ -221,7 +247,10 @@ async function gateSc2(report) {
       console.log(
         `       measured SC-2: median ${(100 * median(reductions)).toFixed(1)} %, min ${(100 * Math.min(...reductions)).toFixed(1)} %, max ${(100 * Math.max(...reductions)).toFixed(1)} %`,
       );
-    report.check(sc2Ok(sc2?.perSeed), "SC-2 (re-checked by node-1.2's rule from the per-seed counts): median ≥ 8 %, every seed ≥ 0 %");
+    report.check(
+      sc2Ok(sc2?.perSeed),
+      "SC-2 (re-checked by node-1.2's rule from the per-seed counts): median ≥ 8 %, every seed ≥ 0 %",
+    );
     report.check(
       !sc2Ok((sc2?.perSeed ?? []).map((s) => ({ ...s, economy: s.baseline }))),
       "negative control: SC-2 of the baseline against itself (0 %) is rejected",
@@ -230,8 +259,11 @@ async function gateSc2(report) {
       !sc2Ok((sc2?.perSeed ?? []).map((s, i) => (i === 0 ? { ...s, economy: s.baseline + 1 } : s))),
       "negative control: one seed where economy adds an ingredient is rejected",
     );
-    report.check(one("sc2-control")?.self?.pass === false, "negative control (in the test): SC-2 against itself fails");
-    reportModel(report, m, { requests: (n) => n === 0 });
+    report.check(
+      one("sc2-control")?.self?.pass === false,
+      "negative control (in the test): SC-2 against itself fails",
+    );
+    reportModel(report, m, { requests: (n, model) => n === model.syntheses });
   });
 }
 
@@ -255,7 +287,10 @@ async function gateSc3(report) {
       `       measured SC-3: after one 1★ review ${String(control?.pending)} pending proposal(s); after two: dish score ${String(sc3?.scoreBefore)} → ${String(sc3?.scoreAfter)}, plate appeal ${String(sc3?.appealBefore)} → ${String(sc3?.appealAfter)}, ${String(sc3?.others)} other member(s) on the meal unchanged ${String(sc3?.othersUnchanged)}, ${String(sc3?.proposals)} dislike proposal(s)`,
     );
     report.check(control?.pending === 0, "negative control: one 1★ review gives no proposal");
-    report.check(sc3Ok(sc3), "SC-3 (re-checked by node-1.3's rule): two 1★ reviews lower the member's dish score and appeal and give one proposal");
+    report.check(
+      sc3Ok(sc3),
+      "SC-3 (re-checked by node-1.3's rule): two 1★ reviews lower the member's dish score and appeal and give one proposal",
+    );
     report.check(
       !sc3Ok({ ...sc3, appealAfter: sc3?.appealBefore }),
       "negative control of the re-check: an unchanged appeal is rejected",
@@ -265,7 +300,9 @@ async function gateSc3(report) {
       "negative control of the re-check: the one-review state (no proposal) is rejected",
     );
     const model = one("model");
-    console.log(`       measured: ${String(model?.syntheses)} insight synthesis request(s) answered from the recording`);
+    console.log(
+      `       measured: ${String(model?.syntheses)} insight synthesis request(s) answered from the recording`,
+    );
     reportModel(report, m, { requests: (n) => n === model?.syntheses && n >= 2 });
   });
 }
@@ -286,12 +323,23 @@ async function gateSc4(report) {
     console.log(
       `       measured SC-4: agent change set ${String(sc4?.changeSetId)} (${String(sc4?.actor)}/${String(sc4?.source)}) touched ${(sc4?.entities ?? []).join(", ")}; the turn also wrote ${(sc4?.turnWrites ?? []).join(", ")}; ${String(sc4?.restoreDiff)} row(s) differ after undo; not compared: ${(sc4?.excluded ?? []).join(", ")}`,
     );
-    report.check(sc4Ok(sc4), "SC-4 (re-checked by node-1.3's rule): the agent's change is logged as the agent's and its undo restores every compared table");
-    report.check(!sc4Ok({ ...sc4, restoreDiff: 1 }), "negative control of the re-check: one differing row is rejected");
-    const c = one("sc4-control");
-    console.log(`       measured (negative control): ${String(c?.restoreDiff)} row(s) differ after the undo without one before-image (only member rows: ${String(c?.onlyMember)})`);
     report.check(
-      c?.removed === 1 && c?.restoreDiff > 0 && c?.onlyMember === true && !sc4Ok({ ...sc4, restoreDiff: c?.restoreDiff }),
+      sc4Ok(sc4),
+      "SC-4 (re-checked by node-1.3's rule): the agent's change is logged as the agent's and its undo restores every compared table",
+    );
+    report.check(
+      !sc4Ok({ ...sc4, restoreDiff: 1 }),
+      "negative control of the re-check: one differing row is rejected",
+    );
+    const c = one("sc4-control");
+    console.log(
+      `       measured (negative control): ${String(c?.restoreDiff)} row(s) differ after the undo without one before-image (only member rows: ${String(c?.onlyMember)})`,
+    );
+    report.check(
+      c?.removed === 1 &&
+        c?.restoreDiff > 0 &&
+        c?.onlyMember === true &&
+        !sc4Ok({ ...sc4, restoreDiff: c?.restoreDiff }),
       "negative control: the undo without one before-image fails SC-4",
     );
     reportModel(report, m, { requests: (n) => n >= 4 });
@@ -304,7 +352,14 @@ async function rootPlaywright(report, ctx, args, extraEnv = {}) {
   const reportFile = join(ctx.scratch, "report.json");
   const r = await runAsync(
     process.execPath,
-    [join(WEB, "node_modules/@playwright/test/cli.js"), "test", "--config", PW_CONFIG, "--reporter=list,json", ...args],
+    [
+      join(WEB, "node_modules/@playwright/test/cli.js"),
+      "test",
+      "--config",
+      PW_CONFIG,
+      "--reporter=list,json",
+      ...args,
+    ],
     {
       cwd: WEB,
       env: {
@@ -319,11 +374,15 @@ async function rootPlaywright(report, ctx, args, extraEnv = {}) {
   );
   const tests = playwrightResults(reportFile);
   const failed = tests.filter((t) => t.status !== "passed");
-  if (r.code !== 0 || failed.length > 0) console.log(`----- Playwright output (exit ${String(r.code)}) -----\n${tail(r, 120)}`);
+  if (r.code !== 0 || failed.length > 0)
+    console.log(`----- Playwright output (exit ${String(r.code)}) -----\n${tail(r, 120)}`);
   report.check(
     r.code === 0 && tests.length > 0 && failed.length === 0,
     `Playwright ${args.join(" ")} against the compose stack: ${String(tests.length)} tests, ${String(tests.length - failed.length)} passed, none skipped or failed`,
-    failed.map((t) => `[${t.status}] ${t.title}\n${t.error}`).join("\n").slice(0, 8000),
+    failed
+      .map((t) => `[${t.status}] ${t.title}\n${t.error}`)
+      .join("\n")
+      .slice(0, 8000),
   );
   return tests;
 }
@@ -331,10 +390,18 @@ async function rootPlaywright(report, ctx, args, extraEnv = {}) {
 function requirePlaywright(report, tests, titles) {
   for (const title of titles) {
     const hit = tests.filter((t) => t.title === title);
-    report.check(hit.length === 1 && hit[0].status === "passed", `ran and passed: ${title}`, hit.map((t) => t.status).join(", ") || "missing");
+    report.check(
+      hit.length === 1 && hit[0].status === "passed",
+      `ran and passed: ${title}`,
+      hit.map((t) => t.status).join(", ") || "missing",
+    );
   }
   const unexpected = tests.filter((t) => !titles.includes(t.title));
-  report.check(unexpected.length === 0, "no test outside the required list", unexpected.map((t) => t.title).join("\n"));
+  report.check(
+    unexpected.length === 0,
+    "no test outside the required list",
+    unexpected.map((t) => t.title).join("\n"),
+  );
 }
 
 const FLOWS = (w) => [
@@ -370,9 +437,13 @@ function sc6Verdict(sc6) {
     }
     const m = sc6Problems(run);
     problems.push(...m.problems.map((p) => `${kind}: ${p}`));
-    if (m.questions !== 5) problems.push(`${kind}: ${String(m.questions)} question screens (exactly 5)`);
-    if (kind === "skipped" && m.required !== 0)
-      problems.push(`skipped: ${String(m.required)} required answers (every question can be skipped: 0)`);
+    if (m.questions !== 5)
+      problems.push(`${kind}: ${String(m.questions)} question screens (exactly 5)`);
+    // R2-ONB-2: every question can be skipped, so the product requires no answer at all.
+    if (m.required !== 0)
+      problems.push(
+        `${kind}: ${String(m.required)} required answers (every question can be skipped: 0)`,
+      );
   }
   return problems;
 }
@@ -384,9 +455,12 @@ async function gateSc6(report) {
       LEAF143_TRACE_DIR: traceDir,
       ROOT_SETUP_MODEL: "1",
     });
-    requirePlaywright(report, tests, ["@G5 SC-6 the answers asked before the first plan, answered and skipped"]);
+    requirePlaywright(report, tests, [
+      "@G5 SC-6 the answers asked before the first plan, answered and skipped",
+    ]);
     const file = join(traceDir, "sc6.json");
-    if (!report.check(existsSync(file), "the e2e run recorded SC-6 (leaf 1.4.3 G5's trace)")) return;
+    if (!report.check(existsSync(file), "the e2e run recorded SC-6 (leaf 1.4.3 G5's trace)"))
+      return;
     const sc6 = JSON.parse(readFileSync(file, "utf8"));
     for (const kind of ["answered", "skipped"]) {
       const m = sc6Problems(sc6[kind]);
@@ -395,7 +469,11 @@ async function gateSc6(report) {
       );
     }
     const problems = sc6Verdict(sc6);
-    report.check(problems.length === 0, "SC-6: exactly 5 questions before the first plan, answered and skipped; skipping all needs 0 answers; a first plan both ways", problems.join("\n"));
+    report.check(
+      problems.length === 0,
+      "SC-6: exactly 5 questions before the first plan, answered and skipped, none of them required (0 required answers); a first plan both ways",
+      problems.join("\n"),
+    );
     const bad = {
       ...sc6,
       answered: {
@@ -422,12 +500,17 @@ async function gateSc7(report) {
       LEAF143_TRACE_DIR: traceDir,
       ROOT_SETUP_MODEL: "1",
     });
-    requirePlaywright(report, tests, ["@G5 SC-7 every Adjust link after confirmation resolves to its setting"]);
+    requirePlaywright(report, tests, [
+      "@G5 SC-7 every Adjust link after confirmation resolves to its setting",
+    ]);
     const file = join(traceDir, "sc7.json");
-    if (!report.check(existsSync(file), "the e2e run recorded SC-7 (leaf 1.4.3 G5's trace)")) return;
+    if (!report.check(existsSync(file), "the e2e run recorded SC-7 (leaf 1.4.3 G5's trace)"))
+      return;
     const sc7 = JSON.parse(readFileSync(file, "utf8"));
     for (const r of sc7.results)
-      console.log(`       measured SC-7: ${r.href} → ${String(r.status)}, ${r.target} ${r.visible ? "shown" : "not shown"}`);
+      console.log(
+        `       measured SC-7: ${r.href} → ${String(r.status)}, ${r.target} ${r.visible ? "shown" : "not shown"}`,
+      );
     const problems = sc7Problems(sc7);
     report.check(
       problems.length === 0 && sc7.results.length === sc7.explanations && sc7.explanations > 0,
@@ -438,7 +521,10 @@ async function gateSc7(report) {
       ...sc7,
       results: sc7.results.map((r, i) => (i === 0 ? { ...r, status: 404, visible: false } : r)),
     };
-    report.check(sc7Problems(bad).length > 0, `negative control: a broken Adjust link fails SC-7 (${sc7Problems(bad).join("; ")})`);
+    report.check(
+      sc7Problems(bad).length > 0,
+      `negative control: a broken Adjust link fails SC-7 (${sc7Problems(bad).join("; ")})`,
+    );
     reportModel(report, readMeasurements(ctx.measureFile));
   });
 }

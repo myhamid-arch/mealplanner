@@ -26,7 +26,14 @@ const LOCAL_BASE = "mealplanner-root-nodebase:22.22";
 const PNPM = "pnpm@10.33.0";
 const PLACEHOLDER_TOKEN = "recorded-response-placeholder";
 /** Proxy variables: build arguments in a proxied environment, cleared in the running containers. */
-const PROXY_VARS = ["HTTPS_PROXY", "HTTP_PROXY", "NO_PROXY", "https_proxy", "http_proxy", "no_proxy"];
+const PROXY_VARS = [
+  "HTTPS_PROXY",
+  "HTTP_PROXY",
+  "NO_PROXY",
+  "https_proxy",
+  "http_proxy",
+  "no_proxy",
+];
 
 /** Environment of every docker command: no model credential, no database or auth settings. */
 const DOCKER_ENV = {
@@ -125,7 +132,13 @@ async function ensureLocalBase() {
 
 /** The address containers reach the Docker host on (`host-gateway`: the default bridge's gateway). */
 export async function hostGateway() {
-  const r = await docker(["network", "inspect", "bridge", "-f", "{{(index .IPAM.Config 0).Gateway}}"]);
+  const r = await docker([
+    "network",
+    "inspect",
+    "bridge",
+    "-f",
+    "{{(index .IPAM.Config 0).Gateway}}",
+  ]);
   const ip = r.stdout.trim();
   if (r.code !== 0 || !/^\d+\.\d+\.\d+\.\d+$/.test(ip))
     throw new Error(`no gateway on Docker's default bridge: ${tail(r)}`);
@@ -188,7 +201,7 @@ async function waitForHttp(url, ms) {
   const deadline = Date.now() + ms;
   for (;;) {
     try {
-      const res = await fetch(url);
+      const res = await globalThis.fetch(url);
       if (res.ok) return true;
     } catch {
       // not up yet
@@ -217,7 +230,9 @@ async function containerEnv(id) {
 export function modelEnvProblems(env, relayPort) {
   const problems = [];
   if ("ANTHROPIC_API_KEY" in env)
-    problems.push(`ANTHROPIC_API_KEY is set (${env.ANTHROPIC_API_KEY === "" ? "empty" : "a value"})`);
+    problems.push(
+      `ANTHROPIC_API_KEY is set (${env.ANTHROPIC_API_KEY === "" ? "empty" : "a value"})`,
+    );
   if (env.ANTHROPIC_BASE_URL !== `http://host.docker.internal:${String(relayPort)}`)
     problems.push(`ANTHROPIC_BASE_URL is ${String(env.ANTHROPIC_BASE_URL)}`);
   if (env.ANTHROPIC_AUTH_TOKEN !== PLACEHOLDER_TOKEN)
@@ -270,7 +285,10 @@ export async function withStack(report, gate, relay, fn) {
     }),
   );
   const compose = (args, opts) =>
-    docker(["compose", "-p", project, "-f", join(ROOT, "docker-compose.yml"), "-f", override, ...args], opts);
+    docker(
+      ["compose", "-p", project, "-f", join(ROOT, "docker-compose.yml"), "-f", override, ...args],
+      opts,
+    );
   const stack = {
     project,
     appUrl: `http://localhost:${String(webPort)}`,
@@ -327,7 +345,10 @@ export async function withStack(report, gate, relay, fn) {
               (SELECT count(*) FROM household)::int AS households`,
     );
     report.check(
-      counts.tables > 0 && counts.ingredients > 0 && counts.library_dishes > 0 && counts.households === 0,
+      counts.tables > 0 &&
+        counts.ingredients > 0 &&
+        counts.library_dishes > 0 &&
+        counts.households === 0,
       `the stack migrated its fresh volume and loaded the catalogue and seed library itself: ${String(counts.tables)} tables, ${String(counts.ingredients)} ingredients, ${String(counts.library_dishes)} library dishes, ${String(counts.households)} households`,
     );
 
@@ -374,7 +395,18 @@ export async function composeConfig(overrideText) {
   try {
     const file = join(dir, "override.yml");
     writeFileSync(file, overrideText);
-    const r = await docker(["compose", "-p", "mproot-config", "-f", join(ROOT, "docker-compose.yml"), "-f", file, "config", "--format", "json"]);
+    const r = await docker([
+      "compose",
+      "-p",
+      "mproot-config",
+      "-f",
+      join(ROOT, "docker-compose.yml"),
+      "-f",
+      file,
+      "config",
+      "--format",
+      "json",
+    ]);
     return r.code === 0 ? JSON.parse(r.stdout) : { error: tail(r) };
   } finally {
     rmSync(dir, { recursive: true, force: true });

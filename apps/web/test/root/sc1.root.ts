@@ -7,16 +7,16 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { measure } from "../../../../packages/db/test/node/support";
-import type { RecordedModel } from "../node/recorded-model";
-import {
-  evaluateSc1,
-  householdConfig,
-  readPlan,
-  variantNutrients,
-} from "../node/engine-measure";
+import { loadRecordings, type RecordedModel } from "../node/recorded-model";
+import { evaluateSc1, householdConfig, readPlan, variantNutrients } from "../node/engine-measure";
 import { assertF1 } from "./f1-api";
 import { ECONOMY, F1_WEEK, finishRun, queueRun, type Run } from "./engine-runs";
 import { pool, recordedModel } from "./stack";
+
+/** The worker's insight synthesis, answered from the recording (recorded/product-parse.json). */
+const SYNTHESIS = "insights.run: synthesis keeps the rule candidates as they are";
+const SYNTHESIS_ONLY = () =>
+  loadRecordings("product-parse", {}).filter((r) => r.name === SYNTHESIS);
 
 let db: pg.Pool;
 let model: RecordedModel;
@@ -24,8 +24,9 @@ let run: Run;
 
 beforeAll(async () => {
   db = pool();
-  // plan.generate with AI recipes off calls no model; any request would be a failure.
-  model = await recordedModel([]);
+  // plan.generate with AI recipes off calls no model. The worker's scheduled insights runs ask for
+  // a synthesis, answered by the node gates' recorded synthesis; any other request is a failure.
+  model = await recordedModel(SYNTHESIS_ONLY());
 });
 
 afterAll(async () => {
@@ -42,8 +43,10 @@ async function sc1(r: Run) {
 
 describe("root SC-1 (compose stack)", () => {
   it("SC-1 F1 through the stack's API, and plan.generate by its worker persists the 7-day plan (seed 1, economy 0.4, AI recipes off)", async () => {
-    const queued = await queueRun("sc1", 1, ECONOMY);
-    const compared = await assertF1(db, queued.f1);
+    let compared: Record<string, number> = {};
+    const queued = await queueRun("sc1", 1, ECONOMY, async (f1) => {
+      compared = await assertF1(db, f1);
+    });
     run = await finishRun(db, queued);
     const { rows } = await db.query<{ days: number; meals: number; plates: number }>(
       `SELECT (SELECT count(*) FROM plan_day WHERE household_id = $1)::int AS days,
@@ -97,8 +100,15 @@ describe("root SC-1 (compose stack)", () => {
     expect(result.storedDrift).toBeGreaterThan(0);
   });
 
-  it("SC-1 the recorded model received no request it could not answer", () => {
-    measure({ check: "model", requests: model.requests.length, failures: model.failures });
-    expect(model.failures).toEqual([]);
+  it("SC-1 the recorded model answered every request (insight syntheses only), and no live call was made", () => {
+    const syntheses = model.answered.get(SYNTHESIS) ?? 0;
+    measure({
+      check: "model",
+      requests: model.requests.length,
+      syntheses,
+      failures: model.failures,
+    });
+    expect(model.failures, model.failures.join("\n")).toEqual([]);
+    expect(model.requests.length).toBe(syntheses);
   });
 });

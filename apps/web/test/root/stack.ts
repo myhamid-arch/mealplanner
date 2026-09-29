@@ -3,11 +3,7 @@
 // its containers through the relay, and JSON calls against the running app as a signed-up login.
 import { writeFileSync } from "node:fs";
 import pg from "pg";
-import {
-  startRecordedModel,
-  type RecordedModel,
-  type Recording,
-} from "../node/recorded-model";
+import { startRecordedModel, type RecordedModel, type Recording } from "../node/recorded-model";
 import { api, requiredEnv, type Api, type BuiltApp, type Login } from "../node/support";
 
 export { waitForJob } from "../node/support";
@@ -54,9 +50,19 @@ async function post(path: string, body: unknown): Promise<{ status: number; json
 }
 
 /** `POST /api/v1/signup`: a new user and household, the user its admin (ARC-6). */
-export async function signup(email: string, name: string, householdName: string): Promise<SignedUp> {
-  const r = await post("/signup", { email, password: "correct horse battery", name, householdName });
-  if (r.status !== 201) throw new Error(`signup ${email}: ${String(r.status)} ${JSON.stringify(r.json)}`);
+export async function signup(
+  email: string,
+  name: string,
+  householdName: string,
+): Promise<SignedUp> {
+  const r = await post("/signup", {
+    email,
+    password: "correct horse battery",
+    name,
+    householdName,
+  });
+  if (r.status !== 201)
+    throw new Error(`signup ${email}: ${String(r.status)} ${JSON.stringify(r.json)}`);
   const s = r.json as { user: { id: string }; householdId: string; token: string };
   return { email, token: s.token, householdId: s.householdId, userId: s.user.id };
 }
@@ -79,7 +85,11 @@ export function pool(max = 4): pg.Pool {
 }
 
 /** The job's outcome as the worker persisted it: the `done` event's payload is its result. */
-export async function jobResult(db: pg.Pool, jobId: string, ms = 1_800_000): Promise<{ flags: unknown[] }> {
+export async function jobResult(
+  db: pg.Pool,
+  jobId: string,
+  ms = 1_800_000,
+): Promise<{ flags: unknown[] }> {
   const deadline = Date.now() + ms;
   for (;;) {
     const { rows } = await db.query<{ status: string; error: unknown }>(

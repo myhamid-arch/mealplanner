@@ -77,7 +77,6 @@ interface Household {
   omarId: string;
 }
 
-
 /** Where the flows run: the app's URL and the recorded model it calls (both started by the caller). */
 export interface Sc5Stack {
   url(): string;
@@ -132,12 +131,16 @@ export function registerSc5Flows(stack: Sc5Stack): void {
         await record();
         await page.getByRole("button", { name: "Next", exact: true }).click();
 
-        await expect(page.getByRole("heading", { name: "Who follows macro targets?" })).toBeVisible();
+        await expect(
+          page.getByRole("heading", { name: "Who follows macro targets?" }),
+        ).toBeVisible();
         await page.getByRole("button", { name: "Omar", exact: true }).click();
         await page.getByRole("button", { name: "Sara", exact: true }).click();
         await page.getByLabel("Omar's targets").fill(ANSWERS.omar);
         await page.getByLabel("Sara's targets").fill(ANSWERS.sara);
-        await expect(page.getByText("Read as 2150 kcal · P180 C200 F70 (total carbs)")).toBeVisible();
+        await expect(
+          page.getByText("Read as 2150 kcal · P180 C200 F70 (total carbs)"),
+        ).toBeVisible();
         await record();
         await page.getByRole("button", { name: "Next", exact: true }).click();
 
@@ -303,7 +306,8 @@ export function registerSc5Flows(stack: Sc5Stack): void {
           page,
           "/api/v1/proposals?status=accepted",
         );
-        const changeSetId = accepted.proposals.find((p) => p.changeSetId !== null)?.changeSetId ?? "";
+        const changeSetId =
+          accepted.proposals.find((p) => p.changeSetId !== null)?.changeSetId ?? "";
         const log2 = await json<{ entries: { id: string; source: string }[] }>(
           page,
           "/api/v1/change-sets?limit=100",
@@ -326,7 +330,9 @@ export function registerSc5Flows(stack: Sc5Stack): void {
   }
 
   test("SC-5 the recorded model answered every request, and no live call was made", () => {
-    const parse = [...stack.model().answered.entries()].filter(([name]) => name.startsWith("parse:"));
+    const parse = [...stack.model().answered.entries()].filter(([name]) =>
+      name.startsWith("parse:"),
+    );
     measure({
       check: "model",
       requests: stack.model().requests.length,

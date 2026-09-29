@@ -24,9 +24,18 @@ export interface Run extends QueuedRun {
   seconds: number;
 }
 
-/** A fresh API-built F1 household, its weights set, and F1's week queued at `seed`. */
-export async function queueRun(tag: string, seed: number, economy: number): Promise<QueuedRun> {
+/**
+ * A fresh API-built F1 household, its weights set, and F1's week queued at `seed`. `checkF1` runs
+ * on the household as built, before the run changes its weights.
+ */
+export async function queueRun(
+  tag: string,
+  seed: number,
+  economy: number,
+  checkF1: (f1: F1Household) => Promise<void>,
+): Promise<QueuedRun> {
   const f1 = await buildF1(tag);
+  await checkF1(f1);
   const weights = await f1.adminApi("POST", "/change-sets", {
     summary: `root weights (economy ${String(economy)})`,
     ops: [{ kind: "weights.set", payload: { ingredientEconomy: economy, aiGeneration: "off" } }],
@@ -45,7 +54,11 @@ export async function queueRun(tag: string, seed: number, economy: number): Prom
 
 export async function finishRun(db: pg.Pool, q: QueuedRun): Promise<Run> {
   const result = await jobResult(db, q.jobId, 10_800_000);
-  return { ...q, flags: result.flags as Flag[], seconds: Math.round((Date.now() - q.queuedAt) / 1000) };
+  return {
+    ...q,
+    flags: result.flags as Flag[],
+    seconds: Math.round((Date.now() - q.queuedAt) / 1000),
+  };
 }
 
 /**
