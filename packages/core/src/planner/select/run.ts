@@ -6,6 +6,7 @@ import { resolveSlotTargets, type SlotTarget } from "../targets/index.js";
 import { MACRO_EPSILON } from "./config.js";
 import {
   dayNumber,
+  dishExclusionReason,
   frequencyReason,
   laterThan,
   neverReason,
@@ -165,7 +166,8 @@ export class Run {
           d,
           meal.attendees.map((m) => this.household.ctx(m, meal.slot, d, adjusters)),
         ) &&
-        neverReason(d, meal.attendees, this.household, this.pool) === null,
+        neverReason(d, meal.attendees, this.household, this.pool) === null &&
+        dishExclusionReason(d, meal.attendees, meal.slot.key, this.household) === null,
     );
   }
 

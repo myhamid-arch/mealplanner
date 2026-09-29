@@ -27,6 +27,8 @@ export function isExcluded(
         return row.key === candidate.category;
       case "dietary_flag":
         return candidate.dietaryFlags.includes(row.key);
+      case "dish":
+        return false;
     }
   });
 }
