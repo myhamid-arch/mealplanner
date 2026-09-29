@@ -40,3 +40,9 @@ G2's test file is `packages/db/test/nutrition-recompute*.int.test.ts`. `packages
 ## SPEC-Q-5 (G1): how the packing reviews are counted
 
 "At least 2 household reviews": distinct top-level reviews by any members of the household, in the rule window (`REVIEW_WINDOW_DAYS`), whose meal (`planMealId`, or a `plan_meal`/`plate` target) is in a slot with `isPacked`, whose dish is the dish, and that carry at least one of `hard_to_pack`, `went_soggy_in_box`, `cold_is_bad` (the three count together). A review with no meal context is not counted: it cannot show the dish was eaten from a box. The proposal scopes the exclusion to every active packed slot of the household, not only the slots the reviews came from (the gate: "the household's packed slot keys").
+
+## SPEC-Q-6 (G3): the draft's example plates cover targeted attendees only
+
+REC-6 (05 §6) and AGT-7 (07 §5) say the recipe card has "per-attendee example plates". The `recipe.draft` job returns the generator's REC-5 step-7 feasibility solves (`packages/ai/src/recipes/validate/feasibility.ts`), which exist only for the slot's **targeted** attendees and carry `{ label, status, explain }` (status and deviation text, no grams). An untargeted attendee (a child) gets no plate. Measured in G3: for a household with a targeted adult and an untargeted child at dinner, the card holds one plate (the adult's, `in_tolerance`).
+
+**Reading taken (no code change):** G3 asserts the plates the job produces: one per targeted attendee of the requested slot on the requested day, each within tolerance or a flexible miss, with the solver's explanation, and the card's `use` naming that day and slot. If every attendee must get a plate (PLN-7 appetite portions for untargeted members, with grams), that is a change to `apps/worker/src/jobs/recipe-draft.ts` or the generator, outside OWNS; it is raised as an architect question and listed as a request.
