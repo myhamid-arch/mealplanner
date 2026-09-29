@@ -170,6 +170,16 @@ The first API call after sign-in therefore changes that row. It is not part of t
     - The comparison with the shared `dist/`, and any forced rebuild with its re-comparison, run inside the `packages-build` lock that `buildPackages` holds.
     - The rebuild path was exercised: one published `packages/db` declaration was corrupted, and N2 rebuilt `dist/` under the lock and then matched.
 
+## Pre-CP2 finding 17 (architect, W-21) and what changed
+
+17. **Locks whose holder died before recording its pid.**
+    - `acquireLock` and `withSlot` in `lib/node.mjs` took over a lock only when its pid file named a dead process. A holder killed between `mkdir` and writing its pid left a lock that nothing would ever take over.
+    - Both loops now use `lockIsStale` from the base's `scripts/verify/lib/lock.mjs` (W-21): a lock is stale when its recorded holder is dead, or when it records none and is older than 5 s. Each takeover is logged.
+    - Control: a `packages-build` lock and the `suite` slot lock were planted, each with an empty pid and aged 60 s.
+      - node-1.1 N2 on the fix took both over and passed.
+      - The same gate from a worktree of the pre-fix commit (49a8fd9) was still blocked when its 120 s timeout ended it; both locks were still in place.
+    - Per the ruling, node-1.1 N2 was then run on the new head with `DATABASE_URL` unset and set. The other N2–N4 evidence carries over.
+
 ## Raised during the final rounds
 
 - **R-4 (ARCHITECT QUESTION): the `kg-startup` open-tx witness in 1.4.10 is racy.**
