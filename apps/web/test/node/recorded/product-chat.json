@@ -1,0 +1,54 @@
+{
+  "about": "node-1.4 N3 (R-69, SPEC-Q-6): one chat turn in which the agent asks for a protected change (loosening a tolerance, AGT-5), which the server turns into a proposal card. Written by hand; {{OMAR_ID}} is filled from the household the test onboarded.",
+  "recordings": [
+    {
+      "name": "chat: loosen Omar's protein tolerance",
+      "expect": {
+        "stream": true,
+        "systemContains": ["You are this household's meal-planning assistant"],
+        "lastUserText": ["Loosen Omar's protein tolerance"]
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "That loosens a tolerance, so I will put it to you as a proposal."
+          },
+          {
+            "type": "tool_use",
+            "name": "apply_change",
+            "input": {
+              "summary": "Loosen Omar's protein tolerance to 10 g",
+              "ops": [
+                {
+                  "kind": "tolerance.set",
+                  "payload": {
+                    "memberId": "{{OMAR_ID}}",
+                    "proteinG": 10
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "stop_reason": "tool_use"
+      }
+    },
+    {
+      "name": "chat: point to the proposal",
+      "expect": {
+        "stream": true,
+        "toolResultOf": "apply_change"
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "The proposal is above: accept it to apply the change."
+          }
+        ],
+        "stop_reason": "end_turn"
+      }
+    }
+  ]
+}
