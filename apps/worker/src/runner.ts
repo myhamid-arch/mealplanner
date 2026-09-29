@@ -113,8 +113,12 @@ export async function runJob(rt: WorkerRuntime, jobId: string, handler: JobHandl
   });
   if (outcome.ok) {
     try {
-      await appendJobEvent(rt.db, jobId, "done", outcome.result);
-      await finishJob(rt.db, jobId, { status: "succeeded" });
+      // W-20: the terminal event and the status commit together, so a client that sees `done`
+      // (its pg_notify is delivered at commit) reads the job as succeeded.
+      await rt.db.transaction(async (tx) => {
+        await appendJobEvent(tx, jobId, "done", outcome.result);
+        await finishJob(tx, jobId, { status: "succeeded" });
+      });
       log.info({ ms }, "job succeeded");
     } catch (error) {
       // The work is done; only its record failed. No `failed` after a `done`.
@@ -124,8 +128,17 @@ export async function runJob(rt: WorkerRuntime, jobId: string, handler: JobHandl
   }
   const err = errorJson(outcome.error);
   log.error({ err: outcome.error, ms }, "job failed");
-  await appendJobEvent(rt.db, jobId, "failed", err).catch(() => undefined);
-  await finishJob(rt.db, jobId, { status: "failed", error: err }).catch((error: unknown) => {
-    log.error({ err: error }, "job failed and its status could not be stored");
-  });
+  // W-20: `failed` and the status commit together; if that cannot be stored, the status alone is
+  // still written, so the job never stays running.
+  await rt.db
+    .transaction(async (tx) => {
+      await appendJobEvent(tx, jobId, "failed", err);
+      await finishJob(tx, jobId, { status: "failed", error: err });
+    })
+    .catch(async (error: unknown) => {
+      log.error({ err: error }, "job failed and its failed event could not be stored");
+      await finishJob(rt.db, jobId, { status: "failed", error: err }).catch((e: unknown) => {
+        log.error({ err: e }, "job failed and its status could not be stored");
+      });
+    });
 }
