@@ -280,7 +280,7 @@ Each gate below becomes a ledger entry. Runnable gates use `CHECK: node scripts/
 ## 6. Branch and root gates (BLD-6)
 
 - Each `node-*` ledger: N1 reverify all children, N2 interface checks (packages compile against each other's public types; the contract tests pass), N3 end-to-end for the branch, N4 regression (full test suite), N5 lease releases, N6 manual review.
-- **Root.** SC-1 to SC-5 ([01-product.md](01-product.md) §7) as runnable gates on a fresh `docker compose up` with seeded data. Every contract-inventory row is reconciled. The final report goes to the owner.
+- **Root.** SC-1 to SC-5 ([01-product.md](01-product.md) §7), and SC-6 and SC-7 from r2 (R-79), as runnable gates on a fresh `docker compose up` with seeded data. Every contract-inventory row is reconciled. The final report goes to the owner.
 
 **Node gate definitions (R-69).** `scripts/verify/node-1.<n>.mjs --gate N2|N3|N4` over a shared `scripts/verify/lib/node.mjs`. Each gate prints `VERIFY node-1.<n> <gate> PASSED` only when every assertion holds, and carries a negative control. Gates are safe to run concurrently. `next build` runs with `DATABASE_URL` cleared (R-50). Each N3 uses its own fresh database (a new database on `DATABASE_URL`'s server, else localhost:5432, else a throwaway PostgreSQL 16 cluster), migrated from zero, with the catalogue loaded and F1 seeded.
 - **N2 (every node).** Build the branch's packages, then typecheck every workspace package that depends on them, so consumers compile against the published types (`dist`, subpath exports). `@mealplanner/api-contract`'s contract tests pass. Negative control: in a disposable workspace copy, one exported type of a branch package changes incompatibly, and a consumer's typecheck fails.
@@ -627,6 +627,18 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - on /account, the pre-fix gap is under the 16 px margin, where the fix gives at least 16 px.
   - 1.4.6's padding stays, so roles without the assistant keep their layout.
 
+- **R-79 (root gates reconciled with r2; architect ruling, 2026-09-29).**
+  - **SC-6 and SC-7 are root gates.** r2 (13-revision-r2.md §SC, lines 105-106) adds SC-6 (a new household reaches its first generated day plan after at most 5 questions, counted by Playwright) and SC-7 (every inferred setting on the review screen links to where it is adjusted, and every link resolves). 13 overrides §6's "SC-1 to SC-5": the root runs SC-1 to SC-7.
+  - **The root ledger is `docs/build/GATES.md`**, not `gates/root.md`. R1 reverifies the nodes; R2–R8 are SC-1 … SC-7, one gate each (§6's single R2 split per criterion); R9 (manual) rereads the owner's requests and spec r2 and reconciles every contract-inventory row (§6's R3). The final report to the owner (§6's R4) follows R9 and is not a gate.
+  - **Node gates as built:** N1 reverify, N2 interfaces, N3 end to end, N4 full suite, N5 the architect's manual branch review. §6's separate "N5 lease releases" gate does not exist; nothing in v1 holds leases.
+  - **R1 runs through `scripts/verify/root.mjs --gate R1`.** The earlier CHECK (one `gate-check --reverify` over four node ledgers, with no `--approve` and no `--timeout`) had the R-75 defect: nested runs fall back to a 120 s timeout. It also could not survive a machine reboot, since the four nodes take many hours; this container rebooted twice on 2026-09-29.
+    - `--gate R1` runs `gate-check --root . --cwd . --approve --reverify --jobs 1 --timeout 14400` on each node ledger in turn. It records each node's pass in a cache keyed by the git tree (`git rev-parse HEAD^{tree}`) and a clean worktree. On a rerun it reuses only the passes recorded for the same tree.
+    - It prints `VERIFY root R1 PASSED` only when all four nodes passed on the current tree.
+    - Negative control: a pass cached under a different tree is not reused.
+- **R-80 (root-verify leaf).** A builder writes `scripts/verify/root.mjs` (R1 and SC-1 … SC-7) against GATES.md R1–R8, under the node-scripts leaf's rules (R-69, R-70).
+  - OWNS: `scripts/verify/root.mjs`, `scripts/verify/lib/root*.mjs`, `apps/web/e2e/root/**`, `apps/web/test/root/**`, `docs/decisions/root-verify-*`.
+  - SC-1 … SC-7 run against a fresh `docker compose up` (the repo's `docker-compose.yml`, images built from its Dockerfiles, a new project name and volume per gate, torn down after). The stack migrates and loads the catalogue and seed library itself. F1 is set up through the running stack's API or onboarding, and the model is recorded (as in node N3).
+  - Each gate reuses the N3 flow and measure that proves it, and carries a negative control. Gates are safe to run one after another (compose projects are not shared).
 - **W-20 (a job's terminal event and status were committed apart; reported by the node-scripts builder as R-5, fixed by the architect).**
   - The problem: `apps/worker/src/runner.ts` committed the `done` event, whose `pg_notify` ends the SSE stream, before setting `succeeded`. A client that had seen the stream end could read the job as `running`. The failure path had the same gap for `failed`. It showed up as node-1.3 N4 failing `g2-worker-sse.int.test.ts:218`.
   - The fix: each terminal event and its status now commit in one transaction. On the failure path, if that transaction fails, the status alone is still written, so a job never stays `running`.

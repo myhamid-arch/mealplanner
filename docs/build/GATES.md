@@ -3,8 +3,8 @@
 Scope: the whole v1 as specified in docs/spec r2, integrated and accepted
 
 - [ ] R1: all four branches reverified
-  CHECK: node .claude/skills/unlazy/scripts/gate-check.mjs --root . --cwd . --reverify --jobs 1 docs/build/gates/node-1.1.md docs/build/gates/node-1.2.md docs/build/gates/node-1.3.md docs/build/gates/node-1.4.md
-  EXPECT: ALL MET
+  CHECK: node scripts/verify/root.mjs --gate R1
+  EXPECT: VERIFY root R1 PASSED
   EVIDENCE: pending
 
 - [ ] R2: SC-1 passes on a fresh docker compose up with seeded data
