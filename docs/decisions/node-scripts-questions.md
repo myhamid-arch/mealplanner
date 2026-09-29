@@ -182,6 +182,10 @@ The first API call after sign-in therefore changes that row. It is not part of t
   - A keep-alive race was suspected: `next start` keeps Node's 5000 ms `keepAliveTimeout`, and the test died 6.0 s in. It did not reproduce. With a Playwright request context and a second GET at gaps of 4950–5050 ms, 0 of 21 requests were reset without the header, and 0 of 21 with `Connection: close`.
   - The run kept no web-server output. The e2e runs now set `DEBUG=pw:webserver`, so a recurrence shows what the server did.
   - It has not recurred in the six complete N4 runs since. The last four of them kept the server log.
+- **Leaf 1.4.11's `e2e/assistant-clearance.spec.ts`.** It arrived with base e4fbe02, and N4's coverage check failed on it as designed: node-1.4 N4 on 04a9353 reported "every spec file of the default config is run" as FAIL.
+  - It now runs in the `app` environment (a seeded database and the worker).
+  - For @G1, the harness also passes `PREFIX_MAIN_CLASS` and `PREFIX_SHELL_CLASS`, read from git at the pre-fix commit that `scripts/verify/leaf-1.4.11.mjs` names (83d0811), as that script does.
+  - Checked directly on the 04a9353 build: @G1 11 of 11, @G2 5 of 5.
 - **Suite summary lines** now state the requirement ("required: all passed, none skipped"). A failing suite used to print "…, none failed or skipped".
 
 **Observation, not a gate issue.** Three node-1.2 runs of the same F1 week at seed 1, on the same catalogue, persisted different plans: 10, 13 and 14 same-dish pairs. One of them relaxed a breakfast repeat to 6 days. Plan generation through the job is not reproducible run to run. N3 judges each run on its own terms.

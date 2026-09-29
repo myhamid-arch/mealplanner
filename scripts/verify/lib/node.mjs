@@ -901,6 +901,14 @@ const E2E_SPECS = [
   { file: "e2e/config.spec.ts", env: "app", worker: (tag) => tag !== "@G3" },
   { file: "e2e/plan.spec.ts", env: "app", worker: () => true, graph: ["@G3", "@1.4.8-G5"] },
   { file: "e2e/setup.spec.ts", env: "app", worker: () => true },
+  // Leaf 1.4.11 (W-15): a seeded database and the worker, as scripts/verify/leaf-1.4.11.mjs gives
+  // it; @G1's negative control also needs the pre-fix shell's class lists.
+  {
+    file: "e2e/assistant-clearance.spec.ts",
+    env: "app",
+    worker: () => true,
+    extraEnv: (tag) => (tag === "@G1" ? clearancePreFix() : {}),
+  },
   { file: "e2e/chat.spec.ts", env: "chat" },
   { file: "e2e/admin.spec.ts", env: "admin" },
   // Own configs that start `next start` themselves against a seeded database and the worker
@@ -909,6 +917,40 @@ const E2E_SPECS = [
   { config: "test/followups/playwright.config.ts", env: "own-config" },
   { config: "e2e/node-1.4/playwright.config.ts", env: "node14" },
 ];
+
+/**
+ * The pre-fix class lists of the app shell's <main> and outer div, read from git at the commit
+ * scripts/verify/leaf-1.4.11.mjs names (PRE_FIX_COMMIT), for assistant-clearance.spec.ts @G1.
+ */
+const CLEARANCE_PRE_FIX_COMMIT = "83d0811e4df69138d7bdf89933bac8d69b1d137f";
+const CLEARANCE_SHELL = "apps/web/app/(shell)/_shell/app-shell.tsx";
+async function clearancePreFix() {
+  const show = () =>
+    runAsync("git", ["show", `${CLEARANCE_PRE_FIX_COMMIT}:${CLEARANCE_SHELL}`], {
+      cwd: ROOT,
+      timeoutMs: 60_000,
+    });
+  let r = await show();
+  if (r.code !== 0) {
+    await withLock("git-fetch", () =>
+      runAsync("git", ["fetch", "--quiet", "--depth=1", "origin", CLEARANCE_PRE_FIX_COMMIT], {
+        cwd: ROOT,
+        timeoutMs: 120_000,
+      }),
+    );
+    r = await show();
+  }
+  if (r.code !== 0) throw new Error(`pre-fix ${CLEARANCE_SHELL}:\n${tail(r, 20)}`);
+  const classOf = (opening) => {
+    const at = r.stdout.indexOf(opening);
+    return at === -1 ? undefined : /className="([^"]*)"/.exec(r.stdout.slice(at, at + 600))?.[1];
+  };
+  const main = classOf("<main");
+  const shell = classOf('<div className="flex min-h-dvh');
+  if (main === undefined || shell === undefined)
+    throw new Error(`pre-fix ${CLEARANCE_SHELL}: <main> or the outer div not found`);
+  return { PREFIX_MAIN_CLASS: main, PREFIX_SHELL_CLASS: shell };
+}
 
 const PLAYWRIGHT_CLI = (webDir) => join(webDir, "node_modules/@playwright/test/cli.js");
 
@@ -1149,6 +1191,7 @@ async function e2eRun({ webDir, distDir, server, spec, tag }) {
         });
         if (kg.code !== 0) throw new Error(`kg-rebuild failed:\n${tail(kg, 30)}`);
       }
+      Object.assign(env, (await spec.extraEnv?.(tag)) ?? {});
       const wantsWorker =
         spec.env === "chat" ||
         spec.env === "own-config" ||
