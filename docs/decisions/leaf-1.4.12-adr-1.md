@@ -1,6 +1,7 @@
 # leaf-1.4.12 ADR-1: test harness and the recorded agent turn
 
 ## Context
+
 Leaf 1.4.12 (R-82) adds Playwright tests only, for two requirements that are implemented and untested:
 PLN-3's one-tap "replaces lunch" (`apps/web/components/config/schedule-screen.tsx`) and R2-DL-6's
 "Tell the assistant" (`apps/web/components/detail-level/detail-control.tsx`). G1 needs a real plan
@@ -9,6 +10,7 @@ generated through the worker; G2 needs an agent turn that applies a change, with
 (`@playwright/test` 1.63.0 and `@axe-core/playwright` 4.13.0 are already in `apps/web`).
 
 ## Decisions
+
 1. **Harness: 1.4.8's, with this leaf's names.** `scripts/verify/leaf-1.4.12.mjs` builds the workspace
    packages and the worker under the shared `packages-build` lock, runs `next build` with
    `DATABASE_URL` cleared (R-50) into its own `.next/verify-1.4.12-<gate>` directory under the shared

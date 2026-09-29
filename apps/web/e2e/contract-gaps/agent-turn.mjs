@@ -99,6 +99,7 @@ function splitWithLunch(slots) {
   const others = slots.filter((s) => s.key !== "lunch");
   const lunch = slots.find((s) => s.key === "lunch");
   if (lunch === undefined) throw new Error("the member does not eat lunch");
+  if (others.length === 0) throw new Error("the member eats no meal besides lunch");
   const total = others.reduce((a, s) => a + weight(s.key), 0);
   const round = (n) => Math.round(n * 10_000) / 10_000;
   const shares = others.map((s) => ({

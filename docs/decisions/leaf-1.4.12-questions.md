@@ -1,11 +1,13 @@
 # leaf-1.4.12 spec questions
 
 ## SPEC-Q-1: "applies the change at that section's level" (R2-DL-6, G2)
+
 R2-DL-6 says "tell the assistant" "applies the change at the right level"; the gate says "at that
 section's level". Reading taken (the more testable one): the recorded turn writes the op kind that
 the section's own controls write for the value at the level the section shows, and afterwards the
 section, still at that level (its `detail_level` row unchanged), shows the new value, and the stored
 state read through the API matches:
+
 - Daily targets at **Basic**: `target.set` on the member's default profile; the section shows the
   new kcal.
 - Meals at **Detailed**: `distribution.set` with one meal's share set and the others rebalanced to
@@ -14,7 +16,9 @@ state read through the API matches:
   choices show it as the member's own.
 
 ## SPEC-Q-2: the Tastes prompt does not name the section (blocks G2)
+
 The three detail-level sections on a member's page prefill:
+
 - Daily targets: `Change <name>'s daily targets: ` (names member and section);
 - Meals: `Change how <name>'s day is split across meals: ` (names member and section);
 - Tastes: `<name> likes ` (`apps/web/components/config/tastes-section.tsx:188`): names the member,
@@ -28,6 +32,7 @@ the prefilled request to contain the member's name and that name's last word (`t
 `tastes`), case-insensitive.
 
 ## SPEC-Q-3: which sections are "every detail-level section on a member's page" (G2)
+
 Reading taken: every section of `/family/<memberId>` that carries the R2-DL segmented control
 (`[data-detail-control]`). For a targeted member who trains these are Daily targets, Meals and
 Tastes. Training (no level control, but its own "Tell the assistant") and Allergies & never-serve
@@ -35,13 +40,16 @@ Tastes. Training (no level control, but its own "Tell the assistant") and Allerg
 so the check cannot pass on an empty set.
 
 ## SPEC-Q-4: "those days" (PLN-3, G1)
+
 Reading taken: the weekdays on which the member attends the packed slot. After the tap, the stored
 schedule has `attends = false` for the member's lunch on exactly those weekdays, and the member's
 other lunch days are unchanged. The generated plan is checked over one week: on each packed day the
 member has a packed plate and no lunch plate; on the other days the member keeps a lunch plate.
 
 ## SPEC-Q-5: a meal split set to 40 % shows every share as `yours` (R2-DL-4; found by G2)
+
 Found while building G2, and raised on the PR as an ARCHITECT QUESTION with a proposed patch.
+
 - `meal_distribution.share` is `numeric(10,3)` (`packages/db/src/migrations/0001_schema.sql:199`;
   `num()` in `packages/db/src/schema/columns.ts:12`).
 - `rebalance()` rounds to 4 decimals and `inferYours()` treats two ratios as the same within 0.4 %
