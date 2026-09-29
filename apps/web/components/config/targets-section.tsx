@@ -121,10 +121,15 @@ export function TargetsSection({
   data,
   member,
   onChanged,
+  saved: savedByPage = false,
+  onSaved,
 }: {
   readonly data: HouseholdData;
   readonly member: Member;
   readonly onChanged: () => Promise<void>;
+  /** W-22: set by the page, whose state outlives this section's re-creation after a save. */
+  readonly saved?: boolean;
+  readonly onSaved?: () => void;
 }) {
   const {
     level,
@@ -135,13 +140,15 @@ export function TargetsSection({
   const training = data.targets.find((t) => t.memberId === member.id && t.kind === "training");
   const tolerance = data.tolerances.find((t) => t.memberId === member.id);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
+  const [savedHere, setSaved] = useState(false);
+  const saved = savedByPage || savedHere;
   const pct = data.household.satFatDefaultPct;
   const run = async (summary: string, ops: ChangeOp[]) => {
     try {
       await applyChanges(summary, ops);
       setError(null);
       setSaved(true);
+      onSaved?.();
       await onChanged();
     } catch (e) {
       setError(problemText(e));

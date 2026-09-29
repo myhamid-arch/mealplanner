@@ -4,7 +4,7 @@
 import { isAvatarColor } from "@mealplanner/ui-tokens/tokens";
 import { useHousehold } from "./data";
 import { MealsSection } from "./meals-section";
-import { ErrorBlock, LoadingBlock } from "./parts";
+import { ErrorBlock, LoadingBlock, useSavedSections } from "./parts";
 import { TargetsSection } from "./targets-section";
 import { Avatar } from "../ui/avatar";
 import { LinkButton } from "../ui/button";
@@ -27,6 +27,7 @@ const PRINCIPLES = [
 
 export function DetailLevelsScreen() {
   const { data, error, loading, reload } = useHousehold();
+  const { isSaved, markSaved } = useSavedSections();
   const member = data?.members.find((m) => m.isTargeted) ?? data?.members[0];
   return (
     <div className="flex flex-col gap-5">
@@ -75,6 +76,10 @@ export function DetailLevelsScreen() {
             data={data}
             member={member}
             onChanged={reload}
+            saved={isSaved(`targets:${member.id}`)}
+            onSaved={() => {
+              markSaved(`targets:${member.id}`);
+            }}
           />
           <MealsSection
             data={data}

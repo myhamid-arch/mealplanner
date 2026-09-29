@@ -302,7 +302,10 @@ for (const vp of VIEWPORTS) {
       await expectFits(page, "member page");
       // Change targets.
       await page.getByLabel("Calories").fill("2200");
+      // W-22: the confirmation must still show once the saved targets are back from the server:
+      // "Save targets" goes away when the form matches the reloaded data.
       await page.getByRole("button", { name: "Save targets" }).click();
+      await expect(page.getByRole("button", { name: "Save targets" })).toBeHidden();
       await expect(page.getByText("Saved. It's in the change log")).toBeVisible();
       await expect
         .poll(

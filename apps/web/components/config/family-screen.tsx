@@ -12,7 +12,14 @@ import { newId } from "./ids";
 import { hhmm, memberAge, useHousehold, type HouseholdData, type Member } from "./data";
 import { MealsSection } from "./meals-section";
 import { FLAG_LABEL, NeverServeList } from "./never-serve";
-import { ErrorBlock, LoadingBlock, readNumber, SaveStatus, Section } from "./parts";
+import {
+  ErrorBlock,
+  LoadingBlock,
+  readNumber,
+  SaveStatus,
+  Section,
+  useSavedSections,
+} from "./parts";
 import { TargetsSection } from "./targets-section";
 import { TastesSection } from "./tastes-section";
 import { TrainingSection } from "./training-section";
@@ -352,6 +359,7 @@ function Profile({
 export function FamilyScreen({ selectedId }: { readonly selectedId: string | null }) {
   const { data, error, loading, reload } = useHousehold();
   const router = useRouter();
+  const { isSaved, markSaved } = useSavedSections();
   const [logins, setLogins] = useState<{ memberId: string | null; role: string; email: string }[]>(
     [],
   );
@@ -452,6 +460,10 @@ export function FamilyScreen({ selectedId }: { readonly selectedId: string | nul
             data={data}
             member={selected}
             onChanged={reload}
+            saved={isSaved(`targets:${selected.id}`)}
+            onSaved={() => {
+              markSaved(`targets:${selected.id}`);
+            }}
           />
           <MealsSection data={data} member={selected} onChanged={reload} />
           <div className="grid gap-4 xl:grid-cols-2">
@@ -460,6 +472,10 @@ export function FamilyScreen({ selectedId }: { readonly selectedId: string | nul
               data={data}
               member={selected}
               onChanged={reload}
+              saved={isSaved(`training:${selected.id}`)}
+              onSaved={() => {
+                markSaved(`training:${selected.id}`);
+              }}
             />
             <Section id="never-serve" title="Allergies & never-serve">
               <NeverServeList data={data} member={selected} onChanged={reload} />

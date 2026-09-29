@@ -1,6 +1,6 @@
 "use client";
 // Small building blocks shared by the onboarding, family and settings screens.
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { WEEKDAY_SHORT } from "@mealplanner/core/onboarding";
 
 /** A white recipe-card section with a Fraunces heading and an optional header control. */
@@ -69,6 +69,20 @@ export function WeekdayPicker({
       })}
     </div>
   );
+}
+
+/**
+ * Which sections of a page have saved (W-22). The page keeps it, so a section that is re-created
+ * from the reloaded data (keyed by it) still shows its "Saved" line.
+ */
+export function useSavedSections() {
+  const [saved, setSaved] = useState<ReadonlySet<string>>(() => new Set());
+  return {
+    isSaved: (key: string) => saved.has(key),
+    markSaved: (key: string) => {
+      setSaved((s) => new Set(s).add(key));
+    },
+  };
 }
 
 /** A status line under a form: saving, saved, or a plain-language error (UX-7). */

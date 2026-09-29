@@ -20,10 +20,15 @@ export function TrainingSection({
   data,
   member,
   onChanged,
+  saved: savedByPage = false,
+  onSaved,
 }: {
   readonly data: HouseholdData;
   readonly member: Member;
   readonly onChanged: () => Promise<void>;
+  /** W-22: set by the page, whose state outlives this section's re-creation after a save. */
+  readonly saved?: boolean;
+  readonly onSaved?: () => void;
 }) {
   const stored: Day[] = data.schedules.training
     .filter((t) => t.memberId === member.id)
@@ -31,7 +36,8 @@ export function TrainingSection({
   const [editing, setEditing] = useState(false);
   const [days, setDays] = useState<Day[]>(stored);
   const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
+  const [savedHere, setSaved] = useState(false);
+  const saved = savedByPage || savedHere;
   const save = async () => {
     try {
       await applyChanges(`Set ${member.displayName}'s training days`, [
@@ -43,6 +49,7 @@ export function TrainingSection({
       setEditing(false);
       setError(null);
       setSaved(true);
+      onSaved?.();
       await onChanged();
     } catch (e) {
       setError(problemText(e));
