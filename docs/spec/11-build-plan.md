@@ -627,3 +627,11 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - on /account, the pre-fix gap is under the 16 px margin, where the fix gives at least 16 px.
   - 1.4.6's padding stays, so roles without the assistant keep their layout.
 
+- **W-20 (a job's terminal event and status were committed apart; reported by the node-scripts builder as R-5, fixed by the architect).**
+  - The problem: `apps/worker/src/runner.ts` committed the `done` event, whose `pg_notify` ends the SSE stream, before setting `succeeded`. A client that had seen the stream end could read the job as `running`. The failure path had the same gap for `failed`. It showed up as node-1.3 N4 failing `g2-worker-sse.int.test.ts:218`.
+  - The fix: each terminal event and its status now commit in one transaction. On the failure path, if that transaction fails, the status alone is still written, so a job never stays `running`.
+  - Verified in a clean worktree:
+    - `g2-worker-sse.int.test.ts` passes 6 of 6;
+    - with a 500 ms pause inside the transaction it passes 3 of 3;
+    - the pre-fix code with the same pause between separate writes fails 3 of 3 with "expected 'running' to be 'succeeded'".
+  - This is a single edit in the worker runner, which merged leaf 1.3.2 owns.
