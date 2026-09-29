@@ -502,6 +502,7 @@ const CASES: Case[] = [
       return out;
     },
     shown: async (page) => {
+      console.log(await page.locator("section#meals").innerText());
       const lunch = page.locator("section#meals [data-slot=lunch]");
       await expect(lunch.locator("[data-share]")).toHaveText(/^40\s?%$/);
       await expect(lunch.locator("[data-dl=yours]")).toBeVisible();
@@ -601,8 +602,8 @@ for (const v of VIEWPORTS)
           .getByRole("radiogroup", { name: `Detail level for ${c.scope}` })
           .getByRole("radio", { name: LABEL[c.level] }),
       ).toBeChecked();
-      await c.shown(page);
       await capture(page, `g2-applied-${c.id}-${v.name}`);
+      await c.shown(page);
     }
     await ctx.close();
   });
