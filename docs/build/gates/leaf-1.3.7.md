@@ -4,10 +4,10 @@ OWNS: docs/decisions/leaf-1.3.7-*.md, packages/core/src/learning/rules/practical
 
 Scope: R-82: close the contract gaps the root review (R9) found in node-1.3's scope — FBK-3's practical tags (W-23, not implemented), DM-4's nutrition recompute on change (untested) and REC-6's admin-initiated draft job (untested past queueing), as specified in docs/spec (06 §2 FBK-3, 02 DM-4, 05 §6 REC-6, 11-build-plan.md §8 R-82)
 
-- [ ] G1: FBK-3 practical tags (W-23, R-82): at least 2 household reviews tagging one dish hard_to_pack, went_soggy_in_box or cold_is_bad on meals in packed slots give one pending proposal of a dish exclusion (kind dish, not protected) scoped to the household's packed slot keys; once accepted, planned weeks keep that dish out of the packed slots and still offer it in others; took_too_long gives a digest note and no op; one such review gives no proposal (negative control)
+- [x] G1: FBK-3 practical tags (W-23, R-82): at least 2 household reviews tagging one dish hard_to_pack, went_soggy_in_box or cold_is_bad on meals in packed slots give one pending proposal of a dish exclusion (kind dish, not protected) scoped to the household's packed slot keys; once accepted, planned weeks keep that dish out of the packed slots and still offer it in others; took_too_long gives a digest note and no op; one such review gives no proposal (negative control)
   CHECK: node scripts/verify/leaf-1.3.7.mjs --gate G1
   EXPECT: VERIFY leaf-1.3.7 G1 PASSED
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=86169e1c9d7bba8c6651738969eec41a72f9178917387b6d19a3d666be4ebd2e; exit=0; EXPECT=matched; output-sha256=c2a42ca0bb370c356872477d24e512330541f29c96169cd6790a2dbbea82b775; output-bytes=3468; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [ ] G2: DM-4 nutrition recompute: a recipe change set that changes a variant's ingredient grams queues nutrition.recompute; the worker job rewrites that variant's dish_nutrition_cache row to the engine's new per-100 g values with a later computed_at and leaves other variants' rows unchanged; the stale row fails the same comparison (negative control)
   CHECK: node scripts/verify/leaf-1.3.7.mjs --gate G2
