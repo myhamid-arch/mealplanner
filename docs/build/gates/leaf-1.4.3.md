@@ -7,27 +7,27 @@ Scope: Onboarding, Family, Settings, detail levels, as specified in docs/spec (s
 - [x] G1: Playwright at 390 and 1280 px: 5-question onboarding to first plan, family edits, settings (matches mockups)
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.3 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=e1a341a2c2f2517c0df8eeedac75783aff35b89cefb7885a328c219b46c56248; exit=0; EXPECT=matched; output-sha256=56d7ae3df917952bfc4895252efabcce469e0437a03605c8bd3c74dc4730605b; output-bytes=1494; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=e1a341a2c2f2517c0df8eeedac75783aff35b89cefb7885a328c219b46c56248; exit=0; EXPECT=matched; output-sha256=c484753b2d85514b3684b5ffdb1455ab69ea3f22e877e44ea0b15ee741081c17; output-bytes=1496; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: axe-core: no serious or critical violations on these screens
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.3 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=6f1698c508f858fe77f91963f2ae23ae4c5ab60c32dd85a73454ad66148b6c19; exit=0; EXPECT=matched; output-sha256=0461763b245127f2a255f926f61177da3edabca21443a8f093a9abee1a17ead2; output-bytes=1163; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=6f1698c508f858fe77f91963f2ae23ae4c5ab60c32dd85a73454ad66148b6c19; exit=0; EXPECT=matched; output-sha256=6d24e0a5845b75d83f83618a0e3d817ade3f54712464ac589809ce8f6f626e38; output-bytes=1163; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: R2-DL: auto tags visible, per-value override and back-to-auto, keep/reset prompt when lowering level
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.3 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=44cdb66bcae666e39993e5da66256ff85af5b1fc0bbb976e57f80b9ddf0ec034; exit=0; EXPECT=matched; output-sha256=153b98c2c099c5e4179c700e7df8afeea8111241ee73618a9cfc7e4c9ba6288f; output-bytes=2488; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=44cdb66bcae666e39993e5da66256ff85af5b1fc0bbb976e57f80b9ddf0ec034; exit=0; EXPECT=matched; output-sha256=7c61221cee2da32379bfb81c2dffedd89cf70122565dbc5c2d9cc5f529bf1f29; output-bytes=2488; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: inferSetup golden tests: F1 answers produce exactly the F1 configuration; sesame expands via flags; free-text parse stubbed (R2-ONB-3)
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G4
   EXPECT: VERIFY leaf-1.4.3 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=40f34e5dc4c413846b081589cfa173fcfe5bdabca42e6637c975a707d4b20834; exit=0; EXPECT=matched; output-sha256=69cdd3bf832186c95296dfa589602fd2d5444ffcbe4fa46235cb3449ebc5c89e; output-bytes=1239; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=40f34e5dc4c413846b081589cfa173fcfe5bdabca42e6637c975a707d4b20834; exit=0; EXPECT=matched; output-sha256=b505c47638a33ed5f5cdbcb3cf15887bdf903ed4325e6cba3a2edb7bfd1cbfbb; output-bytes=1239; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G5: SC-6 at most 5 required answers to the first plan and SC-7 every review-screen Adjust link resolves
   CHECK: node scripts/verify/leaf-1.4.3.mjs --gate G5
   EXPECT: VERIFY leaf-1.4.3 G5 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=84afb387dc80b9169c5ba002d5bacb35ad1e7c8528bc27b6447044225bd0eaec; exit=0; EXPECT=matched; output-sha256=645fdb2950a876c2b02ed4984656592fd3da7757a691f78a62e1bdaadd34a2da; output-bytes=1418; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=84afb387dc80b9169c5ba002d5bacb35ad1e7c8528bc27b6447044225bd0eaec; exit=0; EXPECT=matched; output-sha256=e671eaf08c4254c03a2bc3f9e5b9700914b5c1ac5a358f7b5cfdbc2b94080025; output-bytes=1418; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G6: architect visual review against Onboarding, DetailLevels, MemberSimple, MemberDetailed, ScheduleGrid, PlanningBalance, TastesDesktop mockups
   EVIDENCE: architect review 2026-09-27 at 81ebd31 (screenshots at 390/1280 px beside each mockup): layouts match with the recorded deviations (R-28 copy, W-5 preview panel omitted, one question per screen); finding: training-day sat fat/soluble fibre not carried from the typed answer (16/8 vs F1 22/10) and a mislabelled '(6 % of calories)' source, both fixed in 80e96e6 and re-checked at a14bfc4 (G4 fails with the fix reverted); G1-G5 re-pass on the merge with base 554cad5, with DATABASE_URL set and unset
