@@ -61,6 +61,9 @@ export function rebalance(
 /** Relative tolerance for "the same ratio": 4-decimal rounding moves a 5 % share by < 0.2 %. */
 const RATIO_TOLERANCE = 0.004;
 
+/** Half the unit of `meal_distribution.share` (numeric(10,3)), the rounding a stored share carries. */
+const STORED_HALF_UNIT = 0.0005;
+
 /**
  * Which stored shares the user set (SPEC-Q-15). Siblings were rebalanced in proportion to their
  * automatic shares, so they share one `stored / auto` ratio; the user's values do not. The
@@ -78,14 +81,23 @@ export function inferYours(
     const a = auto[k] ?? 0;
     return a > 0 ? (stored[k] ?? 0) / a : Number.NaN;
   };
-  const same = (x: number, y: number) =>
-    Number.isFinite(x) &&
-    Number.isFinite(y) &&
-    Math.abs(x - y) <= RATIO_TOLERANCE * Math.max(x, y, 1e-9);
-  if (keys.every((k) => same(ratio(k), 1))) return new Set();
+  // A stored share is off by up to half the column's unit, which moves its ratio to auto by
+  // STORED_HALF_UNIT / auto: allow that on top of the relative tolerance (W-24).
+  const slack = (k: string) => STORED_HALF_UNIT / (auto[k] ?? 1);
+  const same = (a: string, b: string | null) => {
+    const x = ratio(a);
+    const y = b === null ? 1 : ratio(b);
+    return (
+      Number.isFinite(x) &&
+      Number.isFinite(y) &&
+      Math.abs(x - y) <=
+        RATIO_TOLERANCE * Math.max(x, y, 1e-9) + slack(a) + (b === null ? 0 : slack(b))
+    );
+  };
+  if (keys.every((k) => same(k, null))) return new Set();
   const groups: string[][] = [];
   for (const k of keys) {
-    const group = groups.find((g) => same(ratio(g[0] ?? ""), ratio(k)));
+    const group = groups.find((g) => same(g[0] ?? "", k));
     if (group === undefined) groups.push([k]);
     else group.push(k);
   }
