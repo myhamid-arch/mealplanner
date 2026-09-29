@@ -180,8 +180,9 @@ export const exclusionAdd = defineOp({
     const existing = await sameExclusion(tx, p);
     return existing !== undefined && isProtectedExclusion(existing) && !isProtectedExclusion(p);
   },
+  // R-83: a dish is keyed by its id, which is no name to show; the change set's summary names it.
   title: (p) =>
-    `Exclude ${p.kind.replace("_", " ")} "${p.key}" (${p.reason})${
+    `Exclude ${p.kind === "dish" ? "a dish" : `${p.kind.replace("_", " ")} "${p.key}"`} (${p.reason})${
       p.slotKeys == null ? "" : ` in ${p.slotKeys.join(", ")} only`
     }`,
   apply: async (tx, p) => {

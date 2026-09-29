@@ -97,6 +97,7 @@ const G1_TITLES = [
   "an unscoped row applies in every slot, and only to that dish",
   "other kinds with the same key do not exclude the dish",
   "parses a dish id key and stores the scope sorted",
+  "names no id in the change title",
   "refuses a key that is not a dish id",
   "writes the row for a household dish and for a seed dish",
   "refuses a dish the household cannot see",

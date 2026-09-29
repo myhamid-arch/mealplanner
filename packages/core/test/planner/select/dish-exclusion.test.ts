@@ -4,7 +4,7 @@
 // seed library: the dish F1's week serves most in packed slots, excluded from the household's
 // packed slots, as a practical-tag proposal would (FBK-3).
 import { describe, expect, it } from "vitest";
-import { ChangeOpSchema, type ChangeOp } from "../../../src/changes/index.js";
+import { ChangeOpSchema, getOp, type ChangeOp } from "../../../src/changes/index.js";
 import { dishExclusionReason } from "../../../src/planner/select/filters.js";
 import type { PlanResult } from "../../../src/planner/select/index.js";
 import { mealsOfDate } from "../../../src/planner/select/meals.js";
@@ -67,7 +67,8 @@ async function packedExclusionViolations(cfg: HouseholdConfig, dishId: string): 
   const out: string[] = [];
   for (const seed of SEEDS) {
     const plan = await planF1(F1_WEEK, { seed, config: cfg });
-    for (const at of servings(plan, dishId, packed).packed) out.push(`seed ${String(seed)}: served ${at}`);
+    for (const at of servings(plan, dishId, packed).packed)
+      out.push(`seed ${String(seed)}: served ${at}`);
   }
   const base = new Run(f1PlanConfig(), lib.dishes, lib.adjusters, 1);
   const run = new Run(cfg, lib.dishes, lib.adjusters, 1);
@@ -171,6 +172,14 @@ describe("exclusion.add with kind dish (R-83)", () => {
       "packed_school_lunch",
       "packed_work_lunch",
     ]);
+  });
+  it("names no id in the change title", () => {
+    const r = parse(payload());
+    const def = getOp("exclusion.add");
+    if (def === undefined || !r.success) throw new Error("exclusion.add did not parse");
+    expect(def.title(r.data.payload as never)).toBe(
+      "Exclude a dish (other) in packed_school_lunch, packed_work_lunch only",
+    );
   });
   it("refuses a key that is not a dish id", () => {
     expect(parse(payload({ key: "chicken-shawarma-bowl" })).success).toBe(false);
