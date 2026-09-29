@@ -634,4 +634,4 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - `g2-worker-sse.int.test.ts` passes 6 of 6;
     - with a 500 ms pause inside the transaction it passes 3 of 3;
     - the pre-fix code with the same pause between separate writes fails 3 of 3 with "expected 'running' to be 'succeeded'".
-  - This is a single edit in the worker runner, which merged leaf 1.3.2 owns.
+  - This is a single edit in the worker runner, which merged leaf 1.4.1 owns.
