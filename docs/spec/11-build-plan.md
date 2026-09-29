@@ -635,3 +635,17 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - with a 500 ms pause inside the transaction it passes 3 of 3;
     - the pre-fix code with the same pause between separate writes fails 3 of 3 with "expected 'running' to be 'succeeded'".
   - This is a single edit in the worker runner, which merged leaf 1.4.1 owns.
+- **W-21 (verify-script locks a dead holder could leave for ever; found and fixed by the architect).**
+  - The problem: the verify scripts' mkdir locks were taken over only when their `pid` file named a dead process.
+    - A holder killed between `mkdirSync` and writing its pid left a lock with an empty `pid` file, and nothing ever took it over. Every later gate needing that lock waited out its deadline (25 min) and failed.
+    - The build locks of leaves 1.3.4, 1.3.5, 1.4.1, 1.4.5 and 1.4.6 recorded no pid at all, so any killed holder left them blocked.
+    - Leaf 1.3.1's lock went stale only after 15 min, while its waiters gave up at 10.
+    - The exclusive locks of leaves 1.2.7 and 1.4.10 waited with no deadline while their `pid` file was missing.
+  - Where it showed: a `packages-build` lock left with an empty pid at 23:38 on 2026-09-28. In node-1.4 N1 rerun #3 on 2026-09-29, nothing built between 07:27 and 08:17: two gates in a row timed out.
+  - The fix: one shared rule, `scripts/verify/lib/lock.mjs` `lockIsStale`. A lock may be taken over when its recorded holder is dead, or when it records no holder (empty, missing or unreadable pid) and is older than 5 s, the mkdir-to-write window. Every lock loop in the verify scripts now uses it, and the build locks that recorded no pid now record one.
+  - Verified:
+    - The rule was unit-tested on nine cases: empty, missing and garbage pid, both aged and fresh; a live holder; a dead holder; a lock that is gone.
+    - With an aged empty-pid lock planted, real gates of leaf 1.4.3 (`withLock`), 1.3.4 (build lock), 1.3.1 (build lock) and 1.2.7 (exclusive) each took it over, 4 of 4.
+    - With the pre-fix rule substituted, all four stayed blocked, 0 of 4, and the unit cases failed 3 of 9.
+    - The leaf 1.3.1, 1.3.4 and 1.4.2 ledgers were reverified on the change in a clean worktree: ALL MET, 10 met. The first attempt failed 4 gates because the takeover harness had SIGKILLed a gate mid-build in that worktree, leaving `packages/db/dist` empty. After a full package rebuild, every gate passed.
+  - Edits in the verify scripts of merged leaves 1.2.7, 1.3.1, 1.3.4, 1.3.5 and 1.4.1–1.4.11. Root R1 reverifies all of them.

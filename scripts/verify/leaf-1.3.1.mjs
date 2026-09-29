@@ -20,6 +20,7 @@ import {
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { lockIsStale } from "./lib/lock.mjs";
 import { Report } from "./lib/report.mjs";
 import { run, tail } from "./lib/run.mjs";
 
@@ -77,15 +78,19 @@ function withLock(fn) {
   for (;;) {
     try {
       mkdirSync(LOCK);
+      writeFileSync(join(LOCK, "pid"), String(process.pid));
       break;
-    } catch {
+    } catch (error) {
+      if (error.code !== "EEXIST") throw error;
+      // W-21: a dead holder, or none recorded, is stale; so is any lock older than a build.
       try {
-        if (Date.now() - statSync(LOCK).mtimeMs > LOCK_STALE_MS)
+        if (lockIsStale(LOCK) || Date.now() - statSync(LOCK).mtimeMs > LOCK_STALE_MS)
           rmSync(LOCK, { recursive: true, force: true });
       } catch {
         // The holder released it between the two calls.
       }
-      if (Date.now() - started > LOCK_WAIT_MS) throw new Error(`timed out waiting for ${LOCK}`);
+      if (Date.now() - started > LOCK_WAIT_MS)
+        throw new Error(`timed out waiting for ${LOCK}`, { cause: error });
       sleep(250);
     }
   }
