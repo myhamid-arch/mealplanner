@@ -649,3 +649,14 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - With the pre-fix rule substituted, all four stayed blocked, 0 of 4, and the unit cases failed 3 of 9.
     - The leaf 1.3.1, 1.3.4 and 1.4.2 ledgers were reverified on the change in a clean worktree: ALL MET, 10 met. The first attempt failed 4 gates because the takeover harness had SIGKILLed a gate mid-build in that worktree, leaving `packages/db/dist` empty. After a full package rebuild, every gate passed.
   - Edits in the verify scripts of merged leaves 1.2.7, 1.3.1, 1.3.4, 1.3.5 and 1.4.1–1.4.11. Root R1 reverifies all of them.
+- **W-22 (a saved target or training change lost its "Saved" confirmation at once; found by the architect in PR #26's CP3, fixed by the architect).**
+  - The problem: on the family page, `TargetsSection` and `TrainingSection` are keyed by the member's saved targets and training days (`family-screen.tsx`, and `detail-levels-screen.tsx` for targets). This makes a form reset from fresh data.
+    - After a save, `setSaved(true)` showed "Saved. It's in the change log, where you can undo it." Then `reload()` brought back the new data, the key changed, and React re-created the section with `saved` false.
+    - The UX-7 confirmation therefore showed only for the length of one reload, tens of milliseconds.
+  - Where it showed: node-1.4 N4 in PR #26's CP3 (unset round, 2026-09-29) failed leaf 1.4.3's `e2e/config.spec.ts` "@G1 family edits at 390 px" at the confirmation check. The same suite passed in the three other nodes' N4. Whether the test's first look came before the re-creation depended on timing.
+  - The fix: the page keeps which sections have saved (`useSavedSections` in `components/config/parts.tsx`) and passes it to both sections, so the line survives their re-creation. The keys stay: they still reset the forms from the saved data.
+  - The test now waits for "Save targets" to disappear (the form matches the reloaded data) before it looks for the confirmation. It checks the state after the reload, deterministically.
+  - Verified (leaf-1.4.3 G1, both widths):
+    - with the test change on the pre-fix code, "@G1 family edits" failed at 390 and 1280 px ("element(s) not found" at the confirmation);
+    - with the fix, all 7 @G1 tests passed.
+  - Edits in merged leaf 1.4.3's files (`parts.tsx`, `targets-section.tsx`, `training-section.tsx`, `family-screen.tsx`, `detail-levels-screen.tsx`, `e2e/config.spec.ts`). Root R1 reverifies all of them.
