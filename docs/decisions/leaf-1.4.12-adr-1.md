@@ -27,13 +27,25 @@ generated through the worker; G2 needs an agent turn that applies a change, with
    (`get_household`, then `apply_change` with the op the section writes at its level, then a short
    text, `stop_reason` `tool_use` / `end_turn`), filling only ids read from the `get_household` tool
    result. 1.4.5's stub is not reused: it has no turn for these requests and is 1.4.5's file.
-   - Where the preload lives: Request R-1 asks for `apps/web/e2e/contract-gaps/**` in OWNS
-     (`agent-turn.mjs`). If R-1 is not granted, the preload is a mode of
-     `scripts/verify/leaf-1.4.12.mjs` itself: imported (not run) with `LEAF_1_4_12_AGENT_TURN=1`, it
-     installs the turn and does nothing else.
+   - Where the preload lives: `apps/web/e2e/contract-gaps/agent-turn.mjs` (R-1, granted in R-84).
 3. **Negative controls go through the same assertion functions** as the positive checks:
-   - G1: a twin household at each width where the tap is not made; the same "no lunch plate, packed
-     plate present" check over its generated plan must fail (its lunch plate stays).
+   - G1: a twin household where the tap is not made (at 1280 px); the same schedule and plan
+     checks over its stored schedule and generated week must fail, with exactly the school days'
+     lunch plates reported.
    - G2: the member page with the "Tell the assistant" link removed from one detail-level section
      (DOM removal in the test page); the same "every section offers it" check must fail and name
      that section.
+
+## As built
+
+- The values the turn writes live in `apps/web/e2e/contract-gaps/recorded.json`, which the preload
+  and the spec both read, so the test asserts the numbers the turn sends rather than a copy. (The
+  spec cannot import the `.mjs` itself: `apps/web` has `allowJs: false`.)
+- Before Playwright, G2 checks the preload on its own in a child process. A section's request gets
+  `get_household` and then `apply_change` with that section's op for the named member. A request
+  that is not a section's (the pre-R-84 Tastes prompt) gets a text answer and applies nothing.
+- The Meals turn sets lunch to 35 %, not 40 % (SPEC-Q-5). At 40 %, the 3-decimal share column's
+  rounding makes 1.4.3's `inferYours()` show every share as `yours`. That is a 1.4.3 defect raised
+  on the PR, not something this leaf changes.
+- `SCREENSHOT_DIR`, when set, receives full-page captures of the tap (G1) and of each chat prefill
+  and applied section (G2) at 390 and 1280 px.
