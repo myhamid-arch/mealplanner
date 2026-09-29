@@ -565,7 +565,7 @@ for (const v of VIEWPORTS)
     await memberPage(page, f);
     const sections = await detailSections(page);
     expect(tellAssistantProblems(sections, "Omar")).toEqual([]);
-    expect(sections.map((s) => s.id).sort()).toEqual(["meals", "tastes", "targets"]);
+    expect(sections.map((s) => s.id).sort()).toEqual(["meals", "targets", "tastes"]);
 
     for (const c of CASES) {
       await memberPage(page, f);
