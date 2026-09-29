@@ -25,6 +25,7 @@ import { createServer as createNetServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { lockIsStale } from "./lock.mjs";
 import { Report } from "./report.mjs";
 import { run, tail } from "./run.mjs";
 import { copyWorkspace, installCopy, listWorkspacePackages } from "./workspace.mjs";
@@ -72,15 +73,6 @@ export function sleepMs(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
-function processAlive(pid) {
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch (error) {
-    return error.code === "EPERM";
-  }
-}
-
 /** The lock directory for `name`, the same path the leaf scripts use (1.4.9, 1.4.10). */
 function lockPath(name) {
   return join(
@@ -99,9 +91,9 @@ function acquireLock(name) {
       return lock;
     } catch (error) {
       if (error.code !== "EEXIST") throw error;
-      const pidFile = join(lock, "pid");
-      const holder = existsSync(pidFile) ? Number(readFileSync(pidFile, "utf8")) : NaN;
-      if (Number.isInteger(holder) && holder > 0 && !processAlive(holder)) {
+      // A dead holder's lock, or one whose holder died before recording its pid (W-21).
+      if (lockIsStale(lock)) {
+        console.log(`       took over the stale lock ${lock}`);
         rmSync(lock, { recursive: true, force: true });
         continue;
       }
@@ -114,7 +106,7 @@ function acquireLock(name) {
 /**
  * Runs `fn` holding one of `slots` machine-wide slots named `name` (a counting semaphore over lock
  * directories), so concurrent gates share the machine instead of overloading it. A slot left by a
- * dead process is taken over.
+ * dead process, or by one that died before recording its pid, is taken over (W-21).
  */
 export async function withSlot(name, slots, fn) {
   const deadline = Date.now() + 3 * 60 * 60_000;
@@ -125,10 +117,10 @@ export async function withSlot(name, slots, fn) {
         mkdirSync(lock);
       } catch (error) {
         if (error.code !== "EEXIST") throw error;
-        const pidFile = join(lock, "pid");
-        const holder = existsSync(pidFile) ? Number(readFileSync(pidFile, "utf8")) : NaN;
-        if (Number.isInteger(holder) && holder > 0 && !processAlive(holder))
+        if (lockIsStale(lock)) {
+          console.log(`       took over the stale slot ${lock}`);
           rmSync(lock, { recursive: true, force: true });
+        }
         continue;
       }
       writeFileSync(join(lock, "pid"), String(process.pid));
