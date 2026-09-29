@@ -177,6 +177,12 @@ The first API call after sign-in therefore changes that row. It is not part of t
   - `openTx` hooks only the catalogue job, so the dish job can end its attempt before the catalogue nodes are written. When that happens, no lock wait ever occurs.
   - Run alone, the test failed 1 of 8 times. With the proposed hook change, `-t "open-tx"` passed 16 of 16.
   - The architect landed the fix on the base as W-18 (c459df5). It is not an edit on this branch.
+- **R-5 (ARCHITECT QUESTION): the worker committed a job's terminal event before its status.**
+  - node-1.3 N4 failed on 8965303 (and node-1.1 N4, `DATABASE_URL` set, on e043452) at `apps/web/test/api/g2-worker-sse.int.test.ts:218`: the job read `running` after the SSE stream's `done`.
+  - `apps/worker/src/runner.ts` appended `done` (with its `pg_notify`) and then, in a separate commit, set `succeeded`; the failure path had the same gap.
+  - With a 500 ms pause between the two writes the test failed 3 of 3; with the pause inside one transaction it passed 3 of 3.
+  - The architect landed the fix on the base as W-20 (012c130; merged here as 799aa57). There is no edit on this branch.
+  - Per the ruling, N4 on all four nodes and N3 on node-1.2, 1.3 and 1.4 were rerun on 799aa57; N2 and node-1.1 N3 carry over from e043452.
 - **`e2e/plan.spec.ts:612` ECONNRESET: one occurrence, no root cause.**
   - node-1.2 N4 failed once, on cbbcfe8. The GET at `:479` got `read ECONNRESET` from the built app.
   - A keep-alive race was suspected: `next start` keeps Node's 5000 ms `keepAliveTimeout`, and the test died 6.0 s in. It did not reproduce. With a Playwright request context and a second GET at gaps of 4950–5050 ms, 0 of 21 requests were reset without the header, and 0 of 21 with `Connection: close`.
