@@ -1,6 +1,6 @@
 {
   "targets": { "kcal": 2250, "proteinG": 185, "carbsG": 215, "fatG": 72 },
-  "lunchShare": 0.4,
+  "lunchShare": 0.35,
   "cuisine": "levantine",
   "like": 0.5
 }

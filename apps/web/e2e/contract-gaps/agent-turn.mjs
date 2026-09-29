@@ -9,7 +9,7 @@
 // (leaf-1.4.12 SPEC-Q-1), then a short text. Only ids are filled in, from the `get_household`
 // result. Anything else gets "Noted: <text>".
 //   "change <name>'s daily targets: …"                → target.set, default profile (Basic)
-//   "change how <name>'s day is split across meals: …" → distribution.set, lunch 40 %, the other
+//   "change how <name>'s day is split across meals: …" → distribution.set, lunch 35 %, the other
 //                                                        rest-day meals rebalanced in proportion
 //                                                        to their automatic shares (Detailed)
 //   "change <name>'s tastes: …"                        → preference.set, Levantine liked (Detailed)
@@ -90,7 +90,11 @@ function restDaySlots(household, memberId) {
   });
 }
 
-/** Lunch at 40 %; the other meals keep their automatic ratio and fill the remaining 60 %. */
+/**
+ * Lunch at the recorded share (35 %); the other meals keep their automatic ratio and fill the rest.
+ * 35 % makes every share exact in `meal_distribution.share` (numeric(10,3)); see leaf-1.4.12
+ * SPEC-Q-5 for what 40 % shows.
+ */
 function splitWithLunch(slots) {
   const others = slots.filter((s) => s.key !== "lunch");
   const lunch = slots.find((s) => s.key === "lunch");
@@ -139,7 +143,8 @@ const REQUESTS = [
       },
     ],
     summary: (member) => `Set ${member.displayName}'s meal split`,
-    done: (member) => `Done: lunch is now 40 % of ${member.displayName}'s day.`,
+    done: (member) =>
+      `Done: lunch is now ${String(Math.round(RECORDED.lunchShare * 100))} % of ${member.displayName}'s day.`,
   },
   {
     pattern: /^change (.+)'s tastes:/i,

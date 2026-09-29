@@ -39,3 +39,19 @@ Reading taken: the weekdays on which the member attends the packed slot. After t
 schedule has `attends = false` for the member's lunch on exactly those weekdays, and the member's
 other lunch days are unchanged. The generated plan is checked over one week: on each packed day the
 member has a packed plate and no lunch plate; on the other days the member keeps a lunch plate.
+
+## SPEC-Q-5: a meal split set to 40 % shows every share as `yours` (R2-DL-4; found by G2)
+Found while building G2, and raised on the PR as an ARCHITECT QUESTION with a proposed patch.
+- `meal_distribution.share` is `numeric(10,3)` (`packages/db/src/migrations/0001_schema.sql:199`;
+  `num()` in `packages/db/src/schema/columns.ts:12`).
+- `rebalance()` rounds to 4 decimals and `inferYours()` treats two ratios as the same within 0.4 %
+  (`apps/web/components/detail-level/logic.ts:29`, `:62`).
+- For a member with breakfast, lunch, dinner and snack, lunch set to 40 % gives siblings 0.2308,
+  0.2769 and 0.0923. They are stored as 0.231, 0.277 and 0.092. The snack's rounding error (0.43 %)
+  is over the tolerance, so `inferYours()` finds no majority group and returns every key. The Meals
+  section then shows all four shares as "Yours · back to auto". This was observed in G2 at 390 and
+  1280 px, and the section's own "set lunch to 40 %" writes the same values.
+
+Reading taken: this leaf does not change 1.4.3's logic (outside OWNS). The recorded turn sets lunch
+to 35 %, where every share is exact in the column (0.25, 0.30, 0.10, 0.35). G2 therefore tests
+R2-DL-6 and not this rounding defect.

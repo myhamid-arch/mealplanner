@@ -488,7 +488,7 @@ const CASES: Case[] = [
     section: "meal_split",
     scope: "Omar's meals",
     level: "detailed",
-    says: "lunch 40 %",
+    says: `lunch ${String(Math.round(RECORDED.lunchShare * 100))} %`,
     stored: async (api, f) => {
       const rows = (await schedules(api)).distributions.filter(
         (d) => d.memberId === f.omar && d.dayKind === "default",
@@ -502,9 +502,10 @@ const CASES: Case[] = [
       return out;
     },
     shown: async (page) => {
-      console.log(await page.locator("section#meals").innerText());
       const lunch = page.locator("section#meals [data-slot=lunch]");
-      await expect(lunch.locator("[data-share]")).toHaveText(/^40\s?%$/);
+      await expect(lunch.locator("[data-share]")).toHaveText(
+        new RegExp(`^${String(Math.round(RECORDED.lunchShare * 100))}\\s?%$`),
+      );
       await expect(lunch.locator("[data-dl=yours]")).toBeVisible();
       // The other meals were rebalanced, not set: they keep their auto tag (R2-DL-4).
       const others = page.locator("section#meals [data-slot]:not([data-slot=lunch])");
