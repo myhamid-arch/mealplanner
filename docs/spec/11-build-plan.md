@@ -647,5 +647,5 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - The rule was unit-tested on nine cases: empty, missing and garbage pid, both aged and fresh; a live holder; a dead holder; a lock that is gone.
     - With an aged empty-pid lock planted, real gates of leaf 1.4.3 (`withLock`), 1.3.4 (build lock), 1.3.1 (build lock) and 1.2.7 (exclusive) each took it over, 4 of 4.
     - With the pre-fix rule substituted, all four stayed blocked, 0 of 4, and the unit cases failed 3 of 9.
-    - A reverify of the leaf 1.3.1, 1.3.4 and 1.4.2 ledgers on the change is running; its result will be recorded here.
+    - The leaf 1.3.1, 1.3.4 and 1.4.2 ledgers were reverified on the change in a clean worktree: ALL MET, 10 met. The first attempt failed 4 gates because the takeover harness had SIGKILLed a gate mid-build in that worktree, leaving `packages/db/dist` empty. After a full package rebuild, every gate passed.
   - Edits in the verify scripts of merged leaves 1.2.7, 1.3.1, 1.3.4, 1.3.5 and 1.4.1–1.4.11. Root R1 reverifies all of them.
