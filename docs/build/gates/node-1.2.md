@@ -22,5 +22,5 @@ Scope: integrate children leaf-1.2.1, leaf-1.2.2, leaf-1.2.3, leaf-1.2.4, leaf-1
   EXPECT: VERIFY node-1.2 N4 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=c90059af46e722118943bcf26ef4eab693afba47d89de6104bab9e8a2038627e; exit=0; EXPECT=matched; output-sha256=c8caf5dd3457c46a890c212267cacbfc6d48a24b67cf52e5f647bc0cd96531af; output-bytes=6075; shell=/bin/sh; cwd=/tmp/claude-0/cp3-26; path=ad9aca3d1be2/14 entries
 
-- [ ] N5: consequential manual outcomes from the children reviewed at branch level by the architect
-  EVIDENCE: pending
+- [x] N5: consequential manual outcomes from the children reviewed at branch level by the architect
+  EVIDENCE: architect review 2026-09-29 at c77176a. Children's manual outcome 1.2.4 G5 (10 recipes, plausibility, UAE availability, steps) — data/seed-dishes unchanged since e9abe38 (git log empty). Branch level: plans changed once by 1.2.7 (W-17, id-independent search); N3 on the merged tree measured SC-1 68/68 in tolerance, 0 unflagged; OQ-8 15 same-dish pairs, 0 inside the owner's gaps (main ≥ 7, snack/workout ≥ 4); SC-2 seeds 1–10 median 13.9 %, min 9.8 % (owner: median ≥ 8 %, every seed ≥ 0 %); day-1 cook sheet within 0.002 g. Consistent with the owner's OQ-8 and SC-2 decisions.

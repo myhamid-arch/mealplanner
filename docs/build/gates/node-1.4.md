@@ -22,5 +22,5 @@ Scope: integrate children leaf-1.4.1, leaf-1.4.2, leaf-1.4.3, leaf-1.4.4, leaf-1
   EXPECT: VERIFY node-1.4 N4 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=4a1acd948bdb6c0a74ee653e5b0862804efb71a8d1615f5a8bd991982670c826; exit=0; EXPECT=matched; output-sha256=3576f1e04829cb474019f778dd0dbff7623a19148a4cdc1c48854fedec355d1d; output-bytes=6074; shell=/bin/sh; cwd=/tmp/claude-0/cp3-26; path=ad9aca3d1be2/14 entries
 
-- [ ] N5: consequential manual outcomes from the children reviewed at branch level by the architect
-  EVIDENCE: pending
+- [x] N5: consequential manual outcomes from the children reviewed at branch level by the architect
+  EVIDENCE: architect review 2026-09-29 at c77176a. Children's manual outcomes: visual reviews 1.4.2 G3, 1.4.3 G6, 1.4.4 G4, 1.4.5 G4, 1.4.6 G3, 1.4.7 G5, 1.4.8 G6, 1.4.9 G5, 1.4.10 G5 and 1.4.11 G3 all recorded. Branch level: two defects surfaced only above the leaves and are fixed on the base — W-15 (1.4.11: the Assistant button covered the last control at 390 px; padding added, reviewed in 1.4.11 G3) and W-22 (found in node-1.4 N4: the UX-7 "Saved. It's in the change log" line vanished when a keyed section reloaded; fixed with a failing-then-passing control, no layout change). N3 (SC-5 flows at 390 and 1280 px, axe light and dark, no serious or critical) met with DATABASE_URL unset and set.

@@ -22,5 +22,5 @@ Scope: integrate children leaf-1.1.1, leaf-1.1.2, leaf-1.1.3 into one verified r
   EXPECT: VERIFY node-1.1 N4 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=480808576c5a0bc6e362861ec43da1eefb6f758b94487006c2876677cb4c4271; exit=0; EXPECT=matched; output-sha256=d1ee5e558ad8fd1dba1ce4492131414b729d7150615511727cc01cead481d0e5; output-bytes=6073; shell=/bin/sh; cwd=/tmp/claude-0/cp3-26; path=ad9aca3d1be2/14 entries
 
-- [ ] N5: consequential manual outcomes from the children reviewed at branch level by the architect
-  EVIDENCE: pending
+- [x] N5: consequential manual outcomes from the children reviewed at branch level by the architect
+  EVIDENCE: architect review 2026-09-29 at c77176a. Children's manual outcomes: 1.1.1 G3 (CI) — .github/workflows/ci.yml runs frozen install, format:check, build, lint, typecheck, test:unit, a PostgreSQL 16 assertion and test:integration against postgres:16; its only change after the leaf review (9618aaf) runs build before lint, and the CP3 full CI of the node scripts ran the same steps on the merged tree, all exit 0. 1.1.3 G6 (20-ingredient spot-check at 02fd36c) — data/ingredients.v1.json and ingredients.manifest.json are unchanged since (git log empty). Branch level: N3 (migrations from zero; change set apply/undo equality through the service and HTTP) met with DATABASE_URL unset and set. No consequential outcome changed.
