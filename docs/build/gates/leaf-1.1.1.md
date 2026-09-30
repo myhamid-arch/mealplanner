@@ -7,7 +7,7 @@ Scope: Monorepo, tooling, CI, as specified in docs/spec (see 11-build-plan.md §
 - [x] G1: pnpm install --frozen-lockfile and pnpm -r build succeed on Node 22 (ARC-1, ARC-2)
   CHECK: node scripts/verify/leaf-1.1.1.mjs --gate G1
   EXPECT: VERIFY leaf-1.1.1 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=29f99ef3309c0a6ad6cef486f4f0717d0bb67f14a6ad72cc4ff6af7f88a99aac; exit=0; EXPECT=matched; output-sha256=cc86c005e38487b8e6dd43959b995c39088217584b7390fe6bf0b243c899c17a; output-bytes=4466; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=29f99ef3309c0a6ad6cef486f4f0717d0bb67f14a6ad72cc4ff6af7f88a99aac; exit=0; EXPECT=matched; output-sha256=c3cb94c17f188c18384734fd795b91024f5d099f79c56aad3d1b6660733d0794; output-bytes=4466; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: pnpm lint and pnpm typecheck pass; the ARC-3 boundary rule rejects a deliberately illegal import fixture (negative control)
   CHECK: node scripts/verify/leaf-1.1.1.mjs --gate G2
