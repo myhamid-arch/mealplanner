@@ -901,6 +901,14 @@ const E2E_SPECS = [
     worker: () => true,
     extraEnv: (tag) => (tag === "@G1" ? clearancePreFix() : {}),
   },
+  // Leaf 1.4.12 (W-26): a seeded database and the worker, as scripts/verify/leaf-1.4.12.mjs gives
+  // it; @1.4.12-G2 also needs its recorded agent turn preloaded into `next start` (ADR-1).
+  {
+    file: "e2e/contract-gaps.spec.ts",
+    env: "app",
+    worker: () => true,
+    preload: (tag) => (tag === "@1.4.12-G2" ? "e2e/contract-gaps/agent-turn.mjs" : null),
+  },
   { file: "e2e/chat.spec.ts", env: "chat" },
   { file: "e2e/admin.spec.ts", env: "admin" },
   // Own configs that start `next start` themselves against a seeded database and the worker
@@ -1184,6 +1192,10 @@ async function e2eRun({ webDir, distDir, server, spec, tag }) {
         if (kg.code !== 0) throw new Error(`kg-rebuild failed:\n${tail(kg, 30)}`);
       }
       Object.assign(env, (await spec.extraEnv?.(tag)) ?? {});
+      const preload = spec.preload?.(tag) ?? null;
+      if (preload !== null)
+        env.NODE_OPTIONS =
+          `${HEAP_OPTIONS} --import ${pathToFileURL(join(webDir, preload)).href}`.trim();
       const wantsWorker =
         spec.env === "chat" ||
         spec.env === "own-config" ||
