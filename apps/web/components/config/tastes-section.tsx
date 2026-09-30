@@ -185,7 +185,7 @@ export function TastesSection({
         <Link href="/family/tastes" className="text-sm font-extrabold">
           Family tastes
         </Link>
-        <TellAssistant prompt={`${member.displayName} likes `} />
+        <TellAssistant prompt={`Change ${member.displayName}'s tastes: `} />
       </div>
     </Section>
   );
