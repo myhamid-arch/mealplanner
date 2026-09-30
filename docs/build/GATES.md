@@ -42,5 +42,5 @@ Scope: the whole v1 as specified in docs/spec r2, integrated and accepted
   EXPECT: VERIFY root SC-7 PASSED
   EVIDENCE: pending
 
-- [ ] R9: owner requests and spec r2 reread; every contract row reconciled by the architect
-  EVIDENCE: pending
+- [x] R9: owner requests and spec r2 reread; every contract row reconciled by the architect
+  EVIDENCE: architect review 2026-09-30 at 4cf7495: docs/build/R9-REVIEW.md (19 owner requests against gate evidence: 17 met, 1 met with a recorded interpretation (carbs "+-56" read as ±5 g), 1 deviation (native app phase B, OQ-3); SPEC-Q-6, ARC-4 and PRD-4's unmeasured 5 minutes listed) and docs/build/CONTRACT-INVENTORY.md (165 IDs reconciled; partial and manual-only clauses listed)
