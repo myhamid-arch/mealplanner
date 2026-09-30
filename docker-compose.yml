@@ -53,6 +53,11 @@ services:
       dockerfile: apps/web/Dockerfile
     environment:
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/mealplanner
+      # W-27: the chat assistant and onboarding's parse run in the web app, so it needs the
+      # model settings too (without them the assistant answers 503).
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+      AGENT_EFFORT: ${AGENT_EFFORT:-high}
       AUTH_SECRET: ${AUTH_SECRET:-}
       APP_URL: ${APP_URL:-http://localhost:3000}
       EMAIL_SERVER: ${EMAIL_SERVER:-}
