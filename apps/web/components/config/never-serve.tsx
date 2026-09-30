@@ -2,11 +2,12 @@
 // Allergies & never-serve (R2-ONB-3, DM-5). Every exclusion is a filter, whatever its `hard` flag
 // (R-34): nothing on this list is ever planned for the person. `hard` only means the rule is
 // protected, so the copy never suggests a soft rule may still be served. Foods are stored as
-// ingredient slugs, allergens and household rules as dietary flags (R-36).
-import { useState } from "react";
+// ingredient slugs, allergens and household rules as dietary flags (R-36), and a dish by its id
+// (R-83: a practical-tag proposal keeps a dish out of the packed lunches).
+import { useEffect, useState } from "react";
 import { resolveTerm } from "@mealplanner/core/onboarding";
 import type { ChangeOp } from "@mealplanner/core/changes";
-import { applyChanges, problemText } from "./api";
+import { api, applyChanges, c, problemText } from "./api";
 import type { Exclusion, HouseholdData, Member } from "./data";
 import { SaveStatus } from "./parts";
 
@@ -31,9 +32,14 @@ const REASON_LABEL: Readonly<Record<Exclusion["reason"], string>> = {
   other: "never serve",
 };
 
-/** "sesame", "beef liver", "fish". */
-export function exclusionWhat(e: Exclusion, data: HouseholdData): string {
+/** "sesame", "beef liver", "fish", "Chicken shawarma bowl" (a dish, named from `dishNames`). */
+export function exclusionWhat(
+  e: Exclusion,
+  data: HouseholdData,
+  dishNames: ReadonlyMap<string, string> = new Map(),
+): string {
   if (e.kind === "dietary_flag") return FLAG_LABEL[e.key] ?? e.key.replace(/^contains_/, "");
+  if (e.kind === "dish") return dishNames.get(e.key) ?? "a dish";
   if (e.kind === "ingredient")
     return (data.ingredients.find((i) => i.slug === e.key)?.name ?? e.key).toLowerCase();
   return e.key.replace(/_/g, " ");
@@ -74,7 +80,12 @@ export function exclusionScope(e: Exclusion, data: HouseholdData): string {
  * Groups rows of one person, reason and slot scope into one line: "Sara · liver, kidneys —
  * dislike"; a scoped group reads "Layla · nuts · in the packed school lunch only".
  */
-function lines(rows: readonly Exclusion[], data: HouseholdData, names: Map<string, string>) {
+function lines(
+  rows: readonly Exclusion[],
+  data: HouseholdData,
+  names: Map<string, string>,
+  dishNames: ReadonlyMap<string, string>,
+) {
   const groups = new Map<string, Exclusion[]>();
   const scopeOf = (e: Exclusion) => (e.slotKeys == null ? "" : `|${e.slotKeys.join(",")}`);
   for (const e of rows) {
@@ -84,7 +95,7 @@ function lines(rows: readonly Exclusion[], data: HouseholdData, names: Map<strin
   return [...groups.entries()].map(([key, group]) => {
     const head = group[0] as Exclusion;
     const who = head.memberId === null ? "Everyone" : (names.get(head.memberId) ?? "Someone");
-    const what = [...new Set(group.map((e) => exclusionWhat(e, data)))].join(", ");
+    const what = [...new Set(group.map((e) => exclusionWhat(e, data, dishNames)))].join(", ");
     const incl = group.length === 1 ? including(head, data) : "";
     return {
       key,
@@ -95,6 +106,33 @@ function lines(rows: readonly Exclusion[], data: HouseholdData, names: Map<strin
       group,
     };
   });
+}
+
+/** R-83: the names of the dishes that `dish` exclusions name (a dish that fails to load stays unnamed). */
+function useDishNames(rows: readonly Exclusion[]): ReadonlyMap<string, string> {
+  const ids = [...new Set(rows.filter((e) => e.kind === "dish").map((e) => e.key))].sort();
+  const wanted = ids.join(",");
+  const [names, setNames] = useState<ReadonlyMap<string, string>>(new Map());
+  useEffect(() => {
+    if (wanted === "") return;
+    let live = true;
+    void Promise.all(
+      wanted.split(",").map(async (id) => {
+        try {
+          const dish = await api.call(c.dishesGet, { params: { id } });
+          return [id, dish.name] as const;
+        } catch {
+          return null;
+        }
+      }),
+    ).then((found) => {
+      if (live) setNames(new Map(found.filter((f) => f !== null)));
+    });
+    return () => {
+      live = false;
+    };
+  }, [wanted]);
+  return names;
 }
 
 export function NeverServeList({
@@ -114,6 +152,7 @@ export function NeverServeList({
     (e) =>
       member === undefined || e.memberId === member.id || (showHousehold && e.memberId === null),
   );
+  const dishNames = useDishNames(rows);
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -147,7 +186,7 @@ export function NeverServeList({
         </p>
       ) : (
         <ul className="m-0 flex list-none flex-col gap-2 p-0">
-          {lines(rows, data, names).map((line) => (
+          {lines(rows, data, names, dishNames).map((line) => (
             <li
               key={line.key}
               data-never-serve={`${line.who}|${line.head.reason}${

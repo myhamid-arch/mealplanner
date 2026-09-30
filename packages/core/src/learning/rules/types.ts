@@ -104,6 +104,8 @@ export const RULE_IDS = [
   "never_again",
   "observed_frequency",
   "targeted_quantity",
+  "practical_packing",
+  "practical_time",
 ] as const;
 export type RuleId = (typeof RULE_IDS)[number];
 
