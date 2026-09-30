@@ -68,13 +68,12 @@ host network for the build. Without `HTTPS_PROXY` nothing is substituted.
 records the node, the tree (`git rev-parse HEAD^{tree}`), the exact gate-check command and its
 exit code; only an entry with the current tree and the same command is reused.
 
-## SPEC-Q-8: the root Playwright config is not a `playwright.config.ts`
+## SPEC-Q-8: node N4 and the root Playwright config (answered: R-86)
 
 Node N4 (`scripts/verify/lib/node.mjs` `runE2ESuite`) requires every `playwright.config.ts` under
 apps/web to be one it runs; `e2e/root/playwright.config.ts` failed node-1.1 N4 in R1 on
 2026-09-30 ("every Playwright config of apps/web is run"), since its tests need the compose stack
-a root gate starts and N4 has none. The config is therefore `e2e/root/root.playwright.ts`, which
-N4's finder does not collect, as the root vitest files end in `.root.ts` (the node tests' `.node.ts`
-precedent). N4's own coverage stays as it is. The alternative, listing the root config in N4 as
-run by the root gates, is a single-entry edit in lib/node.mjs, outside this leaf (ARCHITECT
-QUESTION on the PR).
+a root gate starts. A rename past N4's finder was tried and withdrawn. R-86: one entry in
+`node.mjs`'s known configs names exactly `e2e/root/playwright.config.ts` as run by the root gates
+R6–R8, not by N4; the rule is unchanged, and a stray `playwright.config.ts` anywhere else under
+apps/web still fails it (negative control shown in the PR).

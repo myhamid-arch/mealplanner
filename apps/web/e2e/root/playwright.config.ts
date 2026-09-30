@@ -7,8 +7,8 @@ import { join } from "node:path";
 // config runs the root SC-5 spec (root/sc5.e2e.ts) and leaf 1.4.3's G5 tests (config.spec.ts
 // --grep @G5, for SC-6 and SC-7). For the G5 tests, which start no model themselves, ROOT_SETUP_MODEL
 // makes the global setup serve the recorded onboarding parse responses to the stack.
-// The file is not named playwright.config.ts: node N4 runs every such config of apps/web, and this
-// one needs the compose stack a root gate starts (SPEC-Q-8).
+// Node N4 runs every other playwright.config.ts of apps/web; this one needs the compose stack a root
+// gate starts, so N4 names it as run by R6–R8 (R-86, SPEC-Q-8).
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
 const appUrl = process.env.ROOT_APP_URL;
 if (appUrl === undefined || appUrl === "")
