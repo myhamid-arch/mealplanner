@@ -56,7 +56,9 @@ import {
 import { tail } from "./lib/run.mjs";
 import { sc6Problems, sc7Problems } from "./leaf-1.4.3.mjs";
 
-const PW_CONFIG = "e2e/root/playwright.config.ts";
+// Named so that node N4, which runs every `playwright.config.ts` of apps/web, does not collect it:
+// it needs the compose stack a root gate starts (SPEC-Q-8).
+const PW_CONFIG = "e2e/root/root.playwright.ts";
 
 /**
  * The frame of every SC gate: the reused re-checks equal their sources, the packages the tests
