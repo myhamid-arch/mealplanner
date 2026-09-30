@@ -12,14 +12,14 @@ Scope: R-82: close the contract gaps the root review (R9) found in node-1.3's sc
 - [x] G2: DM-4 nutrition recompute: a recipe change set that changes a variant's ingredient grams queues nutrition.recompute; the worker job rewrites that variant's dish_nutrition_cache row to the engine's new per-100 g values with a later computed_at and leaves other variants' rows unchanged; the stale row fails the same comparison (negative control)
   CHECK: node scripts/verify/leaf-1.3.7.mjs --gate G2
   EXPECT: VERIFY leaf-1.3.7 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=e6df1cd9f65edb61a7e332c520f0f98a318b1db2036f6a23213e128bf51d9c7a; exit=0; EXPECT=matched; output-sha256=a9cdc4ec12c498cad84842b40d52fc06cea6de8c0cf86a26427ad508270b8790; output-bytes=932; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=e6df1cd9f65edb61a7e332c520f0f98a318b1db2036f6a23213e128bf51d9c7a; exit=0; EXPECT=matched; output-sha256=b587a509da2b0d8fcbe9ea8ca69b377117f983b048d4894fb933d78d96010103; output-bytes=934; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: REC-6 admin-initiated generation: the recipe.draft job with a recorded model response saves a draft dish (not active) with example plates for the requested day and slot, and the save path activates it; a schema-failing recorded response saves nothing (negative control)
   CHECK: node scripts/verify/leaf-1.3.7.mjs --gate G3
   EXPECT: VERIFY leaf-1.3.7 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=b665e53d65e27077ccb40929ad87981595ec7418f61041fc89f5508f89f82585; exit=0; EXPECT=matched; output-sha256=3ebe52401a3cc013cf5ebfe95e028bf17c75930a0661e52299e9434a48884e33; output-bytes=962; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=b665e53d65e27077ccb40929ad87981595ec7418f61041fc89f5508f89f82585; exit=0; EXPECT=matched; output-sha256=9455e11350593a8f6dd56b6f17cea48138881763aa400f5d1890bf3ae5bd7074; output-bytes=964; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: no regression: leaf-1.3.3 G1 and G2, and apps/web test:integration, pass
   CHECK: node scripts/verify/leaf-1.3.7.mjs --gate G4
   EXPECT: VERIFY leaf-1.3.7 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=ced1e95f53d42699cf15bfe46a1494efd9a0631a6ed298f916508f3e675a12af; exit=0; EXPECT=matched; output-sha256=ce033758329e58bb2da47579d73a21b0e06af0b8ce48cc09b046ad6b95273790; output-bytes=891; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=ced1e95f53d42699cf15bfe46a1494efd9a0631a6ed298f916508f3e675a12af; exit=0; EXPECT=matched; output-sha256=88c87fe66bff2887f5dedee04ec7e33f8779496a9638a00abcc88d9117108646; output-bytes=893; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
