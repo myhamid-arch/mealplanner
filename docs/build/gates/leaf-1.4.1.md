@@ -12,19 +12,19 @@ Scope: API, auth, worker, SSE, as specified in docs/spec (see 11-build-plan.md Â
 - [x] G2: a plan job runs in the worker and streams progress over SSE to a test client (ARC-7)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.1 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=d3cbf8d120eaf3246897d77f0239ff95ecaf2be31604b9180ee03fefeaadca37; exit=0; EXPECT=matched; output-sha256=abc15a9c7a10ed79a1bd3572da4730cdb5de9a426e027587b8c4897d244e3c23; output-bytes=4720; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=d3cbf8d120eaf3246897d77f0239ff95ecaf2be31604b9180ee03fefeaadca37; exit=0; EXPECT=matched; output-sha256=1b1bf1fe5d720e7d0e95ebdaef23f828e19177a8a01bc7a4758cdf1340f3e813; output-bytes=4720; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: OpenAPI document generated and valid
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.1 G3 PASSED
   EVIDENCE: automatic-evidence=v1; definition-sha256=74255a58a0a14257647dd81e0a3bae0ec0f1d9ba25c1b687d48af4000545aa5d; exit=0; EXPECT=matched; output-sha256=8caeb3c7df62c45adc0599367a0d452ea83e4868a949e278cc9c5e0da62c2f8c; output-bytes=1554; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
-- [x] G4: block revokes all sessions immediately (next request 401); invites single-use with expiry; TOTP enforced when required (R2-ADM)
+- [ ] G4: block revokes all sessions immediately (next request 401); invites single-use with expiry; TOTP enforced when required (R2-ADM)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G4
   EXPECT: VERIFY leaf-1.4.1 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=c8f7f2995d5f417e1c1b45dc53ad1189125fa1f3e46ee7c83b113703f5e4e965; exit=0; EXPECT=matched; output-sha256=5a9f7616a160d0508006943007caa9b366f3e4351c7eef8d1e9a9f6140c6261d; output-bytes=3675; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: pending
 
-- [x] G5: platform endpoints refuse household data without an active support grant, and each access is logged (R2-ADM-8)
+- [ ] G5: platform endpoints refuse household data without an active support grant, and each access is logged (R2-ADM-8)
   CHECK: node scripts/verify/leaf-1.4.1.mjs --gate G5
   EXPECT: VERIFY leaf-1.4.1 G5 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=56850e8142218b7681be8d2094c65423ed37b41d772fa47ef856499b19260a9e; exit=0; EXPECT=matched; output-sha256=48967da5460d4c1dba13fdafded03ce0986cdeb21964e5ae043f9885dbcfeee2; output-bytes=1645; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: pending
