@@ -27,4 +27,4 @@ Scope: Target resolver and portion solver, as specified in docs/spec (see 11-bui
 - [x] G5: p95 solve time at most 150 ms per plate
   CHECK: node scripts/verify/leaf-1.2.2.mjs --gate G5
   EXPECT: VERIFY leaf-1.2.2 G5 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=8f032d294889c62083ec573b287bae269b0083abc91fea365747b03e6e9bec1f; exit=0; EXPECT=matched; output-sha256=d0b41a0f7c3b837fb2c87ce424f3236462a2c082a4fc0980aba28c8fdaef4ddf; output-bytes=399; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=8f032d294889c62083ec573b287bae269b0083abc91fea365747b03e6e9bec1f; exit=0; EXPECT=matched; output-sha256=cdb18f51610cacc4368370fba6541de53e0671cb2ea40f014eda0a6ce81c855a; output-bytes=397; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries

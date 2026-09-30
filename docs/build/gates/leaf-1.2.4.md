@@ -17,12 +17,12 @@ Scope: Seed dish library, as specified in docs/spec (see 11-build-plan.md §5 an
 - [x] G3: every variant passes nutrition validation; at least 15 adjuster dishes
   CHECK: node scripts/verify/leaf-1.2.4.mjs --gate G3
   EXPECT: VERIFY leaf-1.2.4 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=26e507966df6c48f11bbda2e82af5255194d491e106012c753b335ffd9d59a58; exit=0; EXPECT=matched; output-sha256=8b2fe44ae28c0b8b6b3523e353284aa4e8a4dc38f0f865da7f2392c1b739754b; output-bytes=1405; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=26e507966df6c48f11bbda2e82af5255194d491e106012c753b335ffd9d59a58; exit=0; EXPECT=matched; output-sha256=2a5393d337818140f3a594510426e414b35a66279b59b42749d709146f471a4a; output-bytes=1405; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: at least 80% of dishes feasible for both F1 targeted adults at dinner
   CHECK: node scripts/verify/leaf-1.2.4.mjs --gate G4
   EXPECT: VERIFY leaf-1.2.4 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=0fc4d98fa1157078616ca11eb321ca4c097904c9e454321c0461ad69e47bcf01; exit=0; EXPECT=matched; output-sha256=c583fd46d6497837582bb6374b66827fef88d77f196532b8cbce1c7b1e2737ed; output-bytes=1096; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=0fc4d98fa1157078616ca11eb321ca4c097904c9e454321c0461ad69e47bcf01; exit=0; EXPECT=matched; output-sha256=760fc8b11bde6ce5574f9cc937eac99914e3e01f43607931cc57d8f0637f19b9; output-bytes=1096; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G5: architect review of 10 random recipes for plausibility, UAE availability and step clarity
   EVIDENCE: architect review 2026-09-26 at 04adc38, re-checked at e9abe38: 10 dishes drawn with mulberry32 seed 20260926 (hummus-chicken-box, chicken-pesto-pasta, chana-masala-rice, tuna-pasta-salad, beef-broccoli-stir-fry, chicken-saloona, mujaddara-chicken, chicken-machboos, foul-medames, beef-burger); sample regenerates identically; all cookable with specific numbered steps, AE-available ingredients, correct allergen flags on compound ingredients (worcestershire fish, oyster sauce shellfish, pesto dairy+nuts, mayonnaise egg, hummus sesame). Findings 1-5 (brief-warm bread costed at full-toast yield 0.82 in 5 variants; machboos pan-juice double count; unlisted stir-fry water; two step-text nits) fixed in cc7e268; gates G1-G4, G6 and 1.2.1/1.1.3 G1-G4 re-pass at e9abe38
@@ -30,4 +30,4 @@ Scope: Seed dish library, as specified in docs/spec (see 11-build-plan.md §5 an
 - [x] G6: plate naturalness on the seed library: no solved F1 plate has a component outside its [min,max], and the median ratio deviation is at most 25% (PLN-5)
   CHECK: node scripts/verify/leaf-1.2.4.mjs --gate G6
   EXPECT: VERIFY leaf-1.2.4 G6 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=ff41a695df1a94f3b3137022676881164795383c6eb0fb6e40ecd7ba3ab19489; exit=0; EXPECT=matched; output-sha256=4ef9d4c947c3990ba78e2381516f0cd11f2304d3ce12cd74907b615183305a07; output-bytes=779; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=ff41a695df1a94f3b3137022676881164795383c6eb0fb6e40ecd7ba3ab19489; exit=0; EXPECT=matched; output-sha256=3a7c2768b684ef17130fb090f227fd00e5c6d76f0b96c492d76d2bb703dd3013; output-bytes=779; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
