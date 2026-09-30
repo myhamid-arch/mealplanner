@@ -7,7 +7,7 @@ Scope: Claude client and recipe generator, as specified in docs/spec (see 11-bui
 - [x] G1: with recorded responses the pipeline accepts a valid batch and rejects one of each REC-5 defect class with its reason surfaced
   CHECK: node scripts/verify/leaf-1.3.1.mjs --gate G1
   EXPECT: VERIFY leaf-1.3.1 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=a1d2d0af2c3a361e932dff7e9873abd927dd9e68dc6c6d8e72f9815dee1c781b; exit=0; EXPECT=matched; output-sha256=d8f258a987b225e9485f1d1259d66dd183abce9434482d31398d2cca596a097a; output-bytes=1472; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=a1d2d0af2c3a361e932dff7e9873abd927dd9e68dc6c6d8e72f9815dee1c781b; exit=0; EXPECT=matched; output-sha256=f80c0b88ea7404a76e7307f5ea3c04b140dba081e930e73d48eb5b15097f62ea; output-bytes=1498; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: system and catalogue blocks are byte-identical across calls; no member names or ages in requests (REC-2, REC-3)
   CHECK: node scripts/verify/leaf-1.3.1.mjs --gate G2

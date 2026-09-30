@@ -7,19 +7,19 @@ Scope: R-82: close the contract gaps the root review (R9) found in node-1.3's sc
 - [x] G1: FBK-3 practical tags (W-23, R-82): at least 2 household reviews tagging one dish hard_to_pack, went_soggy_in_box or cold_is_bad on meals in packed slots give one pending proposal of a dish exclusion (kind dish, not protected) scoped to the household's packed slot keys; once accepted, planned weeks keep that dish out of the packed slots and still offer it in others; took_too_long gives a digest note and no op; one such review gives no proposal (negative control)
   CHECK: node scripts/verify/leaf-1.3.7.mjs --gate G1
   EXPECT: VERIFY leaf-1.3.7 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=86169e1c9d7bba8c6651738969eec41a72f9178917387b6d19a3d666be4ebd2e; exit=0; EXPECT=matched; output-sha256=a556ed0c4994c04b166aa985a4bde19c362ebbec044e6a0b84f103d58ec7f114; output-bytes=3469; shell=/bin/sh; cwd=/tmp/claude-0/cp3-137; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=86169e1c9d7bba8c6651738969eec41a72f9178917387b6d19a3d666be4ebd2e; exit=0; EXPECT=matched; output-sha256=b7bb51179add54f213aac8e77bf3d274441770abbc1e5dd8792765306bc00607; output-bytes=3470; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: DM-4 nutrition recompute: a recipe change set that changes a variant's ingredient grams queues nutrition.recompute; the worker job rewrites that variant's dish_nutrition_cache row to the engine's new per-100 g values with a later computed_at and leaves other variants' rows unchanged; the stale row fails the same comparison (negative control)
   CHECK: node scripts/verify/leaf-1.3.7.mjs --gate G2
   EXPECT: VERIFY leaf-1.3.7 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=e6df1cd9f65edb61a7e332c520f0f98a318b1db2036f6a23213e128bf51d9c7a; exit=0; EXPECT=matched; output-sha256=e0291e3468c963c773976af3a4fa1f36f5cd5fb418432d6008e5cd6efb82e476; output-bytes=931; shell=/bin/sh; cwd=/tmp/claude-0/cp3-137; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=e6df1cd9f65edb61a7e332c520f0f98a318b1db2036f6a23213e128bf51d9c7a; exit=0; EXPECT=matched; output-sha256=d967ae6b999beeadb650752b54a6634927004667b85d961d88c87d6c29446db5; output-bytes=935; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: REC-6 admin-initiated generation: the recipe.draft job with a recorded model response saves a draft dish (not active) with example plates for the requested day and slot, and the save path activates it; a schema-failing recorded response saves nothing (negative control)
   CHECK: node scripts/verify/leaf-1.3.7.mjs --gate G3
   EXPECT: VERIFY leaf-1.3.7 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=b665e53d65e27077ccb40929ad87981595ec7418f61041fc89f5508f89f82585; exit=0; EXPECT=matched; output-sha256=bfbbf38dc47acea47670d5483466a3d4e5cbb3aad5927d036868f56226583d4b; output-bytes=962; shell=/bin/sh; cwd=/tmp/claude-0/cp3-137; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=b665e53d65e27077ccb40929ad87981595ec7418f61041fc89f5508f89f82585; exit=0; EXPECT=matched; output-sha256=d3c56b2e7cbda5b2d7219bc57708b3139008c24ae897945a1966a64181c788b3; output-bytes=965; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: no regression: leaf-1.3.3 G1 and G2, and apps/web test:integration, pass
   CHECK: node scripts/verify/leaf-1.3.7.mjs --gate G4
   EXPECT: VERIFY leaf-1.3.7 G4 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=ced1e95f53d42699cf15bfe46a1494efd9a0631a6ed298f916508f3e675a12af; exit=0; EXPECT=matched; output-sha256=b09fd5afee8e33415a7d8906f934252ae6631f06ddd8f1b9d8dbb7ad611ffdfe; output-bytes=891; shell=/bin/sh; cwd=/tmp/claude-0/cp3-137; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=ced1e95f53d42699cf15bfe46a1494efd9a0631a6ed298f916508f3e675a12af; exit=0; EXPECT=matched; output-sha256=2b02bd73506226f71ed4d6c66f863f4514f82ffb1039d6d6272d49b875f28ee2; output-bytes=894; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
