@@ -71,6 +71,7 @@ const VALUE_LABELS: Readonly<Record<string, Readonly<Record<string, string>>>> =
     ingredient: "Ingredient",
     category: "Category",
     dietary_flag: "Dietary flag",
+    dish: "Dish",
     default: "Every day",
     training: "Training days",
   },

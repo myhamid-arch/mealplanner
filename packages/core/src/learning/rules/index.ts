@@ -16,6 +16,7 @@ export {
   type RecipeNoteFinding,
 } from "./recipe-notes.js";
 export { aiIngredient } from "./ai-ingredient.js";
+export { practicalPacking, practicalNotes } from "./practical.js";
 export { moreOrLessOften, neverAgain, observedFrequency } from "./frequency.js";
 export {
   plateMisses,

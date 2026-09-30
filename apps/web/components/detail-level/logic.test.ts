@@ -43,6 +43,21 @@ describe("G3 R2-DL logic", () => {
     expect(inferYours(split, auto)).toEqual(new Set(DAY));
   });
 
+  it("G3 a split read back from the 3-decimal share column keeps only the user's value (W-24)", () => {
+    // meal_distribution.share is numeric(10,3): the stored siblings are rounded to 0.0005, which
+    // moves a small share's ratio to auto by more than the 4-decimal tolerance.
+    const auto = autoShares(DAY);
+    const stored3 = (r: Record<string, number>) =>
+      Object.fromEntries(Object.entries(r).map(([k, v]) => [k, Math.round(v * 1000) / 1000]));
+    expect(inferYours(stored3(rebalance(auto, { lunch: 0.4 })), auto)).toEqual(new Set(["lunch"]));
+    expect(inferYours(stored3(rebalance(auto, { lunch: 0.36 })), auto)).toEqual(new Set(["lunch"]));
+    expect(inferYours(stored3(rebalance(auto, {})), auto)).toEqual(new Set());
+    const five = autoShares([...DAY, "pre_workout"]);
+    expect(inferYours(stored3(rebalance(five, { lunch: 0.4, snack: 0.05 })), five)).toEqual(
+      new Set(["lunch", "snack"]),
+    );
+  });
+
   it("G3 a stored split equal to the automatic one has no user values", () => {
     const auto = autoShares(DAY);
     expect(inferYours(rebalance(auto, {}), auto)).toEqual(new Set());

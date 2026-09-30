@@ -58,6 +58,20 @@ export class Household {
     return result;
   }
 
+  /**
+   * R-83 (W-23): a `dish` exclusion of the member's own or the household's that covers the slot
+   * keeps that dish off the member's plates there (every row applies, whatever `hard`; R-34).
+   */
+  excludesDish(memberId: string, slotKey: string, dishId: string): boolean {
+    return this.cfg.exclusions.some(
+      (e) =>
+        e.kind === "dish" &&
+        e.key === dishId &&
+        (e.memberId === null || e.memberId === memberId) &&
+        (e.slotKeys == null || e.slotKeys.includes(slotKey)),
+    );
+  }
+
   /** The solver's member context for one dish at one slot. */
   ctx(
     memberId: string,
