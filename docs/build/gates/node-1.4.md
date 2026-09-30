@@ -2,10 +2,10 @@
 
 Scope: integrate children leaf-1.4.1, leaf-1.4.2, leaf-1.4.3, leaf-1.4.4, leaf-1.4.5, leaf-1.4.6, leaf-1.4.7, leaf-1.4.8, leaf-1.4.9, leaf-1.4.10, leaf-1.4.11, leaf-1.4.12 into one verified result
 
-- [ ] N1: every direct child is reverified from its exact ledger
+- [x] N1: every direct child is reverified from its exact ledger
   CHECK: node .claude/skills/unlazy/scripts/gate-check.mjs --root . --cwd . --approve --reverify --jobs 1 --timeout 1800 docs/build/gates/leaf-1.4.1.md docs/build/gates/leaf-1.4.2.md docs/build/gates/leaf-1.4.3.md docs/build/gates/leaf-1.4.4.md docs/build/gates/leaf-1.4.5.md docs/build/gates/leaf-1.4.6.md docs/build/gates/leaf-1.4.7.md docs/build/gates/leaf-1.4.8.md docs/build/gates/leaf-1.4.9.md docs/build/gates/leaf-1.4.10.md docs/build/gates/leaf-1.4.11.md docs/build/gates/leaf-1.4.12.md
   EXPECT: ALL MET
-  EVIDENCE: pending
+  EVIDENCE: automatic-evidence=v1; definition-sha256=4a1912bfaa149e1786e8d3db854aaa5ef236ee6d0f7cf65d0b9df98cbc1b7b47; exit=0; EXPECT=matched; output-sha256=deb338a30f32f3428b054297862968b4f1a6346e7853f6c6cee2e86e88e38437; output-bytes=23959; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] N2: child packages compile against each other's public types and contract tests pass
   CHECK: node scripts/verify/node-1.4.mjs --gate N2
