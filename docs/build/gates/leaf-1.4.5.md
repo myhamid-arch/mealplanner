@@ -7,17 +7,17 @@ Scope: Reviews, Insights, Chat UI, as specified in docs/spec (see 11-build-plan.
 - [x] G1: Playwright: quick rating and detailed review, proposal appears, accept, undo (stubbed model)
   CHECK: node scripts/verify/leaf-1.4.5.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.5 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=bc28774acdb014e2eb98b43b02a00eb4eaeba0e69a0b1e0ed76d07449df22481; exit=0; EXPECT=matched; output-sha256=1ccc732bd68064bbddb4ae65a249db1cdfd67339314b085d581d42271d3e248b; output-bytes=1875; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=bc28774acdb014e2eb98b43b02a00eb4eaeba0e69a0b1e0ed76d07449df22481; exit=0; EXPECT=matched; output-sha256=227178a63e7090bc3bf555d54b89b6b2979b8c3cdd9655028bcf2834a5da1bda; output-bytes=1875; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: axe-core: no serious or critical violations on these screens
   CHECK: node scripts/verify/leaf-1.4.5.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.5 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=1706ca616de76fb7c1fb096f3cd8422a710401f5655d38225ea49d6163da915c; exit=0; EXPECT=matched; output-sha256=1e01c2067c246d74867df12449d4cfad957fd6f439e0cd97d72a12b89892d537; output-bytes=2622; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=1706ca616de76fb7c1fb096f3cd8422a710401f5655d38225ea49d6163da915c; exit=0; EXPECT=matched; output-sha256=203d3d7a9aa3fc99c87c1c910c2919c1c546c4575c91f6e8c7b384a49ad08906; output-bytes=2622; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: chat renders every AGT-7 card type from recorded tool results
   CHECK: node scripts/verify/leaf-1.4.5.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.5 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=3bb7db561b3e18814a5bf115d1f4e4ef144defb78850b6e37890a77be5c81aad; exit=0; EXPECT=matched; output-sha256=6fa84f1c7371a2aa276c7e25f728d7b857296e555406dd16a6774fea84f29c79; output-bytes=1928; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=3bb7db561b3e18814a5bf115d1f4e4ef144defb78850b6e37890a77be5c81aad; exit=0; EXPECT=matched; output-sha256=6b81ce5c272e3abaaf361aff726bc23f0611bb51b10b833cd723954b2fe0fcf7; output-bytes=1928; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: architect visual review against QuickRatePhone, ReviewComposePhone, ReviewsFeed, Insights, Chat* mockups
   EVIDENCE: architect review 2026-09-27 at 819eaa6 (ChatDesktop, ChatPhoneDigest rendered from docs/mockups beside the builder's 390/1280 px captures, screenshot page version 3): layouts match with the accepted deviations (Portions copy, whole-meal chips, Rating for, no Use-for button -> 1.4.8, floating button, SPEC-Q-16/17/18) and W-9 (digest auto-applied block and plan-ready row in Updates, outside this leaf); findings (raw enum values and no Now/Proposed rows on proposal/applied cards; phone suggestion chips in three rows) fixed and re-checked (Before 0.20 -> After 0.50 capture; label mapping mutated back to raw values fails 4 describe tests); G1-G3 met twice on the merge with base b79c0c3 (DATABASE_URL unset and set); mutations caught: undo call removed (G1), macro_table card dropped (G3)

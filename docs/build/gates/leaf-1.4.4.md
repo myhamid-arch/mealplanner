@@ -7,17 +7,17 @@ Scope: Today, Plan, Plate, Recipes, Kitchen screens, as specified in docs/spec (
 - [x] G1: Playwright at 390 and 1280 px: plan week, swap, lock, one-off shared/individual override, cook sheet print view
   CHECK: node scripts/verify/leaf-1.4.4.mjs --gate G1
   EXPECT: VERIFY leaf-1.4.4 G1 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=b0558a4b3208bbd56a74603b930685e9d85097095116384d5c91c89428058a11; exit=0; EXPECT=matched; output-sha256=3e12e0007aea5f2886787b4e5bd16bd384b229258d4b44095172d4f8608c8bf0; output-bytes=4756; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=b0558a4b3208bbd56a74603b930685e9d85097095116384d5c91c89428058a11; exit=0; EXPECT=matched; output-sha256=c89a93cbd81bc5e1bf5eb81b36a3c5ed89d18b41a94686eacfc961e29f858c6f; output-bytes=4756; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G2: axe-core: no serious or critical violations on these screens
   CHECK: node scripts/verify/leaf-1.4.4.mjs --gate G2
   EXPECT: VERIFY leaf-1.4.4 G2 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=7b88bc2420abc2deea8ed0b8a96fe523d00694dffa0a3f334f949039b8018b45; exit=0; EXPECT=matched; output-sha256=ec8b00f5b63e8ec39a2f3be1277fb67d10a4e3744ab3f3c62ce9ccdbce28d02e; output-bytes=1165; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=7b88bc2420abc2deea8ed0b8a96fe523d00694dffa0a3f334f949039b8018b45; exit=0; EXPECT=matched; output-sha256=7f48443d36d8041080ca7cc8306c3b3474147f6a0dff07c8218f488e0c439cca; output-bytes=1161; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G3: kitchen flag ingredient-unavailable triggers substitution and plate re-solve visible to admins (R2-UX-1)
   CHECK: node scripts/verify/leaf-1.4.4.mjs --gate G3
   EXPECT: VERIFY leaf-1.4.4 G3 PASSED
-  EVIDENCE: automatic-evidence=v1; definition-sha256=41e4818fb430501a41263c00008598a51a4d331ee1077d45afb44fd02c3f4639; exit=0; EXPECT=matched; output-sha256=bcd6b223e86c0b66cf157749ed0a969a81e110f2070b5b45cad6784cfedba3a9; output-bytes=1555; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
+  EVIDENCE: automatic-evidence=v1; definition-sha256=41e4818fb430501a41263c00008598a51a4d331ee1077d45afb44fd02c3f4639; exit=0; EXPECT=matched; output-sha256=bfb35acf615ca060a93412fa876164c441b6f4e03f0f01128da8bcf613eb9146; output-bytes=1553; shell=/bin/sh; cwd=/home/user/mealplanner; path=ad9aca3d1be2/14 entries
 
 - [x] G4: architect visual review against TodayPhone, TodayDesktop, PlatePhone, WeekPlan, SwapDialog, RecipeLibrary, RecipePage, CookSheet mockups
   EVIDENCE: architect review 2026-09-27 at 6ca9f1c (TodayDesktop, WeekPlan, CookSheet, TodayPhone rendered from docs/mockups beside the builder's 390/1280 px captures): layouts match with the recorded deviations 1-7; findings (day target was the sum of slot targets, 2146 vs 2150; training-day header untested) fixed in 32e661c and re-checked at 478a284 (G1 fails with dayProfile's day-kind lookup removed); G1-G3 re-pass on the merge with base cec4044
