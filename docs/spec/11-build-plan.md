@@ -677,6 +677,11 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - The fix: the comparison adds the column's half-unit (0.0005 / auto share) for each side.
   - Verified: a unit case of stored 3-decimal splits (lunch 40 %, lunch 36 %, automatic, two of five set) failed on the pre-fix code (all four shown as yours) and passes with the fix; leaf-1.4.3 G3 reverified at CP3 of PR #32.
   - Edit in merged leaf 1.4.3's `logic.ts` and `logic.test.ts`. Root R1 reverifies them.
+- **W-25 (web integration tests timed out under CPU load; found by the architect in node-1.4 N1, 2026-09-30).**
+  - The problem: `apps/web` had no Vitest config, so its API integration tests ran on Vitest's 5 s default test timeout. The G4 access tests sign users up and in (scrypt password hashing) and make many database round trips per test. With other work on the machine they ran past 5 s and failed with "Test timed out in 5000ms"; alone they passed.
+  - Where it showed: the node-1.4 N1 rerun of 2026-09-30 (started 01:10, alongside node-1.3's N1) reset leaf-1.4.1 G4 and G5 to pending. Alone, both passed (16/16 and 5/5). With a full `pnpm build` running alongside, G4 failed 1 of 2 runs: "G4 TOTP enforced when required" and "G4 undoing an unblock …" timed out at 5000 ms.
+  - The fix: `apps/web/vitest.config.ts` sets `testTimeout` and `hookTimeout` to 30 s for the suite. Tests that need more still pass their own timeout, as the other API integration files already do.
+  - Verified: see the node-1.4 N1 evidence that follows this entry. The fixed G4 is run three times under a forced full build, and node-1.4 N1 is rerun with nothing alongside.
 - **W-23 (FBK-3 practical tags not implemented; found in R9).** See R-82. Owner: leaf 1.3.7.
 - **W-20 (a job's terminal event and status were committed apart; reported by the node-scripts builder as R-5, fixed by the architect).**
   - The problem: `apps/worker/src/runner.ts` committed the `done` event, whose `pg_notify` ends the SSE stream, before setting `succeeded`. A client that had seen the stream end could read the job as `running`. The failure path had the same gap for `failed`. It showed up as node-1.3 N4 failing `g2-worker-sse.int.test.ts:218`.
