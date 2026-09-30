@@ -1274,6 +1274,7 @@ export async function runE2ESuite(report, { webDir, distDir, server }) {
   const knownConfigs = new Set([
     "playwright.config.ts",
     ...E2E_SPECS.filter((s) => s.config).map((s) => s.config),
+    "e2e/root/playwright.config.ts", // R-86: run by root gates R6–R8 (scripts/verify/root.mjs), not N4
   ]);
   report.check(
     configs.every((c) => knownConfigs.has(c)),
