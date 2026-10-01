@@ -687,6 +687,13 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
   - The fix: an `E2E_SPECS` entry (a seeded database and the worker, as the leaf's verify script gives it) and a `preload(tag)` option in `e2eRun`, which puts the leaf's recorded agent turn (`e2e/contract-gaps/agent-turn.mjs`) into `next start` for `@1.4.12-G2`, as the chat stub is.
   - Verified: node-1.1 N4 on the fix passed (DATABASE_URL unset), with `contract-gaps.spec.ts` @1.4.12-G1 3/3 and @1.4.12-G2 3/3; before it, the builder's N4 runs (unset and set) failed on exactly that assertion.
   - Process change: at CP3, a leaf that adds or moves an e2e spec or Playwright config also runs node N4.
+- **R-87 (owner answers to the final report, 2026-10-01).**
+  - **Confirmed:**
+    - carbs ±5 g per meal (the owner's "+-56" was ±5; OQ-1 is now decided, not a default);
+    - v1 is the installable PWA, with the native app deferred (OQ-3);
+    - PRD-4's 5-minute bound stays unmeasured;
+    - the ARC-4 exception (the auth route's 2FA policy read) stays.
+  - **Open:** SPEC-Q-6 (recipe-card example plates for targeted attendees only). The owner is reviewing it and will say whether it changes.
 - **W-27 (the web container got no model settings under docker compose; found by the architect after the root run, 2026-09-30).**
   - The problem: `docker-compose.yml` passed `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` to the worker only. The chat assistant and onboarding's parse run in the web app, so a stack started as the file says (`cp .env.example .env`, `docker compose up`) answered 503 "assistant unavailable". Separately, `.env.example` set `ANTHROPIC_MODEL=claude-opus-5`, not the default model (R-81 errata), so copying it as instructed would have broken every model call.
   - Why no gate saw it: root R2–R8's generated compose override sets the recorded model's variables on both containers, which masked the base file's omission; no gate reads `.env.example`.

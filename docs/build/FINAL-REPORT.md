@@ -41,7 +41,13 @@ These checks run against a recorded model, so they make no live model calls and 
 - broken Adjust links fail SC-7;
 - a key reaching the containers fails every success criterion.
 
-## Decisions and interpretations to confirm
+## Decisions and interpretations
+
+**Owner's answers (2026-10-01):**
+- items 1, 2, 4 and 5 are confirmed;
+- item 3 is under the owner's review; changes will follow if needed.
+
+The items as presented:
 
 1. **Carb tolerance.** Your message said "carbs +-56". I read it as **±5 g per meal**; each member's tolerance is editable.
 2. **Mobile.** v1 is an installable web app (PWA) with offline Today. A native app is deferred.
