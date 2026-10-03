@@ -7,7 +7,7 @@ import { adjustHref, MEMBER_COLOR_ORDER } from "./explain.js";
 import { appetiteForAge, isChild } from "./parse-people.js";
 import { targetsText } from "./parse-targets.js";
 import { resolveTarget, resolveTerm } from "./resolve.js";
-import { isSelfWord, listJoin, normalise, weekdayText } from "./text.js";
+import { cappedList, isSelfWord, listJoin, normalise, shortNames, weekdayText } from "./text.js";
 import type {
   AdjustTarget,
   DayTargets,
@@ -353,8 +353,6 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
     reason: ExclusionReason;
     term: string;
     covers: string[];
-    /** R-88: the assistant's summary of the rule it read. */
-    summary?: string;
   }
   const rules = new Map<string, Rule>();
   const coverage: InferredSetup["coverage"] = [];
@@ -397,9 +395,16 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
         kind: e.kind,
         key: e.key,
         reason: item.reason,
-        term: item.term,
+        // R-88: a mapped rule is named by what it covers, not by the sentence it came from.
+        term:
+          item.target === undefined
+            ? item.term
+            : e.kind === "dietary_flag"
+              ? e.key.replace(/^contains_/, "")
+              : e.kind === "category"
+                ? e.key.replace(/_/g, " ")
+                : (shortNames([names.get(e.key) ?? e.key])[0] ?? e.key),
         covers: e.covers,
-        ...(item.summary === undefined ? {} : { summary: item.summary }),
       });
     }
   }
@@ -440,20 +445,16 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
       .flatMap((r) => r.covers)
       .map((slug) => names.get(slug) ?? slug)
       .filter((name) => !terms.some((t) => normalise(name).includes(normalise(t))));
-    const ingredientNames = group
-      .filter((r) => r.kind === "ingredient")
-      .map((r) => names.get(r.key) ?? r.key);
-    const summaries = [
-      ...new Set(group.flatMap((r) => (r.summary === undefined ? [] : [r.summary]))),
-    ];
-    const summarised = group.every((r) => r.summary !== undefined);
-    const what = summarised
-      ? listJoin(summaries)
-      : group.every((r) => r.kind === "ingredient") && ingredientNames.length > 0
-        ? listJoin(ingredientNames.map((n) => n.toLowerCase()))
+    // R-88: short names, once each, capped at six: "chicken wing", "tomatoes (canned)".
+    const ingredientNames = shortNames(
+      group.filter((r) => r.kind === "ingredient").map((r) => names.get(r.key) ?? r.key),
+    );
+    const what =
+      group.every((r) => r.kind === "ingredient") && ingredientNames.length > 0
+        ? cappedList(ingredientNames)
         : listJoin(terms);
     const incl =
-      summarised || including.length === 0
+      including.length === 0
         ? ""
         : `, including ${listJoin(
             including.length > 4
@@ -467,7 +468,9 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
       head.reason === "allergy"
         ? " Allergy: a hard rule."
         : head.reason === "religious"
-          ? " Household rule, including in sauces and marinades."
+          ? head.memberId === null
+            ? " Household rule, including in sauces and marinades."
+            : " Religious rule, including in sauces and marinades."
           : head.reason === "medical"
             ? " Medical: a hard rule."
             : " Never planned for them.";

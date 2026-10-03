@@ -2,6 +2,8 @@
 // R-56). The web route wires the database port (R-2).
 export {
   NEVER_EAT_PARSE_EFFORT,
+  ONBOARDING_PARSE_MODEL,
+  onboardingConfig,
   ONBOARDING_PARSE_DISABLED_REASON,
   ONBOARDING_PARSE_EFFORT,
   catalogueText,

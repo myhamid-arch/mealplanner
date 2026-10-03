@@ -33,8 +33,11 @@ type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 /** SPEC-Q-4: a short structured read, like `reviews.extract` (ARC-7). */
 export const ONBOARDING_PARSE_EFFORT: Effort = "low";
 
-/** R-88: the never-eat reading reasons about meaning against the catalogue. */
-export const NEVER_EAT_PARSE_EFFORT: Effort = "medium";
+/**
+ * R-88: one statement at a time reads at low effort (3.5–12 s measured live, 2026-10-03, against
+ * 21–37 s for the whole answer at medium); statements are read in parallel and only once.
+ */
+export const NEVER_EAT_PARSE_EFFORT: Effort = "low";
 
 export function effortOf(field: OnboardingField): Effort {
   return field === "never_eat" ? NEVER_EAT_PARSE_EFFORT : ONBOARDING_PARSE_EFFORT;
@@ -64,24 +67,27 @@ The question was "What are this person's macro targets?": daily numbers in any f
 - If the text gives no usable daily numbers, day is null and problem says in one short sentence what is missing.`,
   never_eat: `${COMMON}
 
-The question was "Anything anyone must never eat?". Turn the answer into rules the planner applies, using only the catalogue given after these instructions. Read it the way a careful family cook would: work out what the parent means, not just which words they used.
+The question was "Anything anyone must never eat?". The page splits the answer into statements and sends one at a time, with the whole answer for context. Read only the statement given, and turn it into rules the planner applies, using only the catalogue given after these instructions. Work out what the parent means, the way a careful family cook would.
 
-who: one of the people listed with the answer, written exactly as listed (without the age in brackets), or "everyone" (the whole family, anyone, all of us, the household). Ages, when given, tell you who "the kids", "the children" or "the adults" are: under 18 is a child. A group of people gets one rule per person.
+who: one of the people listed, written exactly as listed (without the age in brackets), or "everyone" (the whole family, anyone, all of us, the household). Under 18 is a child, so ages tell you who "the kids" are. A group of people gets one rule per person.
 
-One rule per person (or one for everyone) and restriction:
-- said: the words the rule comes from, in lower case.
-- reason: allergy, religious, medical, dislike or other. Use what the text says. Pork or alcohol for the whole family with no reason given is religious. An allergy or medical rule also keeps out traces in sauces and stocks; a dislike only keeps the food itself off the plate.
+Each rule:
+- said: the statement's words the rule comes from, lower case.
+- reason: allergy, religious, medical, dislike or other, as the statement says. Pork or alcohol for the whole family with no reason given is religious.
 - Exactly one of:
-  - flag: when the words name an allergen or rule the catalogue flags (sesame, nuts, gluten, dairy, egg, fish, shellfish, soy, pork, alcohol). Use the flag, not a list of ingredients: the planner covers everything the catalogue flags. Then categories and slugs are empty.
-  - categories: a whole group: "seafood" is seafood and fish; "red meat" is red_meat; "meat" is red_meat and poultry; "pulses" or "legumes" is legume. Then flag is null and slugs is empty.
-  - slugs: the catalogue items the words cover, all of them and nothing else. "chicken" is every chicken item; for an allergy, religious or medical rule include stocks and products made from it. Then flag is null and categories is empty.
-- summary: one short line in plain words saying what stays off the plate and what does not, with examples from the catalogue, e.g. "chicken on the bone (drumsticks, wings, whole chicken); boneless breast and mince stay".
+  - flag: an allergen or rule the catalogue flags (sesame, nuts, gluten, dairy, egg, fish, shellfish, soy, pork, alcohol). The planner covers everything the catalogue flags. Use slugs instead when the statement makes an exception ("but almond milk is fine").
+  - categories: a whole group: "seafood" is seafood and fish; "red meat" is red_meat; "meat" is red_meat and poultry; "pulses" or "legumes" is legume.
+  - slugs: every catalogue item the words cover and nothing else. An allergy, religious or medical rule includes stocks and products made from it; a dislike covers the food itself.
+- keeps: what stays allowed, in a few words ("boneless breast and mince"), or "" when nothing needs saying.
 
-Form and preparation words change the meaning: "no bone in chicken" keeps out the chicken cuts that come on the bone and leaves boneless ones. The catalogue has no raw or cooked forms, so "raw tomatoes" can only mean the tomato items; say so in the summary.
+questions: ask one question for every assumption you would otherwise make that changes what is planned. Ask when:
+- a food is ruled out for a person with no reason given (allergy and medical are hard rules that also keep out traces in sauces; a dislike only keeps the food off their plate);
+- the statement names a form the catalogue does not have (raw or cooked, fried, on the bone, fresh or dried): ask whether the other forms are fine;
+- a group word's reach is unclear ("spicy", "processed food", "junk");
+- the statement reads like the opposite of a restriction or a likely typo ("does like seafood"): ask what was meant.
+Write each question in plain words, under 15 words, about one thing. Give 2 to 4 short options (under 6 words each), each with the rules it adds (an option may add none). Every option must lead to a different plan: never two options that add the same rules, or one that only rewords another. Each label says plainly what happens ("Cooked garlic is fine", "No garlic in any form"), and its rules do exactly that: "in any form" covers every catalogue item of that food (fresh, canned, dried, paste, powder, sauce). The first option is the safest reading. When a statement has a question, put only the rules no question affects in rules; the options carry the rest. Do not ask about what the statement settles.
 
-questions: ask only when the text can reasonably be read in ways that change what is planned and you cannot tell which, for example a food named for one person with no reason given (allergy and dislike plan differently), or a cut that may or may not be on the bone. One short question in plain words, 2 to 4 options, each with the rules it adds (an option may add none). Put the safest reading first: it applies until the parent chooses. Do not also put a questioned reading in rules. Ask at most a few questions, and none about what the text settles.
-
-unclear: words that name no food in the catalogue, or are not about food, with why in a few plain words.
+unclear: only words that name no food in the catalogue and are not about food at all, with why in a few plain words.
 
 Never invent a slug: use only slugs from the catalogue.`,
 };
@@ -127,6 +133,8 @@ export interface OnboardingParseInput {
   people?: readonly string[];
   /** R-88: their ages, in the same order (so "the kids" can be read). */
   ages?: readonly (number | null)[];
+  /** R-88: the whole never-eat answer, for context; `text` is the one statement to read. */
+  context?: string;
   /** R-88: the household's catalogue, for `never_eat` (rules map onto it and are checked by it). */
   catalogue?: readonly CatalogueRow[];
 }
@@ -141,7 +149,9 @@ export function parseRequest(input: OnboardingParseInput): StructuredRequest<z.Z
               return age === undefined || age === null ? name : `${name} (${String(age)})`;
             })
             .join(", ") || "(none named)"
-        }\nAnswer:\n${input.text}`
+        }\n${
+          input.context === undefined ? "" : `Whole answer (context only):\n${input.context}\n`
+        }Read this statement:\n${input.text}`
       : `Answer:\n${input.text}`;
   return {
     schema: schemaOf(input.field),
@@ -182,6 +192,23 @@ export type OnboardingParseResult =
       issues: string[];
       generationId: string;
     };
+
+/**
+ * R-88: the onboarding readings run on a faster model than the rest of the app (owner, 2026-10-03:
+ * "the input needs to be processed faster"). Measured live on the owner's seven statements, read in
+ * parallel at low effort: 2.4–3.4 s each (one 8.7 s) against 7.7–19 s on the default model, with
+ * the same questions asked. `ONBOARDING_PARSE_MODEL` overrides it.
+ */
+export const ONBOARDING_PARSE_MODEL = "claude-sonnet-5-5";
+
+/** The configuration for onboarding readings: the app's credential state, the faster model. */
+export function onboardingConfig(config: ClaudeConfig, env = process.env): ClaudeConfig {
+  const override = env.ONBOARDING_PARSE_MODEL?.trim();
+  return {
+    ...config,
+    model: override === undefined || override === "" ? ONBOARDING_PARSE_MODEL : override,
+  };
+}
 
 /**
  * The parse model for a configuration (null without a credential), through 1.3.1's client.

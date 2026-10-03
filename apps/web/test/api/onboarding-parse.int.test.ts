@@ -108,6 +108,7 @@ describe("G1 POST /onboarding/parse", () => {
       text: "Zayd is allergic to sesame. No pork or alcohol for anyone. Sara hates liver.",
       people: ["Omar", "Sara", "Layla", "Adam", "Zayd"],
       ages: [41, 39, 18, 15, 10],
+      context: "Zayd is allergic to sesame. No pork or alcohol for anyone. Sara hates liver.",
     });
     expect(r.status).toBe(200);
     const dto = c.OnboardingParseDto.parse(r.json);
@@ -132,7 +133,6 @@ describe("G1 POST /onboarding/parse", () => {
           who: "Sara",
           reason: "dislike",
           target: { kind: "ingredient", keys: ["beef-liver", "chicken-liver"] },
-          summary: "liver (beef and chicken liver)",
         },
       ],
       questions: [

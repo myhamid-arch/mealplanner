@@ -1045,6 +1045,8 @@ export const OnboardingParseBody = z
     people: z.array(z.string().trim().min(1).max(80)).max(20).optional(),
     /** R-88: question 1's ages, in the order of `people` ("the kids" names them). */
     ages: z.array(z.number().int().min(0).max(120).nullable()).max(20).optional(),
+    /** R-88: the whole never-eat answer, for context; `text` is the one statement to read. */
+    context: z.string().trim().max(2000).optional(),
   })
   .strict();
 
@@ -1085,7 +1087,7 @@ const NeverEatItemDto = z.object({
       keys: z.array(z.string()),
     })
     .optional(),
-  summary: z.string().optional(),
+  keeps: z.string().optional(),
 });
 
 export const OnboardingParseDto = z.union([

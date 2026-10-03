@@ -63,3 +63,36 @@ export function weekdayText(days: readonly number[]): string {
     return `${WEEKDAY_SHORT[first] ?? ""}–${WEEKDAY_SHORT[last] ?? ""}`;
   return sorted.map((d) => WEEKDAY_SHORT[d]).join(", ");
 }
+
+/**
+ * R-88: short display names for ingredients, lower case, once each: the name before its comma
+ * ("Chicken wing, with skin" → chicken wing), unless that would read like another item's
+ * ("Tomato" and "Tomatoes, canned"), when the detail stays in brackets: tomatoes (canned).
+ */
+export function shortNames(names: readonly string[]): string[] {
+  const parts = names.map((n) => {
+    const [head = n, ...rest] = n.split(",");
+    return { head: head.trim().toLowerCase(), rest: rest.join(",").trim().toLowerCase() };
+  });
+  const count = new Map<string, number>();
+  for (const p of parts) {
+    const k = words(p.head).join(" ");
+    count.set(k, (count.get(k) ?? 0) + 1);
+  }
+  return [
+    ...new Set(
+      parts.map((p) =>
+        (count.get(words(p.head).join(" ")) ?? 0) > 1 && p.rest !== ""
+          ? `${p.head} (${p.rest})`
+          : p.head,
+      ),
+    ),
+  ];
+}
+
+/** "a, b, c, d, e, f and 3 more": a list capped for one line of text. */
+export function cappedList(items: readonly string[], max = 6): string {
+  return items.length > max
+    ? `${items.slice(0, max).join(", ")} and ${String(items.length - max)} more`
+    : listJoin(items);
+}

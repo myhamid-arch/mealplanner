@@ -317,101 +317,147 @@ for (const vp of VIEWPORTS) {
     await expect(page.getByRole("button", { name: /^my wife/ })).toHaveCount(0);
   });
 
-  test(`@G4 never-eat at ${vp.name} px (R-88): the assistant's reading is the answer, its question is answered by a tap`, async ({
+  test(`@G4 never-eat at ${vp.name} px (R-88): statements are read one by one, answers lock, nothing is tappable while reading`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: vp.width, height: vp.height });
     await signup(page, "nevereat");
-    const rule = (keys: string[], summary: string) => ({
-      who: "Yousif",
-      term: "no bone in chicken",
-      reason: "other",
+    const rule = (who: string, keys: string[], reason = "other", keeps?: string) => ({
+      who,
+      term: "x",
+      reason,
       target: { kind: "ingredient", keys },
-      summary,
+      ...(keeps === undefined ? {} : { keeps }),
     });
-    const calls: { field: string; people?: string[]; ages?: (number | null)[] }[] = [];
+    // One reading per statement; each answer is held until the test releases it.
+    const readings: Record<string, unknown> = {
+      "no lamb for Manal": {
+        neverEat: [],
+        questions: [
+          {
+            who: "Manal",
+            said: "no lamb for manal",
+            question: "Why does Manal avoid lamb?",
+            options: [
+              { label: "Allergy or medical", items: [rule("Manal", ["lamb-leg"], "medical")] },
+              { label: "She doesn't like it", items: [rule("Manal", ["lamb-leg"], "dislike")] },
+            ],
+          },
+        ],
+        unclear: [],
+      },
+      "no bone in chicken for Yousif": {
+        neverEat: [
+          rule(
+            "Yousif",
+            ["chicken-drumstick", "chicken-wing", "chicken-whole"],
+            "other",
+            "boneless breast and mince",
+          ),
+        ],
+        questions: [],
+        unclear: [],
+      },
+      "Omar doesn't like cheese": {
+        neverEat: [rule("Omar", ["cheddar", "feta"], "dislike")],
+        questions: [],
+        unclear: [],
+      },
+    };
+    const sent: { field: string; text: string; context?: string; ages?: unknown }[] = [];
+    let release: () => void = () => undefined;
+    let gate = new Promise<void>((r) => (release = r));
     await page.route("**/api/v1/onboarding/parse", async (route) => {
-      const body = route.request().postDataJSON() as (typeof calls)[number];
-      calls.push(body);
+      const body = route.request().postDataJSON() as (typeof sent)[number];
+      sent.push(body);
+      if (body.field === "people")
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            people: [
+              { name: "Yousif", age: 44, sex: null },
+              { name: "Manal", age: 40, sex: null },
+              { name: "Omar", age: 17, sex: null },
+            ],
+          }),
+        });
+      await gate;
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(
-          body.field === "people"
-            ? {
-                people: [
-                  { name: "Yousif", age: 44, sex: null },
-                  { name: "Manal", age: 40, sex: null },
-                ],
-              }
-            : {
-                neverEat: [
-                  rule(
-                    ["chicken-drumstick", "chicken-wing", "chicken-whole"],
-                    "chicken on the bone (drumsticks, wings, whole chicken); boneless cuts stay",
-                  ),
-                ],
-                questions: [
-                  {
-                    who: "Yousif",
-                    said: "no bone in chicken",
-                    question: "Should chicken thighs stay off Yousif's plate too?",
-                    options: [
-                      {
-                        label: "Yes, thighs too",
-                        items: [rule(["chicken-thigh"], "chicken thighs")],
-                      },
-                      { label: "No, thighs are fine", items: [] },
-                    ],
-                  },
-                ],
-                unclear: [],
-              },
-        ),
+        body: JSON.stringify(readings[body.text]),
       });
     });
     await page.goto("/onboarding");
-    await page.getByRole("textbox", { name: "Household members" }).fill("Yousif 44, Manal 40");
+    await page
+      .getByRole("textbox", { name: "Household members" })
+      .fill("Yousif 44, Manal 40, Omar 17");
     await page.getByRole("button", { name: /^Next/ }).click();
     for (let i = 0; i < 3; i += 1) await page.getByRole("button", { name: "Skip" }).click();
     await expect(
       page.getByRole("heading", { name: "Anything anyone must never eat?" }),
     ).toBeVisible();
-    await page.getByLabel("Never eat").fill("no bone in chicken for Yousif");
-    await expect(page.getByText("Read by the assistant")).toBeVisible();
+    const next = page.getByRole("button", { name: "See what I worked out" });
+    await page.getByLabel("Never eat").fill("no lamb for Manal, no bone in chicken for Yousif");
+    const cards = page.locator("[data-statement]");
+    await expect(cards).toHaveCount(2);
+    // While the assistant reads: each card says so, nothing to tap, and the step cannot be left.
+    await expect(page.locator("[data-statement=reading]")).toHaveCount(2);
+    await expect(page.locator("[data-never-question] button")).toHaveCount(0);
+    await expect(next).toBeDisabled();
+    await expect(page.getByText("Reading 2 statements…")).toBeVisible();
+    await expectFits(page, "never-eat reading");
+    expect(await axeBoth(page, "never-eat reading")).toEqual([]);
+    await shot(page, `never-eat-reading-${vp.name}`);
+    release();
+    await expect(page.locator("[data-statement=needs-answer]")).toHaveCount(1);
     await expect(
-      page.getByText("Yousif: never chicken on the bone (drumsticks, wings, whole chicken)", {
-        exact: false,
-      }),
+      page.getByText("Yousif: never chicken drumstick, chicken wing and whole chicken"),
     ).toBeVisible();
-    // The request names the people with their ages (R-88: "the kids").
-    expect(calls.at(-1)).toMatchObject({
-      field: "never_eat",
-      people: ["Yousif", "Manal"],
-      ages: [44, 40],
+    await expect(page.getByText("Still fine: boneless breast and mince")).toBeVisible();
+    await expect(next).toBeDisabled();
+    await expect(page.getByText("Answer 1 question to continue.")).toBeVisible();
+    // Each statement went alone, with the whole answer and the ages for context.
+    expect(
+      sent
+        .filter((b) => b.field === "never_eat")
+        .map((b) => b.text)
+        .sort(),
+    ).toEqual(["no bone in chicken for Yousif", "no lamb for Manal"]);
+    expect(sent.at(-1)).toMatchObject({
+      context: "no lamb for Manal, no bone in chicken for Yousif",
+      ages: [44, 40, 17],
     });
-    const question = page.getByRole("group", {
-      name: "Should chicken thighs stay off Yousif's plate too?",
-    });
-    await expect(question).toBeVisible();
-    // Until a choice is made, the first (safest) answer applies.
-    await expect(question.getByText("Until you choose, the first answer applies.")).toBeVisible();
-    await expect(page.getByText("Yousif: never chicken thighs")).toBeVisible();
     await expectFits(page, "never-eat question");
     expect(await axeBoth(page, "never-eat question")).toEqual([]);
     await shot(page, `never-eat-question-${vp.name}`);
-    await question.getByRole("button", { name: "No, thighs are fine" }).click();
-    await expect(question.getByRole("button", { name: "No, thighs are fine" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    await expect(page.getByText("Yousif: never chicken thighs")).toHaveCount(0);
-    await page.getByRole("button", { name: "See what I worked out" }).click();
-    await expect(
-      page.getByText(
-        "Yousif: never chicken on the bone (drumsticks, wings, whole chicken); boneless cuts stay. Never planned for them.",
-      ),
-    ).toBeVisible();
+    await page
+      .getByRole("group", { name: "Why does Manal avoid lamb?" })
+      .getByRole("button", { name: "She doesn't like it" })
+      .click();
+    await expect(page.locator("[data-statement=settled]")).toHaveCount(2);
+    await expect(page.getByText("✓ She doesn't like it")).toBeVisible();
+    await expect(next).toBeEnabled();
+    // More text: only the new statement is read; the answered one keeps its answer.
+    gate = new Promise<void>((r) => (release = r));
+    const before = sent.length;
+    await page
+      .getByLabel("Never eat")
+      .fill("no lamb for Manal, no bone in chicken for Yousif, Omar doesn't like cheese");
+    await expect(page.locator("[data-statement=reading]")).toHaveCount(1);
+    await expect(page.getByText("✓ She doesn't like it")).toBeVisible();
+    await expect(next).toBeDisabled();
+    release();
+    await expect(page.locator("[data-statement=settled]")).toHaveCount(3);
+    expect(sent.slice(before).map((b) => b.text)).toEqual(["Omar doesn't like cheese"]);
+    await next.click();
+    for (const line of [
+      "Manal: never lamb leg. Never planned for them.",
+      "Yousif: never chicken drumstick, chicken wing and whole chicken. Never planned for them.",
+      "Omar: never cheddar and feta (white cheese). Never planned for them.",
+    ])
+      await expect(page.getByText(line)).toBeVisible();
   });
 
   test(`@G1 @G4 without a credential at ${vp.name} px: no confirmation, the page keeps its own reading`, async ({

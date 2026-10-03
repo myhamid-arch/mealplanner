@@ -61,8 +61,8 @@ export interface NeverEatItem {
   reason: ExclusionReason;
   /** R-88: the assistant's mapping; absent → the term is matched by `resolveTerm`. */
   target?: NeverEatTarget;
-  /** R-88: the assistant's plain-words summary ("chicken on the bone: drumsticks, wings"). */
-  summary?: string;
+  /** R-88: what the assistant says stays allowed ("boneless breast and mince"), if anything. */
+  keeps?: string;
 }
 
 /** R-88: a question the assistant asks when the never-eat answer can be read more than one way. */

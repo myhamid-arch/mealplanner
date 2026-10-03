@@ -7,8 +7,6 @@ import {
   isChild,
   MEMBER_COLOR_ORDER,
   targetsText,
-  type NeverEatItem,
-  type NeverEatQuestion,
   type PersonAnswer,
   type TargetParse,
   type TrainingTime,
@@ -534,40 +532,53 @@ export function CuisineQuestion({
   );
 }
 
+/** R-88: one statement of the never-eat answer as the page shows it. */
+export interface StatementView {
+  key: string;
+  text: string;
+  status: "waiting" | "reading" | "needs-answer" | "settled" | "simple" | "failed";
+  /** What the statement keeps off whose plate, in the app's words. */
+  lines: string[];
+  /** What the assistant says stays fine. */
+  keeps: string[];
+  /** Words it could not place, with why. */
+  unclear: string[];
+  questions: { question: string; options: string[]; picked: number | undefined }[];
+}
+
+const STATUS: Record<StatementView["status"], { label: string; className: string }> = {
+  waiting: { label: "Waiting for you to finish typing", className: "text-ink-soft" },
+  reading: { label: "Reading…", className: "text-aubergine-text" },
+  "needs-answer": { label: "Needs your answer", className: "text-saffron-text" },
+  settled: { label: "Settled", className: "text-basil-text" },
+  simple: { label: "Read by simple matching", className: "text-ink-soft" },
+  failed: { label: "The assistant couldn't read this", className: "text-pomegranate-text" },
+};
+
 export function NeverQuestion({
   text,
   onText,
-  items,
-  describe,
-  status,
-  questions,
-  picks,
+  statements,
   onPick,
-  unclear,
+  onRetry,
 }: {
   readonly text: string;
   readonly onText: (t: string) => void;
-  readonly items: readonly NeverEatItem[];
-  readonly describe: (item: NeverEatItem) => string;
-  /** R-88: whether the assistant is reading the answer, has read it, or cannot. */
-  readonly status: "reading" | "ready" | "off";
-  readonly questions: readonly NeverEatQuestion[];
-  /** The option chosen per question; none chosen means the first (the safest reading). */
-  readonly picks: readonly number[];
-  readonly onPick: (question: number, option: number) => void;
-  readonly unclear: readonly string[];
+  readonly statements: readonly StatementView[];
+  readonly onPick: (key: string, question: number, option: number | undefined) => void;
+  readonly onRetry: (key: string) => void;
 }) {
   return (
     <>
       <Heading
         n={5}
         title="Anything anyone must never eat?"
-        lead="Allergies, religious rules, strong dislikes. Plain words are fine."
+        lead="Allergies, religious rules, strong dislikes. Plain words are fine: one statement per person and food, separated by commas or full stops."
       />
       <label className="flex flex-col">
         <span className="sr-only-focusable">Never eat</span>
         <textarea
-          rows={3}
+          rows={Math.min(8, Math.max(3, Math.ceil(text.length / 34) + 1))}
           value={text}
           onChange={(e) => {
             onText(e.target.value);
@@ -576,70 +587,123 @@ export function NeverQuestion({
           className="w-full resize-none rounded-xl border-2 border-action bg-card px-4 py-3.5 text-lg font-bold"
         />
       </label>
-      <p aria-live="polite" className="m-0 text-sm font-bold text-aubergine-text">
-        {text.trim() === ""
-          ? ""
-          : status === "reading"
-            ? "The assistant is reading this…"
-            : status === "ready"
-              ? "Read by the assistant"
-              : ""}
-      </p>
-      {items.length > 0 && (
-        <ul className="m-0 flex list-none flex-col gap-1 p-0 text-sm" aria-label="Read as">
-          {items.map((item, i) => (
-            <li key={`${item.who}-${item.term}-${String(i)}`} className="text-ink-soft">
-              {describe(item)}
-            </li>
-          ))}
-        </ul>
+      {statements.length > 0 && (
+        <ol className="m-0 flex list-none flex-col gap-2.5 p-0" aria-label="Your statements">
+          {statements.map((st) => {
+            const busy = st.status === "waiting" || st.status === "reading";
+            return (
+              <li
+                key={st.key}
+                data-statement={st.status}
+                aria-busy={busy}
+                className="flex flex-col gap-2 rounded-xl border-[1.5px] border-line-strong bg-card p-3.5"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                  <span className="font-extrabold text-ink">“{st.text}”</span>
+                  <span className={`text-sm font-extrabold ${STATUS[st.status].className}`}>
+                    {busy && (
+                      <span
+                        aria-hidden
+                        className="mr-1.5 inline-block size-3 animate-spin rounded-full border-2 border-current border-t-transparent align-[-1px]"
+                      />
+                    )}
+                    {STATUS[st.status].label}
+                  </span>
+                </div>
+                {!busy && st.lines.length > 0 && (
+                  <ul
+                    className="m-0 flex list-none flex-col gap-1 p-0 text-sm"
+                    aria-label="Read as"
+                  >
+                    {st.lines.map((line) => (
+                      <li key={line} className="text-ink">
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {!busy &&
+                  st.keeps.map((k) => (
+                    <p key={k} className="m-0 text-sm text-ink-soft">
+                      Still fine: {k}
+                    </p>
+                  ))}
+                {!busy &&
+                  st.unclear.map((u) => (
+                    <p key={u} className="m-0 text-sm font-bold text-saffron-text">
+                      {u}
+                    </p>
+                  ))}
+                {st.status === "failed" && (
+                  <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <span className="text-ink-soft">
+                      Read by simple matching instead. You can try the assistant again.
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onRetry(st.key);
+                      }}
+                      className="min-h-11 rounded-lg border-[1.5px] border-ink bg-card px-4 font-extrabold text-ink"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                )}
+                {!busy &&
+                  st.questions.map((q, qi) =>
+                    q.picked === undefined ? (
+                      <fieldset
+                        key={q.question}
+                        data-never-question={qi}
+                        className="m-0 flex flex-col gap-2 rounded-lg border-[1.5px] border-aubergine bg-aubergine-tint p-3 text-ink"
+                      >
+                        <legend className="float-left mb-1 p-0 font-extrabold text-aubergine-text">
+                          {q.question}
+                        </legend>
+                        <div className="clear-left flex flex-wrap gap-2">
+                          {q.options.map((label, oi) => (
+                            <button
+                              key={label}
+                              type="button"
+                              onClick={() => {
+                                onPick(st.key, qi, oi);
+                              }}
+                              className="min-h-11 rounded-lg border-[1.5px] border-ink bg-card px-4 font-extrabold text-ink"
+                            >
+                              {label}
+                            </button>
+                          ))}
+                        </div>
+                      </fieldset>
+                    ) : (
+                      <div
+                        key={q.question}
+                        data-never-answer={qi}
+                        className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm"
+                      >
+                        <span className="text-ink-soft">{q.question}</span>
+                        <span className="font-extrabold text-basil-text">
+                          ✓ {q.options[q.picked]}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onPick(st.key, qi, undefined);
+                          }}
+                          aria-label={`Change the answer to: ${q.question}`}
+                          className="min-h-11 px-2 font-extrabold text-tomato-text underline"
+                        >
+                          Change
+                        </button>
+                      </div>
+                    ),
+                  )}
+              </li>
+            );
+          })}
+        </ol>
       )}
-      {unclear.length > 0 && (
-        <ul className="m-0 flex list-none flex-col gap-1 p-0 text-sm" aria-label="Not understood">
-          {unclear.map((line) => (
-            <li key={line} className="font-bold text-saffron-text">
-              {line}
-            </li>
-          ))}
-        </ul>
-      )}
-      {questions.map((q, qi) => (
-        <fieldset
-          key={`${q.who}-${q.said}-${String(qi)}`}
-          data-never-question={qi}
-          className="m-0 flex flex-col gap-2 rounded-xl border-[1.5px] border-aubergine bg-aubergine-tint p-3.5 text-ink"
-        >
-          <legend className="sr-only">{q.question}</legend>
-          <span aria-hidden className="font-extrabold text-aubergine-text">
-            {q.question}
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {q.options.map((o, oi) => {
-              const chosen = (picks[qi] ?? 0) === oi;
-              return (
-                <button
-                  key={`${o.label}-${String(oi)}`}
-                  type="button"
-                  aria-pressed={chosen}
-                  onClick={() => {
-                    onPick(qi, oi);
-                  }}
-                  className={`min-h-11 rounded-lg border-[1.5px] px-4 font-extrabold ${
-                    chosen ? "border-agent bg-agent text-on-agent" : "border-ink bg-card text-ink"
-                  }`}
-                >
-                  {o.label}
-                </button>
-              );
-            })}
-          </div>
-          {picks[qi] === undefined && (
-            <span className="text-sm text-ink-soft">
-              Until you choose, the first answer applies.
-            </span>
-          )}
-        </fieldset>
-      ))}
     </>
   );
 }

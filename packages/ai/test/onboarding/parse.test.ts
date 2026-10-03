@@ -5,6 +5,8 @@ import { describe, expect, it } from "vitest";
 import { parsePeople, parseTargets } from "@mealplanner/core/onboarding";
 import {
   checkOutput,
+  ONBOARDING_PARSE_MODEL,
+  onboardingConfig,
   parseOnboardingText,
   parseRequest,
   type OnboardingGenerationRecord,
@@ -37,7 +39,7 @@ const rule = (over: Record<string, unknown>) => ({
   flag: null,
   categories: [],
   slugs: [],
-  summary: "sesame",
+  keeps: "",
   ...over,
 });
 
@@ -151,7 +153,31 @@ describe("G1 typed results from recorded responses", () => {
     expect(sent).not.toContain("tahini");
     const system = JSON.stringify(bodies[0]?.system);
     expect(system).toContain("tahini | Tahini | nut_seed | contains_sesame");
-    expect(bodies[0]?.output_config).toMatchObject({ effort: "medium" });
+    expect(bodies[0]?.output_config).toMatchObject({ effort: "low" });
+  });
+
+  it("R-88 never-eat: one statement is read, with the whole answer as context", async () => {
+    const { bodies } = await run("never-eat-f1", {
+      field: "never_eat",
+      text: "Child C3 is allergic to sesame",
+      context: "No pork for anyone. Child C3 is allergic to sesame.",
+      people: F1_NAMES,
+      catalogue: CATALOGUE,
+    });
+    const sent = JSON.stringify(bodies[0]?.messages);
+    expect(sent).toContain(
+      "Whole answer (context only):\\nNo pork for anyone. Child C3 is allergic to sesame.\\nRead this statement:\\nChild C3 is allergic to sesame",
+    );
+  });
+
+  it("R-88 onboarding readings use the faster model unless ONBOARDING_PARSE_MODEL overrides it", () => {
+    const base = { enabled: true as const, model: "claude-fable-5-1" };
+    expect(onboardingConfig(base, {}).model).toBe(ONBOARDING_PARSE_MODEL);
+    expect(onboardingConfig(base, { ONBOARDING_PARSE_MODEL: "claude-opus-5-5" }).model).toBe(
+      "claude-opus-5-5",
+    );
+    const off = { enabled: false as const, model: "x", reason: "no key" };
+    expect(onboardingConfig(off, {}).enabled).toBe(false);
   });
 
   it("R-88 never-eat: rules, reasons and a question with the options' rules", async () => {
@@ -170,7 +196,6 @@ describe("G1 typed results from recorded responses", () => {
       ["everyone", "religious", { kind: "dietary_flag", keys: ["contains_alcohol"] }],
       ["Sara", "dislike", { kind: "ingredient", keys: ["beef-liver", "chicken-liver"] }],
     ]);
-    expect(result.value.neverEat[3]?.summary).toBe("liver (beef and chicken liver)");
     expect(result.value.questions).toHaveLength(1);
     expect(result.value.questions[0]?.options.map((o) => [o.label, o.items.length])).toEqual([
       ["Yes, all organ meats", 1],
@@ -285,6 +310,39 @@ describe("G1 schema-failing and invalid answers are refused, not repaired (SPEC-
         { label: "B", rules: [] },
       ]),
     ).toBe(false);
+    // Options that plan the same are merged; a question left with one plan is no question.
+    const read = (options: unknown[]) =>
+      checkOutput(
+        "never_eat",
+        {
+          rules: [],
+          questions: [{ who: "Zayd", said: "x", question: "Which?", options }],
+          unclear: [],
+        },
+        ["Zayd"],
+        CATALOGUE,
+      );
+    const merged = read([
+      { label: "No shrimp", rules: [rule({ slugs: ["shrimp"] })] },
+      { label: "No shrimp at all", rules: [rule({ slugs: ["shrimp"] })] },
+      { label: "Shrimp is fine", rules: [] },
+    ]);
+    expect(
+      merged.ok &&
+        merged.value.field === "never_eat" &&
+        merged.value.questions[0]?.options.map((o) => o.label),
+    ).toEqual(["No shrimp", "Shrimp is fine"]);
+    const moot = read([
+      { label: "No shrimp", rules: [rule({ slugs: ["shrimp"] })] },
+      { label: "Never shrimp", rules: [rule({ slugs: ["shrimp"] })] },
+    ]);
+    expect(
+      moot.ok &&
+        moot.value.field === "never_eat" && [
+          moot.value.questions.length,
+          moot.value.neverEat.length,
+        ],
+    ).toEqual([0, 1]);
   });
 });
 

@@ -7,6 +7,7 @@ import type { z } from "zod";
 import { resolveClaudeConfig } from "@mealplanner/ai/client";
 import {
   createOnboardingModel,
+  onboardingConfig,
   parseOnboardingText,
   type OnboardingParseDeps,
 } from "@mealplanner/ai/onboarding";
@@ -24,7 +25,8 @@ type Holder = { [MODEL_KEY]?: OnboardingParseDeps["model"] };
 /** The parse model from the environment (null without a credential), or the one tests installed. */
 export function onboardingParseModel(): OnboardingParseDeps["model"] {
   const holder = globalThis as Holder;
-  if (!(MODEL_KEY in holder)) holder[MODEL_KEY] = createOnboardingModel(resolveClaudeConfig());
+  if (!(MODEL_KEY in holder))
+    holder[MODEL_KEY] = createOnboardingModel(onboardingConfig(resolveClaudeConfig()));
   return holder[MODEL_KEY] ?? null;
 }
 
@@ -70,6 +72,7 @@ export async function parseOnboarding(
       text: body.text,
       ...(body.people === undefined ? {} : { people: body.people }),
       ...(body.ages === undefined ? {} : { ages: body.ages }),
+      ...(body.context === undefined ? {} : { context: body.context }),
       ...(catalogue === undefined ? {} : { catalogue }),
     },
   );

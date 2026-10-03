@@ -551,6 +551,8 @@ async function gateG1() {
       "G1 targets: Adult A's numbers equal the deterministic parse, training day included",
       "R-88 never-eat: the reading maps onto the catalogue sent with the instructions",
       "R-88 never-eat: rules, reasons and a question with the options' rules",
+      "R-88 never-eat: one statement is read, with the whole answer as context",
+      "R-88 onboarding readings use the faster model unless ONBOARDING_PARSE_MODEL overrides it",
       "G1 schema failure refused: schema-targets-string-kcal",
       "G1 schema failure refused: schema-not-json",
       "G1 semantic check refuses: invalid-targets-disagree",

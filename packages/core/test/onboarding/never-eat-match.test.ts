@@ -6,6 +6,8 @@ import {
   parseNeverEat,
   resolveTarget,
   resolveTerm,
+  shortNames,
+  splitStatements,
 } from "../../src/onboarding/index.js";
 import { idFactory, MemoryTx, newHousehold } from "./memory-tx.js";
 import { catalogueIngredients, context } from "./support.js";
@@ -161,8 +163,8 @@ describe("R-88 resolveTarget: the assistant's mapping is held to the catalogue",
   });
 });
 
-describe("R-88 inferSetup applies a mapped rule and explains it in the assistant's words", () => {
-  it("bone-in chicken for one person: three ingredient exclusions, one summary line", async () => {
+describe("R-88 inferSetup applies a mapped rule and explains it in the catalogue's words", () => {
+  it("bone-in chicken for one person: three ingredient exclusions, named from the catalogue", async () => {
     const ctx = context(await newHousehold(new MemoryTx(idFactory(2))));
     const setup = inferSetup(
       {
@@ -182,7 +184,7 @@ describe("R-88 inferSetup applies a mapped rule and explains it in the assistant
               kind: "ingredient",
               keys: ["chicken-drumstick", "chicken-wing", "chicken-whole"],
             },
-            summary: "chicken on the bone (drumsticks, wings, whole chicken)",
+            keeps: "boneless cuts",
           },
         ],
       },
@@ -194,7 +196,62 @@ describe("R-88 inferSetup applies a mapped rule and explains it in the assistant
     expect(keys).toEqual(["chicken-drumstick", "chicken-wing", "chicken-whole"]);
     expect(setup.unresolved).toEqual([]);
     expect(setup.explanations.map((e) => e.text)).toContain(
-      "Yousif: never chicken on the bone (drumsticks, wings, whole chicken). Never planned for them.",
+      "Yousif: never chicken drumstick, chicken wing and whole chicken. Never planned for them.",
     );
+  });
+});
+
+describe("R-88 splitStatements: each statement is read and answered on its own", () => {
+  const people = ["Yousif", "manal", "nada", "Omar", "mohamed"];
+  it("the owner's answer: one statement per person and restriction", () => {
+    expect(
+      splitStatements(
+        "no pork or alcohol for the whole family, no lamb for manal, no bone in chicken for Yousif, Omar doesn't like cheese, mohamed does like seafood, nada doesn't like raw tomatoes, manal doesn't like raw garlic",
+        people,
+      ).map((s) => s.text),
+    ).toEqual([
+      "no pork or alcohol for the whole family",
+      "no lamb for manal",
+      "no bone in chicken for Yousif",
+      "Omar doesn't like cheese",
+      "mohamed does like seafood",
+      "nada doesn't like raw tomatoes",
+      "manal doesn't like raw garlic",
+    ]);
+  });
+  it("a clause naming nobody stays with its statement; names before the food join it", () => {
+    expect(
+      splitStatements(
+        "Omar is allergic to nuts but almond milk is fine. Omar, nada and manal hate liver, kidneys\nNo pork",
+        people,
+      ).map((s) => s.text),
+    ).toEqual([
+      "Omar is allergic to nuts but almond milk is fine",
+      "Omar, nada and manal hate liver, kidneys",
+      "No pork",
+    ]);
+  });
+  it("the key is the normalised text, so case and spacing do not make a new statement", () => {
+    const [a] = splitStatements("Omar  doesn't like CHEESE", people);
+    const [b] = splitStatements("omar doesn't like cheese.", people);
+    expect(a?.key).toBe(b?.key);
+  });
+});
+
+describe("R-88 shortNames: one line a person can read", () => {
+  it("the name before its comma, with the detail kept only where two would read alike", () => {
+    expect(shortNames(["Tomato", "Cherry tomatoes", "Tomatoes, canned", "Tomato paste"])).toEqual([
+      "tomato",
+      "cherry tomatoes",
+      "tomatoes (canned)",
+      "tomato paste",
+    ]);
+    expect(
+      shortNames([
+        "Chicken wing, with skin",
+        "Chicken breast, skinless",
+        "Chicken breast, with skin",
+      ]),
+    ).toEqual(["chicken wing", "chicken breast (skinless)", "chicken breast (with skin)"]);
   });
 });

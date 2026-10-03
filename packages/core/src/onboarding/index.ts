@@ -11,7 +11,7 @@ export {
 export { adjustHref, MEMBER_COLOR_ORDER } from "./explain.js";
 export { appetiteForAge, isChild, parsePeople } from "./parse-people.js";
 export { parseTargets, targetsText } from "./parse-targets.js";
-export { parseNeverEat } from "./parse-never-eat.js";
+export { parseNeverEat, splitStatements, type NeverEatStatement } from "./parse-never-eat.js";
 export {
   flagCoverage,
   matchIngredients,
@@ -19,4 +19,4 @@ export {
   resolveTerm,
   type Resolution,
 } from "./resolve.js";
-export { listJoin, weekdayText, WEEKDAY_SHORT } from "./text.js";
+export { cappedList, listJoin, shortNames, weekdayText, WEEKDAY_SHORT } from "./text.js";

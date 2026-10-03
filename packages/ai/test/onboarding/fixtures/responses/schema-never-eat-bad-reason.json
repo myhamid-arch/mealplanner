@@ -13,7 +13,7 @@
       },
       {
         "type": "text",
-        "text": "{\"rules\":[{\"who\":\"Zayd\",\"said\":\"sesame\",\"reason\":\"preference\",\"flag\":\"contains_sesame\",\"categories\":[],\"slugs\":[],\"summary\":\"sesame\"}],\"questions\":[],\"unclear\":[]}",
+        "text": "{\"rules\":[{\"who\":\"Zayd\",\"said\":\"sesame\",\"reason\":\"preference\",\"flag\":\"contains_sesame\",\"categories\":[],\"slugs\":[],\"keeps\":\"\"}],\"questions\":[],\"unclear\":[]}",
         "citations": null
       }
     ],

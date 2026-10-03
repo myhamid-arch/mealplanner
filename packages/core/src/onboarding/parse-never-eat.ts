@@ -166,3 +166,47 @@ export function parseNeverEat(text: string, people: readonly string[]): NeverEat
   }
   return items;
 }
+
+/** One statement of the never-eat answer: who and what, as typed (R-88). */
+export interface NeverEatStatement {
+  /** Normalised text: a statement's reading and answers are kept under it until it changes. */
+  key: string;
+  /** The words as typed. */
+  text: string;
+}
+
+/**
+ * R-88: splits the answer into statements, each read (and its questions answered) on its own, so
+ * an edit re-reads only what changed. Sentences split at . ! ? ; and new lines; within a sentence,
+ * a clause that names someone (or everyone) and a food starts a new statement. A clause naming
+ * nobody continues the statement before it ("Adam is allergic to nuts but almond milk is fine"),
+ * and names with no food yet join the next clause ("Omar, Sara and Adam are allergic to nuts").
+ */
+export function splitStatements(text: string, people: readonly string[]): NeverEatStatement[] {
+  const out: NeverEatStatement[] = [];
+  const aliases = people.map((p) => normalise(p)).sort((a, b) => b.length - a.length);
+  for (const sentence of text.split(/[.!?;\n]+/)) {
+    const parts = sentence.split(/(,|\bbut\b)/i);
+    const groups: { text: string; hasFood: boolean }[] = [];
+    for (let i = 0; i < parts.length; i += 2) {
+      const clause = parts[i] ?? "";
+      const sep = i === 0 ? "" : (parts[i - 1] ?? "");
+      if (clause.trim() === "") continue;
+      const n = normalise(clause);
+      const named = namedPeople(n, people).length > 0 || EVERYONE.test(n);
+      const hasFood = foodPhrases(n, aliases).length > 0;
+      const last = groups.at(-1);
+      if (last !== undefined && (!named || !last.hasFood)) {
+        last.text = `${last.text}${sep}${clause}`;
+        last.hasFood ||= hasFood;
+      } else groups.push({ text: clause, hasFood });
+    }
+    for (const g of groups) if (g.text.trim() !== "") out.push(statementOf(g.text));
+  }
+  return out;
+}
+
+function statementOf(text: string): NeverEatStatement {
+  const t = text.trim().replace(/\s+/g, " ");
+  return { key: normalise(t), text: t };
+}

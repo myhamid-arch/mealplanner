@@ -694,6 +694,43 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - PRD-4's 5-minute bound stays unmeasured;
     - the ARC-4 exception (the auth route's 2FA policy read) stays.
   - **Open:** SPEC-Q-6 (recipe-card example plates for targeted attendees only). The owner is reviewing it and will say whether it changes.
+- **R-89 (owner, 2026-10-03, on R-88 as built: "it needs to be more governed and the input needs to be processed faster … a way to lock in answers … the assistant … came back with the same two questions even though there is a lot of new input … have you set a limit for the number of questions … while the assistant is processing why are the buttons available … the experience isn't being reviewed").**
+  - **What R-88 got wrong**, all confirmed:
+    - the prompt said "ask at most a few questions" and the check allowed 6, so assumptions (raw vs cooked, "does like seafood") were settled silently;
+    - every edit re-read the whole answer and dropped every answer given;
+    - choices could be tapped while a new reading was running;
+    - one reading of the whole answer at medium effort took 21–37 s;
+    - the review used the model's prose;
+    - it was verified with stubbed responses and single live calls, never by using the page.
+  - **Statements:** `splitStatements` (core) splits the answer at sentence ends and at commas where a clause names someone and a food. Each statement is read once (`useNeverEatReadings`, 1 s after typing stops, in parallel), with the whole answer as context. Its reading and the answers to its questions are kept under its normalised text, so editing or adding other statements never re-reads it or asks its questions again. Changing its own words reads it afresh.
+  - **Questions:**
+    - one per assumption that changes the plan: no reason given, a form the catalogue lacks, a group word's reach, an apparent typo or opposite;
+    - no count limit beyond 4 per statement;
+    - 2–4 options, each its own plan;
+    - `checkOutput` merges options that plan the same, and a question left with one plan is applied as rules, not asked;
+    - an answered question shows ✓ and Change.
+  - **Governance on the page:**
+    - each statement card shows its state: waiting, reading, needs your answer, settled, read by simple matching (no credential), or couldn't read (with Try again);
+    - nothing is tappable on a card while it is read;
+    - "See what I worked out" stays disabled, with the reason, until every statement is read and every question answered (Skip still leaves the step, R2-ONB-2);
+    - rule lines and the review are written by the app from the catalogue (`shortNames`, `cappedList`); the model adds only a short "still fine" note.
+  - **Speed:** onboarding readings run on `ONBOARDING_PARSE_MODEL` (default `claude-sonnet-5-5`; overridable) at low effort; the rest of the app keeps `DEFAULT_MODEL`. Measured live on the owner's seven statements:
+    - Sonnet 5.5 at low effort: 2.4–3.4 s each (one 8.7 s), 8.8 s for all seven;
+    - the default model at low effort: 7.7–19 s.
+
+    In the page walkthrough (below), the first three statements were read in 5.6–6.5 s, and four added ones in 1.8–1.9 s.
+  - **Reviewed by use:** `scripts/scratch-ux` (not committed) started the built app on a seeded database with the live model. A browser repeated the owner's sequence at 1280 and 390 px: typing, answering, adding four statements. Checked:
+    - no option buttons while reading;
+    - continue disabled with its reason;
+    - earlier answers kept (2 → 2), and only new statements read;
+    - five questions asked across the seven statements;
+    - the review in catalogue words.
+
+    Found and fixed in that review:
+    - options that meant the same thing (now merged in code);
+    - a personal religious rule called a "Household rule";
+    - "tomato, tomatoes" (now "tomatoes (canned)");
+    - a 13-item list (now capped).
 - **R-88 (owner, 2026-10-03: "the parser needs to be smarter … an agent who reasons and figures out how to convert the free text into the categories set up in the app … questions to clarify when there is some doubt").** Supersedes R-56's limit that the onboarding model "only reads the text" for question 5. People and targets are unchanged.
   - **What the model does now:** it receives the household's visible catalogue (slug, name, category, flags) in a cached system block, plus the people with their ages. It returns per-person rules mapped onto exactly one of:
     - a dietary flag;

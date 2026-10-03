@@ -12,7 +12,12 @@ import {
   parseNeverEat,
   parsePeople,
   parseTargets,
+  cappedList,
+  listJoin,
+  resolveTarget,
+  shortNames,
   resolveTerm,
+  splitStatements,
   type Explanation,
   type InferredSetup,
   type NeverEatItem,
@@ -29,6 +34,7 @@ import {
   defaultWeek,
   Heading,
   NeverQuestion,
+  type StatementView,
   PeopleQuestion,
   TargetsQuestion,
   WeekQuestion,
@@ -40,6 +46,7 @@ import {
   readingOr,
   useModelReadings,
 } from "../../setup/model-parse";
+import { openQuestions, statementItems, useNeverEatReadings } from "../../setup/never-eat-readings";
 
 const STEPS = ["Who", "Targets", "Week", "Food", "Never", "Review"] as const;
 
@@ -150,34 +157,42 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
   );
   const weekState = week ?? defaultWeek(people);
   const namesKey = names.join("\u0000");
-  const neverModel = useModelReadings(
-    "never_eat",
-    { "": neverText },
-    names,
-    people.map((p) => p.age),
-  );
-  const ownNeverItems = useMemo(
-    () => parseNeverEat(neverText, namesKey === "" ? [] : namesKey.split("\u0000")),
+  // R-88: question 5 is read statement by statement; each statement's reading and answers are
+  // kept under its own text, so edits elsewhere never re-read it or ask its questions again.
+  const neverStatements = useMemo(
+    () => splitStatements(neverText, namesKey === "" ? [] : namesKey.split("\u0000")),
     [neverText, namesKey],
   );
-  // R-88: the assistant's reading is the answer once it arrives (its questions' choices included);
-  // the deterministic parse stands in while it reads, and when it is unavailable.
-  const [neverChoices, setNeverChoices] = useState<{ text: string; picks: number[] }>({
-    text: "",
-    picks: [],
+  const neverReadings = useNeverEatReadings(
+    neverStatements,
+    names,
+    people.map((p) => p.age),
+    neverText,
+  );
+  const neverPer = neverStatements.map((st) => {
+    const state = neverReadings.state(st);
+    const picks = neverReadings.picks(st);
+    return {
+      st,
+      state,
+      picks,
+      items: statementItems(state, picks, () => parseNeverEat(st.text, names)),
+      open: openQuestions(state, picks),
+    };
   });
-  const neverReading = neverModel.reading("", neverText);
-  const neverRead =
-    neverReading !== undefined && "neverEat" in neverReading ? neverReading : undefined;
-  const neverQuestions = neverRead?.questions ?? [];
-  const picks = neverChoices.text === neverText ? neverChoices.picks : [];
-  const neverItems: NeverEatItem[] =
-    neverRead === undefined
-      ? ownNeverItems
-      : [
-          ...neverRead.neverEat,
-          ...neverQuestions.flatMap((q, i) => q.options[picks[i] ?? 0]?.items ?? []),
-        ];
+  const neverItems: NeverEatItem[] = neverPer.flatMap((p) => p.items);
+  const neverReadingCount = neverPer.filter(
+    (p) => p.state.status === "waiting" || p.state.status === "reading",
+  ).length;
+  const neverOpenCount = neverPer.reduce((n, p) => n + p.open, 0);
+  // The step cannot be left with a statement still being read or a question unanswered (Skip
+  // still leaves it, R2-ONB-2).
+  const neverBlocked =
+    neverReadingCount > 0
+      ? `Reading ${String(neverReadingCount)} ${neverReadingCount === 1 ? "statement" : "statements"}…`
+      : neverOpenCount > 0
+        ? `Answer ${String(neverOpenCount)} ${neverOpenCount === 1 ? "question" : "questions"} to continue.`
+        : null;
 
   const answers: OnboardingAnswers = {
     people: skipped.has(0) || people.length === 0 ? null : people,
@@ -243,26 +258,66 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
     inferError = e instanceof Error ? e.message : String(e);
   }
 
+  const listOf = (slugs: readonly string[]) =>
+    cappedList(
+      shortNames(slugs.map((slug) => ctx.ingredients.find((i) => i.slug === slug)?.name ?? slug)),
+      5,
+    );
+  const REASON: Record<NeverEatItem["reason"], string> = {
+    allergy: "allergy",
+    religious: "religious",
+    medical: "medical",
+    dislike: "doesn't like it",
+    other: "other reason",
+  };
+  /** One rule in the app's own words, from the catalogue (R-88: never the assistant's prose). */
   const describe = (item: NeverEatItem) => {
     const who = item.who === "everyone" ? "Everyone" : item.who;
-    // R-88: the assistant's own words for what it mapped.
-    if (item.summary !== undefined) return `${who}: never ${item.summary} · ${item.reason}`;
-    const r = resolveTerm(item.term, ctx.ingredients);
+    const r =
+      item.target === undefined
+        ? resolveTerm(item.term, ctx.ingredients)
+        : resolveTarget(item.target, ctx.ingredients);
     if (r.kind === "unknown")
       return `${who}: “${item.term}” is not in the catalogue, so it is not saved.`;
-    const named = (slugs: readonly string[]) =>
-      slugs.map((s) => ctx.ingredients.find((i) => i.slug === s)?.name.toLowerCase() ?? s);
     const what =
       r.kind === "dietary_flag"
         ? `anything with ${FLAG_LABEL[r.flag] ?? r.flag} (${String(r.slugs.length)} foods)`
         : r.kind === "category"
-          ? `${item.term} (${named(r.slugs.slice(0, 4)).join(", ")}${r.slugs.length > 4 ? ` and ${String(r.slugs.length - 4)} more` : ""})`
-          : named(r.slugs).join(", ");
+          ? `all ${listJoin(r.categories.map((k) => k.replace(/_/g, " ")))} (${listOf(r.slugs)})`
+          : listOf(r.slugs);
     // W-28: the catalogue has no raw/cooked distinction, so "raw tomatoes" covers all tomato.
     const form =
       r.dropped === undefined ? "" : ` (${r.dropped.join(", ")} or not: the planner can't tell)`;
-    return `${who}: never ${what}${form} · ${item.reason}`;
+    return `${who}: never ${what}${form} · ${REASON[item.reason]}`;
   };
+  const statementViews: StatementView[] = neverPer.map(({ st, state, picks, items, open }) => {
+    const reading = state.status === "read" ? state.reading : undefined;
+    return {
+      key: st.key,
+      text: st.text,
+      status:
+        state.status === "waiting" || state.status === "reading"
+          ? state.status
+          : state.status === "fallback"
+            ? state.why === "unavailable"
+              ? "simple"
+              : "failed"
+            : open > 0
+              ? "needs-answer"
+              : "settled",
+      lines: items.map(describe),
+      keeps: [...new Set(items.flatMap((i) => (i.keeps === undefined ? [] : [i.keeps])))],
+      unclear: (reading?.unclear ?? []).map(
+        (u) =>
+          `${u.who === "everyone" ? "Everyone" : u.who}: “${u.said}” is not saved: ${u.why.replace(/\.$/, "")}.`,
+      ),
+      questions: (reading?.questions ?? []).map((q, i) => ({
+        question: q.question,
+        options: q.options.map((o) => o.label),
+        picked: picks[i],
+      })),
+    };
+  });
 
   const next = () => {
     const nextSkipped = new Set(skipped);
@@ -462,20 +517,15 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
                 <NeverQuestion
                   text={neverText}
                   onText={setNeverText}
-                  items={neverItems}
-                  describe={describe}
-                  status={neverModel.status("", neverText)}
-                  questions={neverQuestions}
-                  picks={picks}
-                  onPick={(question, option) => {
-                    const next = [...picks];
-                    next[question] = option;
-                    setNeverChoices({ text: neverText, picks: next });
+                  statements={statementViews}
+                  onPick={(key, question, option) => {
+                    const st = neverStatements.find((x) => x.key === key);
+                    if (st !== undefined) neverReadings.pick(st, question, option);
                   }}
-                  unclear={(neverRead?.unclear ?? []).map(
-                    (u) =>
-                      `${u.who === "everyone" ? "Everyone" : u.who}: “${u.said}”: ${u.why} Not saved.`,
-                  )}
+                  onRetry={(key) => {
+                    const st = neverStatements.find((x) => x.key === key);
+                    if (st !== undefined) neverReadings.retry(st);
+                  }}
                 />
               )}
               {step === 5 && (
@@ -519,7 +569,11 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
                     <button
                       type="button"
                       onClick={next}
-                      className="min-h-13 rounded-xl bg-action px-6 text-base font-extrabold text-on-action"
+                      disabled={step === 4 && !skipped.has(4) && neverBlocked !== null}
+                      aria-describedby={
+                        step === 4 && neverBlocked !== null ? "never-blocked" : undefined
+                      }
+                      className="min-h-13 rounded-xl bg-action px-6 text-base font-extrabold text-on-action disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {step === 4 ? "See what I worked out" : "Next"}
                     </button>
@@ -530,6 +584,15 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
                     >
                       Skip
                     </button>
+                    {step === 4 && neverBlocked !== null && (
+                      <span
+                        id="never-blocked"
+                        aria-live="polite"
+                        className="text-sm font-bold text-ink-soft"
+                      >
+                        {neverBlocked}
+                      </span>
+                    )}
                   </>
                 ) : (
                   <button

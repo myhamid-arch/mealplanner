@@ -13,7 +13,7 @@
       },
       {
         "type": "text",
-        "text": "{\"rules\":[{\"who\":\"Zayd\",\"said\":\"no bacon\",\"reason\":\"religious\",\"flag\":null,\"categories\":[],\"slugs\":[\"bacon-strips\"],\"summary\":\"bacon\"}],\"questions\":[],\"unclear\":[]}",
+        "text": "{\"rules\":[{\"who\":\"Zayd\",\"said\":\"no bacon\",\"reason\":\"religious\",\"flag\":null,\"categories\":[],\"slugs\":[\"bacon-strips\"],\"keeps\":\"\"}],\"questions\":[],\"unclear\":[]}",
         "citations": null
       }
     ],

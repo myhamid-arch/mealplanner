@@ -64,8 +64,8 @@ const NeverEatRuleSchema = z.object({
   flag: z.enum(DIETARY_FLAGS).nullable(),
   categories: z.array(z.enum(INGREDIENT_CATEGORIES)),
   slugs: z.array(z.string()),
-  /** Plain words for the review: "chicken on the bone (drumsticks, wings, whole chicken)". */
-  summary: z.string(),
+  /** What stays allowed, in a few words ("boneless breast and mince"), or "". */
+  keeps: z.string(),
 });
 
 export const NeverEatOutputSchema = z.object({
@@ -116,8 +116,10 @@ const MAX_MACRO_G = 800;
 const MAX_PEOPLE = 20;
 const MAX_RULES = 40;
 const MAX_TERM = 200;
-const MAX_SUMMARY = 300;
-const MAX_QUESTIONS = 6;
+const MAX_TEXT_FIELD = 300;
+const MAX_KEEPS = 120;
+/** Per statement (R-88): one question per assumption, so a statement rarely needs more. */
+const MAX_QUESTIONS = 4;
 const MAX_OPTIONS = 4;
 /** Stated calories must agree with 4P + 4C + 9F within this share (a swapped number fails it). */
 export const ENERGY_AGREEMENT = 0.12;
@@ -218,6 +220,18 @@ function checkTargets(out: TargetsOutput): Checked {
 
 type NeverEatRule = z.output<typeof NeverEatRuleSchema>;
 
+/** What a set of rules plans: who, why and which flag, categories or slugs, order-free. */
+function planKey(items: readonly NeverEatItem[]): string {
+  return JSON.stringify(
+    items
+      .map(
+        (i) =>
+          `${i.who}|${i.reason}|${i.target?.kind ?? ""}|${[...(i.target?.keys ?? [])].sort().join(",")}`,
+      )
+      .sort(),
+  );
+}
+
 function checkNeverEat(
   out: NeverEatOutput,
   people: readonly string[],
@@ -241,7 +255,8 @@ function checkNeverEat(
   const item = (r: NeverEatRule): NeverEatItem | null => {
     const who = whoOf(r.who);
     const said = text("food", r.said, MAX_TERM).toLowerCase();
-    const summary = text("summary", r.summary, MAX_SUMMARY);
+    const keeps = r.keeps.trim();
+    if (keeps.length > MAX_KEEPS) issues.push(`"${r.said}": what stays is too long`);
     const kinds = [r.flag !== null, r.categories.length > 0, r.slugs.length > 0].filter(Boolean);
     if (kinds.length !== 1)
       issues.push(`"${r.said}": exactly one of flag, categories or ingredients must be given`);
@@ -257,30 +272,43 @@ function checkNeverEat(
         : r.categories.length > 0
           ? { kind: "category", keys: [...new Set(r.categories)] }
           : { kind: "ingredient", keys: [...new Set(r.slugs)] };
-    return { who, term: said, reason: r.reason, target, summary };
+    return { who, term: said, reason: r.reason, target, ...(keeps === "" ? {} : { keeps }) };
   };
   if (out.rules.length > MAX_RULES)
     issues.push(`${String(out.rules.length)} rules (at most ${String(MAX_RULES)})`);
   if (out.questions.length > MAX_QUESTIONS)
     issues.push(`${String(out.questions.length)} questions (at most ${String(MAX_QUESTIONS)})`);
   const rules = out.rules.map(item).filter((r): r is NeverEatItem => r !== null);
-  const questions: NeverEatQuestion[] = out.questions.map((q) => {
+  const questions: NeverEatQuestion[] = [];
+  for (const q of out.questions) {
     if (q.options.length < 2 || q.options.length > MAX_OPTIONS)
       issues.push(`question "${q.question}" has ${String(q.options.length)} options (2–4)`);
-    return {
+    // R-88: options that would plan the same are one option (the first label is kept); a question
+    // whose options all plan the same is no question, and its rules simply apply.
+    const options: NeverEatQuestion["options"] = [];
+    const seen = new Set<string>();
+    for (const o of q.options) {
+      const items = o.rules.map(item).filter((r): r is NeverEatItem => r !== null);
+      const plan = planKey(items);
+      if (seen.has(plan)) continue;
+      seen.add(plan);
+      options.push({ label: text("option", o.label, MAX_TERM), items });
+    }
+    if (options.length === 1) {
+      rules.push(...(options[0]?.items ?? []));
+      continue;
+    }
+    questions.push({
       who: whoOf(q.who) ?? q.who,
       said: text("question about", q.said, MAX_TERM),
-      question: text("question", q.question, MAX_SUMMARY),
-      options: q.options.map((o) => ({
-        label: text("option", o.label, MAX_TERM),
-        items: o.rules.map(item).filter((r): r is NeverEatItem => r !== null),
-      })),
-    };
-  });
+      question: text("question", q.question, MAX_TEXT_FIELD),
+      options,
+    });
+  }
   const unclear = out.unclear.map((u) => ({
     who: whoOf(u.who) ?? u.who,
     said: text("unclear words", u.said, MAX_TERM),
-    why: text("why", u.why, MAX_SUMMARY),
+    why: text("why", u.why, MAX_TEXT_FIELD),
   }));
   if (issues.length > 0) return { ok: false, issues };
   return { ok: true, value: { field: "never_eat", neverEat: rules, questions, unclear } };
