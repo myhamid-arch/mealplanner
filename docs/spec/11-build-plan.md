@@ -722,6 +722,7 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - 21 s.
 
     On a harder sentence it kept Adam's nut allergy while allowing almond milk, and asked whether Omar's seafood rule is an allergy or a dislike (37 s). With ages, "the kids" maps to the people under 18.
+  - **Verified** on 2b82cb3 and 44e6bcb (the route test now runs on the seeded catalogue): leaf-1.4.7 G1, G4 and LIVE; leaf-1.4.3 G1, G4 and G5 (SC-6, SC-7); leaf-1.4.9 G3 all PASSED, with typecheck, lint, format and unit tests (core 484, ai 164, web 38).
   - **Not covered:** cooking methods ("no fried food") are not exclusions the planner has (EXCLUSION_KINDS has no method kind), so the reading lists them as not understood.
 - **W-28 (never-eat answers in everyday words were not understood; reported by the owner from onboarding's review screen, 2026-10-02).**
   - The problem: the owner read the review as "the catalogue is very shallow". The catalogue (363 ingredients) contains every food typed. The matcher and the parser were at fault:
