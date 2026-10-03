@@ -731,6 +731,12 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - a personal religious rule called a "Household rule";
     - "tomato, tomatoes" (now "tomatoes (canned)");
     - a 13-item list (now capped).
+  - **Verified** on 4d08430 and 775e80a:
+    - leaf-1.4.7 G1, G3, G4 and LIVE; leaf-1.4.3 G1, G4 and G5; leaf-1.4.9 G3 all PASSED;
+    - root SC-5, SC-6 and SC-7 PASSED on a fresh `docker compose up`;
+    - typecheck, lint, format and unit tests are clean (core 488, ai 164).
+
+    leaf-1.4.7 G4 first timed out: the specs' "wait for animations before axe" helper waited for the endless reading spinner. It now skips endless animations, and the spinner stops under reduced motion.
 - **R-88 (owner, 2026-10-03: "the parser needs to be smarter … an agent who reasons and figures out how to convert the free text into the categories set up in the app … questions to clarify when there is some doubt").** Supersedes R-56's limit that the onboarding model "only reads the text" for question 5. People and targets are unchanged.
   - **What the model does now:** it receives the household's visible catalogue (slug, name, category, flags) in a cached system block, plus the people with their ages. It returns per-person rules mapped onto exactly one of:
     - a dietary flag;
