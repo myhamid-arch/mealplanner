@@ -16,10 +16,13 @@ export function isSelfWord(name: string): boolean {
 
 const SELF_WORDS: ReadonlySet<string> = new Set(["me", "myself", "i", "im", "i am"]);
 
-/** A crude English singular: "kidneys" → "kidney", "peaches" → "peach", "eggs" → "egg". */
+/** A crude English singular: "kidneys" → "kidney", "peaches" → "peach", "tomatoes" → "tomato". */
 export function singular(word: string): string {
   if (word.length > 4 && word.endsWith("ies")) return `${word.slice(0, -3)}y`;
   if (word.length > 4 && /(ches|shes|sses|xes)$/.test(word)) return word.slice(0, -2);
+  // W-28: "tomatoes", "potatoes", "mangoes".
+  if (word.length > 5 && word.endsWith("toes")) return word.slice(0, -2);
+  if (word === "mangoes") return "mango";
   if (word.length > 3 && word.endsWith("s") && !word.endsWith("ss")) return word.slice(0, -1);
   return word;
 }

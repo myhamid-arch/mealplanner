@@ -283,6 +283,7 @@ function NeverServeForm({
     name: i.name,
     aliases: i.aliases,
     dietaryFlags: i.dietaryFlags,
+    category: i.category,
   }));
   const resolution = food.trim() === "" ? null : resolveTerm(food, ingredients);
   const preview =
@@ -290,9 +291,11 @@ function NeverServeForm({
       ? ""
       : resolution.kind === "dietary_flag"
         ? `Everything flagged ${FLAG_LABEL[resolution.flag] ?? resolution.flag}: ${String(resolution.slugs.length)} foods in the catalogue.`
-        : resolution.kind === "ingredient"
-          ? `Matches ${resolution.slugs.map((s) => data.ingredients.find((i) => i.slug === s)?.name ?? s).join(", ")}.`
-          : "Not in the catalogue. Try another word (for example “sesame”, “nuts”, “liver”).";
+        : resolution.kind === "category"
+          ? `Everything in ${resolution.categories.map((k) => k.replace(/_/g, " ")).join(" and ")}: ${String(resolution.slugs.length)} foods in the catalogue.`
+          : resolution.kind === "ingredient"
+            ? `Matches ${resolution.slugs.map((s) => data.ingredients.find((i) => i.slug === s)?.name ?? s).join(", ")}.`
+            : "Not in the catalogue. Try another word (for example “sesame”, “nuts”, “liver”).";
   const save = async () => {
     if (resolution === null || resolution.kind === "unknown") {
       setError("Name a food or allergen the catalogue knows.");
@@ -308,10 +311,15 @@ function NeverServeForm({
               payload: { memberId, kind: "dietary_flag", key: resolution.flag, reason, hard },
             },
           ]
-        : resolution.slugs.map((slug) => ({
-            kind: "exclusion.add",
-            payload: { memberId, kind: "ingredient", key: slug, reason, hard },
-          }));
+        : resolution.kind === "category"
+          ? resolution.categories.map((key) => ({
+              kind: "exclusion.add",
+              payload: { memberId, kind: "category", key, reason, hard },
+            }))
+          : resolution.slugs.map((slug) => ({
+              kind: "exclusion.add",
+              payload: { memberId, kind: "ingredient", key: slug, reason, hard },
+            }));
     setBusy(true);
     try {
       await applyChanges(`Never serve ${food.trim()}`, ops);

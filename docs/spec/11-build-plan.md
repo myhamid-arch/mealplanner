@@ -694,6 +694,19 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - PRD-4's 5-minute bound stays unmeasured;
     - the ARC-4 exception (the auth route's 2FA policy read) stays.
   - **Open:** SPEC-Q-6 (recipe-card example plates for targeted attendees only). The owner is reviewing it and will say whether it changes.
+- **W-28 (never-eat answers in everyday words were not understood; reported by the owner from onboarding's review screen, 2026-10-02).**
+  - The problem: the owner read the review as "the catalogue is very shallow". The catalogue (363 ingredients) contains every food typed. The matcher and the parser were at fault:
+    - `resolveTerm` matched only an exact slug, name or alias, or a single word equal to the last word of a name. So "chicken" matched nothing ("Chicken breast, skinless" ends in "skinless"), "minced beef" missed "Beef mince", "raw tomatoes" missed "Tomato", and "lean" matched beef mince;
+    - group words ("seafood", "red meat", "meat") were never mapped, although `category` exclusions exist (EXCLUSION_KINDS) and the planner applies them (`planner/select/members.ts`);
+    - `singular("tomatoes")` gave "tomatoe";
+    - `parseNeverEat` gave every food in a sentence to every person the sentence named.
+  - The fix:
+    - `resolve.ts`: a `category` resolution for group words ("seafood" → seafood and fish; "meat" → red meat and poultry); modifiers ("raw", "fresh", "cooked") are dropped and reported; "minced"/"ground" → mince, "prawn" → shrimp; a phrase matches a name's words (before its comma) in any order; a single word matches the head noun of the name before its comma, and any word of an animal item's name (poultry, red meat, seafood, fish), so "chicken" covers its 9 cuts but not chicken stock. "kidney" still does not match kidney beans.
+    - `infer.ts` and the never-serve form write `category` exclusions and name what they cover; the onboarding review says when "raw" was dropped (the catalogue has no raw/cooked distinction).
+    - `parseNeverEat` reads a sentence clause by clause: a clause naming someone starts a new subject, a clause naming nobody continues the last one, and names with no food yet share the next clause's food.
+    - `InferContext.ingredients` gains an optional `category` (the ingredient DTO already carries it).
+  - Not fixed: preparations ("on the bone") are not foods; such a phrase is still reported as not in the catalogue.
+  - Verified: `packages/core/test/onboarding/never-eat-match.test.ts` (11 cases, including the negative controls "kidney" and "lean"); all 478 core unit tests, web unit tests, typecheck, lint and format pass; leaf gates listed in the commit.
 - **W-27 (the web container got no model settings under docker compose; found by the architect after the root run, 2026-09-30).**
   - The problem: `docker-compose.yml` passed `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` to the worker only. The chat assistant and onboarding's parse run in the web app, so a stack started as the file says (`cp .env.example .env`, `docker compose up`) answered 503 "assistant unavailable". Separately, `.env.example` set `ANTHROPIC_MODEL=claude-opus-5`, not the default model (R-81 errata), so copying it as instructed would have broken every model call.
   - Why no gate saw it: root R2–R8's generated compose override sets the recorded model's variables on both containers, which masked the base file's omission; no gate reads `.env.example`.

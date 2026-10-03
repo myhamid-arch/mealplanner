@@ -226,13 +226,18 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
     const who = item.who === "everyone" ? "Everyone" : item.who;
     if (r.kind === "unknown")
       return `${who}: “${item.term}” is not in the catalogue, so it is not saved.`;
+    const named = (slugs: readonly string[]) =>
+      slugs.map((s) => ctx.ingredients.find((i) => i.slug === s)?.name.toLowerCase() ?? s);
     const what =
       r.kind === "dietary_flag"
         ? `anything with ${FLAG_LABEL[r.flag] ?? r.flag} (${String(r.slugs.length)} foods)`
-        : r.slugs
-            .map((s) => ctx.ingredients.find((i) => i.slug === s)?.name.toLowerCase() ?? s)
-            .join(", ");
-    return `${who}: never ${what} · ${item.reason}`;
+        : r.kind === "category"
+          ? `${item.term} (${named(r.slugs.slice(0, 4)).join(", ")}${r.slugs.length > 4 ? ` and ${String(r.slugs.length - 4)} more` : ""})`
+          : named(r.slugs).join(", ");
+    // W-28: the catalogue has no raw/cooked distinction, so "raw tomatoes" covers all tomato.
+    const form =
+      r.dropped === undefined ? "" : ` (${r.dropped.join(", ")} or not: the planner can't tell)`;
+    return `${who}: never ${what}${form} · ${item.reason}`;
   };
 
   const next = () => {

@@ -348,7 +348,7 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
   interface Rule {
     memberId: string | null;
     who: string;
-    kind: "dietary_flag" | "ingredient";
+    kind: "dietary_flag" | "category" | "ingredient";
     key: string;
     reason: ExclusionReason;
     term: string;
@@ -358,6 +358,7 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
   const coverage: InferredSetup["coverage"] = [];
   const unresolved: NeverEatItem[] = [];
   const names = new Map(ctx.ingredients.map((i) => [i.slug, i.name]));
+  const categoryOf = new Map(ctx.ingredients.map((i) => [i.slug, i.category]));
   for (const item of answers.neverEat ?? []) {
     const everyone = normalise(item.who) === "everyone";
     const member = everyone ? null : memberOf(item.who);
@@ -366,14 +367,20 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
       unresolved.push(item);
       continue;
     }
-    const entries =
+    const entries: { kind: Rule["kind"]; key: string; covers: string[] }[] =
       resolution.kind === "dietary_flag"
-        ? [{ kind: "dietary_flag" as const, key: resolution.flag, covers: resolution.slugs }]
-        : resolution.slugs.map((slug) => ({
-            kind: "ingredient" as const,
-            key: slug,
-            covers: [slug],
-          }));
+        ? [{ kind: "dietary_flag", key: resolution.flag, covers: resolution.slugs }]
+        : resolution.kind === "category"
+          ? resolution.categories.map((category) => ({
+              kind: "category" as const,
+              key: category,
+              covers: resolution.slugs.filter((slug) => categoryOf.get(slug) === category),
+            }))
+          : resolution.slugs.map((slug) => ({
+              kind: "ingredient" as const,
+              key: slug,
+              covers: [slug],
+            }));
     for (const e of entries) {
       const id = `${member?.id ?? "*"}|${e.kind}|${e.key}`;
       const existing = rules.get(id);
@@ -416,10 +423,13 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
     if (head === undefined) continue;
     const terms = [...new Set(group.map((r) => r.term))];
     // Allergies and medical rules name what the flag covers (R2-ONB-3: "sesame → tahini, hummus,
-    // za'atar"); a household rule says it covers sauces and marinades instead.
+    // za'atar"); a household rule says it covers sauces and marinades instead. A group word
+    // ("seafood", W-28) always names what it covers.
     const including = group
       .filter(
-        (r) => r.kind === "dietary_flag" && (r.reason === "allergy" || r.reason === "medical"),
+        (r) =>
+          r.kind === "category" ||
+          (r.kind === "dietary_flag" && (r.reason === "allergy" || r.reason === "medical")),
       )
       .flatMap((r) => r.covers)
       .map((slug) => names.get(slug) ?? slug)

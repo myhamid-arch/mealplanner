@@ -27,6 +27,7 @@ interface IngredientFileRow {
   name: string;
   aliases: string[];
   dietary_flags: string[];
+  category: string;
 }
 
 export type CatalogueIngredient = InferContext["ingredients"][number];
@@ -43,6 +44,7 @@ export function catalogueIngredients(): CatalogueIngredient[] {
     name: i.name,
     aliases: i.aliases,
     dietaryFlags: i.dietary_flags,
+    category: i.category,
   }));
 }
 

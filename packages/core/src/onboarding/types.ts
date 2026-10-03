@@ -82,6 +82,8 @@ export interface InferContext {
     name: string;
     aliases: readonly string[];
     dietaryFlags: readonly string[];
+    /** Catalogue category (W-28: "seafood", "chicken" match by it); absent → never matched by it. */
+    category?: string;
   }[];
   /** Household sat-fat default in % of energy (R-28: 6). */
   satFatDefaultPct: number;
