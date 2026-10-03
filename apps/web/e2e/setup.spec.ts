@@ -150,7 +150,13 @@ async function expectFits(page: Page, where: string) {
 /** Waits for running CSS transitions to end, so axe measures the final colours. */
 async function settled(page: Page): Promise<void> {
   await page.evaluate(async () => {
-    await Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined)));
+    await Promise.all(
+      document
+        .getAnimations()
+        // An endless animation (a reading spinner) never finishes; it is not a transition.
+        .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined)),
+    );
   });
 }
 

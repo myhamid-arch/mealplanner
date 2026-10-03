@@ -433,7 +433,13 @@ test("@G1 negative control: a page wider than the viewport is reported", async (
  */
 async function settled(page: Page): Promise<void> {
   await page.evaluate(async () => {
-    await Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined)));
+    await Promise.all(
+      document
+        .getAnimations()
+        // An endless animation (a reading spinner) never finishes; it is not a transition.
+        .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined)),
+    );
   });
 }
 

@@ -604,7 +604,7 @@ export function NeverQuestion({
                     {busy && (
                       <span
                         aria-hidden
-                        className="mr-1.5 inline-block size-3 animate-spin rounded-full border-2 border-current border-t-transparent align-[-1px]"
+                        className="mr-1.5 inline-block size-3 rounded-full motion-safe:animate-spin border-2 border-current border-t-transparent align-[-1px]"
                       />
                     )}
                     {STATUS[st.status].label}
