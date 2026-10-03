@@ -1,7 +1,7 @@
 {
   "status": 200,
   "body": {
-    "id": "msg_onb_14",
+    "id": "msg_onb_slug",
     "type": "message",
     "role": "assistant",
     "model": "claude-fable-5-1",
@@ -13,7 +13,7 @@
       },
       {
         "type": "text",
-        "text": "{\"rules\":[{\"who\":\"Grandma\",\"said\":\"grandma no shellfish\",\"reason\":\"allergy\",\"flag\":\"contains_shellfish\",\"categories\":[],\"slugs\":[],\"summary\":\"shellfish\"}],\"questions\":[],\"unclear\":[]}",
+        "text": "{\"rules\":[{\"who\":\"Zayd\",\"said\":\"no bacon\",\"reason\":\"religious\",\"flag\":null,\"categories\":[],\"slugs\":[\"bacon-strips\"],\"summary\":\"bacon\"}],\"questions\":[],\"unclear\":[]}",
         "citations": null
       }
     ],

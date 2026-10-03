@@ -1,9 +1,10 @@
 // The onboarding free-text parse (R2-ONB-3: "Free text is parsed with Claude using structured
 // output. The parse result is shown for confirmation."; BLD-8 R-55, R-56). One structured call
 // through 1.3.1's client per answer; the output passes the Zod schema (in the client) and the
-// deterministic parsers' semantic checks, or it is refused. The model only reads the text: which
-// ingredients a never-eat term covers, and every change op, stay with `inferSetup` and the
-// catalogue. Every call writes one `ai_generation` row (DM-7) through the injected port (R-2).
+// deterministic parsers' semantic checks, or it is refused. R-88: for the never-eat answer the
+// model maps the words onto the catalogue (flags, categories, ingredient slugs) and asks when a
+// reading is in doubt; the checks hold every mapping to the catalogue, a flag still covers exactly
+// what the catalogue flags, and every change op stays with `inferSetup`. Every call writes one `ai_generation` row (DM-7) through the injected port (R-2).
 import Anthropic, { type ClientOptions } from "@anthropic-ai/sdk";
 import type { BetaTextBlockParam } from "@anthropic-ai/sdk/resources/beta/messages/messages";
 import type { z } from "zod";
@@ -22,6 +23,7 @@ import {
   NeverEatOutputSchema,
   PeopleOutputSchema,
   TargetsOutputSchema,
+  type CatalogueRow,
   type OnboardingField,
   type ParsedValue,
 } from "./schema.js";
@@ -30,6 +32,13 @@ type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 
 /** SPEC-Q-4: a short structured read, like `reviews.extract` (ARC-7). */
 export const ONBOARDING_PARSE_EFFORT: Effort = "low";
+
+/** R-88: the never-eat reading reasons about meaning against the catalogue. */
+export const NEVER_EAT_PARSE_EFFORT: Effort = "medium";
+
+export function effortOf(field: OnboardingField): Effort {
+  return field === "never_eat" ? NEVER_EAT_PARSE_EFFORT : ONBOARDING_PARSE_EFFORT;
+}
 
 export const ONBOARDING_PARSE_DISABLED_REASON =
   "the assistant's reading is unavailable: no Anthropic credential is configured (set ANTHROPIC_API_KEY)";
@@ -55,9 +64,26 @@ The question was "What are this person's macro targets?": daily numbers in any f
 - If the text gives no usable daily numbers, day is null and problem says in one short sentence what is missing.`,
   never_eat: `${COMMON}
 
-The question was "Anything anyone must never eat?", for example "Zayd is allergic to sesame. No pork or alcohol for anyone. Sara hates liver."
-- One rule per person and food: who is one of the people listed with the answer (written exactly as listed) or "everyone"; term is the food in lower case as written ("sesame", "pork", "liver"); reason is allergy, religious, medical, dislike or other.
-- Do not expand a food into ingredients (sesame stays "sesame"); the planner does that from its catalogue.`,
+The question was "Anything anyone must never eat?". Turn the answer into rules the planner applies, using only the catalogue given after these instructions. Read it the way a careful family cook would: work out what the parent means, not just which words they used.
+
+who: one of the people listed with the answer, written exactly as listed (without the age in brackets), or "everyone" (the whole family, anyone, all of us, the household). Ages, when given, tell you who "the kids", "the children" or "the adults" are: under 18 is a child. A group of people gets one rule per person.
+
+One rule per person (or one for everyone) and restriction:
+- said: the words the rule comes from, in lower case.
+- reason: allergy, religious, medical, dislike or other. Use what the text says. Pork or alcohol for the whole family with no reason given is religious. An allergy or medical rule also keeps out traces in sauces and stocks; a dislike only keeps the food itself off the plate.
+- Exactly one of:
+  - flag: when the words name an allergen or rule the catalogue flags (sesame, nuts, gluten, dairy, egg, fish, shellfish, soy, pork, alcohol). Use the flag, not a list of ingredients: the planner covers everything the catalogue flags. Then categories and slugs are empty.
+  - categories: a whole group: "seafood" is seafood and fish; "red meat" is red_meat; "meat" is red_meat and poultry; "pulses" or "legumes" is legume. Then flag is null and slugs is empty.
+  - slugs: the catalogue items the words cover, all of them and nothing else. "chicken" is every chicken item; for an allergy, religious or medical rule include stocks and products made from it. Then flag is null and categories is empty.
+- summary: one short line in plain words saying what stays off the plate and what does not, with examples from the catalogue, e.g. "chicken on the bone (drumsticks, wings, whole chicken); boneless breast and mince stay".
+
+Form and preparation words change the meaning: "no bone in chicken" keeps out the chicken cuts that come on the bone and leaves boneless ones. The catalogue has no raw or cooked forms, so "raw tomatoes" can only mean the tomato items; say so in the summary.
+
+questions: ask only when the text can reasonably be read in ways that change what is planned and you cannot tell which, for example a food named for one person with no reason given (allergy and dislike plan differently), or a cut that may or may not be on the bone. One short question in plain words, 2 to 4 options, each with the rules it adds (an option may add none). Put the safest reading first: it applies until the parent chooses. Do not also put a questioned reading in rules. Ask at most a few questions, and none about what the text settles.
+
+unclear: words that name no food in the catalogue, or are not about food, with why in a few plain words.
+
+Never invent a slug: use only slugs from the catalogue.`,
 };
 
 function schemaOf(field: OnboardingField) {
@@ -71,8 +97,27 @@ function schemaOf(field: OnboardingField) {
   }
 }
 
-export function systemBlocks(field: OnboardingField): BetaTextBlockParam[] {
-  return [{ type: "text", text: PROMPTS[field], cache_control: { type: "ephemeral" } }];
+/** R-88: the catalogue as the never-eat reading sees it, one line per ingredient. */
+export function catalogueText(catalogue: readonly CatalogueRow[]): string {
+  return [
+    "Catalogue (slug | name | category | flags):",
+    ...[...catalogue]
+      .sort((a, b) => a.slug.localeCompare(b.slug))
+      .map((r) => `${r.slug} | ${r.name} | ${r.category} | ${r.dietaryFlags.join(", ")}`),
+  ].join("\n");
+}
+
+export function systemBlocks(
+  field: OnboardingField,
+  catalogue: readonly CatalogueRow[] = [],
+): BetaTextBlockParam[] {
+  if (field !== "never_eat")
+    return [{ type: "text", text: PROMPTS[field], cache_control: { type: "ephemeral" } }];
+  // The catalogue is stable per household, so the instructions and the catalogue cache together.
+  return [
+    { type: "text", text: PROMPTS[field] },
+    { type: "text", text: catalogueText(catalogue), cache_control: { type: "ephemeral" } },
+  ];
 }
 
 export interface OnboardingParseInput {
@@ -80,18 +125,29 @@ export interface OnboardingParseInput {
   text: string;
   /** Question 1's names, for `never_eat` (a rule names one of them, or everyone). */
   people?: readonly string[];
+  /** R-88: their ages, in the same order (so "the kids" can be read). */
+  ages?: readonly (number | null)[];
+  /** R-88: the household's catalogue, for `never_eat` (rules map onto it and are checked by it). */
+  catalogue?: readonly CatalogueRow[];
 }
 
 export function parseRequest(input: OnboardingParseInput): StructuredRequest<z.ZodType> {
   const text =
     input.field === "never_eat"
-      ? `People: ${(input.people ?? []).join(", ") || "(none named)"}\nAnswer:\n${input.text}`
+      ? `People: ${
+          (input.people ?? [])
+            .map((name, i) => {
+              const age = input.ages?.[i];
+              return age === undefined || age === null ? name : `${name} (${String(age)})`;
+            })
+            .join(", ") || "(none named)"
+        }\nAnswer:\n${input.text}`
       : `Answer:\n${input.text}`;
   return {
     schema: schemaOf(input.field),
-    system: systemBlocks(input.field),
+    system: systemBlocks(input.field, input.catalogue),
     messages: [{ role: "user", content: text }],
-    effort: ONBOARDING_PARSE_EFFORT,
+    effort: effortOf(input.field),
   };
 }
 
@@ -156,14 +212,19 @@ export async function parseOnboardingText(
   const requestSummary = asJson({
     field: input.field,
     model: deps.model.model,
-    effort: ONBOARDING_PARSE_EFFORT,
+    effort: effortOf(input.field),
     maxTokens: MAX_OUTPUT_TOKENS,
     textLength: input.text.length,
     people: input.people?.length ?? 0,
   });
   try {
     const result = await deps.model.parse(parseRequest(input));
-    const checked = checkOutput(input.field, result.output, input.people ?? []);
+    const checked = checkOutput(
+      input.field,
+      result.output,
+      input.people ?? [],
+      input.catalogue ?? [],
+    );
     const generationId = await deps.recordGeneration({
       purpose: "onboarding_parse",
       model: result.servedModel,

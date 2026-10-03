@@ -1,8 +1,14 @@
 // W-28: never-eat answers in everyday words resolve against the catalogue, and a sentence naming
 // several people gives each person only their own foods.
 import { describe, expect, it } from "vitest";
-import { parseNeverEat, resolveTerm } from "../../src/onboarding/index.js";
-import { catalogueIngredients } from "./support.js";
+import {
+  inferSetup,
+  parseNeverEat,
+  resolveTarget,
+  resolveTerm,
+} from "../../src/onboarding/index.js";
+import { idFactory, MemoryTx, newHousehold } from "./memory-tx.js";
+import { catalogueIngredients, context } from "./support.js";
 
 const ingredients = catalogueIngredients();
 const nameOf = (slug: string) => ingredients.find((i) => i.slug === slug)?.name ?? slug;
@@ -85,7 +91,22 @@ describe("W-28 parseNeverEat: each person keeps their own foods", () => {
       { who: "everyone", term: "pork", reason: "religious" },
       { who: "Omar", term: "minced beef", reason: "dislike" },
       { who: "Sara", term: "raw tomatoes", reason: "dislike" },
-      { who: "Adam", term: "seafood", reason: "religious" },
+      { who: "Adam", term: "seafood", reason: "other" },
+    ]);
+  });
+
+  it("the owner's sentence: religious only where pork or alcohol is named", () => {
+    expect(
+      parseNeverEat(
+        "no pork or alcohol for the whole family, no lamb for manal, no bone in chicken for Yousif",
+        ["Yousif", "Manal", "Nada", "Omar", "Mohamed"],
+      ),
+    ).toEqual([
+      { who: "everyone", term: "pork", reason: "religious" },
+      { who: "everyone", term: "alcohol", reason: "religious" },
+      { who: "Manal", term: "lamb", reason: "other" },
+      { who: "Yousif", term: "bone", reason: "other" },
+      { who: "Yousif", term: "chicken", reason: "other" },
     ]);
   });
 
@@ -102,5 +123,78 @@ describe("W-28 parseNeverEat: each person keeps their own foods", () => {
       { who: "Adam", term: "sesame", reason: "allergy" },
       { who: "Zayd", term: "sesame", reason: "allergy" },
     ]);
+  });
+});
+
+describe("R-88 resolveTarget: the assistant's mapping is held to the catalogue", () => {
+  it("a flag covers exactly what the catalogue flags, whatever the model listed", () => {
+    const r = resolveTarget({ kind: "dietary_flag", keys: ["contains_sesame"] }, ingredients);
+    expect(r.kind).toBe("dietary_flag");
+    expect(r.kind === "dietary_flag" && r.slugs).toEqual(
+      ingredients.filter((i) => i.dietaryFlags.includes("contains_sesame")).map((i) => i.slug),
+    );
+  });
+  it("an unknown flag, or two flags at once, resolves to nothing", () => {
+    expect(resolveTarget({ kind: "dietary_flag", keys: ["contains_kale"] }, ingredients).kind).toBe(
+      "unknown",
+    );
+    expect(
+      resolveTarget(
+        { kind: "dietary_flag", keys: ["contains_sesame", "contains_pork"] },
+        ingredients,
+      ).kind,
+    ).toBe("unknown");
+  });
+  it("unknown slugs are dropped; none left is unknown", () => {
+    const r = resolveTarget(
+      { kind: "ingredient", keys: ["chicken-wing", "dragon-wing"] },
+      ingredients,
+    );
+    expect(r.kind === "ingredient" && r.slugs).toEqual(["chicken-wing"]);
+    expect(resolveTarget({ kind: "ingredient", keys: ["dragon-wing"] }, ingredients).kind).toBe(
+      "unknown",
+    );
+  });
+  it("a category covers its catalogue items", () => {
+    const r = resolveTarget({ kind: "category", keys: ["seafood"] }, ingredients);
+    expect(r.kind === "category" && r.slugs.length).toBe(8);
+  });
+});
+
+describe("R-88 inferSetup applies a mapped rule and explains it in the assistant's words", () => {
+  it("bone-in chicken for one person: three ingredient exclusions, one summary line", async () => {
+    const ctx = context(await newHousehold(new MemoryTx(idFactory(2))));
+    const setup = inferSetup(
+      {
+        people: [
+          { name: "Yousif", age: 40, sex: null },
+          { name: "Manal", age: 38, sex: null },
+        ],
+        targets: null,
+        week: null,
+        cuisines: null,
+        neverEat: [
+          {
+            who: "Yousif",
+            term: "no bone in chicken",
+            reason: "other",
+            target: {
+              kind: "ingredient",
+              keys: ["chicken-drumstick", "chicken-wing", "chicken-whole"],
+            },
+            summary: "chicken on the bone (drumsticks, wings, whole chicken)",
+          },
+        ],
+      },
+      ctx,
+    );
+    const keys = setup.changeOps
+      .filter((o) => o.kind === "exclusion.add")
+      .map((o) => (o.payload as { key: string }).key);
+    expect(keys).toEqual(["chicken-drumstick", "chicken-wing", "chicken-whole"]);
+    expect(setup.unresolved).toEqual([]);
+    expect(setup.explanations.map((e) => e.text)).toContain(
+      "Yousif: never chicken on the bone (drumsticks, wings, whole chicken). Never planned for them.",
+    );
   });
 });

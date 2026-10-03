@@ -5,8 +5,8 @@
 // become `category` exclusions, and terms are matched loosely: modifiers ("raw", "fresh") are
 // dropped, word order and "minced"/"ground" don't matter, and an animal word ("chicken", "beef")
 // covers every cut of it.
-import type { DietaryFlag } from "../types/index.js";
-import type { InferContext } from "./types.js";
+import { DIETARY_FLAGS, type DietaryFlag } from "../types/index.js";
+import type { InferContext, NeverEatTarget } from "./types.js";
 import { sameWords, words } from "./text.js";
 
 /** Allergen and rule words that name a whole dietary flag (02 §3 dietary_flags). */
@@ -148,4 +148,39 @@ export function resolveTerm(term: string, ingredients: readonly Ingredient[]): R
   const found = matchIngredients(term, ingredients);
   if (found.length === 0) return { kind: "unknown" };
   return { kind: "ingredient", slugs: found.map((i) => i.slug), ...extra };
+}
+
+/**
+ * R-88: the assistant's mapping, checked against the catalogue. A flag covers what the catalogue
+ * flags (the model cannot widen or narrow it); a category covers its catalogue items; unknown
+ * slugs are dropped. Nothing left → unknown.
+ */
+export function resolveTarget(
+  target: NeverEatTarget,
+  ingredients: readonly Ingredient[],
+): Resolution {
+  if (target.kind === "dietary_flag") {
+    const flag = target.keys[0];
+    if (target.keys.length !== 1 || !(DIETARY_FLAGS as readonly string[]).includes(flag ?? ""))
+      return { kind: "unknown" };
+    return {
+      kind: "dietary_flag",
+      flag: flag as DietaryFlag,
+      slugs: flagCoverage(flag as DietaryFlag, ingredients).map((i) => i.slug),
+    };
+  }
+  if (target.kind === "category") {
+    const categories = target.keys.filter((k) => ingredients.some((i) => i.category === k));
+    if (categories.length === 0) return { kind: "unknown" };
+    return {
+      kind: "category",
+      categories,
+      slugs: ingredients
+        .filter((i) => i.category !== undefined && categories.includes(i.category))
+        .map((i) => i.slug),
+    };
+  }
+  const known = new Set(ingredients.map((i) => i.slug));
+  const slugs = [...new Set(target.keys)].filter((k) => known.has(k));
+  return slugs.length === 0 ? { kind: "unknown" } : { kind: "ingredient", slugs };
 }

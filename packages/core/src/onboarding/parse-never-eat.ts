@@ -106,9 +106,6 @@ export function parseNeverEat(text: string, people: readonly string[]): NeverEat
   for (const raw of text.split(/[.!?;\n]+/)) {
     const sentence = normalise(raw);
     if (sentence === "") continue;
-    const fallback: ExclusionReason = /\b(pork|alcohol|pig|wine|beer)\b/.test(sentence)
-      ? "religious"
-      : "other";
     const segments: Segment[] = [];
     let pending: string[] = [];
     let current: Segment | null = null;
@@ -121,6 +118,10 @@ export function parseNeverEat(text: string, people: readonly string[]): NeverEat
       );
       const terms = foodPhrases(clause, aliases);
       const reason = reasonOf(clause);
+      // R-88: "religious" only for the clause that names pork or alcohol, not its neighbours.
+      const fallback: ExclusionReason = /\b(pork|alcohol|pig|wine|beer)\b/.test(clause)
+        ? "religious"
+        : "other";
       if (named.length > 0 || everyone) {
         const who = [...pending, ...(everyone && named.length === 0 ? ["everyone"] : [])];
         for (const n of named) if (!who.includes(n.person)) who.push(n.person);

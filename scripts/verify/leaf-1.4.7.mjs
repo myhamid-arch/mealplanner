@@ -549,11 +549,13 @@ async function gateG1() {
     [
       "G1 people: the F1 line reads as the deterministic parse reads it",
       "G1 targets: Adult A's numbers equal the deterministic parse, training day included",
-      "G1 never-eat: rules keep the term; the catalogue, not the model, expands it",
+      "R-88 never-eat: the reading maps onto the catalogue sent with the instructions",
+      "R-88 never-eat: rules, reasons and a question with the options' rules",
       "G1 schema failure refused: schema-targets-string-kcal",
       "G1 schema failure refused: schema-not-json",
       "G1 semantic check refuses: invalid-targets-disagree",
       "G1 semantic check refuses: invalid-never-eat-unknown-person",
+      "G1 semantic check refuses: invalid-never-eat-unknown-slug",
       "G1 negative control: the same checks accept the valid reading they refuse when broken",
       "G1 the request: structured output, adaptive thinking, effort low, default fallbacks with the beta",
       "G1 refusal: a typed failure, recorded, never thrown",
@@ -570,6 +572,7 @@ async function gateG1() {
       "G1 a schema-failing answer is refused with 502 and not returned; the audit row keeps why",
       "G1 without a credential: 503 and no audit row (the page keeps its deterministic parse)",
       "G1 admin only: member and kitchen get 403 and the model is not called",
+      "R-88 typed never-eat rules, mapped onto the household's catalogue, with a question",
     ],
   );
 
@@ -585,7 +588,7 @@ async function gateG1() {
     const body = JSON.parse(readFileSync(join(RESPONSES, file), "utf8")).body;
     const text = body.content?.find((b) => b.type === "text")?.text;
     if (!/^(people|targets|never-eat|invalid)-/.test(name) || text === undefined) continue;
-    const verdict = checkOutput(fieldOf(name), JSON.parse(text), people);
+    const verdict = checkOutput(fieldOf(name), JSON.parse(text), people, catalogue());
     if (name.startsWith("invalid-")) {
       refused += 1;
       report.check(!verdict.ok, `negative control: the recorded reading ${name} is refused`);
@@ -801,7 +804,17 @@ const F1_TEXT = {
   neverEat: "Child C3 is allergic to sesame.",
 };
 
-/** G6 (owner handoff): the F1 answers read by the real model match the deterministic parse. */
+/** R-88: the shipped catalogue as the never-eat reading sees it. */
+function catalogue() {
+  return JSON.parse(readFileSync(join(ROOT, "data/ingredients.v1.json"), "utf8")).ingredients.map(
+    (i) => ({ slug: i.slug, name: i.name, category: i.category, dietaryFlags: i.dietary_flags }),
+  );
+}
+
+/**
+ * G6 (owner handoff): the F1 answers read by the real model match the deterministic parse; the
+ * never-eat answer (R-88) maps to Child C3's sesame allergy flag and nothing else.
+ */
 async function live() {
   const report = new Report(`${LABEL} LIVE`);
   console.log("# G6: live parse of the F1 answers through the real model (owner handoff)");
@@ -814,7 +827,7 @@ async function live() {
     return 1;
   }
   const { createOnboardingModel, parseOnboardingText } = await importDist("ai", "onboarding");
-  const { parseNeverEat, parsePeople, parseTargets } = await importDist("core", "onboarding");
+  const { parsePeople, parseTargets } = await importDist("core", "onboarding");
   const model = createOnboardingModel(config);
   const records = [];
   const deps = {
@@ -831,8 +844,16 @@ async function live() {
     ]),
     [
       "never-eat",
-      { field: "never_eat", text: F1_TEXT.neverEat, people: names },
-      { neverEat: parseNeverEat(F1_TEXT.neverEat, names) },
+      { field: "never_eat", text: F1_TEXT.neverEat, people: names, catalogue: catalogue() },
+      {
+        neverEat: [
+          {
+            who: "Child C3",
+            reason: "allergy",
+            target: { kind: "dietary_flag", keys: ["contains_sesame"] },
+          },
+        ],
+      },
     ],
   ];
   for (const [label, input, expected] of cases) {
@@ -844,10 +865,17 @@ async function live() {
           ? { people: r.value.people }
           : r.value.field === "targets"
             ? { targets: r.value.targets }
-            : { neverEat: r.value.neverEat };
+            : {
+                // R-88: the words and summary are the model's own; who, why and what are checked.
+                neverEat: r.value.neverEat.map((i) => ({
+                  who: i.who,
+                  reason: i.reason,
+                  target: i.target,
+                })),
+              };
     report.check(
       JSON.stringify(got) === JSON.stringify(expected),
-      `live ${label} (model ${model.model}) equals the deterministic parse`,
+      `live ${label} (model ${model.model}) equals the expected reading`,
       `got ${JSON.stringify(got)}\nexpected ${JSON.stringify(expected)}`,
     );
   }

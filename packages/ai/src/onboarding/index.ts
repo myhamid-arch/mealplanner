@@ -1,8 +1,11 @@
 // @mealplanner/ai/onboarding: the model-backed onboarding free-text parse (R2-ONB-3; BLD-8 R-55,
 // R-56). The web route wires the database port (R-2).
 export {
+  NEVER_EAT_PARSE_EFFORT,
   ONBOARDING_PARSE_DISABLED_REASON,
   ONBOARDING_PARSE_EFFORT,
+  catalogueText,
+  effortOf,
   createOnboardingModel,
   parseOnboardingText,
   parseRequest,
@@ -21,6 +24,7 @@ export {
   PeopleOutputSchema,
   TargetsOutputSchema,
   checkOutput,
+  type CatalogueRow,
   type Checked,
   type OnboardingField,
   type ParsedValue,

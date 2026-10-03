@@ -2,10 +2,16 @@
 // semantic checks the deterministic parsers of @mealplanner/core/onboarding apply. A model answer
 // that fails either is refused, never repaired: the page then keeps the deterministic parse.
 import { z } from "zod";
-import { EXCLUSION_REASONS, SEXES } from "@mealplanner/core/types";
+import {
+  DIETARY_FLAGS,
+  EXCLUSION_REASONS,
+  INGREDIENT_CATEGORIES,
+  SEXES,
+} from "@mealplanner/core/types";
 import type {
   DayTargets,
   NeverEatItem,
+  NeverEatQuestion,
   PersonAnswer,
   TargetNumbers,
   TargetParse,
@@ -46,15 +52,44 @@ export const TargetsOutputSchema = z.object({
   problem: z.string().nullable(),
 });
 
+/**
+ * R-88: one never-eat rule mapped onto the catalogue. Exactly one of `flag`, `categories` or
+ * `slugs` says what it covers; the checks below hold it to the catalogue.
+ */
+const NeverEatRuleSchema = z.object({
+  who: z.string(),
+  /** The words the rule comes from, as typed. */
+  said: z.string(),
+  reason: z.enum(EXCLUSION_REASONS),
+  flag: z.enum(DIETARY_FLAGS).nullable(),
+  categories: z.array(z.enum(INGREDIENT_CATEGORIES)),
+  slugs: z.array(z.string()),
+  /** Plain words for the review: "chicken on the bone (drumsticks, wings, whole chicken)". */
+  summary: z.string(),
+});
+
 export const NeverEatOutputSchema = z.object({
-  rules: z.array(
+  rules: z.array(NeverEatRuleSchema),
+  /** Asked only when a reading changes what is planned and the text does not settle it. */
+  questions: z.array(
     z.object({
       who: z.string(),
-      term: z.string(),
-      reason: z.enum(EXCLUSION_REASONS),
+      said: z.string(),
+      question: z.string(),
+      options: z.array(z.object({ label: z.string(), rules: z.array(NeverEatRuleSchema) })),
     }),
   ),
+  /** Words that name no food the catalogue has, with why, in plain words. */
+  unclear: z.array(z.object({ who: z.string(), said: z.string(), why: z.string() })),
 });
+
+/** R-88: the catalogue rows the never-eat reading maps onto and is checked against. */
+export interface CatalogueRow {
+  slug: string;
+  name: string;
+  category: string;
+  dietaryFlags: readonly string[];
+}
 
 export type PeopleOutput = z.output<typeof PeopleOutputSchema>;
 export type TargetsOutput = z.output<typeof TargetsOutputSchema>;
@@ -63,7 +98,12 @@ export type NeverEatOutput = z.output<typeof NeverEatOutputSchema>;
 export type ParsedValue =
   | { field: "people"; people: PersonAnswer[] }
   | { field: "targets"; targets: TargetParse }
-  | { field: "never_eat"; neverEat: NeverEatItem[] };
+  | {
+      field: "never_eat";
+      neverEat: NeverEatItem[];
+      questions: NeverEatQuestion[];
+      unclear: { who: string; said: string; why: string }[];
+    };
 
 export type Checked = { ok: true; value: ParsedValue } | { ok: false; issues: string[] };
 
@@ -75,7 +115,10 @@ const MAX_KCAL = 6000;
 const MAX_MACRO_G = 800;
 const MAX_PEOPLE = 20;
 const MAX_RULES = 40;
-const MAX_TERM = 80;
+const MAX_TERM = 200;
+const MAX_SUMMARY = 300;
+const MAX_QUESTIONS = 6;
+const MAX_OPTIONS = 4;
 /** Stated calories must agree with 4P + 4C + 9F within this share (a swapped number fails it). */
 export const ENERGY_AGREEMENT = 0.12;
 
@@ -173,22 +216,74 @@ function checkTargets(out: TargetsOutput): Checked {
   return { ok: true, value: { field: "targets", targets: { ok: true, value } } };
 }
 
-function checkNeverEat(out: NeverEatOutput, people: readonly string[]): Checked {
+type NeverEatRule = z.output<typeof NeverEatRuleSchema>;
+
+function checkNeverEat(
+  out: NeverEatOutput,
+  people: readonly string[],
+  catalogue: readonly CatalogueRow[],
+): Checked {
   const issues: string[] = [];
+  const names = new Map(people.map((p) => [p.trim().toLowerCase(), p.trim()]));
+  const slugs = new Set(catalogue.map((r) => r.slug));
+  const categories = new Set(catalogue.map((r) => r.category));
+  const whoOf = (who: string): string | undefined => {
+    const w = who.trim();
+    const person = w.toLowerCase() === "everyone" ? "everyone" : names.get(w.toLowerCase());
+    if (person === undefined) issues.push(`"${w}" is not one of the people named`);
+    return person;
+  };
+  const text = (label: string, value: string, max: number) => {
+    const v = value.trim();
+    if (v === "" || v.length > max) issues.push(`${label} "${value}" is empty or too long`);
+    return v;
+  };
+  const item = (r: NeverEatRule): NeverEatItem | null => {
+    const who = whoOf(r.who);
+    const said = text("food", r.said, MAX_TERM).toLowerCase();
+    const summary = text("summary", r.summary, MAX_SUMMARY);
+    const kinds = [r.flag !== null, r.categories.length > 0, r.slugs.length > 0].filter(Boolean);
+    if (kinds.length !== 1)
+      issues.push(`"${r.said}": exactly one of flag, categories or ingredients must be given`);
+    for (const slug of r.slugs)
+      if (!slugs.has(slug)) issues.push(`"${r.said}": "${slug}" is not in the catalogue`);
+    for (const category of r.categories)
+      if (!categories.has(category))
+        issues.push(`"${r.said}": no catalogue ingredient is in category "${category}"`);
+    if (who === undefined || kinds.length !== 1) return null;
+    const target: NeverEatItem["target"] =
+      r.flag !== null
+        ? { kind: "dietary_flag", keys: [r.flag] }
+        : r.categories.length > 0
+          ? { kind: "category", keys: [...new Set(r.categories)] }
+          : { kind: "ingredient", keys: [...new Set(r.slugs)] };
+    return { who, term: said, reason: r.reason, target, summary };
+  };
   if (out.rules.length > MAX_RULES)
     issues.push(`${String(out.rules.length)} rules (at most ${String(MAX_RULES)})`);
-  const names = new Map(people.map((p) => [p.trim().toLowerCase(), p.trim()]));
-  const rules: NeverEatItem[] = [];
-  for (const r of out.rules) {
-    const who = r.who.trim();
-    const term = r.term.trim().toLowerCase();
-    const person = who.toLowerCase() === "everyone" ? "everyone" : names.get(who.toLowerCase());
-    if (person === undefined) issues.push(`"${who}" is not one of the people named`);
-    if (term === "" || term.length > MAX_TERM) issues.push(`food "${r.term}" is empty or too long`);
-    if (person !== undefined) rules.push({ who: person, term, reason: r.reason });
-  }
+  if (out.questions.length > MAX_QUESTIONS)
+    issues.push(`${String(out.questions.length)} questions (at most ${String(MAX_QUESTIONS)})`);
+  const rules = out.rules.map(item).filter((r): r is NeverEatItem => r !== null);
+  const questions: NeverEatQuestion[] = out.questions.map((q) => {
+    if (q.options.length < 2 || q.options.length > MAX_OPTIONS)
+      issues.push(`question "${q.question}" has ${String(q.options.length)} options (2–4)`);
+    return {
+      who: whoOf(q.who) ?? q.who,
+      said: text("question about", q.said, MAX_TERM),
+      question: text("question", q.question, MAX_SUMMARY),
+      options: q.options.map((o) => ({
+        label: text("option", o.label, MAX_TERM),
+        items: o.rules.map(item).filter((r): r is NeverEatItem => r !== null),
+      })),
+    };
+  });
+  const unclear = out.unclear.map((u) => ({
+    who: whoOf(u.who) ?? u.who,
+    said: text("unclear words", u.said, MAX_TERM),
+    why: text("why", u.why, MAX_SUMMARY),
+  }));
   if (issues.length > 0) return { ok: false, issues };
-  return { ok: true, value: { field: "never_eat", neverEat: rules } };
+  return { ok: true, value: { field: "never_eat", neverEat: rules, questions, unclear } };
 }
 
 /** The semantic checks of one field's output (schema checks already passed). */
@@ -196,6 +291,7 @@ export function checkOutput(
   field: OnboardingField,
   output: unknown,
   people: readonly string[] = [],
+  catalogue: readonly CatalogueRow[] = [],
 ): Checked {
   switch (field) {
     case "people":
@@ -203,6 +299,6 @@ export function checkOutput(
     case "targets":
       return checkTargets(output as TargetsOutput);
     case "never_eat":
-      return checkNeverEat(output as NeverEatOutput, people);
+      return checkNeverEat(output as NeverEatOutput, people, catalogue);
   }
 }

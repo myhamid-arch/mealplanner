@@ -13,7 +13,7 @@
       },
       {
         "type": "text",
-        "text": "{\"rules\":[{\"who\":\"Child C3\",\"term\":\"sesame\",\"reason\":\"allergy\"}]}",
+        "text": "{\"rules\":[{\"who\":\"Child C3\",\"said\":\"child c3 is allergic to sesame\",\"reason\":\"allergy\",\"flag\":\"contains_sesame\",\"categories\":[],\"slugs\":[],\"summary\":\"anything with sesame (tahini, hummus, za'atar), including in sauces\"}],\"questions\":[],\"unclear\":[]}",
         "citations": null
       }
     ],

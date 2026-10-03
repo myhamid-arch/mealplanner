@@ -43,6 +43,15 @@ export interface WeekAnswer {
   snacks: boolean;
 }
 
+/**
+ * R-88: what a rule covers, as the assistant mapped it onto the catalogue: one dietary flag, one
+ * or more ingredient categories, or specific ingredient slugs. Checked again in `inferSetup`.
+ */
+export interface NeverEatTarget {
+  kind: "dietary_flag" | "category" | "ingredient";
+  keys: string[];
+}
+
 /** Question 5: one rule, before it is resolved against the catalogue. */
 export interface NeverEatItem {
   /** A person's name from question 1, or "everyone". */
@@ -50,6 +59,20 @@ export interface NeverEatItem {
   /** The food as written: "sesame", "pork", "liver". */
   term: string;
   reason: ExclusionReason;
+  /** R-88: the assistant's mapping; absent → the term is matched by `resolveTerm`. */
+  target?: NeverEatTarget;
+  /** R-88: the assistant's plain-words summary ("chicken on the bone: drumsticks, wings"). */
+  summary?: string;
+}
+
+/** R-88: a question the assistant asks when the never-eat answer can be read more than one way. */
+export interface NeverEatQuestion {
+  who: string;
+  /** The words the question is about. */
+  said: string;
+  question: string;
+  /** The first option is the safest reading; it applies until another is chosen. */
+  options: { label: string; items: NeverEatItem[] }[];
 }
 
 /** The confirmed answers. `null` means the question was skipped (R2-ONB-2: defaults apply). */

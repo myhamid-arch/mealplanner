@@ -15,6 +15,7 @@ import { createWriteRepos } from "@mealplanner/db/repos";
 import { newId } from "@mealplanner/db/schema";
 import type { CallerContext } from "../auth/context";
 import { ProblemError } from "./problem";
+import { listIngredients } from "./reads";
 import type { Runtime } from "./runtime";
 
 const MODEL_KEY = Symbol.for("mealplanner.web.onboardingParseModel");
@@ -39,6 +40,16 @@ export async function parseOnboarding(
   caller: CallerContext,
   body: z.output<typeof OnboardingParseBody>,
 ) {
+  // R-88: the never-eat reading maps onto the household's visible catalogue.
+  const catalogue =
+    body.field === "never_eat"
+      ? (await listIngredients(rt, caller, { limit: 10_000 })).ingredients.map((i) => ({
+          slug: i.slug,
+          name: i.name,
+          category: i.category,
+          dietaryFlags: i.dietaryFlags,
+        }))
+      : undefined;
   const result = await parseOnboardingText(
     {
       model: onboardingParseModel(),
@@ -58,6 +69,8 @@ export async function parseOnboarding(
       field: body.field,
       text: body.text,
       ...(body.people === undefined ? {} : { people: body.people }),
+      ...(body.ages === undefined ? {} : { ages: body.ages }),
+      ...(catalogue === undefined ? {} : { catalogue }),
     },
   );
   switch (result.status) {
@@ -76,5 +89,5 @@ export async function parseOnboarding(
   const v = result.value;
   if (v.field === "people") return { people: v.people };
   if (v.field === "targets") return { targets: v.targets };
-  return { neverEat: v.neverEat };
+  return { neverEat: v.neverEat, questions: v.questions, unclear: v.unclear };
 }

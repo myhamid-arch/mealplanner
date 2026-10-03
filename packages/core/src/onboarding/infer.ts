@@ -6,7 +6,7 @@ import type { DietaryFlag, ExclusionReason } from "../types/index.js";
 import { adjustHref, MEMBER_COLOR_ORDER } from "./explain.js";
 import { appetiteForAge, isChild } from "./parse-people.js";
 import { targetsText } from "./parse-targets.js";
-import { resolveTerm } from "./resolve.js";
+import { resolveTarget, resolveTerm } from "./resolve.js";
 import { isSelfWord, listJoin, normalise, weekdayText } from "./text.js";
 import type {
   AdjustTarget,
@@ -353,6 +353,8 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
     reason: ExclusionReason;
     term: string;
     covers: string[];
+    /** R-88: the assistant's summary of the rule it read. */
+    summary?: string;
   }
   const rules = new Map<string, Rule>();
   const coverage: InferredSetup["coverage"] = [];
@@ -362,7 +364,10 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
   for (const item of answers.neverEat ?? []) {
     const everyone = normalise(item.who) === "everyone";
     const member = everyone ? null : memberOf(item.who);
-    const resolution = resolveTerm(item.term, ctx.ingredients);
+    const resolution =
+      item.target === undefined
+        ? resolveTerm(item.term, ctx.ingredients)
+        : resolveTarget(item.target, ctx.ingredients);
     if (resolution.kind === "unknown") {
       unresolved.push(item);
       continue;
@@ -394,6 +399,7 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
         reason: item.reason,
         term: item.term,
         covers: e.covers,
+        ...(item.summary === undefined ? {} : { summary: item.summary }),
       });
     }
   }
@@ -437,12 +443,17 @@ export function inferSetup(answers: OnboardingAnswers, ctx: InferContext): Infer
     const ingredientNames = group
       .filter((r) => r.kind === "ingredient")
       .map((r) => names.get(r.key) ?? r.key);
-    const what =
-      group.every((r) => r.kind === "ingredient") && ingredientNames.length > 0
+    const summaries = [
+      ...new Set(group.flatMap((r) => (r.summary === undefined ? [] : [r.summary]))),
+    ];
+    const summarised = group.every((r) => r.summary !== undefined);
+    const what = summarised
+      ? listJoin(summaries)
+      : group.every((r) => r.kind === "ingredient") && ingredientNames.length > 0
         ? listJoin(ingredientNames.map((n) => n.toLowerCase()))
         : listJoin(terms);
     const incl =
-      including.length === 0
+      summarised || including.length === 0
         ? ""
         : `, including ${listJoin(
             including.length > 4

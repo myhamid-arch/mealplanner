@@ -100,21 +100,44 @@ describe("G1 POST /onboarding/parse", () => {
     expect(targets.json).toEqual({ targets: parseTargets(ADULT_A) });
   });
 
-  it("G1 typed never-eat rules against the people named", async () => {
+  it("R-88 typed never-eat rules, mapped onto the household's catalogue, with a question", async () => {
     useOnboardingParseModel(recordedModel("never-eat-mockup"));
     const r = await parse(a, {
       field: "never_eat",
       text: "Zayd is allergic to sesame. No pork or alcohol for anyone. Sara hates liver.",
       people: ["Omar", "Sara", "Layla", "Adam", "Zayd"],
+      ages: [41, 39, 18, 15, 10],
     });
     expect(r.status).toBe(200);
-    expect(r.json).toEqual({
+    const dto = c.OnboardingParseDto.parse(r.json);
+    expect(dto).toMatchObject({
       neverEat: [
-        { who: "Zayd", term: "sesame", reason: "allergy" },
-        { who: "everyone", term: "pork", reason: "religious" },
-        { who: "everyone", term: "alcohol", reason: "religious" },
-        { who: "Sara", term: "liver", reason: "dislike" },
+        {
+          who: "Zayd",
+          reason: "allergy",
+          target: { kind: "dietary_flag", keys: ["contains_sesame"] },
+        },
+        {
+          who: "everyone",
+          reason: "religious",
+          target: { kind: "dietary_flag", keys: ["contains_pork"] },
+        },
+        {
+          who: "everyone",
+          reason: "religious",
+          target: { kind: "dietary_flag", keys: ["contains_alcohol"] },
+        },
+        {
+          who: "Sara",
+          reason: "dislike",
+          target: { kind: "ingredient", keys: ["beef-liver", "chicken-liver"] },
+          summary: "liver (beef and chicken liver)",
+        },
       ],
+      questions: [
+        { who: "Sara", options: [{ label: "Yes, all organ meats" }, { label: "No, only liver" }] },
+      ],
+      unclear: [],
     });
   });
 

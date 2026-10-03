@@ -8,6 +8,7 @@ import {
   MEMBER_COLOR_ORDER,
   targetsText,
   type NeverEatItem,
+  type NeverEatQuestion,
   type PersonAnswer,
   type TargetParse,
   type TrainingTime,
@@ -538,11 +539,23 @@ export function NeverQuestion({
   onText,
   items,
   describe,
+  status,
+  questions,
+  picks,
+  onPick,
+  unclear,
 }: {
   readonly text: string;
   readonly onText: (t: string) => void;
   readonly items: readonly NeverEatItem[];
   readonly describe: (item: NeverEatItem) => string;
+  /** R-88: whether the assistant is reading the answer, has read it, or cannot. */
+  readonly status: "reading" | "ready" | "off";
+  readonly questions: readonly NeverEatQuestion[];
+  /** The option chosen per question; none chosen means the first (the safest reading). */
+  readonly picks: readonly number[];
+  readonly onPick: (question: number, option: number) => void;
+  readonly unclear: readonly string[];
 }) {
   return (
     <>
@@ -563,6 +576,15 @@ export function NeverQuestion({
           className="w-full resize-none rounded-xl border-2 border-action bg-card px-4 py-3.5 text-lg font-bold"
         />
       </label>
+      <p aria-live="polite" className="m-0 text-sm font-bold text-aubergine-text">
+        {text.trim() === ""
+          ? ""
+          : status === "reading"
+            ? "The assistant is reading this…"
+            : status === "ready"
+              ? "Read by the assistant"
+              : ""}
+      </p>
       {items.length > 0 && (
         <ul className="m-0 flex list-none flex-col gap-1 p-0 text-sm" aria-label="Read as">
           {items.map((item, i) => (
@@ -572,6 +594,52 @@ export function NeverQuestion({
           ))}
         </ul>
       )}
+      {unclear.length > 0 && (
+        <ul className="m-0 flex list-none flex-col gap-1 p-0 text-sm" aria-label="Not understood">
+          {unclear.map((line) => (
+            <li key={line} className="font-bold text-saffron-text">
+              {line}
+            </li>
+          ))}
+        </ul>
+      )}
+      {questions.map((q, qi) => (
+        <fieldset
+          key={`${q.who}-${q.said}-${String(qi)}`}
+          data-never-question={qi}
+          className="m-0 flex flex-col gap-2 rounded-xl border-[1.5px] border-aubergine bg-aubergine-tint p-3.5 text-ink"
+        >
+          <legend className="sr-only">{q.question}</legend>
+          <span aria-hidden className="font-extrabold text-aubergine-text">
+            {q.question}
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {q.options.map((o, oi) => {
+              const chosen = (picks[qi] ?? 0) === oi;
+              return (
+                <button
+                  key={`${o.label}-${String(oi)}`}
+                  type="button"
+                  aria-pressed={chosen}
+                  onClick={() => {
+                    onPick(qi, oi);
+                  }}
+                  className={`min-h-11 rounded-lg border-[1.5px] px-4 font-extrabold ${
+                    chosen ? "border-agent bg-agent text-on-agent" : "border-ink bg-card text-ink"
+                  }`}
+                >
+                  {o.label}
+                </button>
+              );
+            })}
+          </div>
+          {picks[qi] === undefined && (
+            <span className="text-sm text-ink-soft">
+              Until you choose, the first answer applies.
+            </span>
+          )}
+        </fieldset>
+      ))}
     </>
   );
 }

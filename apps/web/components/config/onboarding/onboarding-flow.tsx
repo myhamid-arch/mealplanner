@@ -150,12 +150,34 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
   );
   const weekState = week ?? defaultWeek(people);
   const namesKey = names.join("\u0000");
-  const neverModel = useModelReadings("never_eat", { "": neverText }, names);
+  const neverModel = useModelReadings(
+    "never_eat",
+    { "": neverText },
+    names,
+    people.map((p) => p.age),
+  );
   const ownNeverItems = useMemo(
     () => parseNeverEat(neverText, namesKey === "" ? [] : namesKey.split("\u0000")),
     [neverText, namesKey],
   );
-  const neverItems = readingOr("never_eat", neverModel, "", neverText, ownNeverItems);
+  // R-88: the assistant's reading is the answer once it arrives (its questions' choices included);
+  // the deterministic parse stands in while it reads, and when it is unavailable.
+  const [neverChoices, setNeverChoices] = useState<{ text: string; picks: number[] }>({
+    text: "",
+    picks: [],
+  });
+  const neverReading = neverModel.reading("", neverText);
+  const neverRead =
+    neverReading !== undefined && "neverEat" in neverReading ? neverReading : undefined;
+  const neverQuestions = neverRead?.questions ?? [];
+  const picks = neverChoices.text === neverText ? neverChoices.picks : [];
+  const neverItems: NeverEatItem[] =
+    neverRead === undefined
+      ? ownNeverItems
+      : [
+          ...neverRead.neverEat,
+          ...neverQuestions.flatMap((q, i) => q.options[picks[i] ?? 0]?.items ?? []),
+        ];
 
   const answers: OnboardingAnswers = {
     people: skipped.has(0) || people.length === 0 ? null : people,
@@ -222,8 +244,10 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
   }
 
   const describe = (item: NeverEatItem) => {
-    const r = resolveTerm(item.term, ctx.ingredients);
     const who = item.who === "everyone" ? "Everyone" : item.who;
+    // R-88: the assistant's own words for what it mapped.
+    if (item.summary !== undefined) return `${who}: never ${item.summary} · ${item.reason}`;
+    const r = resolveTerm(item.term, ctx.ingredients);
     if (r.kind === "unknown")
       return `${who}: “${item.term}” is not in the catalogue, so it is not saved.`;
     const named = (slugs: readonly string[]) =>
@@ -440,20 +464,18 @@ function Flow({ ctx, adminName }: { readonly ctx: Context; readonly adminName: s
                   onText={setNeverText}
                   items={neverItems}
                   describe={describe}
-                />
-              )}
-              {step === 4 && (
-                <ModelParseConfirm
-                  kind={{ field: "never_eat", lines: (items) => items.map(describe) }}
-                  readings={neverModel}
-                  entries={[
-                    {
-                      key: "",
-                      text: neverText,
-                      label: "the never-eat answer",
-                      mine: ownNeverItems,
-                    },
-                  ]}
+                  status={neverModel.status("", neverText)}
+                  questions={neverQuestions}
+                  picks={picks}
+                  onPick={(question, option) => {
+                    const next = [...picks];
+                    next[question] = option;
+                    setNeverChoices({ text: neverText, picks: next });
+                  }}
+                  unclear={(neverRead?.unclear ?? []).map(
+                    (u) =>
+                      `${u.who === "everyone" ? "Everyone" : u.who}: “${u.said}”: ${u.why} Not saved.`,
+                  )}
                 />
               )}
               {step === 5 && (

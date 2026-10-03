@@ -2,7 +2,7 @@
 // structured-output client over recorded responses. Typed results for each field; a schema-failing
 // or semantically invalid answer is refused, not repaired; typed errors; one audit row per call.
 import { describe, expect, it } from "vitest";
-import { parseNeverEat, parsePeople, parseTargets } from "@mealplanner/core/onboarding";
+import { parsePeople, parseTargets } from "@mealplanner/core/onboarding";
 import {
   checkOutput,
   parseOnboardingText,
@@ -19,6 +19,27 @@ const F1 = {
   neverEat: "Child C3 is allergic to sesame.",
 };
 const F1_NAMES = ["Adult A", "Adult B", "Child C1", "Child C2", "Child C3"];
+const F1_AGES = [40, 37, 18, 15, 10];
+
+/** R-88: a small catalogue the never-eat readings map onto. */
+const CATALOGUE = [
+  { slug: "tahini", name: "Tahini", category: "nut_seed", dietaryFlags: ["contains_sesame"] },
+  { slug: "pork-loin", name: "Pork loin", category: "red_meat", dietaryFlags: ["contains_pork"] },
+  { slug: "beef-liver", name: "Beef liver", category: "red_meat", dietaryFlags: [] },
+  { slug: "chicken-liver", name: "Chicken liver", category: "poultry", dietaryFlags: [] },
+  { slug: "shrimp", name: "Shrimp", category: "seafood", dietaryFlags: ["contains_shellfish"] },
+];
+
+const rule = (over: Record<string, unknown>) => ({
+  who: "Zayd",
+  said: "sesame",
+  reason: "allergy",
+  flag: null,
+  categories: [],
+  slugs: [],
+  summary: "sesame",
+  ...over,
+});
 
 function recorder() {
   const records: OnboardingGenerationRecord[] = [];
@@ -97,41 +118,64 @@ describe("G1 typed results from recorded responses", () => {
     });
   });
 
-  it("G1 never-eat: rules keep the term; the catalogue, not the model, expands it", async () => {
+  it("R-88 never-eat: the reading maps onto the catalogue sent with the instructions", async () => {
     const { result, bodies } = await run("never-eat-f1", {
       field: "never_eat",
       text: F1.neverEat,
       people: F1_NAMES,
-    });
-    expect(result).toMatchObject({
-      status: "parsed",
-      value: { field: "never_eat", neverEat: parseNeverEat(F1.neverEat, F1_NAMES) },
-    });
-    // The request lists the people and nothing from the catalogue.
-    const sent = JSON.stringify(bodies[0]?.messages);
-    expect(sent).toContain("People: Adult A, Adult B, Child C1, Child C2, Child C3");
-    expect(sent).not.toMatch(/tahini|za'?atar|contains_sesame/);
-  });
-
-  it("G1 never-eat: the mockup's sentence gives four rules with reasons", async () => {
-    const people = ["Omar", "Sara", "Layla", "Adam", "Zayd"];
-    const { result } = await run("never-eat-mockup", {
-      field: "never_eat",
-      text: "Zayd is allergic to sesame. No pork or alcohol for anyone. Sara hates liver.",
-      people,
+      ages: F1_AGES,
+      catalogue: CATALOGUE,
     });
     expect(result).toMatchObject({
       status: "parsed",
       value: {
         field: "never_eat",
         neverEat: [
-          { who: "Zayd", term: "sesame", reason: "allergy" },
-          { who: "everyone", term: "pork", reason: "religious" },
-          { who: "everyone", term: "alcohol", reason: "religious" },
-          { who: "Sara", term: "liver", reason: "dislike" },
+          {
+            who: "Child C3",
+            term: "child c3 is allergic to sesame",
+            reason: "allergy",
+            // A flag only: what it covers stays the catalogue's (inferSetup expands it).
+            target: { kind: "dietary_flag", keys: ["contains_sesame"] },
+          },
         ],
+        questions: [],
+        unclear: [],
       },
     });
+    // The people (with ages) go in the user turn; the catalogue in the cached system blocks.
+    const sent = JSON.stringify(bodies[0]?.messages);
+    expect(sent).toContain(
+      "People: Adult A (40), Adult B (37), Child C1 (18), Child C2 (15), Child C3 (10)",
+    );
+    expect(sent).not.toContain("tahini");
+    const system = JSON.stringify(bodies[0]?.system);
+    expect(system).toContain("tahini | Tahini | nut_seed | contains_sesame");
+    expect(bodies[0]?.output_config).toMatchObject({ effort: "medium" });
+  });
+
+  it("R-88 never-eat: rules, reasons and a question with the options' rules", async () => {
+    const people = ["Omar", "Sara", "Layla", "Adam", "Zayd"];
+    const { result } = await run("never-eat-mockup", {
+      field: "never_eat",
+      text: "Zayd is allergic to sesame. No pork or alcohol for anyone. Sara hates liver.",
+      people,
+      catalogue: CATALOGUE,
+    });
+    expect(result.status).toBe("parsed");
+    if (result.status !== "parsed" || result.value.field !== "never_eat") return;
+    expect(result.value.neverEat.map((r) => [r.who, r.reason, r.target])).toEqual([
+      ["Zayd", "allergy", { kind: "dietary_flag", keys: ["contains_sesame"] }],
+      ["everyone", "religious", { kind: "dietary_flag", keys: ["contains_pork"] }],
+      ["everyone", "religious", { kind: "dietary_flag", keys: ["contains_alcohol"] }],
+      ["Sara", "dislike", { kind: "ingredient", keys: ["beef-liver", "chicken-liver"] }],
+    ]);
+    expect(result.value.neverEat[3]?.summary).toBe("liver (beef and chicken liver)");
+    expect(result.value.questions).toHaveLength(1);
+    expect(result.value.questions[0]?.options.map((o) => [o.label, o.items.length])).toEqual([
+      ["Yes, all organ meats", 1],
+      ["No, only liver", 0],
+    ]);
   });
 });
 
@@ -157,6 +201,7 @@ describe("G1 schema-failing and invalid answers are refused, not repaired (SPEC-
     ["invalid-targets-swapped", "targets", /180 kcal is outside 800–6000/],
     ["invalid-targets-disagree", "targets", /disagrees with its macros/],
     ["invalid-never-eat-unknown-person", "never_eat", /"Grandma" is not one of the people named/],
+    ["invalid-never-eat-unknown-slug", "never_eat", /"bacon-strips" is not in the catalogue/],
     ["invalid-people-duplicate", "people", /"omar" appears twice/],
     ["invalid-people-age", "people", /age 410 is outside 0–120/],
   ] as const)
@@ -165,6 +210,7 @@ describe("G1 schema-failing and invalid answers are refused, not repaired (SPEC-
         field,
         text: "some answer",
         people: ["Zayd", "Sara"],
+        catalogue: CATALOGUE,
       });
       expect(result.status).toBe("failed");
       if (result.status !== "failed") return;
@@ -197,15 +243,47 @@ describe("G1 schema-failing and invalid answers are refused, not repaired (SPEC-
         day: { ...valid.day, proteinG: 250, carbsG: 300, fatG: 90 },
       }).ok,
     ).toBe(false);
+    const reading = (r: Record<string, unknown>) => ({
+      rules: [rule(r)],
+      questions: [],
+      unclear: [],
+    });
+    const ok = (r: Record<string, unknown>, people = ["Zayd"]) =>
+      checkOutput("never_eat", reading(r), people, CATALOGUE).ok;
+    expect(ok({ flag: "contains_sesame" })).toBe(true);
+    expect(ok({ flag: "contains_sesame" }, ["Sara"])).toBe(false);
+    expect(ok({ slugs: ["beef-liver"] })).toBe(true);
+    expect(ok({ slugs: ["beef-kidney"] })).toBe(false);
+    expect(ok({ categories: ["seafood"] })).toBe(true);
+    // No catalogue item is in "fish" here, so the category covers nothing and is refused.
+    expect(ok({ categories: ["fish"] })).toBe(false);
+    // Exactly one of flag, categories and slugs.
+    expect(ok({ flag: "contains_sesame", slugs: ["tahini"] })).toBe(false);
+    expect(ok({})).toBe(false);
+    // A question needs 2–4 options, and its options' rules pass the same checks.
+    const question = (options: unknown[]) =>
+      checkOutput(
+        "never_eat",
+        {
+          rules: [],
+          questions: [{ who: "Zayd", said: "x", question: "Which?", options }],
+          unclear: [],
+        },
+        ["Zayd"],
+        CATALOGUE,
+      ).ok;
     expect(
-      checkOutput("never_eat", { rules: [{ who: "Zayd", term: "sesame", reason: "allergy" }] }, [
-        "Zayd",
-      ]).ok,
+      question([
+        { label: "A", rules: [rule({ slugs: ["shrimp"] })] },
+        { label: "B", rules: [] },
+      ]),
     ).toBe(true);
+    expect(question([{ label: "A", rules: [] }])).toBe(false);
     expect(
-      checkOutput("never_eat", { rules: [{ who: "Zayd", term: "sesame", reason: "allergy" }] }, [
-        "Sara",
-      ]).ok,
+      question([
+        { label: "A", rules: [rule({ slugs: ["lobster"] })] },
+        { label: "B", rules: [] },
+      ]),
     ).toBe(false);
   });
 });

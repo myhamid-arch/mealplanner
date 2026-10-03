@@ -694,6 +694,35 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - PRD-4's 5-minute bound stays unmeasured;
     - the ARC-4 exception (the auth route's 2FA policy read) stays.
   - **Open:** SPEC-Q-6 (recipe-card example plates for targeted attendees only). The owner is reviewing it and will say whether it changes.
+- **R-88 (owner, 2026-10-03: "the parser needs to be smarter … an agent who reasons and figures out how to convert the free text into the categories set up in the app … questions to clarify when there is some doubt").** Supersedes R-56's limit that the onboarding model "only reads the text" for question 5. People and targets are unchanged.
+  - **What the model does now:** it receives the household's visible catalogue (slug, name, category, flags) in a cached system block, plus the people with their ages. It returns per-person rules mapped onto exactly one of:
+    - a dietary flag;
+    - ingredient categories;
+    - ingredient slugs.
+
+    Each rule has a reason and a plain-words summary. It also returns questions (2–4 options, each with the rules it adds; the first option is the safest and applies until the admin chooses) and the words it could not place, with why. Effort is medium for this field (people and targets stay low).
+  - **What stays deterministic:** `checkOutput` refuses a reading that:
+    - names someone not in question 1;
+    - uses an unknown slug or an empty category;
+    - gives anything other than exactly one target per rule;
+    - has a question with fewer than 2 or more than 4 options.
+
+    `inferSetup` resolves each target against the catalogue again (`resolveTarget`): a flag covers exactly what the catalogue flags, so the model cannot widen or narrow it; unknown slugs are dropped. Every change op is still written by `inferSetup`.
+  - **On the page:**
+    - step 5 shows "The assistant is reading this…"; once the reading arrives it is the answer, without the confirm step SPEC-Q-5 requires for the other fields;
+    - its questions are tap-to-choose;
+    - the review uses its summaries;
+    - without a credential, or when a reading is refused, the deterministic parse (W-28) is the answer as before;
+    - SC-6 is unchanged: no input is required.
+  - **Also fixed:** the deterministic parser gave "religious" to every clause of a sentence that mentioned pork or alcohol ("no lamb for Manal" was religious). It now applies only to the clause naming pork or alcohol.
+  - **Measured live** (default model, 2026-10-03), on the owner's sentence "no pork or alcohol for the whole family, no lamb for manal, no bone in chicken for Yousif":
+    - pork and alcohol come out as flags (religious);
+    - Manal: four lamb cuts;
+    - Yousif: drumsticks, wings and whole chicken, with boneless cuts kept, plus one question (thighs: bone-in or not);
+    - 21 s.
+
+    On a harder sentence it kept Adam's nut allergy while allowing almond milk, and asked whether Omar's seafood rule is an allergy or a dislike (37 s). With ages, "the kids" maps to the people under 18.
+  - **Not covered:** cooking methods ("no fried food") are not exclusions the planner has (EXCLUSION_KINDS has no method kind), so the reading lists them as not understood.
 - **W-28 (never-eat answers in everyday words were not understood; reported by the owner from onboarding's review screen, 2026-10-02).**
   - The problem: the owner read the review as "the catalogue is very shallow". The catalogue (363 ingredients) contains every food typed. The matcher and the parser were at fault:
     - `resolveTerm` matched only an exact slug, name or alias, or a single word equal to the last word of a name. So "chicken" matched nothing ("Chicken breast, skinless" ends in "skinless"), "minced beef" missed "Beef mince", "raw tomatoes" missed "Tomato", and "lean" matched beef mince;

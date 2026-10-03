@@ -31,6 +31,11 @@ export interface ModelReadings {
   kept(key: string, text: string): boolean;
   accept(key: string): void;
   keep(key: string): void;
+  /**
+   * R-88: "reading" while the assistant may still answer for `text`, "ready" once it has, "off"
+   * when it cannot (no credential, or its reading of this text failed or was refused).
+   */
+  status(key: string, text: string): "reading" | "ready" | "off";
 }
 
 /** Readings of several answers of one field (`key` → text; targets are one text per person). */
@@ -38,20 +43,24 @@ export function useModelReadings(
   field: Field,
   texts: Readonly<Record<string, string>>,
   people: readonly string[] = [],
+  /** R-88: the people's ages, same order, for `never_eat`. */
+  ages: readonly (number | null)[] = [],
 ): ModelReadings {
   const [readings, setReadings] = useState<ReadonlyMap<string, Reading>>(new Map());
   const [accepted, setAccepted] = useState<ReadonlyMap<string, Reading>>(new Map());
   const [kept, setKept] = useState<ReadonlyMap<string, string>>(new Map());
   // No credential (503): stop asking for this page view.
   const unavailable = useRef(false);
+  const [off, setOff] = useState(false);
+  const [failed, setFailed] = useState<ReadonlyMap<string, string>>(new Map());
   const latest = useRef(texts);
   latest.current = texts;
   const textsKey = JSON.stringify(texts);
-  const peopleKey = JSON.stringify(people);
+  const peopleKey = JSON.stringify([people, ages]);
 
   useEffect(() => {
     const current = JSON.parse(textsKey) as Record<string, string>;
-    const names = JSON.parse(peopleKey) as string[];
+    const [names, years] = JSON.parse(peopleKey) as [string[], (number | null)[]];
     const timers = Object.entries(current)
       .filter(([, text]) => text.trim() !== "" && text.length <= 2000)
       .map(([key, text]) =>
@@ -59,14 +68,21 @@ export function useModelReadings(
           if (unavailable.current) return;
           void api
             .call(c.onboardingParse, {
-              body: { field, text, ...(field === "never_eat" ? { people: names } : {}) },
+              body: {
+                field,
+                text,
+                ...(field === "never_eat" ? { people: names, ages: years } : {}),
+              },
             })
             .then((value) => {
               if (latest.current[key] !== text) return;
               setReadings((m) => new Map(m).set(key, { text, value }));
             })
             .catch((e: unknown) => {
-              if (e instanceof ApiProblem && e.problem.status === 503) unavailable.current = true;
+              if (e instanceof ApiProblem && e.problem.status === 503) {
+                unavailable.current = true;
+                setOff(true);
+              } else setFailed((m) => new Map(m).set(key, text));
             });
         }, PARSE_DEBOUNCE_MS),
       );
@@ -91,6 +107,11 @@ export function useModelReadings(
     keep: (key) => {
       const text = latest.current[key];
       if (text !== undefined) setKept((m) => new Map(m).set(key, text));
+    },
+    status: (key, text) => {
+      if (of(readings, key, text) !== undefined) return "ready";
+      if (off || text.trim() === "" || text.length > 2000 || failed.get(key) === text) return "off";
+      return "reading";
     },
   };
 }

@@ -1043,6 +1043,8 @@ export const OnboardingParseBody = z
     text: z.string().trim().min(1).max(2000),
     /** Question 1's names, for `never_eat`. */
     people: z.array(z.string().trim().min(1).max(80)).max(20).optional(),
+    /** R-88: question 1's ages, in the order of `people` ("the kids" names them). */
+    ages: z.array(z.number().int().min(0).max(120).nullable()).max(20).optional(),
   })
   .strict();
 
@@ -1072,13 +1074,38 @@ const TargetParseDto = z.union([
   z.object({ ok: z.literal(false), reason: z.string() }),
 ]);
 
+/** The shape of `NeverEatItem` (@mealplanner/core/onboarding); R-88 adds the mapping. */
+const NeverEatItemDto = z.object({
+  who: z.string(),
+  term: z.string(),
+  reason: z.enum(EXCLUSION_REASONS),
+  target: z
+    .object({
+      kind: z.enum(["dietary_flag", "category", "ingredient"]),
+      keys: z.array(z.string()),
+    })
+    .optional(),
+  summary: z.string().optional(),
+});
+
 export const OnboardingParseDto = z.union([
   z.object({ people: z.array(PersonAnswerDto) }),
   z.object({ targets: TargetParseDto }),
   z.object({
-    neverEat: z.array(
-      z.object({ who: z.string(), term: z.string(), reason: z.enum(EXCLUSION_REASONS) }),
-    ),
+    neverEat: z.array(NeverEatItemDto),
+    /** R-88: what the assistant asks when the answer can be read more than one way. */
+    questions: z
+      .array(
+        z.object({
+          who: z.string(),
+          said: z.string(),
+          question: z.string(),
+          options: z.array(z.object({ label: z.string(), items: z.array(NeverEatItemDto) })),
+        }),
+      )
+      .optional(),
+    /** R-88: words that name no food in the catalogue, with why. */
+    unclear: z.array(z.object({ who: z.string(), said: z.string(), why: z.string() })).optional(),
   }),
 ]);
 
