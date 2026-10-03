@@ -2,6 +2,7 @@
 // structured-output client over recorded responses. Typed results; a schema-failing or invalid
 // reading is refused (502, nothing returned); 503 without a credential; admin only; one audit row
 // per model call in the caller's household.
+// R-88: the database is seeded, so the never-eat reading is checked against the real catalogue.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -50,7 +51,7 @@ let member: Login;
 let kitchen: Login;
 
 beforeAll(async () => {
-  db = await createTestDatabase({ seed: false });
+  db = await createTestDatabase();
   app = startTestApp(db.url);
   a = await signupAdmin("Household A");
   b = await signupAdmin("Household B");
