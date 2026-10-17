@@ -8,6 +8,7 @@
 // (UX-4, W-5 addendum; BLD-8 R-58; leaf-1.4.8 ADR-1, SPEC-Q-7).
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { listJoin } from "@mealplanner/core/onboarding";
 import { Button, Chip, EmptyState, Icon } from "../ui";
 import {
   api,
@@ -653,14 +654,23 @@ export function WeekPlanScreen({
         });
         setJob(null);
         await reload();
-        // W-30: meals with few good options get new recipes in the background, swapped in later.
+        // W-30: slots with few good options get new recipes in the background, swapped in later.
         const improving = (end.result as { improving?: unknown } | undefined)?.improving;
+        const slots = Array.isArray(improving)
+          ? improving
+              .filter((k): k is string => typeof k === "string")
+              .map(
+                (k) =>
+                  data0?.basics.slots.find((x) => x.key === k)?.label.toLowerCase() ??
+                  k.replaceAll("_", " "),
+              )
+          : [];
         setMessage(
           end.status === "done"
             ? {
                 text:
-                  typeof improving === "number" && improving > 0
-                    ? `The plan is ready. ${String(improving)} ${improving === 1 ? "meal has" : "meals have"} few good options in the recipe library, so new recipes are being written in the background (a few minutes). They are swapped in where they fit better; each swap is in Settings › Change log.`
+                  slots.length > 0
+                    ? `The plan is ready. Your family's rules leave few recipes to choose from for ${listJoin(slots)}, so new ones are being written in the background (a few minutes for each). Better ones replace this plan's dishes as they arrive; each change is in Settings › Change log.`
                     : "The plan is ready.",
                 error: false,
               }
@@ -671,7 +681,7 @@ export function WeekPlanScreen({
         setMessage({ text: problemText(e), error: true });
       }
     },
-    [reload],
+    [reload, data0],
   );
 
   if (loaded.data === null)

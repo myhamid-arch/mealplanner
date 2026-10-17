@@ -125,7 +125,7 @@ export const planGenerate: JobHandler = async (ctx) => {
     stats: toJson(stats),
     // 1.4.9 (R-61): what the "plan is ready" row in Updates shows (W-9b).
     ready: planReadySummary(result.plan),
-    // W-30: meals whose new recipes are being written in the background.
+    // W-30: the slots whose new recipes are being written in the background.
     improving,
   };
 };
@@ -137,7 +137,7 @@ async function queueImprovements(
   ctx: JobContext,
   hh: HouseholdContext,
   deferred: readonly Deferred[],
-): Promise<number> {
+): Promise<string[]> {
   const bySlot = new Map<string, Deferred[]>();
   for (const r of deferred) bySlot.set(r.slotKey, [...(bySlot.get(r.slotKey) ?? []), r]);
   for (const [slotKey, rs] of bySlot) {
@@ -158,7 +158,7 @@ async function queueImprovements(
       hh.userId,
     );
   }
-  return deferred.length;
+  return [...bySlot.keys()];
 }
 
 /**
