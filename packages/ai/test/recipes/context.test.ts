@@ -11,7 +11,7 @@ import {
 import { F1_DINNER_DATE, f1Config } from "./support/household.js";
 
 describe("REC-3 context", () => {
-  it("lists only the members attending the slot, with the union of hard exclusions", () => {
+  it("lists only the members attending the slot, with the union of their exclusions", () => {
     const cfg = f1Config();
     // Tuesday lunch: the children have packed school lunch and Adult A a packed work lunch.
     const lunch = buildGenerationContext({ config: cfg, date: F1_DINNER_DATE, slotKey: "lunch" });
@@ -31,6 +31,50 @@ describe("REC-3 context", () => {
     expect(school.context.exclusions.dietaryFlags).toEqual(["contains_sesame"]);
     expect(school.context.slot).toMatchObject({ key: "packed_school_lunch", isPacked: true });
     expect(school.solveTargets).toEqual([]);
+  });
+
+  it("W-30: a dislike of an attendee is an exclusion the model is told about; an absent member's is not", () => {
+    const cfg = f1Config();
+    const attending = buildGenerationContext({
+      config: cfg,
+      date: F1_DINNER_DATE,
+      slotKey: "dinner",
+    });
+    const who = cfg.members[0]?.id ?? null;
+    const withDislike = {
+      ...cfg,
+      exclusions: [
+        ...cfg.exclusions,
+        {
+          id: "x-dislike",
+          householdId: cfg.household.id,
+          memberId: who,
+          kind: "ingredient" as const,
+          key: "tomato",
+          reason: "dislike" as const,
+          hard: false,
+          slotKeys: null as string[] | null,
+        },
+      ],
+    };
+    const dinner = buildGenerationContext({
+      config: withDislike,
+      date: F1_DINNER_DATE,
+      slotKey: "dinner",
+    });
+    expect(attending.context.exclusions.ingredients).not.toContain("tomato");
+    expect(dinner.context.exclusions.ingredients).toContain("tomato");
+    // Scoped to another slot: not sent for dinner.
+    const scoped = {
+      ...withDislike,
+      exclusions: withDislike.exclusions.map((e) =>
+        e.id === "x-dislike" ? { ...e, slotKeys: ["packed_school_lunch"] } : e,
+      ),
+    };
+    expect(
+      buildGenerationContext({ config: scoped, date: F1_DINNER_DATE, slotKey: "dinner" }).context
+        .exclusions.ingredients,
+    ).not.toContain("tomato");
   });
 
   it("gives the solver the resolver's targets under the label, never the member id", () => {

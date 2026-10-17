@@ -183,8 +183,14 @@ export function buildGenerationContext(input: GenerationContextInput): {
 
   const targets = resolveSlotTargets(config, date).filter((t) => t.slotTypeId === slot.id);
   const attendingIds = new Set(attending.map((m) => m.id));
+  // W-30: every exclusion of the people at this meal, as the planner applies them (R-34: every
+  // exclusion filters; `hard` only protects it against relaxing), scoped to the slot as the
+  // planner scopes it. With hard ones only, dislikes ("no tomatoes", "no garlic") reached the
+  // model nowhere, and the dishes it wrote could not be planned for the family they were for.
   const hardExclusions = config.exclusions.filter(
-    (e) => e.hard && (e.memberId === null || attendingIds.has(e.memberId)),
+    (e) =>
+      (e.memberId === null || attendingIds.has(e.memberId)) &&
+      (e.slotKeys == null || e.slotKeys.includes(slot.key)),
   );
   const exclusionsOf = (rows: ExclusionRow[]) => ({
     ingredients: sortedUnique(rows.filter((e) => e.kind === "ingredient").map((e) => e.key)),
