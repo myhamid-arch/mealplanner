@@ -54,6 +54,7 @@ export {
 } from "./meal.js";
 export { cookSheetFor, type StoredDay } from "./cook-sheet.js";
 export {
+  NO_PEOPLE,
   generatePlan,
   generationProposal,
   type GeneratePlanArgs,

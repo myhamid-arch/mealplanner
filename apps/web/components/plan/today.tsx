@@ -22,7 +22,15 @@ import {
   type Review,
   type Targets,
 } from "./api";
-import { FitText, LoadError, Loading, cuisineLabel, loadBasics, type Basics } from "./common";
+import {
+  FitText,
+  LoadError,
+  Loading,
+  NoPeople,
+  cuisineLabel,
+  loadBasics,
+  type Basics,
+} from "./common";
 import { KitchenCard } from "./flag-results";
 import {
   addDays,
@@ -170,6 +178,7 @@ function DayNav({ date, today }: { readonly date: string; readonly today: string
 }
 
 function NoPlan({ basics, date }: { readonly basics: Basics; readonly date: string }) {
+  if (basics.members.length === 0) return <NoPeople admin={basics.role === "admin"} />;
   return (
     <EmptyState
       headingLevel={2}

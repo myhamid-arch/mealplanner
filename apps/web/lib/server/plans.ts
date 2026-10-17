@@ -2,14 +2,23 @@
 // ARC-6 plate projection (leaf-1.4.1 SPEC-Q-17): admins see every plate with target and deviation;
 // a member sees their own plate in full and other members' plates (without target or deviation)
 // only when `members_see_plates`; kitchen users see plates only through the cook sheet.
-import { and, eq, gte, inArray, lte } from "drizzle-orm";
+import { and, eq, gte, inArray, isNull, lte } from "drizzle-orm";
 import { plateNutrients, type Nutrients } from "@mealplanner/core/nutrition";
 import type { ScoreBreakdown } from "@mealplanner/core/planner";
 import { createRepos } from "@mealplanner/db/repos";
-import { component, dish, planDay, planMeal, plate, plateItem } from "@mealplanner/db/schema";
+import {
+  component,
+  dish,
+  member,
+  planDay,
+  planMeal,
+  plate,
+  plateItem,
+} from "@mealplanner/db/schema";
 import { applyChangeSet } from "@mealplanner/db/services/changes";
 import { createReview } from "@mealplanner/db/services/reviews";
 import {
+  NO_PEOPLE,
   cookSheetFor,
   isUntargeted,
   loadMealState,
@@ -279,6 +288,13 @@ export async function generate(
   caller: CallerContext,
   body: { dates: string[]; seed: number },
 ) {
+  // W-29: nothing to plan for a household with nobody in it; say so instead of queueing.
+  const people = await rt.db
+    .select({ id: member.id })
+    .from(member)
+    .where(and(eq(member.householdId, caller.ctx.householdId), isNull(member.archivedAt)))
+    .limit(1);
+  if (people.length === 0) throw new ProblemError(409, "no_people", NO_PEOPLE);
   const jobId = await enqueueJob(rt.db, rt.queue, {
     kind: "plan.generate",
     householdId: caller.ctx.householdId,

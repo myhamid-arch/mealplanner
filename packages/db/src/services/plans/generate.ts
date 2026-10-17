@@ -14,6 +14,7 @@ import type { ProposalDraft } from "@mealplanner/core/learning/rules";
 import type { HouseholdContext } from "@mealplanner/core/types";
 import type { Executor } from "../../repos/index.js";
 import { createProposals, type ProposalRow } from "../proposals/index.js";
+import { PlanServiceError } from "./errors.js";
 import { loadPlanInput, type PlanPool } from "./load-input.js";
 import { savePlan, type ChangeActorInput } from "./store.js";
 
@@ -59,12 +60,18 @@ export function generationProposal(
   };
 }
 
+/** W-29: why a plan cannot be made yet, in the words the page shows. */
+export const NO_PEOPLE =
+  "Nobody to plan for yet: add the people who eat at home first (Set up your household, or Family › Add a person).";
+
 export async function generatePlan(
   db: Executor,
   ctx: HouseholdContext,
   args: GeneratePlanArgs,
 ): Promise<GeneratePlanResult> {
   const { input, pool } = await loadPlanInput(db, ctx, { dates: args.dates });
+  // W-29: a household with nobody in it got a "ready" plan with no meals. Refuse instead, saying why.
+  if (input.config.members.length === 0) throw new PlanServiceError("refused", NO_PEOPLE);
   const requestDishes = args.requestDishes;
   const plan = await planDays(input, {
     seed: args.seed,
@@ -73,6 +80,11 @@ export async function generatePlan(
       ? {}
       : { requestDishes: (r: PlanGenerationRequest) => requestDishes(r, pool) }),
   });
+  if (plan.days.every((d) => d.meals.length === 0))
+    throw new PlanServiceError(
+      "refused",
+      "Nothing to plan: nobody eats a meal on these days. Check Settings › Meals & schedule.",
+    );
   // Dishes generated during the run joined the planner's pool; the save validates against them.
   for (const d of Object.values(plan.dishes)) if (!pool.byId.has(d.id)) pool.byId.set(d.id, d);
   const sheet = buildCookSheet(plan, pool.catalog.context);

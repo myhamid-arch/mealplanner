@@ -694,6 +694,19 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - PRD-4's 5-minute bound stays unmeasured;
     - the ARC-4 exception (the auth route's 2FA policy read) stays.
   - **Open:** SPEC-Q-6 (recipe-card example plates for targeted attendees only). The owner is reviewing it and will say whether it changes.
+- **W-29 (an empty household got an empty "ready" plan; reported by the owner from the Plan screen, 2026-10-17).**
+  - The problem: the owner's household had no people (onboarding's answers were never saved there). "Plan this week" still queued the planner, which saved seven plan days with no meals. The page said "The plan is ready.", showed "0 different ingredients", and offered "Regenerate unlocked".
+    - Reproduced on a fresh household: signup, then Plan this week, gives exactly that screen.
+    - No gate covered a household without people: every fixture and spec adds people first.
+  - The fix:
+    - `generatePlan` (used by the worker and the assistant) refuses with `PlanServiceError("refused", NO_PEOPLE)` when the household has nobody, and refuses a run that would plan no meals at all; nothing is saved.
+    - `POST /plans/generate` answers 409 `no_people` before queueing.
+    - The page shows a refused job's reason instead of "The planner could not finish".
+    - Plan and Today show "Nobody to plan for yet" with "Set up your household" (to /onboarding) instead of a plan button.
+  - Verified:
+    - `apps/web/test/api/plan-no-people.int.test.ts`: 409 and the planner refusal with no plan day saved, plus a negative control in which a person is added and meals are planned.
+    - In the built app with the worker, a household with nobody shows the new state on Plan and Today, and its link opens onboarding.
+    - A household set up through onboarding still plans its week.
 - **R-89 (owner, 2026-10-03, on R-88 as built: "it needs to be more governed and the input needs to be processed faster … a way to lock in answers … the assistant … came back with the same two questions even though there is a lot of new input … have you set a limit for the number of questions … while the assistant is processing why are the buttons available … the experience isn't being reviewed").**
   - **What R-88 got wrong**, all confirmed:
     - the prompt said "ask at most a few questions" and the check allowed 6, so assumptions (raw vs cooked, "does like seafood") were settled silently;

@@ -142,10 +142,17 @@ export function followJob(jobId: string, onProgress: (line: string) => void): Pr
             return;
           }
           if (job.status === "failed" || job.status === "cancelled") {
+            // W-29: a refusal says why (nobody to plan for); anything else is a plain failure.
+            const e = job.error as { name?: unknown; code?: unknown; message?: unknown } | null;
             finish({
               status: "failed",
               progress: null,
-              error: "The planner could not finish. Try again.",
+              error:
+                e?.name === "PlanServiceError" &&
+                e.code === "refused" &&
+                typeof e.message === "string"
+                  ? e.message
+                  : "The planner could not finish. Try again.",
             });
             return;
           }

@@ -3,7 +3,7 @@
 // reads, the fit badge (UX-6: text + icon), loading and error states (UX-7), and the few stroke
 // icons the design-system set does not carry (R2-UX-5: inline Lucide-style SVG).
 import type { ReactNode } from "react";
-import { Button, Chip, EmptyState, Icon, SkeletonBlock } from "../ui";
+import { Button, Chip, EmptyState, Icon, LinkButton, SkeletonBlock } from "../ui";
 import { api, c, type Household, type Me, type Member, type Role, type Slot } from "./api";
 import { fitLook, localDate, type FitStatus } from "./logic";
 
@@ -196,5 +196,25 @@ export function PageHeader({
       </div>
       {children}
     </div>
+  );
+}
+
+/**
+ * W-29: a household with nobody in it has nothing to plan; the admin is sent to the setup
+ * questions instead of a plan button that would make an empty plan.
+ */
+export function NoPeople({ admin }: { readonly admin: boolean }) {
+  return (
+    <EmptyState
+      headingLevel={2}
+      icon="family"
+      title="Nobody to plan for yet"
+      description={
+        admin
+          ? "Add the people who eat at home first: five quick questions, then the first plan is made."
+          : "An admin of the household has not added the family yet."
+      }
+      action={admin ? <LinkButton href="/onboarding">Set up your household</LinkButton> : undefined}
+    />
   );
 }

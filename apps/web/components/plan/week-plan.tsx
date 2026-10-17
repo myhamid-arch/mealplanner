@@ -23,7 +23,7 @@ import {
   type Schedules,
   type TargetProfile,
 } from "./api";
-import { ExtraIconSvg, LoadError, Loading, loadBasics, type Basics } from "./common";
+import { ExtraIconSvg, LoadError, Loading, NoPeople, loadBasics, type Basics } from "./common";
 import {
   addDays,
   cuisineFamily,
@@ -724,7 +724,7 @@ export function WeekPlanScreen({
             <Chip tone={status.tone}>{status.text}</Chip>
           </span>
         )}
-        {admin && future.length > 0 && (
+        {admin && future.length > 0 && data.basics.members.length > 0 && (
           <div className="flex flex-wrap gap-2 lg:ml-auto">
             <Button
               variant={planned.length === 0 ? "primary" : "secondary"}
@@ -765,7 +765,9 @@ export function WeekPlanScreen({
           {message.text}
         </p>
       )}
-      {planned.length === 0 ? (
+      {data.basics.members.length === 0 ? (
+        <NoPeople admin={admin} />
+      ) : planned.length === 0 ? (
         <EmptyState
           headingLevel={2}
           icon="plan"
