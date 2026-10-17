@@ -513,9 +513,18 @@ describe("solver rules", () => {
         i === 0 ? { ...c, portioning: "unit" as const, unitWeightG: null } : c,
       ),
     };
+    // W-31: a unit component without a unit ingredient's weight steps by step_g (PLN-5, as the
+    // loader documents); only one with no positive step either is invalid.
+    expect(
+      solvePlate({ dish: badUnit, target: t, member: memberCtx(), adjusters: [] }).status,
+    ).toBeDefined();
+    const noStep: DishForSolve = {
+      ...badUnit,
+      components: badUnit.components.map((c, i) => (i === 0 ? { ...c, stepG: 0 } : c)),
+    };
     expect(() =>
-      solvePlate({ dish: badUnit, target: t, member: memberCtx(), adjusters: [] }),
-    ).toThrow(SolverError);
+      solvePlate({ dish: noStep, target: t, member: memberCtx(), adjusters: [] }),
+    ).toThrow(/unit portioning needs a positive unit_weight_g/);
     const noGrid: DishForSolve = {
       ...d,
       components: d.components.map((c, i) =>

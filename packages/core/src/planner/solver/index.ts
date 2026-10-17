@@ -4,6 +4,7 @@ export { adjusterOptions, variantAllowed, type AdjusterOption } from "./eligibil
 export { SolverError, type SolverErrorCode } from "./errors.js";
 export { loadPortionSolver } from "./highs.js";
 export { solvePlate } from "./solve.js";
+export { gridOf } from "./milp.js";
 export type {
   ComponentForSolve,
   DishForSolve,

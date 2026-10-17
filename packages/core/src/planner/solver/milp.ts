@@ -30,8 +30,12 @@ export function gridOf(component: ComponentForSolve): Grid {
   const optional = !component.required;
   if (component.portioning === "fixed")
     return { unit: component.defaultServingG, kMin: 1, kMax: 1, optional };
-  const unit = component.portioning === "unit" ? component.unitWeightG : component.stepG;
-  if (unit === null || !(unit > 0))
+  // W-31: a `unit` component without one unit ingredient's weight (several ingredients, or an
+  // ingredient with no unit weight) steps by `step_g`, as the loader documents (PLN-5). Before, it
+  // threw, and one such dish made every plan of its household fail.
+  const unit =
+    component.portioning === "unit" ? (component.unitWeightG ?? component.stepG) : component.stepG;
+  if (!(unit > 0))
     throw new SolverError(
       "invalid_input",
       `component ${component.id}: ${component.portioning} portioning needs a positive ${component.portioning === "unit" ? "unit_weight_g" : "step_g"}`,

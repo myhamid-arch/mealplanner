@@ -19,6 +19,7 @@ import type {
   ScoreBreakdown,
   SlotTarget,
 } from "@mealplanner/core/planner";
+import { gridOf, SolverError } from "@mealplanner/core/planner";
 import type { HouseholdConfig, HouseholdContext, Json } from "@mealplanner/core/types";
 import type { Executor } from "../../repos/index.js";
 import {
@@ -223,6 +224,9 @@ export async function toPlanDishes(
           }),
       }));
     if (state.broken || planComponents.some((c) => c.variants.length === 0)) continue;
+    // W-31: a dish whose portions cannot be put on a grid (no grid point between its min and
+    // max) is left out of the pool, not allowed to fail the whole plan in the solver.
+    if (planComponents.some((c) => !griddable(c))) continue;
     out.push({
       id: d.id,
       slug: d.slug,
@@ -244,6 +248,16 @@ export async function toPlanDishes(
 /** Code-unit order (not locale order), so the loader's order is the same on every machine. */
 function compareText(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
+}
+
+function griddable(c: Parameters<typeof gridOf>[0]): boolean {
+  try {
+    gridOf(c);
+    return true;
+  } catch (error) {
+    if (error instanceof SolverError) return false;
+    throw error;
+  }
 }
 
 /**

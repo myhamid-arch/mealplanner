@@ -694,6 +694,22 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - PRD-4's 5-minute bound stays unmeasured;
     - the ARC-4 exception (the auth route's 2FA policy read) stays.
   - **Open:** SPEC-Q-6 (recipe-card example plates for targeted attendees only). The owner is reviewing it and will say whether it changes.
+- **W-30 (a week plan waited hours for new recipes; reported by the owner, 2026-10-17).**
+  - The problem:
+    - With the owner's rules, few library dishes fit shared meals, and the planner wrote new recipes inline, one slot at a time, at the recipe model's high effort. One dinner took 367 s, measured live on a copy of the household; the week was still running after 20 minutes.
+    - The recipe writer was given hard exclusions only. Dislikes ("no tomatoes", "no garlic", "no seafood") never reached the model, so every dish of a batch failed the planner's hard filter on a required part (a tomato salad, hammour, a garlic rice).
+  - The fix:
+    - `planDays({ deferGeneration })` records `auto` requests instead of awaiting them. `plan.generate` plans from the dishes there are, then queues one `plan.improve` job per short slot.
+    - `plan.improve` writes the dishes and swaps the best into each unlocked, future, draft meal it improves (`improveMeal`), one undoable change set each.
+    - The recipe context carries every exclusion of the attendees, scoped to the slot as the planner scopes it.
+    - The page names the meals getting new recipes.
+  - Verified live on a copy of the owner's household:
+    - the week planned in 6–9 s;
+    - a background batch wrote 3 lunches in about 4 minutes and swapped one in ("Goat Yogurt Curry with Jeera Rice, Green Beans and Raita");
+    - unit tests in core (planner deferral), ai (context exclusions) and the plan screens' gates leaf-1.4.4 G1–G2 and leaf-1.4.8 G1 and G4 (on W-29).
+- **W-31 (one AI dish made every plan of the owner's household fail, 2026-10-17).** The worker log on the owner's machine showed `SolverError: component …: unit portioning needs a positive unit_weight_g` on every `plan.generate`. An AI dish from the pre-W-30 run had a `unit` component whose default variant has several ingredients, so the loader gave it no unit weight. The loader documents that the solver "then uses step_g"; the solver threw instead, and the whole plan failed with "The planner could not finish".
+  - Fix: `gridOf` steps a unit component by `step_g` when it has no unit weight (step_g is > 0 by a database check). The loader also leaves out any dish whose components cannot be put on a grid, instead of letting one dish fail the plan.
+  - Test: solve.test.ts covers a unit component without a unit weight solving, plus the negative control that one with no positive step either still throws.
 - **W-29 (an empty household got an empty "ready" plan; reported by the owner from the Plan screen, 2026-10-17).**
   - The problem: the owner's household had no people (onboarding's answers were never saved there). "Plan this week" still queued the planner, which saved seven plan days with no meals. The page said "The plan is ready.", showed "0 different ingredients", and offered "Regenerate unlocked".
     - Reproduced on a fresh household: signup, then Plan this week, gives exactly that screen.
