@@ -194,6 +194,11 @@ export type PlanOptions = {
   seed: number;
   onProgress?: (e: PlanProgress) => void;
   requestDishes?: (request: PlanGenerationRequest) => Promise<PlanDish[]>;
+  /**
+   * W-30: in `auto` mode, record the generation request instead of waiting for new dishes; the
+   * plan is made from the dishes there are, and the caller writes new ones in the background.
+   */
+  deferGeneration?: boolean;
 };
 
 export type PlanMember = {

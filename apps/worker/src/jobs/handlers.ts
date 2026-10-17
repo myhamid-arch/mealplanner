@@ -1,24 +1,34 @@
 // The worker's job handlers (ARC-7, R-40). Each returns the job result, stored as the `done` event.
 // Actors of the change sets they write (leaf-1.4.1 SPEC-Q-12): a job a user started from the UI
 // writes as that user (`ui`); triggered and scheduled jobs write as `system` (`learning`).
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import type { KgSyncRequest } from "@mealplanner/graph/sync";
 import { recomputeLibrary, syncGraph } from "@mealplanner/graph/sync";
 import type { PlanProgress } from "@mealplanner/core/planner";
 import type { HouseholdContext, Json } from "@mealplanner/core/types";
-import { changeSet, component, dish, household, member, variant } from "@mealplanner/db/schema";
+import {
+  changeSet,
+  component,
+  dish,
+  household,
+  member,
+  planDay,
+  planMeal,
+  variant,
+} from "@mealplanner/db/schema";
 import { loadHouseholdConfig } from "@mealplanner/db/services/config";
 import { expireProposals, localDate, runInsights } from "@mealplanner/db/services/proposals";
 import {
   followUpJobs,
   generatePlan,
+  improveMeal,
   loadPlanPool,
   recomputeNutrition,
   resolvePlates,
   substituteUnavailable,
   type ChangeActorInput,
 } from "@mealplanner/db/services/plans";
-import { requestDishesFor, synthesizeFor, generateDishes } from "../ai.js";
+import { synthesizeFor, generateDishes } from "../ai.js";
 import { toJson, type JobContext, type JobHandler } from "../runner.js";
 import type { WorkerRuntime } from "../runtime.js";
 import { reviseRecipe } from "./revise.js";
@@ -86,26 +96,20 @@ export const planGenerate: JobHandler = async (ctx) => {
       : p.source === "agent"
         ? { actor: "agent", source: "agent_apply" }
         : { actor: "user", source: "ui" };
-  const config = await loadHouseholdConfig(ctx.rt.db, hh);
+  // W-30: the plan never waits for the recipe generator (minutes per meal at the recipe model's
+  // effort). Weak meals keep the best dish there is; new recipes are written afterwards by
+  // `plan.improve`, which swaps them in where they score higher.
   const result = await generatePlan(ctx.rt.db, hh, {
     dates: p.dates,
     seed: p.seed ?? 1,
     by,
+    deferGeneration: true,
     onProgress: (e) => {
       // The planner's own `done` is not the job's terminal event (the runner appends that).
       ctx.emit(e.type === "done" ? "planned" : e.type, progressPayload(e));
     },
-    requestDishes: requestDishesFor(
-      ctx.rt,
-      hh,
-      config,
-      by,
-      (type, data) => {
-        ctx.emit(type, data);
-      },
-      (changeSetId) => followUps(ctx, hh.householdId, changeSetId),
-    ),
   });
+  const improving = await queueImprovements(ctx, hh, result.deferred);
   const { stats } = result.plan;
   // ARC-12 planner metrics.
   ctx.log.info(
@@ -121,7 +125,110 @@ export const planGenerate: JobHandler = async (ctx) => {
     stats: toJson(stats),
     // 1.4.9 (R-61): what the "plan is ready" row in Updates shows (W-9b).
     ready: planReadySummary(result.plan),
+    // W-30: meals whose new recipes are being written in the background.
+    improving,
   };
+};
+
+type Deferred = Awaited<ReturnType<typeof generatePlan>>["deferred"][number];
+
+/** W-30: one `plan.improve` job per slot (a batch of new dishes serves every date it was short). */
+async function queueImprovements(
+  ctx: JobContext,
+  hh: HouseholdContext,
+  deferred: readonly Deferred[],
+): Promise<number> {
+  const bySlot = new Map<string, Deferred[]>();
+  for (const r of deferred) bySlot.set(r.slotKey, [...(bySlot.get(r.slotKey) ?? []), r]);
+  for (const [slotKey, rs] of bySlot) {
+    const first = rs[0];
+    if (first === undefined) continue;
+    await ctx.rt.enqueue(
+      "plan.improve",
+      hh.householdId,
+      {
+        slotKey,
+        dates: [...new Set(rs.map((r) => r.date))].sort(),
+        count: Math.max(...rs.map((r) => r.count)),
+        reason: first.reason.slice(0, 500),
+        palette: first.palette,
+        avoidRecentCuisines: [...new Set(rs.flatMap((r) => r.avoidRecentCuisines))].sort(),
+        avoidDishes: [...new Set(rs.flatMap((r) => r.avoidDishes))].sort(),
+      },
+      hh.userId,
+    );
+  }
+  return deferred.length;
+}
+
+/**
+ * W-30: writes new dishes for a slot the plan was short on, then gives each planned meal of that
+ * slot on those dates the best new dish where it scores higher (`improveMeal`: unlocked, future,
+ * still a draft). Each swap is its own logged, undoable change set.
+ */
+export const planImprove: JobHandler = async (ctx) => {
+  const p = payload(ctx) as {
+    slotKey: string;
+    dates: string[];
+    count: number;
+    reason: string;
+    palette?: { slug: string; timesUsed: number }[];
+    avoidRecentCuisines?: string[];
+    avoidDishes?: string[];
+  };
+  const hh = systemCtx(ctx.household().householdId);
+  const config = await loadHouseholdConfig(ctx.rt.db, hh);
+  const pool = await loadPlanPool(ctx.rt.db, hh);
+  const outcome = await generateDishes(ctx.rt, hh, {
+    config,
+    pool,
+    date: p.dates[0] ?? "",
+    slotKey: p.slotKey,
+    count: p.count,
+    ...(p.palette === undefined ? {} : { palette: p.palette }),
+    ...(p.avoidRecentCuisines === undefined ? {} : { avoidRecentCuisines: p.avoidRecentCuisines }),
+    ...(p.avoidDishes === undefined ? {} : { avoidDishes: p.avoidDishes }),
+    by: SYSTEM,
+    save: true,
+  });
+  if (outcome.status === "unavailable") return toJson({ written: 0, reason: outcome.reason });
+  await followUps(ctx, hh.householdId, outcome.changeSetId);
+  const slot = config.slotTypes.find((s) => s.key === p.slotKey);
+  if (slot === undefined || outcome.dishIds.length === 0)
+    return toJson({ written: outcome.dishIds.length, improved: [] });
+  const [h] = await ctx.rt.db
+    .select({ tz: household.timezone })
+    .from(household)
+    .where(eq(household.id, hh.householdId));
+  let today: string;
+  try {
+    today = localDate(new Date(), h?.tz ?? "UTC");
+  } catch {
+    today = new Date().toISOString().slice(0, 10);
+  }
+  const meals = await ctx.rt.db
+    .select({ id: planMeal.id, date: planDay.date })
+    .from(planMeal)
+    .innerJoin(planDay, eq(planDay.id, planMeal.planDayId))
+    .where(
+      and(
+        eq(planDay.householdId, hh.householdId),
+        inArray(planDay.date, p.dates),
+        eq(planMeal.slotTypeId, slot.id),
+      ),
+    );
+  const improved: { date: string; dish: string }[] = [];
+  for (const m of meals) {
+    const name = await improveMeal(ctx.rt.db, hh, {
+      planMealId: m.id,
+      dishIds: outcome.dishIds,
+      today,
+      by: SYSTEM,
+    });
+    if (name !== null) improved.push({ date: m.date, dish: name });
+  }
+  ctx.log.info({ written: outcome.dishIds.length, improved: improved.length }, "plan improved");
+  return toJson({ written: outcome.dishIds.length, improved });
 };
 
 export const nutritionRecompute: JobHandler = async (ctx) => {
@@ -319,6 +426,7 @@ export const householdPurge: JobHandler = async (ctx) => {
 
 export const HANDLERS: Record<string, JobHandler> = {
   "plan.generate": planGenerate,
+  "plan.improve": planImprove,
   "nutrition.recompute": nutritionRecompute,
   "plates.resolve": platesResolve,
   "plates.substitute": platesSubstitute,

@@ -653,9 +653,17 @@ export function WeekPlanScreen({
         });
         setJob(null);
         await reload();
+        // W-30: meals with few good options get new recipes in the background, swapped in later.
+        const improving = (end.result as { improving?: unknown } | undefined)?.improving;
         setMessage(
           end.status === "done"
-            ? { text: "The plan is ready.", error: false }
+            ? {
+                text:
+                  typeof improving === "number" && improving > 0
+                    ? `The plan is ready. ${String(improving)} ${improving === 1 ? "meal has" : "meals have"} few good options in the recipe library, so new recipes are being written in the background (a few minutes). They are swapped in where they fit better; each swap is in Settings › Change log.`
+                    : "The plan is ready.",
+                error: false,
+              }
             : { text: end.error ?? "The planner could not finish.", error: true },
         );
       } catch (e) {

@@ -483,7 +483,7 @@ export async function planDay(
             ? `only ${String(count)} candidate(s) pass the filters and the solver (< ${String(AI_MIN_CANDIDATES)})`
             : `best score ${best.toFixed(2)} is below ${String(AI_MIN_BEST_SCORE)}`;
         const request = generationRequest(run, spec, history, reason);
-        if (mode === "ask") out.generationRequests.push(request);
+        if (mode === "ask" || opts.deferGeneration === true) out.generationRequests.push(request);
         else if (opts.requestDishes !== undefined) {
           opts.onProgress?.({ type: "ai_generating", date, slotKey: spec.slot.key, reason });
           const dishes = await opts.requestDishes(request);

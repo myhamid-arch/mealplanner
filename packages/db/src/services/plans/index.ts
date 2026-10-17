@@ -47,6 +47,7 @@ export {
   solveMealWith,
   strictMiss,
   swapMeal,
+  improveMeal,
   swapOp,
   type Alternative,
   type MealState,

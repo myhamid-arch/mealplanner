@@ -100,6 +100,16 @@ export interface JobState {
   /** The latest progress line, e.g. "Planning Wednesday". */
   progress: string | null;
   error: string | null;
+  /** The job's result, when it came with the terminal event (SSE). */
+  result?: unknown;
+}
+
+/** W-29: a planner refusal says why (nobody to plan for); anything else is a plain failure. */
+function failureText(error: unknown): string {
+  const e = error as { name?: unknown; code?: unknown; message?: unknown } | null;
+  return e?.name === "PlanServiceError" && e.code === "refused" && typeof e.message === "string"
+    ? e.message
+    : "The planner could not finish. Try again.";
 }
 
 /** Job and planner progress events (worker runner; core PlanProgress). */
@@ -142,18 +152,7 @@ export function followJob(jobId: string, onProgress: (line: string) => void): Pr
             return;
           }
           if (job.status === "failed" || job.status === "cancelled") {
-            // W-29: a refusal says why (nobody to plan for); anything else is a plain failure.
-            const e = job.error as { name?: unknown; code?: unknown; message?: unknown } | null;
-            finish({
-              status: "failed",
-              progress: null,
-              error:
-                e?.name === "PlanServiceError" &&
-                e.code === "refused" &&
-                typeof e.message === "string"
-                  ? e.message
-                  : "The planner could not finish. Try again.",
-            });
+            finish({ status: "failed", progress: null, error: failureText(job.error) });
             return;
           }
         } catch (e) {
@@ -174,14 +173,11 @@ export function followJob(jobId: string, onProgress: (line: string) => void): Pr
         const e = JSON.parse(event.data) as { type: string; payload: unknown };
         if (e.type === "done") {
           source.close();
-          finish({ status: "done", progress: null, error: null });
+          finish({ status: "done", progress: null, error: null, result: e.payload });
         } else if (e.type === "failed") {
           source.close();
-          finish({
-            status: "failed",
-            progress: null,
-            error: "The planner could not finish. Try again.",
-          });
+          const p = e.payload as { error?: unknown } | null;
+          finish({ status: "failed", progress: null, error: failureText(p?.error ?? p) });
         } else onProgress(progressLine(e.type, e.payload));
       } catch {
         // A malformed event is skipped; the terminal event still ends the stream.

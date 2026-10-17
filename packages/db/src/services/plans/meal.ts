@@ -332,3 +332,41 @@ async function storedDates(
     .filter((d) => d >= from && d <= to)
     .sort();
 }
+
+/**
+ * W-30: after new dishes were written in the background, a planned meal takes the best of them when
+ * it scores higher than the dish it has, as one logged, undoable swap. Meals that are locked,
+ * past, already sent to the kitchen or already served are left alone, and so is a meal no new dish
+ * improves. Returns the new dish's name, or null when the meal was left as it is.
+ */
+export async function improveMeal(
+  db: Executor,
+  ctx: HouseholdContext,
+  args: { planMealId: string; dishIds: readonly string[]; today: string; by: ChangeActorInput },
+): Promise<string | null> {
+  const row = await createRepos(db, ctx).plan_meal.get({ id: args.planMealId });
+  const day = row === null ? null : await createRepos(db, ctx).plan_day.get({ id: row.planDayId });
+  if (row === null || day === null || row.locked || row.status !== "planned") return null;
+  if (day.status !== "draft" || day.date < args.today) return null;
+  const state = await loadMealState(db, ctx, args.planMealId);
+  const meal = state.meal;
+  let best: { dish: PlanDish; swap: { op: ChangeOp; solved: PlannedMeal } } | null = null;
+  for (const id of args.dishIds) {
+    const dish = state.pool.byId.get(id);
+    if (dish === undefined || id === meal.dishId || !mayServe(dish, meal.slotKey, meal.isPacked))
+      continue;
+    const swap = await swapOp(state, meal, dish);
+    if (swap === null || strictMiss(state.config, swap.solved) !== null) continue;
+    if (best === null || swap.solved.scoreBreakdown.total > best.swap.solved.scoreBreakdown.total)
+      best = { dish, swap };
+  }
+  if (best === null || best.swap.solved.scoreBreakdown.total <= meal.scoreBreakdown.total + 1e-9)
+    return null;
+  await applyChangeSet(db, ctx, {
+    actor: args.by.actor,
+    source: args.by.source,
+    summary: `New recipe for ${meal.slotLabel} on ${meal.date}: ${best.dish.name}`,
+    ops: [...(await adjusterRowsOp(db, ctx, [best.swap.solved])), best.swap.op],
+  });
+  return best.dish.name;
+}

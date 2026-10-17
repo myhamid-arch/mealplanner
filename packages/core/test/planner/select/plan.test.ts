@@ -156,6 +156,25 @@ describe("PLN-12 generation trigger", () => {
     expect(meal).toBeDefined();
   }, 120_000);
 
+  it("W-30 auto, deferred: plans from the dishes there are and returns the request, never waiting", async () => {
+    let called = 0;
+    const plan = await planDays(
+      { config: cfg("auto"), dates: [MONDAY], dishes: small, adjusters: lib.adjusters },
+      {
+        seed: 1,
+        deferGeneration: true,
+        requestDishes: () => {
+          called++;
+          return Promise.resolve([]);
+        },
+      },
+    );
+    expect(called).toBe(0);
+    expect(plan.generationRequests.map((r) => [r.date, r.slotKey])).toEqual([[MONDAY, "dinner"]]);
+    // The meal is planned anyway, from the small pool.
+    expect(plan.days[0]?.meals).toHaveLength(1);
+  }, 120_000);
+
   it("ask: returns the request instead of calling the generator; off: neither", async () => {
     let called = 0;
     const requestDishes = () => {

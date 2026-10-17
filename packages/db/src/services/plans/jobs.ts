@@ -25,6 +25,8 @@ export const JOB_KINDS = [
   "recipe.draft",
   // W-5 (1.4.7, R-56): the what-if plan of Planning balance (UX-4); writes no plan.
   "plans.preview",
+  // W-30: new recipes for a planned week's weak meals, written after the plan is saved.
+  "plan.improve",
 ] as const;
 export type JobKind = (typeof JOB_KINDS)[number];
 

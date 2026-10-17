@@ -25,6 +25,8 @@ export interface GeneratePlanArgs {
   onProgress?: (e: PlanProgress) => void;
   /** PLN-12 `auto`: new dishes for a triggered slot (saved by the caller, returned as PlanDish). */
   requestDishes?: (request: PlanGenerationRequest, pool: PlanPool) => Promise<PlanDish[]>;
+  /** W-30: plan from the dishes there are; `auto` requests come back in `deferred`. */
+  deferGeneration?: boolean;
   now?: Date;
 }
 
@@ -33,6 +35,8 @@ export interface GeneratePlanResult {
   changeSetId: string;
   /** PLN-12 `ask`: the "generate new recipes" proposals stored. */
   proposals: ProposalRow[];
+  /** W-30: `auto` generation requests left for the background (only with `deferGeneration`). */
+  deferred: PlanGenerationRequest[];
 }
 
 /** PLN-12 `ask`: one proposal per triggered slot and date. */
@@ -75,6 +79,7 @@ export async function generatePlan(
   const requestDishes = args.requestDishes;
   const plan = await planDays(input, {
     seed: args.seed,
+    ...(args.deferGeneration === true ? { deferGeneration: true } : {}),
     ...(args.onProgress === undefined ? {} : { onProgress: args.onProgress }),
     ...(requestDishes === undefined
       ? {}
@@ -107,5 +112,8 @@ export async function generatePlan(
     );
     proposals = result.stored;
   }
-  return { plan, changeSetId: saved.changeSetId, proposals };
+  const deferred = plan.generationRequests.filter(
+    (r) => plan.weights[r.date]?.aiGeneration === "auto",
+  );
+  return { plan, changeSetId: saved.changeSetId, proposals, deferred };
 }
