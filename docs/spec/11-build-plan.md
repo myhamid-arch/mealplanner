@@ -694,6 +694,8 @@ Recorded from leaf CP1 reviews. They are binding for all leaves.
     - PRD-4's 5-minute bound stays unmeasured;
     - the ARC-4 exception (the auth route's 2FA policy read) stays.
   - **Open:** SPEC-Q-6 (recipe-card example plates for targeted attendees only). The owner is reviewing it and will say whether it changes.
+- **W-32 (two members shown as "M"; seen on the owner's week plan, 2026-10-17).** Manal and mohamed both showed as "M" in "M trains" and in the attendee lists. Short labels are now the shortest distinct prefix (`initials` in core: "Ma", "Mo"), on the week grid and the tastes table.
+  - Verified: core unit test; on 6a93129 + 9425939, leaf-1.4.4 G1 and G2 and leaf-1.4.3 G1 PASSED.
 - **W-30 (a week plan waited hours for new recipes; reported by the owner, 2026-10-17).**
   - The problem:
     - With the owner's rules, few library dishes fit shared meals, and the planner wrote new recipes inline, one slot at a time, at the recipe model's high effort. One dinner took 367 s, measured live on a copy of the household; the week was still running after 20 minutes.
