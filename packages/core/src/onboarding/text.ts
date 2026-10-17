@@ -96,3 +96,21 @@ export function cappedList(items: readonly string[], max = 6): string {
     ? `${items.slice(0, max).join(", ")} and ${String(items.length - max)} more`
     : listJoin(items);
 }
+
+/**
+ * W-32: the shortest distinct prefix of each name, capitalised, for one-letter labels that must
+ * stay readable: "Manal" and "mohamed" are "Ma" and "Mo", "Omar" stays "O". Keyed like the input.
+ */
+export function initials(names: ReadonlyMap<string, string>): Map<string, string> {
+  const norm = new Map([...names].map(([k, v]) => [k, v.trim()]));
+  const out = new Map<string, string>();
+  for (const [key, name] of norm) {
+    const others = [...norm].filter(([k]) => k !== key).map(([, v]) => v.toLowerCase());
+    let n = 1;
+    while (n < name.length && others.some((o) => o.startsWith(name.slice(0, n).toLowerCase())))
+      n += 1;
+    const prefix = name.slice(0, n);
+    out.set(key, prefix.charAt(0).toUpperCase() + prefix.slice(1).toLowerCase());
+  }
+  return out;
+}

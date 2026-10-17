@@ -8,7 +8,7 @@
 // (UX-4, W-5 addendum; BLD-8 R-58; leaf-1.4.8 ADR-1, SPEC-Q-7).
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { listJoin } from "@mealplanner/core/onboarding";
+import { initials, listJoin } from "@mealplanner/core/onboarding";
 import { Button, Chip, EmptyState, Icon } from "../ui";
 import {
   api,
@@ -111,11 +111,18 @@ interface Row {
   who: string;
 }
 
+/** W-32: a member's short label, unique in the household ("Ma" and "Mo", not "M" twice). */
+function initialOf(data: WeekData, memberId: string): string {
+  return (
+    initials(new Map(data.basics.members.map((m) => [m.id, m.displayName]))).get(memberId) ?? ""
+  );
+}
+
 function rows(data: WeekData): Row[] {
   const seen = new Map<string, Row>();
-  const initials = (ids: readonly string[]) =>
+  const labelsOf = (ids: readonly string[]) =>
     [...new Set(ids)]
-      .map((id) => data.basics.members.find((m) => m.id === id)?.displayName.charAt(0) ?? "")
+      .map((id) => initialOf(data, id))
       .filter((x) => x !== "")
       .join(" · ");
   for (const slot of data.basics.slots) {
@@ -130,7 +137,7 @@ function rows(data: WeekData): Row[] {
       label: slot.label,
       shared: slot.isShared,
       time: slot.defaultTime,
-      who: new Set(attendees).size < all ? initials(attendees) : "",
+      who: new Set(attendees).size < all ? labelsOf(attendees) : "",
     });
   }
   return [...seen.values()].sort((a, b) => minutesOf(a.time) - minutesOf(b.time));
@@ -220,7 +227,7 @@ function Cell({
       </span>
       {shared === undefined && own.length > 1 && !compact && (
         <span className="text-[11px] text-ink-muted">
-          {own.map((m) => name(m.memberScope).charAt(0)).join(" · ")}
+          {own.map((m) => initialOf(data, m.memberScope)).join(" · ")}
         </span>
       )}
       {shared !== undefined && shared.splitMembers.length > 0 && (
@@ -260,7 +267,7 @@ function trainingLine(data: WeekData, date: string): string | null {
   if (s === null) return null;
   const who = data.basics.members
     .filter((m) => dayKindOf(s, m.id, date) === "training")
-    .map((m) => m.displayName.charAt(0));
+    .map((m) => initialOf(data, m.id));
   return who.length === 0 ? "rest" : `${who.join(" · ")} trains`;
 }
 

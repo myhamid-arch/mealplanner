@@ -19,4 +19,4 @@ export {
   resolveTerm,
   type Resolution,
 } from "./resolve.js";
-export { cappedList, listJoin, shortNames, weekdayText, WEEKDAY_SHORT } from "./text.js";
+export { cappedList, initials, listJoin, shortNames, weekdayText, WEEKDAY_SHORT } from "./text.js";

@@ -4,6 +4,7 @@
 // Expert: how each person likes food cooked (method and flavour scores). Never serve for everyone.
 import { useState } from "react";
 import type { ChangeOp } from "@mealplanner/core/changes";
+import { initials } from "@mealplanner/core/onboarding";
 import { applyChanges, problemText } from "./api";
 import { levelOf, useHousehold, type HouseholdData, type Preference } from "./data";
 import { NeverServeList } from "./never-serve";
@@ -100,7 +101,10 @@ function Grid({
             </th>
             {data.members.map((m) => (
               <th key={m.id} scope="col" className="min-w-14 font-extrabold" title={m.displayName}>
-                {short === true ? m.displayName.charAt(0) : m.displayName}
+                {short === true
+                  ? (initials(new Map(data.members.map((x) => [x.id, x.displayName]))).get(m.id) ??
+                    m.displayName)
+                  : m.displayName}
               </th>
             ))}
             {short !== true && (

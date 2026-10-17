@@ -5,6 +5,7 @@ import {
   inferSetup,
   parseNeverEat,
   resolveTarget,
+  initials,
   resolveTerm,
   shortNames,
   splitStatements,
@@ -253,5 +254,20 @@ describe("R-88 shortNames: one line a person can read", () => {
         "Chicken breast, with skin",
       ]),
     ).toEqual(["chicken wing", "chicken breast (skinless)", "chicken breast (with skin)"]);
+  });
+});
+
+describe("W-32 initials: short labels stay distinct", () => {
+  it("Manal and mohamed are Ma and Mo; a unique first letter stays one letter", () => {
+    const m = initials(
+      new Map([
+        ["1", "Yousif"],
+        ["2", "manal"],
+        ["3", "nada"],
+        ["4", "Omar"],
+        ["5", "mohamed"],
+      ]),
+    );
+    expect([...m.values()]).toEqual(["Y", "Ma", "N", "O", "Mo"]);
   });
 });
